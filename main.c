@@ -22,7 +22,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 #include "board.h"
+#include "lprintf.h"
 #include <stdio.h>
+#include <string.h>
+#include <stdint.h>
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
@@ -143,6 +146,7 @@ int __io_putchar(int ch)
 
   return ch;
 }
+
 /**
   * @brief  Main program.
   * @param  None
@@ -157,6 +161,7 @@ int main(void)
        system_stm32f10x.c file
      */     
        
+  RCC_ClocksTypeDef RCC_ClocksStatus;
   delay_init();
   /* GPIOC Periph clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
@@ -180,17 +185,24 @@ int main(void)
      If you need to fine tune this frequency, you can add more GPIO set/reset 
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.  */
+  RCC_GetClocksFreq(&RCC_ClocksStatus);
   while (1)
   {
+    lprintf("clk %d %d %d %d %d Hz\n\r",
+            RCC_ClocksStatus.SYSCLK_Frequency,
+            RCC_ClocksStatus.HCLK_Frequency,
+            RCC_ClocksStatus.PCLK1_Frequency,
+            RCC_ClocksStatus.PCLK2_Frequency,
+            RCC_ClocksStatus.ADCCLK_Frequency);
     /* Set PC13 */
     GPIOC->BSRR = 0x00002000;
-    //printf("\n\rSet PC13\n\r");
-    __io_putchar('s');
+    lprintf("\n\rSet PC13\n\r");
+    //__io_putchar('s');
     delay_ms(500);
     /* Reset PC13 */
     GPIOC->BRR  = 0x00002000;
-    printf("\n\rClr PC13\n\r");
-    __io_putchar('c');
+    lprintf("\n\rClr PC13\n\r");
+    //__io_putchar('c');
     delay_ms(500);
   }
 }
