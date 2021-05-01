@@ -21,6 +21,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
+#include "board.h"
+#include <stdio.h>
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
@@ -35,6 +37,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 GPIO_InitTypeDef GPIO_InitStructure;
+USART_InitTypeDef USART_InitStructure;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -81,6 +84,54 @@ void delay_ms(u16 nms)
 }
 
 /**
+  * @brief  Configures COM port.
+  * @param  COM: Specifies the COM port to be configured.
+  *   This parameter can be one of following parameters:    
+  *     @arg COM1
+  *     @arg COM2  
+  * @param  USART_InitStruct: pointer to a USART_InitTypeDef structure that
+  *   contains the configuration information for the specified USART peripheral.
+  * @retval None
+  */
+void STM_COMInit(COM_TypeDef COM, USART_InitTypeDef* USART_InitStruct)
+{
+  GPIO_InitTypeDef GPIO_InitStructure;
+
+  /* Enable GPIO clock */
+  RCC_APB2PeriphClockCmd(COM_TX_PORT_CLK[COM] | COM_RX_PORT_CLK[COM] | RCC_APB2Periph_AFIO, ENABLE);
+
+
+  /* Enable UART clock */
+  if (COM == COM1)
+  {
+    RCC_APB2PeriphClockCmd(COM_USART_CLK[COM], ENABLE); 
+  }
+  else
+  {
+    /* Enable the USART2 Pins Software Remapping */
+    GPIO_PinRemapConfig(GPIO_Remap_USART2, ENABLE);
+    RCC_APB1PeriphClockCmd(COM_USART_CLK[COM], ENABLE);
+  }
+
+  /* Configure USART Tx as alternate function push-pull */
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+  GPIO_InitStructure.GPIO_Pin = COM_TX_PIN[COM];
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(COM_TX_PORT[COM], &GPIO_InitStructure);
+
+  /* Configure USART Rx as input floating */
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_InitStructure.GPIO_Pin = COM_RX_PIN[COM];
+  GPIO_Init(COM_RX_PORT[COM], &GPIO_InitStructure);
+
+  /* USART configuration */
+  USART_Init(COM_USART[COM], USART_InitStruct);
+    
+  /* Enable USART */
+  USART_Cmd(COM_USART[COM], ENABLE);
+}
+
+/**
   * @brief  Main program.
   * @param  None
   * @retval None
@@ -104,6 +155,14 @@ int main(void)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 
+  USART_InitStructure.USART_BaudRate = 9600;
+  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+  USART_InitStructure.USART_StopBits = USART_StopBits_1;
+  USART_InitStructure.USART_Parity = USART_Parity_No;
+  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+  USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+
+  STM_COMInit(COM1, &USART_InitStructure);
   /* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
      You can monitor PD0 or PD2 on the scope to measure the output signal. 
      If you need to fine tune this frequency, you can add more GPIO set/reset 
@@ -113,9 +172,11 @@ int main(void)
   {
     /* Set PC13 */
     GPIOC->BSRR = 0x00002000;
+    printf("\n\rSet PC13\n\r");
     delay_ms(500);
     /* Reset PC13 */
     GPIOC->BRR  = 0x00002000;
+    printf("\n\rClr PC13\n\r");
     delay_ms(500);
   }
 }

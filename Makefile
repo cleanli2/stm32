@@ -14,7 +14,7 @@ INC_FLAGS= \
 		   -I $(TOP)
 
 
-CFLAGS =  -W -Wall -g -mcpu=cortex-m3 -mthumb -D STM32F10X_HD -D USE_STDPERIPH_DRIVER $(INC_FLAGS) -O0 -std=gnu11
+CFLAGS =  -W -Wall -g -mcpu=cortex-m3 -mthumb -D STM32F10X_MD -D USE_STDPERIPH_DRIVER $(INC_FLAGS) -O0 -std=gnu11
 C_SRC=$(shell find ./ -name '*.c')  
 C_OBJ=$(C_SRC:%.c=%.o)          
 
