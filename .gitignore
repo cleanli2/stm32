@@ -1,0 +1,11 @@
+*.o
+*.map
+*.elf
+cscope.files
+cscope.in.out
+cscope.out
+cscope.po.out
+*.asm
+*.bin
+*.hex
+tags
