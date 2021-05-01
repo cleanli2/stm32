@@ -131,6 +131,18 @@ void STM_COMInit(COM_TypeDef COM, USART_InitTypeDef* USART_InitStruct)
   USART_Cmd(COM_USART[COM], ENABLE);
 }
 
+int __io_putchar(int ch)
+{
+  /* Place your implementation of fputc here */
+  /* e.g. write a character to the USART */
+  USART_SendData(BOARD_COM1, (uint8_t) ch);
+
+  /* Loop until the end of transmission */
+  while (USART_GetFlagStatus(BOARD_COM1, USART_FLAG_TC) == RESET)
+  {}
+
+  return ch;
+}
 /**
   * @brief  Main program.
   * @param  None
@@ -172,11 +184,13 @@ int main(void)
   {
     /* Set PC13 */
     GPIOC->BSRR = 0x00002000;
-    printf("\n\rSet PC13\n\r");
+    //printf("\n\rSet PC13\n\r");
+    __io_putchar('s');
     delay_ms(500);
     /* Reset PC13 */
     GPIOC->BRR  = 0x00002000;
     printf("\n\rClr PC13\n\r");
+    __io_putchar('c');
     delay_ms(500);
   }
 }
