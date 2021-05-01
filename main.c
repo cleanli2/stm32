@@ -39,6 +39,47 @@ GPIO_InitTypeDef GPIO_InitStructure;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
+static u8  fac_us=0;
+static u16 fac_ms=0;
+void delay_init()
+{
+
+    SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
+    fac_us=SystemCoreClock/8000000;
+
+    fac_ms=(u16)fac_us*1000;
+}
+
+void delay_us(u32 nus)
+{
+    u32 temp;
+    SysTick->LOAD=nus*fac_us;
+    SysTick->VAL=0x00;
+    SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;
+    do
+    {
+        temp=SysTick->CTRL;
+    }
+    while(temp&0x01&&!(temp&(1<<16)));
+    SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;
+    SysTick->VAL =0X00;
+}
+
+void delay_ms(u16 nms)
+{
+    u32 temp;
+    SysTick->LOAD=(u32)nms*fac_ms;
+    SysTick->VAL =0x00;
+    SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;
+    do
+    {
+        temp=SysTick->CTRL;
+    }
+    while(temp&0x01&&!(temp&(1<<16)));
+    SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;
+    SysTick->VAL =0X00;
+}
+
 /**
   * @brief  Main program.
   * @param  None
@@ -54,10 +95,10 @@ int main(void)
      */     
        
   /* GPIOD Periph clock enable */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 
   /* Configure PD0 and PD2 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_2;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOD, &GPIO_InitStructure);
@@ -69,55 +110,12 @@ int main(void)
      This code needs to be compiled with high speed optimization option.  */
   while (1)
   {
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
-
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
-
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
-
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
-
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
-
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
-
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
-
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
-
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
-
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
+    /* Set PC13 */
+    GPIOC->BSRR = 0x00002000;
+    delay_ms(500);
+    /* Reset PC13 */
+    GPIOD->BRR  = 0x00002000;
+    delay_ms(500);
   }
 }
 
