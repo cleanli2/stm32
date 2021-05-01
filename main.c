@@ -94,14 +94,15 @@ int main(void)
        system_stm32f10x.c file
      */     
        
-  /* GPIOD Periph clock enable */
+  delay_init();
+  /* GPIOC Periph clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 
   /* Configure PD0 and PD2 in output pushpull mode */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(GPIOD, &GPIO_InitStructure);
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
 
   /* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
      You can monitor PD0 or PD2 on the scope to measure the output signal. 
@@ -114,7 +115,7 @@ int main(void)
     GPIOC->BSRR = 0x00002000;
     delay_ms(500);
     /* Reset PC13 */
-    GPIOD->BRR  = 0x00002000;
+    GPIOC->BRR  = 0x00002000;
     delay_ms(500);
   }
 }
