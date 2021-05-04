@@ -27,6 +27,7 @@
 #include <string.h>
 #include <stdint.h>
 
+int lcd_init(void);
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
   */
@@ -186,6 +187,7 @@ int main(void)
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.  */
   RCC_GetClocksFreq(&RCC_ClocksStatus);
+  lcd_init();
   while (1)
   {
     lprintf("clk %d %d %d %d %d Hz\n\r",
