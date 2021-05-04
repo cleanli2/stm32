@@ -231,6 +231,16 @@ void Delay(unsigned int z)
 	}
 }
 
+unsigned char jiong1[]={
+//16x16 --
+0x00,0xFE,0x82,0x42,0xA2,0x9E,0x8A,0x82,0x86,0x8A,0xB2,0x62,0x02,0xFE,0x00,0x00,
+0x00,0x7F,0x40,0x40,0x7F,0x40,0x40,0x40,0x40,0x40,0x7F,0x40,0x40,0x7F,0x00,0x00};
+
+unsigned char lei1[]={
+//16x16 --
+0x80,0x80,0x80,0xBF,0xA5,0xA5,0xA5,0x3F,0xA5,0xA5,0xA5,0xBF,0x80,0x80,0x80,0x00,
+0x7F,0x24,0x24,0x3F,0x24,0x24,0x7F,0x00,0x7F,0x24,0x24,0x3F,0x24,0x24,0x7F,0x00};
+
 unsigned char IC[]={
 	0xe2,						//lcd reset
 	0xa3,						//set framerate[A0: 76fps, A1b: 95fps, A2b: 132fps, A3b: 168fps(fps: frame-per-second)] 
@@ -277,6 +287,51 @@ void WriteData(unsigned char data, unsigned char C)
 	CS_1();	
 }
 
+void Dispgraphic(unsigned char *p)
+{
+    unsigned char i,j;
+    for(i=0;i<8;i++)//8 pages data
+    {
+        WriteData(0x40,0);//set line of rotating
+        WriteData(0xb0|i,0);//set addr of page
+
+        WriteData(0x10,0);//set addr of column(double bytes cmd)
+        WriteData(0x00,0);//set column addr is 0
+
+        for(j=0;j<192;j++)//192 columns
+        {
+            WriteData(p[i*192+j],1);
+        }
+    }
+}
+/*16*16*/
+//y:page addr  l:column addr  *p:chinese char
+void Display_Chinese(unsigned char y,unsigned char l,unsigned char *p)
+{
+    unsigned char i,j;
+    for(i=0;i<2;i++)
+    {
+        WriteData((0xb0|i)+y,0);//set page addr
+
+        WriteData(0x10+(l>>4&0x0F),0);//set column addr(double bytes cmd)
+        WriteData(l&0x0F,0);
+
+        for(j=0;j<16;j++)//16 column
+        {
+            WriteData(*p++,1);
+        }
+    }
+}
+//long dealy
+void delay_l(unsigned int x)
+{
+	while(x)
+	{
+		Delay(60000);
+		x--;
+	}
+}
+
 void lcd_init(void)
 {
 	unsigned int i=0;
@@ -315,31 +370,4 @@ void lcd_init(void)
         Dispgraphic(pic_f);
         delay_l(20);
     }
-}
-
-void Dispgraphic(unsigned char *p)
-{
-    unsigned char i,j;
-    for(i=0;i<8;i++)//8 pages data
-    {
-        WriteData(0x40,0);//set line of rotating
-        WriteData(0xb0|i,0);//set addr of page
-
-        WriteData(0x10,0);//set addr of column(double bytes cmd)
-        WriteData(0x00,0);//set column addr is 0
-
-        for(j=0;j<192;j++)//192 columns
-        {
-            WriteData(p[i*192+j],1);
-        }
-    }
-}
-//long dealy
-void delay_l(unsigned int x)
-{
-	while(x)
-	{
-		Delay(60000);
-		x--;
-	}
 }

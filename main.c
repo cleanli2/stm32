@@ -22,12 +22,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 #include "board.h"
+#include "lcd.h"
 #include "lprintf.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
 
-int lcd_init(void);
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
   */
@@ -188,6 +188,8 @@ int main(void)
      This code needs to be compiled with high speed optimization option.  */
   RCC_GetClocksFreq(&RCC_ClocksStatus);
   lcd_init();
+  Display_Chinese(0,0,jiong1);//page 0, column 0
+  Display_Chinese(0,20,lei1);//page 0, column 20
   while (1)
   {
     lprintf("clk %d %d %d %d %d Hz\n\r",
