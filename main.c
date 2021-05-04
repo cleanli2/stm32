@@ -23,6 +23,7 @@
 #include "stm32f10x.h"
 #include "board.h"
 #include "lcd.h"
+#include "cmd.h"
 #include "lprintf.h"
 #include <stdio.h>
 #include <string.h>
@@ -144,8 +145,17 @@ int __io_putchar(int ch)
   /* Loop until the end of transmission */
   while (USART_GetFlagStatus(BOARD_COM1, USART_FLAG_TC) == RESET)
   {}
+  if(ch == '\n')
+      USART_SendData(BOARD_COM1, '\r');
 
   return ch;
+}
+
+uint16_t __io_getchar()
+{
+  /* Check the parameters */
+  while (USART_GetFlagStatus(BOARD_COM1, USART_FLAG_RXNE) == RESET);
+  return 0xff&USART_ReceiveData(BOARD_COM1);
 }
 
 /**
@@ -204,7 +214,7 @@ int main(void)
           Display_Chinese2((ti+1)*16,tj*16,ziku+(0x20*(ti*12+tj)));
       }
   }
-  while (1)
+  //while (1)
   {
     lprintf("clk %d %d %d %d %d Hz\n\r",
             RCC_ClocksStatus.SYSCLK_Frequency,
@@ -223,6 +233,7 @@ int main(void)
     //__io_putchar('c');
     delay_ms(500);
   }
+  run_cmd_interface();
 }
 
 #ifdef  USE_FULL_ASSERT
