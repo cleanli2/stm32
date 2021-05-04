@@ -190,6 +190,20 @@ int main(void)
   lcd_init();
   Display_Chinese(0,0,jiong1);//page 0, column 0
   Display_Chinese(0,20,lei1);//page 0, column 20
+  /*
+  Display_Chinese2(0,40,ziku);
+  Display_Chinese2(0,60,ziku+0x20);
+  Display_Chinese2(0,80,ziku+0x40);
+  Display_Chinese2(0,100,ziku+0x60);
+  Display_Chinese2(0,120,ziku+0x180);
+  Display_Chinese2(0,140,ziku+0x1a0);
+  Display_Chinese2(0,160,ziku+0x1b0);
+  */
+  for (int ti = 0;ti < 3;ti++){
+      for(int tj = 0;tj < 12;tj++){
+          Display_Chinese2((ti+1)*16,tj*16,ziku+(0x20*(ti*12+tj)));
+      }
+  }
   while (1)
   {
     lprintf("clk %d %d %d %d %d Hz\n\r",
