@@ -67,6 +67,48 @@ error:
     lprint("Err!\ndwb [page] [col] [data]\n");
 }
 
+void Display_Chinese2_fullscreen(uint32_t x, uint32_t y, uint32_t zi_offset)
+{
+    for(int i = 0; i <48; i++)
+    {
+        Display_Chinese2(x, y, ziku + 0x20*zi_offset++);
+        y += 16;
+        if(y>191){
+            y = 0;
+            x+=2;
+        }
+    }
+}
+
+void show_ziku(char *p)
+{
+    uint stt_off = 0, stp_off =0, tmp, zikusize;
+    uint zi, x=0, y=0;
+
+    zikusize = get_ziku_size();
+    stp_off = zikusize;
+    lprintf("size of ziku:%x %d\n", stp_off, stp_off);
+    tmp = get_howmany_para(p);
+    if( tmp > 0)
+        p = str_to_hex(p, &stt_off);
+    if( tmp > 1)
+        p = str_to_hex(p, &stp_off);
+    if(stp_off > zikusize)
+        stp_off = zikusize;
+    zi = stt_off;
+    while(zi<stp_off){
+        lprintf("zi %d stop %d\n", zi, stp_off);
+        Display_Chinese2_fullscreen(x,y,zi);
+        delay_ms(1000);
+        zi+=12;
+        if(con_is_recved())
+            break;
+    }
+    con_send('\n');
+
+    return;
+}
+
 static const struct command cmd_list[]=
 {
     {"dispcchar",dispcchar},
@@ -75,6 +117,7 @@ static const struct command cmd_list[]=
     {"help",print_help},
     {"pm",print_mem},
     {"r",read_mem},
+    {"szk",show_ziku},
     {"w",write_mem},
     {NULL, NULL},
 };

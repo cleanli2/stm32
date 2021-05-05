@@ -4,4 +4,5 @@
 #include<string.h>
 #include "lprintf.h"
 #include "lcd.h"
+void delay_ms(uint16_t nms);
 #endif

@@ -159,6 +159,10 @@ uint16_t __io_getchar()
   return 0xff&USART_ReceiveData(BOARD_COM1);
 }
 
+int __io_char_received()
+{
+  return (USART_GetFlagStatus(BOARD_COM1, USART_FLAG_RXNE) == SET);
+}
 /**
   * @brief  Main program.
   * @param  None

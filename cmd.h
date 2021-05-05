@@ -3,6 +3,7 @@
 
 #define con_send __io_putchar
 #define con_recv() __io_getchar()
+#define con_is_recved() __io_char_received()
 
 #define COM_MAX_LEN 32
 #define ENTER_CHAR 0x0d
