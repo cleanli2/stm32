@@ -201,6 +201,7 @@ int main(void)
   lcd_init();
   Display_Chinese(0,0,jiong1);//page 0, column 0
   Display_Chinese(0,20,lei1);//page 0, column 20
+  Display_Chinese_r90(0,40,lei1);//page 0, column 20
   /*
   Display_Chinese2(0,40,ziku);
   Display_Chinese2(0,60,ziku+0x20);

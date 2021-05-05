@@ -433,34 +433,41 @@ void Display_Chinese(unsigned char y,unsigned char l,unsigned char *p)
         for(j=0;j<16;j++)//16 column
         {
             WriteData(*p++,1);
-            delay_ms(200);
         }
     }
 }
+
+void Display_Chinese_r90(unsigned char y,unsigned char l,unsigned char *p)
+{
+    uint8_t tmp_code[32];
+    bytes_vertical_transform(p+16, tmp_code);
+    bytes_vertical_transform(p, tmp_code+8);
+    bytes_vertical_transform(p+24, tmp_code+16);
+    bytes_vertical_transform(p+8, tmp_code+24);
+    Display_Chinese(y,l,tmp_code);
+}
+
 void Display_Chinese2(unsigned char y,unsigned char l,unsigned char *ip)
 {
+    uint8_t tmp_code[32];
     unsigned char i,j;
-    unsigned char*p=ip;
+    uint8_t*p=(uint8_t*)ip;
     for(i=0;i<2;i++)
     {
-        WriteData((0xb0|i)+y,0);//set page addr
-
-        WriteData(0x10+(l>>4&0x0F),0);//set column addr(double bytes cmd)
-        WriteData(l&0x0F,0);
-
         for(j=0;j<16;j++)//16 column
         {
             if(i&1){
-                WriteData(*p++,1);
+                tmp_code[i*16+j]=*p++;
                 p++;
             }
             else{
                 p++;
-                WriteData(*p++,1);
+                tmp_code[i*16+j]=*p++;
             }
         }
         p=ip;
     }
+    Display_Chinese_r90(y,l,tmp_code);
 }
 //long dealy
 void delay_l(unsigned int x)
