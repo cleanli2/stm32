@@ -147,6 +147,7 @@ int __io_putchar(int ch)
   {}
   if(ch == '\n')
       USART_SendData(BOARD_COM1, '\r');
+  while (USART_GetFlagStatus(BOARD_COM1, USART_FLAG_TC) == RESET);
 
   return ch;
 }
@@ -211,7 +212,7 @@ int main(void)
   */
   for (int ti = 0;ti < 3;ti++){
       for(int tj = 0;tj < 12;tj++){
-          Display_Chinese2((ti+1)*16,tj*16,ziku+(0x20*(ti*12+tj)));
+          Display_Chinese2((ti+1)*2,tj*16,ziku+(0x20*(ti*12+tj)));
       }
   }
   //while (1)
