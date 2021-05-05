@@ -1,5 +1,6 @@
 #include"stm32f10x.h"
 #include"lcd_gpio.h"
+#include"common.h"
 
 void delay_ms(u16 nms);
 unsigned char pic[]={
@@ -392,6 +393,31 @@ void lcd_write_byte(uint8_t page, uint8_t clm, uint8_t d)
     WriteData(clm&0x0F,0);
     WriteData(d,1);
 }
+
+/* Right Rotate 90
+ *
+ * 1000 0000       1010 0001
+ * 0000 0000       0000 0000
+ * 0000 0000       1000 0000
+ * 0000 0000       0000 0000
+ * 0000 0000  ---> 0000 0000
+ * 0000 0000       0000 0000
+ * 1000 0000       1000 0000
+ * 0000 0000       0000 0000
+ * 1010 0100       0000 0000
+ */
+void bytes_vertical_transform(uint8_t * in, uint8_t* out)
+{
+    uint32_t mask = 1<<7;
+    for(int i=0;i<8;i++){
+        out[i] = 0;
+        for(int j=0;j<8;j++){
+            out[i] = (out[i]<<1) + ((in[7-j]&mask)?1:0);
+        }
+        mask>>=1;
+    }
+}
+
 /*16*16*/
 //y:page addr  l:column addr  *p:chinese char
 void Display_Chinese(unsigned char y,unsigned char l,unsigned char *p)
