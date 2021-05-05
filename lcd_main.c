@@ -383,6 +383,15 @@ void Dispgraphic(unsigned char *p)
         }
     }
 }
+
+void lcd_write_byte(uint8_t page, uint8_t clm, uint8_t d)
+{
+    WriteData(0xb0+page,0);//set page addr
+
+    WriteData(0x10+(clm>>4&0x0F),0);//set column addr(double bytes cmd)
+    WriteData(clm&0x0F,0);
+    WriteData(d,1);
+}
 /*16*16*/
 //y:page addr  l:column addr  *p:chinese char
 void Display_Chinese(unsigned char y,unsigned char l,unsigned char *p)

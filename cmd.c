@@ -44,9 +44,33 @@ error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
 
+void dispwb(char *p)
+{
+    uint page = 0, cl=0, data = 0, tmp;
+
+    tmp = get_howmany_para(p);
+    if( tmp < 3)
+        goto error;
+    p = str_to_hex(p, &page);
+    p = str_to_hex(p, &cl);
+    str_to_hex(p, &data);
+    page = page%4;
+    cl = cl % 192;
+    data &= 0xff;
+    lprintf("page=%x cl=%x d=%x\n", page, cl, data);
+    lcd_write_byte(page, cl, data);
+    con_send('\n');
+
+    return;
+
+error:
+    lprint("Err!\ndwb [page] [col] [data]\n");
+}
+
 static const struct command cmd_list[]=
 {
     {"dispcchar",dispcchar},
+    {"dwb",dispwb},
     {"go",go},
     {"help",print_help},
     {"pm",print_mem},
