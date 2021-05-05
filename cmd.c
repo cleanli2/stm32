@@ -31,6 +31,7 @@ void dispcchar(char *p)
     p = str_to_hex(p, &y);
     if(tmp > 2)
         str_to_hex(p, &offset);
+    lprintf("x=%d y=%d\n", x, y);
     if(tmp == 2)
         Display_Chinese(x,y,jiong1);
     else
@@ -216,11 +217,12 @@ void handle_cmd()
 	    }
 	    if(!(*p_cmd) && (*p_buf == ' ' || !(*p_buf))){
             	    cmd_list[i].cmd_fun(p_buf);
+                    lprint("'%s' done.\n", cmd_list[i].cmd_name);
             	    return;
        	    }
 	    i++;
     }
-    lprint("Unknow cmd:%s\n",cmd_buf);
+    lprint("Unknow cmd:%s\n%s",cmd_buf, "Please check the cmd list.");
 }
 
 uint time_limit_recv_byte(uint limit, char * c);

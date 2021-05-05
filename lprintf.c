@@ -124,14 +124,14 @@ void print_binary(uint32_t num)
         putchars(nc);
 }
 
-void vslprintf(char*s_buf, const char *fmt, ...)
+void vslprintf(char*s_buf, const char *fmt, va_list args)
 {
     const char *s;
     uint32_t d;
     va_list ap;
     char*sp = s_buf;
 
-    va_start(ap, fmt);
+    va_copy(ap, args);
     while (*fmt) {
         if (*fmt != '%') {
             *sp++ = *fmt++;
