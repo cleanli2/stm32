@@ -1,16 +1,17 @@
 #include "cmd.h"
 #include "lcd.h"
+#include "lprintf.h"
 #include <stdint.h>
-#define uint uint16_t
+#define uint uint32_t
 #define lprint lprintf
 
-static unsigned char cmd_buf[COM_MAX_LEN] = "";
+static char cmd_buf[COM_MAX_LEN] = "";
 static uint cmd_buf_p = COM_MAX_LEN;
 
-uint get_howmany_para(unsigned char *s);
-unsigned char * str_to_hex(unsigned char *s, uint * result);
+uint get_howmany_para(char *s);
+char * str_to_hex(char *s, uint * result);
 /*
-void con_send(unsigned char X)
+void con_send(char X)
 {
     __io_putchar(X);
     if(X == '\n'){
@@ -19,10 +20,9 @@ void con_send(unsigned char X)
 }
 */
 
-void dispcchar(unsigned char *p)
+void dispcchar(char *p)
 {
-    uint x = 0, y=0, offset = 0, tmp, i;
-    unsigned char *cp;
+    uint x = 0, y=0, offset = 0, tmp;
 
     tmp = get_howmany_para(p);
     if( tmp < 2)
@@ -53,15 +53,17 @@ static const struct command cmd_list[]=
     {"w",write_mem},
     {NULL, NULL},
 };
-static uint * mrw_addr;
+static uint32_t * mrw_addr;
 
-void go(unsigned char *para)
+void go(char *para)
 {
+    (void)para;
 	(*((void (*)())mrw_addr))();
 }
 
-void print_help(unsigned char *para)
+void print_help(char *para)
 {
+    (void)para;
     uint i = 0;
     lprint("Cmd:\n");
     while(1){
@@ -72,10 +74,8 @@ void print_help(unsigned char *para)
     }
 }
 
-uint asc_to_hex(unsigned char c)
+uint asc_to_hex(char c)
 {
-	uint v;
-
 	if(c >= '0' && c <= '9')
 		return c - '0';	
 	if(c >= 'A' && c <= 'F')
@@ -85,7 +85,7 @@ uint asc_to_hex(unsigned char c)
 	return 0;
 }
 
-uint get_howmany_para(unsigned char *s)
+uint get_howmany_para(char *s)
 {
 	uint tmp = 0;
 	while(1){
@@ -100,7 +100,7 @@ uint get_howmany_para(unsigned char *s)
 	}
 }
 
-unsigned char * str_to_hex(unsigned char *s, uint * result)
+char * str_to_hex(char *s, uint * result)
 {
 	uint  i = 0;
 
@@ -115,10 +115,10 @@ unsigned char * str_to_hex(unsigned char *s, uint * result)
 	return s;
 }
 
-void print_mem(unsigned char *p)
+void print_mem(char *p)
 {
     uint length = 0x80, tmp, i;
-    unsigned char *cp;
+    char *cp;
 
     tmp = get_howmany_para(p);
     if( tmp > 1)
@@ -127,9 +127,9 @@ void print_mem(unsigned char *p)
         goto print;
     str_to_hex(p, &length);
 print:
-    cp = (unsigned char *)mrw_addr;
+    cp = (char *)mrw_addr;
     while(length){
-	lprint("\n%x: ", (uint)cp);
+	lprint("\n%x: ", (int)cp);
 	for(i=0;i<16;i++){
 		length--;
 		con_send(*cp++);
@@ -145,7 +145,7 @@ error:
 
 }
 
-void write_mem(unsigned char *p)
+void write_mem(char *p)
 {
     uint value, tmp;
 
@@ -155,10 +155,10 @@ void write_mem(unsigned char *p)
     p = str_to_hex(p, &value);
     if(tmp == 1)
         goto write;
-    str_to_hex(p, (uint*)&mrw_addr);
-    mrw_addr = (uint*)((uint)mrw_addr & 0xfffffffc);
+    str_to_hex(p, (uint32_t*)&mrw_addr);
+    mrw_addr = (uint32_t*)((uint32_t)mrw_addr & 0xfffffffc);
 write:
-    *(uint*)mrw_addr = value;
+    *(uint32_t*)mrw_addr = value;
     lprint("Write 0x%x@0x%x\n",value,mrw_addr);
     return;
 
@@ -168,7 +168,7 @@ error:
 }
 
 
-void read_mem(unsigned char *p)
+void read_mem(char *p)
 {
     uint value, tmp;
 
@@ -177,10 +177,10 @@ void read_mem(unsigned char *p)
 	goto error;
     if(tmp == 0)
     	goto read;
-    str_to_hex(p, (uint*)&mrw_addr);
-    mrw_addr = (uint*)((uint)mrw_addr & 0xfffffffc);
+    str_to_hex(p, (uint32_t*)&mrw_addr);
+    mrw_addr = (uint32_t*)((uint32_t)mrw_addr & 0xfffffffc);
 read:
-    value = *(uint*)mrw_addr;
+    value = *(uint32_t*)mrw_addr;
     lprint("Read 0x%x at memory 0x%x\n",value,mrw_addr);
 
     return;
@@ -190,14 +190,15 @@ error:
 
 }
 
-void lmemset(unsigned char *d,unsigned char v,unsigned int n)
+void lmemset(char *d,unsigned char v,unsigned int n)
 {
 	while(n--)*d++=v;
 }
 
 void handle_cmd()
 {
-    unsigned char i = 0, *p_cmd, *p_buf;
+    unsigned char i = 0;
+    char *p_cmd, *p_buf;
 
     lprint("\n");
     if(!cmd_buf[0])
@@ -222,12 +223,12 @@ void handle_cmd()
     lprint("Unknow cmd:%s\n",cmd_buf);
 }
 
-uint time_limit_recv_byte(uint limit, unsigned char * c);
+uint time_limit_recv_byte(uint limit, char * c);
 void run_cmd_interface()
 {
-	unsigned char c;
+	char c;
 	
-	mrw_addr = (uint*)0x30000000;
+	mrw_addr = (uint32_t*)0x30000000;
 	lprint("\n\nclean_cmd. \nAnykey stop auto load file\n");
 	lmemset(cmd_buf, 0, COM_MAX_LEN);
 	cmd_buf_p = 0;

@@ -1,7 +1,7 @@
 #ifndef _CMD_H
 #define _CMD_H
 
-#define con_send(X) __io_putchar(X)
+#define con_send __io_putchar
 #define con_recv() __io_getchar()
 
 #define COM_MAX_LEN 32
@@ -11,15 +11,15 @@
 #endif
 
 struct command{
-     unsigned char * cmd_name;
-     void (*cmd_fun)(unsigned char *);
+     char * cmd_name;
+     void (*cmd_fun)(char *);
 };
 
-void go(unsigned char *p);
-void print_mem(unsigned char *p);
-void print_help(unsigned char *para);
-void read_mem(unsigned char *para);
-void write_mem(unsigned char *para);
+void go(char *p);
+void print_mem(char *p);
+void print_help(char *para);
+void read_mem(char *para);
+void write_mem(char *para);
 void run_cmd_interface();
 
 #endif
