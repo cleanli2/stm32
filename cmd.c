@@ -133,7 +133,7 @@ print:
 	lprint("\n%x: ", (int)cp);
 	for(i=0;i<16;i++){
 		length--;
-		con_send(*cp++);
+		lprintf("%b", *cp++);
 		con_send(i == 7 ? '-':' ');
 	}
     }
@@ -230,7 +230,7 @@ void run_cmd_interface()
 {
 	char c;
 	
-	mrw_addr = (uint32_t*)0x30000000;
+	mrw_addr = (uint32_t*)0x20000000;
 	lprint("\n\nclean_cmd. \nAnykey stop auto load file\n");
 	lmemset(cmd_buf, 0, COM_MAX_LEN);
 	cmd_buf_p = 0;
