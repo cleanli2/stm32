@@ -203,8 +203,8 @@ int main(void)
      This code needs to be compiled with high speed optimization option.  */
   RCC_GetClocksFreq(&RCC_ClocksStatus);
   lcd_init();
-  Display_Chinese(0,0,jiong1);//page 0, column 0
-  Display_Chinese(0,20,lei1);//page 0, column 20
+  Display_Chinese2_12(0,0,ziku12+(0x18*2));//page 0, column 0
+  Display_Chinese2_12(0,20,ziku12+(0x18*3));//page 0, column 20
   Display_Chinese_r90(0,40,lei1);//page 0, column 20
   /*
   Display_Chinese2(0,40,ziku);

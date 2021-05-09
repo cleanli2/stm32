@@ -360,6 +360,25 @@ void bytes_vertical_transform(uint8_t * in, uint8_t* out)
     }
 }
 
+/*12*12*/
+//y:page addr  l:column addr  *p:chinese char
+void Display_Chinese_12(unsigned char y,unsigned char l,unsigned char *p)
+{
+    unsigned char i,j;
+    for(i=0;i<2;i++)
+    {
+        WriteData((0xb0|i)+y,0);//set page addr
+
+        WriteData(0x10+(l>>4&0x0F),0);//set column addr(double bytes cmd)
+        WriteData(l&0x0F,0);
+
+        for(j=0;j<12;j++)//12 column
+        {
+            WriteData(*p++,1);
+        }
+    }
+}
+
 /*16*16*/
 //y:page addr  l:column addr  *p:chinese char
 void Display_Chinese(unsigned char y,unsigned char l,unsigned char *p)
@@ -410,6 +429,29 @@ void Display_Chinese2(unsigned char y,unsigned char l,unsigned char *ip)
         p=ip;
     }
     Display_Chinese_r90(y,l,tmp_code);
+}
+
+void Display_Chinese2_12(unsigned char y,unsigned char l,unsigned char *ip)
+{
+    uint8_t tmp_code[24];
+    unsigned char i,j;
+    uint8_t*p=(uint8_t*)ip;
+    for(i=0;i<2;i++)
+    {
+        for(j=0;j<12;j++)//16 column
+        {
+            if(i&1){
+                tmp_code[i*12+j]=*p++;
+                p++;
+            }
+            else{
+                p++;
+                tmp_code[i*12+j]=*p++;
+            }
+        }
+        p=ip;
+    }
+    Display_Chinese_12(y,l,tmp_code);
 }
 //long dealy
 void delay_l(unsigned int x)
