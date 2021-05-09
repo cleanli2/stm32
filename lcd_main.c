@@ -291,6 +291,24 @@ void WriteData(unsigned char data, unsigned char C)
 	CS_1();	
 }
 
+void lcd_clr()
+{
+    unsigned char i,j;
+    for(i=0;i<8;i++)//8 pages data
+    {
+        WriteData(0x40,0);//set line of rotating
+        WriteData(0xb0|i,0);//set addr of page
+
+        WriteData(0x10,0);//set addr of column(double bytes cmd)
+        WriteData(0x00,0);//set column addr is 0
+
+        for(j=0;j<192;j++)//192 columns
+        {
+            WriteData(0,1);
+        }
+    }
+}
+
 void Dispgraphic(unsigned char *p)
 {
     unsigned char i,j;
@@ -418,6 +436,7 @@ void lcd_init(void)
     {
         WriteData(IC[i],0);
     }
+    lcd_clr();
     //display heart
     {
         WriteData(0xc2,0);//normal direction
