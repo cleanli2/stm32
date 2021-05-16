@@ -21,4 +21,6 @@
 #define SD_DETECT_GPIO_CLK               RCC_APB2Periph_GPIOE
 #endif
 
+void SD_LowLevel_Init(void);
+void SD_LowLevel_DeInit(void);
 #endif

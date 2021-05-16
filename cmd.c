@@ -1,6 +1,7 @@
 #include "cmd.h"
 #include "lcd.h"
 #include "lprintf.h"
+#include "sd/stm32_eval_spi_sd.h"
 #include <stdint.h>
 #define uint uint32_t
 #define lprint lprintf
@@ -19,6 +20,25 @@ void con_send(char X)
     }
 }
 */
+
+void sd(char *p)
+{
+    uint x = 0, y=0, offset = 0, tmp;
+
+    tmp = get_howmany_para(p);
+    p = str_to_hex(p, &x);
+    p = str_to_hex(p, &y);
+    if(tmp > 2)
+        str_to_hex(p, &offset);
+    lprintf("sd_init\n", x, y);
+    SD_Init();
+    con_send('\n');
+
+    return;
+
+error:
+    lprint("Err!\ndispcchar [x] [y]\n");
+}
 
 void dispcchar(char *p)
 {
@@ -117,6 +137,7 @@ static const struct command cmd_list[]=
     {"help",print_help},
     {"pm",print_mem},
     {"r",read_mem},
+    {"sd",sd},
     {"szk",show_ziku},
     {"w",write_mem},
     {NULL, NULL},

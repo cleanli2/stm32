@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include "sd/stm32_eval_spi_sd.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
@@ -239,7 +240,6 @@ int main(void)
     //__io_putchar('c');
     delay_ms(500);
   }
-  SD_Init();
   run_cmd_interface();
 }
 
@@ -257,6 +257,7 @@ void assert_failed(uint8_t* file, uint32_t line)
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
+  lprintf("Wrong parameters value: file %s on line %d\r\n", file, line);
   /* Infinite loop */
   while (1)
   {

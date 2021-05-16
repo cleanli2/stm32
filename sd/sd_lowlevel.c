@@ -1,5 +1,6 @@
 #include "stm32_eval_spi_sd.h"
 #include "sd_lowlevel.h"
+
 /**
   * @brief  DeInitializes the SD/SD communication.
   * @param  None
@@ -13,10 +14,8 @@ void SD_LowLevel_DeInit(void)
   SPI_I2S_DeInit(SD_SPI);   /*!< DeInitializes the SD_SPI */
   
   /*!< SD_SPI Periph clock disable */
-  RCC_APB1PeriphClockCmd(SD_SPI_CLK, DISABLE);
-  /*!< DeRemap SPI3 Pins */
-  GPIO_PinRemapConfig(GPIO_Remap_SPI3, DISABLE);  
-  
+  RCC_APB2PeriphClockCmd(SD_SPI_CLK, DISABLE); 
+
   /*!< Configure SD_SPI pins: SCK */
   GPIO_InitStructure.GPIO_Pin = SD_SPI_SCK_PIN;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
@@ -55,11 +54,8 @@ void SD_LowLevel_Init(void)
                          SD_SPI_SCK_GPIO_CLK | SD_DETECT_GPIO_CLK, ENABLE);
 
   /*!< SD_SPI Periph clock enable */
-  RCC_APB1PeriphClockCmd(SD_SPI_CLK, ENABLE);
-  /*!< AFIO Periph clock enable */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-  /*!< Remap SPI3 Pins */
-  GPIO_PinRemapConfig(GPIO_Remap_SPI3,ENABLE);  
+  RCC_APB2PeriphClockCmd(SD_SPI_CLK, ENABLE); 
+
   
   /*!< Configure SD_SPI pins: SCK */
   GPIO_InitStructure.GPIO_Pin = SD_SPI_SCK_PIN;
@@ -94,6 +90,7 @@ void SD_LowLevel_Init(void)
   SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
+
   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
   SPI_InitStructure.SPI_CRCPolynomial = 7;
   SPI_Init(SD_SPI, &SPI_InitStructure);

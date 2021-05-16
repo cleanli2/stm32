@@ -45,6 +45,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32_eval_spi_sd.h"
+#include "common.h"
 
 /** @addtogroup Utilities
   * @{
@@ -127,12 +128,14 @@ SD_Error SD_Init(void)
 {
   uint32_t i = 0;
 
+  lprintf("SD_LowLevel_Init()\n");
   /*!< Initialize SD_SPI */
   SD_LowLevel_Init(); 
 
   /*!< SD chip select high */
   SD_CS_HIGH();
 
+  lprintf("send SD dummy bytes\n");
   /*!< Send dummy byte 0xFF, 10 times with CS high */
   /*!< Rise CS and MOSI for 80 clocks cycles */
   for (i = 0; i <= 9; i++)
