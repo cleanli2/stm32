@@ -157,11 +157,13 @@ uint8_t SD_Detect(void)
 {
   __IO uint8_t status = SD_PRESENT;
 
+#ifndef NO_SD_DETECT
   /*!< Check GPIO to detect SD */
   if (GPIO_ReadInputData(SD_DETECT_GPIO_PORT) & SD_DETECT_PIN)
   {
     status = SD_NOT_PRESENT;
   }
+#endif
   return status;
 }
 

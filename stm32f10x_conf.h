@@ -50,6 +50,7 @@
 #include "misc.h" /* High level functions for NVIC and SysTick (add-on to CMSIS functions) */
 
 #define  USE_FULL_ASSERT
+#define  NO_SD_DETECT
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Uncomment the line below to expanse the "assert_param" macro in the 
