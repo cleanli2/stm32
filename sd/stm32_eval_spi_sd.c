@@ -737,20 +737,24 @@ uint8_t SD_GetDataResponse(void)
 SD_Error SD_GetResponse(uint8_t Response)
 {
   uint32_t Count = 0xFFF;
+  uint8_t res;
+  lprintf("%s:%d\n", __func__, __LINE__);
 
   /*!< Check if response is got or a timeout is happen */
-  while ((SD_ReadByte() != Response) && Count)
+  while (((res=SD_ReadByte()) != Response) && Count)
   {
     Count--;
   }
   if (Count == 0)
   {
     /*!< After time out */
+    lprintf("%s:fail res %x\n", __func__, res);
     return SD_RESPONSE_FAILURE;
   }
   else
   {
     /*!< Right response got */
+    lprintf("%s:%d Noerr res %x\n", __func__, __LINE__, res);
     return SD_RESPONSE_NO_ERROR;
   }
 }
@@ -791,6 +795,7 @@ uint16_t SD_GetStatus(void)
   */
 SD_Error SD_GoIdleState(void)
 {
+  lprintf("%s:%d\n", __func__, __LINE__);
   /*!< SD chip select low */
   SD_CS_LOW();
   
@@ -801,8 +806,10 @@ SD_Error SD_GoIdleState(void)
   if (SD_GetResponse(SD_IN_IDLE_STATE))
   {
     /*!< No Idle State Response: return response failue */
+    lprintf("%s:%d\n", __func__, __LINE__);
     return SD_RESPONSE_FAILURE;
   }
+  lprintf("%s:%d IDLE OK\n", __func__, __LINE__);
   /*----------Activates the card initialization process-----------*/
   do
   {
@@ -827,6 +834,7 @@ SD_Error SD_GoIdleState(void)
   /*!< Send dummy byte 0xFF */
   SD_WriteByte(SD_DUMMY_BYTE);
   
+  lprintf("%s:%d\n", __func__, __LINE__);
   return SD_RESPONSE_NO_ERROR;
 }
 
