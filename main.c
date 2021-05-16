@@ -239,6 +239,7 @@ int main(void)
     //__io_putchar('c');
     delay_ms(500);
   }
+  SD_Init();
   run_cmd_interface();
 }
 
