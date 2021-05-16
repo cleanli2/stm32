@@ -130,7 +130,7 @@ uint8_t SD_GetRes(void)
 		r1=SD_SPI_ReadWriteByte(0xFF);
 	}while((r1&0X80) && Retry--);	 
 	//·µ»Ø×´Ì¬Öµ
-	lprintf("SD_GetRes %x Rty %x\n", r1, Retry);
+	//lprintf("SD_GetRes %x Rty %x\n", r1, Retry);
 	return r1;
 }
 
@@ -200,13 +200,22 @@ SD_Error SD_get_type(void)
 			retry=100;
 			do
 			{
-				lprintf("55\n");
-				SD_SendCmd(CMD55,0,0Xff);	//·¢ËÍCMD55
+				SD_ReadByte();
+				SD_ReadByte();
+				SD_ReadByte();
+				SD_ReadByte();
+				//lprintf("55\n");
+				SD_SendCmd(CMD55,0,0);	//·¢ËÍCMD55
 				r1 = SD_GetRes();
-				lprintf("41\n");
-				SD_SendCmd(CMD41,0x40300000,0Xff);//·¢ËÍCMD41
+				//lprintf("41\n");
+				SD_SendCmd(CMD41,0x40000000,0);//·¢ËÍCMD41
 				r1 = SD_GetRes();
+#if 0
+				SD_SendCmd(SD_CMD_SEND_OP_COND, 0x00ffc000, 0xFF);
+				r1 = SD_GetRes();
+#endif
 			}while(r1&&retry--);
+			lprintf("r1 %x rety %x\n", r1, retry);
 			if(retry&&getres_SD_SendCmd(CMD58,0,0X01)==0)//¼ø±ðSD2.0¿¨°æ±¾¿ªÊ¼
 			{
 				for(int i=0;i<4;i++)buf[i]=SD_SPI_ReadWriteByte(0XFF);//µÃµ½OCRÖµ
