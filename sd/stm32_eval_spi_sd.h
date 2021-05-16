@@ -53,6 +53,11 @@
   * @{
   */ 
 
+#define SD_TYPE_ERR     0X00
+#define SD_TYPE_MMC     0X01
+#define SD_TYPE_V1      0X02
+#define SD_TYPE_V2      0X04
+#define SD_TYPE_V2HC    0X06	   
 typedef enum
 {
 /**
@@ -192,6 +197,7 @@ typedef struct
   */
 #define SD_CMD_GO_IDLE_STATE          0   /*!< CMD0 = 0x40 */
 #define SD_CMD_SEND_OP_COND           1   /*!< CMD1 = 0x41 */
+#define SD_CMD_SEND_IF_COND           8   /*!< CMD8 = 0x48 */
 #define SD_CMD_SEND_CSD               9   /*!< CMD9 = 0x49 */
 #define SD_CMD_SEND_CID               10  /*!< CMD10 = 0x4A */
 #define SD_CMD_STOP_TRANSMISSION      12  /*!< CMD12 = 0x4C */
@@ -213,6 +219,23 @@ typedef struct
 #define SD_CMD_ERASE_GRP_END          36  /*!< CMD36 = 0x64 */
 #define SD_CMD_UNTAG_ERASE_GROUP      37  /*!< CMD37 = 0x65 */
 #define SD_CMD_ERASE                  38  /*!< CMD38 = 0x66 */
+
+#define CMD0    0       //¿¨¸´Î»
+#define CMD1    1
+#define CMD8    8       //ÃüÁî8 £¬SEND_IF_COND
+#define CMD9    9       //ÃüÁî9 £¬¶ÁCSDÊý¾Ý
+#define CMD10   10      //ÃüÁî10£¬¶ÁCIDÊý¾Ý
+#define CMD12   12      //ÃüÁî12£¬Í£Ö¹Êý¾Ý´«Êä
+#define CMD16   16      //ÃüÁî16£¬ÉèÖÃSectorSize Ó¦·µ»Ø0x00
+#define CMD17   17      //ÃüÁî17£¬¶Ásector
+#define CMD18   18      //ÃüÁî18£¬¶ÁMulti sector
+#define CMD23   23      //ÃüÁî23£¬ÉèÖÃ¶àsectorÐ´ÈëÇ°Ô¤ÏÈ²Á³ýN¸öblock
+#define CMD24   24      //ÃüÁî24£¬Ð´sector
+#define CMD25   25      //ÃüÁî25£¬Ð´Multi sector
+#define CMD41   41      //ÃüÁî41£¬Ó¦·µ»Ø0x00
+#define CMD55   55      //ÃüÁî55£¬Ó¦·µ»Ø0x01
+#define CMD58   58      //ÃüÁî58£¬¶ÁOCRÐÅÏ¢
+#define CMD59   59      //ÃüÁî59£¬Ê¹ÄÜ/½ûÖ¹CRC£¬Ó¦·µ»Ø0x00
 
 /**
   * @}

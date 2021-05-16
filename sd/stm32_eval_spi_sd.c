@@ -107,6 +107,38 @@
   * @{
   */ 
 
+uint8_t  SD_Type=0;//no card
+
+uint8_t SD_SPI_ReadWriteByte(uint8_t data)
+{
+	SD_WriteByte(data);
+	return SD_ReadByte();
+}	  
+
+void SD_DisSelect(void)
+{
+	SD_CS_HIGH();
+ 	SD_SPI_ReadWriteByte(0xff);//Ìá¹©¶îÍâµÄ8¸öÊ±ÖÓ
+}
+
+uint8_t SD_GetRes(void)
+{
+	uint8_t Retry=0X1F;
+	uint8_t r1;
+	do
+	{
+		r1=SD_SPI_ReadWriteByte(0xFF);
+	}while((r1&0X80) && Retry--);	 
+	//·µ»Ø×´Ì¬Öµ
+	return r1;
+}
+
+uint8_t getres_SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc)
+{
+	SD_SendCmd(Cmd, Arg, Crc);
+	return SD_GetRes();
+}
+
 /**
   * @brief  DeInitializes the SD/SD communication.
   * @param  None
@@ -146,6 +178,76 @@ SD_Error SD_Init(void)
   /*------------Put SD in SPI mode--------------*/
   /*!< SD initialized and set to SPI mode properly */
   return (SD_GoIdleState());
+}
+
+SD_Error SD_get_type(void)
+{
+	uint8_t buf[4], r1;
+	int retry;
+	SD_SendCmd(SD_CMD_SEND_IF_COND,0x1AA,0x87);
+        if (SD_GetResponse(SD_IN_IDLE_STATE))
+	{//SD V2.0
+		lprintf("SD v2.0\n");
+		for(int i=0;i<4;i++)buf[i]=SD_ReadByte();	//Get trailing return value of R7 resp
+		if(buf[2]==0X01&&buf[3]==0XAA)//¿¨ÊÇ·ñÖ§³Ö2.7~3.6V
+		{
+			retry=0XFFFE;
+			do
+			{
+				SD_SendCmd(CMD55,0,0X01);	//·¢ËÍCMD55
+				SD_SendCmd(CMD41,0x40000000,0X01);//·¢ËÍCMD41
+			}while(SD_ReadByte()&&retry--);
+			if(retry&&getres_SD_SendCmd(CMD58,0,0X01)==0)//¼ø±ðSD2.0¿¨°æ±¾¿ªÊ¼
+			{
+				for(int i=0;i<4;i++)buf[i]=SD_SPI_ReadWriteByte(0XFF);//µÃµ½OCRÖµ
+				if(buf[0]&0x40){
+					SD_Type=SD_TYPE_V2HC;    //¼ì²éCCS
+					lprintf("SD_TYPE_V2HC\n");
+				}
+				else{
+				       	SD_Type=SD_TYPE_V2;   
+					lprintf("SD_TYPE_V2\n");
+				}
+			}
+		}
+	}else//SD V1.x/ MMC	V3
+	{
+		lprintf("SD v1.x/ MMC V3\n");
+		SD_SendCmd(CMD55,0,0X01);		//·¢ËÍCMD55
+		SD_SendCmd(CMD41,0,0X01);	//·¢ËÍCMD41
+		r1=SD_GetRes();
+		if(r1<=1)
+		{		
+			SD_Type=SD_TYPE_V1;
+			lprintf("SD_TYPE_V1\n");
+			retry=0XFFFE;
+			do //µÈ´ýÍË³öIDLEÄ£Ê½
+			{
+				SD_SendCmd(CMD55,0,0X01);	//·¢ËÍCMD55
+				SD_SendCmd(CMD41,0,0X01);//·¢ËÍCMD41
+				r1=SD_GetRes();
+			}while(r1&&retry--);
+		}else//MMC¿¨²»Ö§³ÖCMD55+CMD41Ê¶±ð
+		{
+			SD_Type=SD_TYPE_MMC;//MMC V3
+			lprintf("SD_TYPE_MMC\n");
+			retry=0XFFFE;
+			do //µÈ´ýÍË³öIDLEÄ£Ê½
+			{											    
+				SD_SendCmd(CMD1,0,0X01);//·¢ËÍCMD1
+				r1=SD_GetRes();
+			}while(r1&&retry--);  
+		}
+		if(retry==0||getres_SD_SendCmd(CMD16,512,0X01)!=0){
+			lprintf("SD_TYPE_ERR\n");
+			SD_Type=SD_TYPE_ERR;//´íÎóµÄ¿¨
+		}
+	}
+	SD_DisSelect();//È¡ÏûÆ¬Ñ¡
+	//SD_SPI_SpeedHigh();//¸ßËÙ
+	if(SD_Type)return 0;
+	else if(r1)return r1; 	   
+	return 0xaa;//ÆäËû´íÎó
 }
 
 /**
@@ -674,6 +776,7 @@ void SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc)
   {
     SD_WriteByte(Frame[i]); /*!< Send the Cmd bytes */
   }
+  if(Cmd==CMD12)SD_SPI_ReadWriteByte(0xff);//Skip a stuff byte when stop reading
 }
 
 /**
@@ -810,6 +913,9 @@ SD_Error SD_GoIdleState(void)
     return SD_RESPONSE_FAILURE;
   }
   lprintf("%s:%d IDLE OK\n", __func__, __LINE__);
+  
+  SD_get_type();
+#if 0
   /*----------Activates the card initialization process-----------*/
   do
   {
@@ -835,6 +941,7 @@ SD_Error SD_GoIdleState(void)
   SD_WriteByte(SD_DUMMY_BYTE);
   
   lprintf("%s:%d\n", __func__, __LINE__);
+#endif
   return SD_RESPONSE_NO_ERROR;
 }
 
@@ -888,7 +995,6 @@ uint8_t SD_ReadByte(void)
   /*!< Return the shifted data */
   return Data;
 }
-
 /**
   * @}
   */
