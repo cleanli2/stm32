@@ -3,7 +3,7 @@
 
 /*
 	HW connect:
-	CS-------PA7------
+	CS-------PA4------
 	CD-------PB0------
 	RST------PB1------
 	SCK------PB10-----
@@ -12,7 +12,7 @@
 
 #define Port_Clock   (RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB)
 
-#define CS						GPIO_Pin_7						
+#define CS						GPIO_Pin_4
 #define CD						GPIO_Pin_0					
 #define RST						GPIO_Pin_1						
 #define SCK 					GPIO_Pin_10						
