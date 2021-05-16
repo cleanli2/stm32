@@ -74,7 +74,9 @@ typedef enum
   SD_DATA_OK                = (0x05),
   SD_DATA_CRC_ERROR         = (0x0B),
   SD_DATA_WRITE_ERROR       = (0x0D),
-  SD_DATA_OTHER_ERROR       = (0xFF)
+  SD_DATA_OTHER_ERROR       = (0xFF),
+  SD_ERROR,  
+  SD_OK = 0 
 } SD_Error;
 
 /** 

@@ -24,6 +24,8 @@ void con_send(char X)
 void sd(char *p)
 {
     uint x = 0, y=0, offset = 0, tmp;
+    SD_Error Status = SD_OK;
+    SD_CardInfo mycard;
 
     tmp = get_howmany_para(p);
     p = str_to_hex(p, &x);
@@ -31,7 +33,24 @@ void sd(char *p)
     if(tmp > 2)
         str_to_hex(p, &offset);
     lprintf("sd_init\n", x, y);
-    SD_Init();
+    if((Status = SD_Init()) != SD_OK)
+    {
+	lprintf("Fail\n");
+    }
+    else{
+        lprintf("OK\n");
+        if((Status = SD_GetCardInfo(&mycard)) != SD_OK)
+        {
+		lprintf("get card info Fail\n");
+        }
+        else{
+		lprintf("block size %d\n", mycard.CardBlockSize);
+		lprintf("block capacity %d\n", mycard.CardCapacity);
+        }
+    }
+
+    lprintf("sd_deinit\n", x, y);
+    SD_DeInit();
     con_send('\n');
 
     return;
