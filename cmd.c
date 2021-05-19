@@ -29,11 +29,13 @@ void sd(char *p)
     SD_Error Status = SD_OK;
     SD_CardInfo mycard;
 
+    lprintf("p=%s\n", p);
     strcpy(cmd_caches[ci++], p);
     tmp = get_howmany_para(p);
-    if(tmp>=2)
+    lprintf("tmp=%d\n", tmp);
+    if(tmp>=1)
 	    p = str_to_hex(p, &cmdindex);
-    if(tmp == 1 || cmdindex == 0){
+    if(tmp == 0 || cmdindex == 0){
 	    lprintf("sd_init\n");
 	    if((Status = SD_Init()) != SD_OK)
 	    {
@@ -55,6 +57,7 @@ void sd(char *p)
 	    SD_DeInit();
     }
     else if(cmdindex == 1){//cs high/low
+	lprintf("line %d\n", __LINE__);
         str_to_hex(p, &para1);
 	if(para1)
 		SD_CS_HIGH();
@@ -62,22 +65,26 @@ void sd(char *p)
 		SD_CS_LOW();
     }
     else if(cmdindex == 2){//
+	lprintf("line %d\n", __LINE__);
 	SD_WriteByte(SD_DUMMY_BYTE);
     }
     else if(cmdindex == 3){//
         str_to_hex(p, &para1);
+	lprintf("line %d para1 %x\n", __LINE__, para1);
 	SD_SPI_ReadWriteByte(para1);
     }
     else if(cmdindex == 4){//
 	lprintf("SD_GetRes %x\n", SD_GetRes());
     }
     else if(cmdindex == 5){//cmd
+	lprintf("line %d %x %x %x\n", __LINE__, para1, para2, para3);
         p = str_to_hex(p, &para1);
         p = str_to_hex(p, &para2);
         p = str_to_hex(p, &para3);
 	SD_SendCmd(para1, para2, para3);
     }
     else if(cmdindex == 6){//cmd
+	lprintf("line %d %x %x %x\n", __LINE__, para1, para2, para3);
         p = str_to_hex(p, &para1);
         p = str_to_hex(p, &para2);
         p = str_to_hex(p, &para3);
@@ -85,6 +92,7 @@ void sd(char *p)
     }
     else if(cmdindex == 7){//low init/deinit
         str_to_hex(p, &para1);
+	lprintf("line %d para1 %x\n", __LINE__, para1);
 	if(para1)
 		SD_LowLevel_Init(); 
 	else
@@ -102,16 +110,17 @@ void sd_cmds(char *p)
 {
     uint tmp = get_howmany_para(p);
     uint para; 
-    if(tmp==1){
+    lprintf("tmp %x\n", tmp);
+    if(tmp==0){
 	    for(uint i =0;i<40;i++){
 		    if(strlen(cmd_caches[i])>0){
 			    lprintf("%d:%s\n", cmd_caches[i]);
-			    sd(cmd_caches[i]);
 		    }
 	    }
     }
     else{
 	    p = str_to_hex(p, &para);
+	    lprintf("para %x\n", para);
 	    switch(para){
 		    case 0:
 			    lprintf("clear cmd caches\n");
@@ -126,6 +135,7 @@ void sd_cmds(char *p)
 			    for(uint i =0;i<40;i++){
 				    if(strlen(cmd_caches[i])>0){
 					    lprintf("%d:%s\n", cmd_caches[i]);
+					    sd(cmd_caches[i]);
 				    }
 			    }
 			    break;
