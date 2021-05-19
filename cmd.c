@@ -23,34 +23,70 @@ void con_send(char X)
 
 void sd(char *p)
 {
-    uint x = 0, y=0, offset = 0, tmp;
+    uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
     SD_Error Status = SD_OK;
     SD_CardInfo mycard;
 
     tmp = get_howmany_para(p);
-    p = str_to_hex(p, &x);
-    p = str_to_hex(p, &y);
-    if(tmp > 2)
-        str_to_hex(p, &offset);
-    lprintf("sd_init\n", x, y);
-    if((Status = SD_Init()) != SD_OK)
-    {
-	lprintf("Fail\n");
-    }
-    else{
-        lprintf("OK\n");
-        if((Status = SD_GetCardInfo(&mycard)) != SD_OK)
-        {
-		lprintf("get card info Fail\n");
-        }
-        else{
-		lprintf("block size %d\n", mycard.CardBlockSize);
-		lprintf("block capacity %d\n", mycard.CardCapacity);
-        }
-    }
+    if(tmp>=1)
+	    p = str_to_hex(p, &cmdindex);
+    if(tmp == 0 || cmdindex == 0){
+	    lprintf("sd_init\n");
+	    if((Status = SD_Init()) != SD_OK)
+	    {
+		    lprintf("Fail\n");
+	    }
+	    else{
+		    lprintf("OK\n");
+		    if((Status = SD_GetCardInfo(&mycard)) != SD_OK)
+		    {
+			    lprintf("get card info Fail\n");
+		    }
+		    else{
+			    lprintf("block size %d\n", mycard.CardBlockSize);
+			    lprintf("block capacity %d\n", mycard.CardCapacity);
+		    }
+	    }
 
-    lprintf("sd_deinit\n", x, y);
-    SD_DeInit();
+	    lprintf("sd_deinit\n");
+	    SD_DeInit();
+    }
+    else if(cmdindex == 1){//cs high/low
+        str_to_hex(p, &para1);
+	if(para1)
+		SD_CS_HIGH();
+	else
+		SD_CS_LOW();
+    }
+    else if(cmdindex == 2){//
+	SD_WriteByte(SD_DUMMY_BYTE);
+    }
+    else if(cmdindex == 3){//
+        str_to_hex(p, &para1);
+	SD_SPI_ReadWriteByte(para1);
+    }
+    else if(cmdindex == 4){//
+	lprintf("SD_GetRes %x\n", SD_GetRes());
+    }
+    else if(cmdindex == 5){//cmd
+        p = str_to_hex(p, &para1);
+        p = str_to_hex(p, &para2);
+        p = str_to_hex(p, &para3);
+	SD_SendCmd(para1, para2, para3);
+    }
+    else if(cmdindex == 6){//cmd
+        p = str_to_hex(p, &para1);
+        p = str_to_hex(p, &para2);
+        p = str_to_hex(p, &para3);
+	getres_SD_SendCmd(para1, para2, para3);
+    }
+    else if(cmdindex == 7){//low init/deinit
+        str_to_hex(p, &para1);
+	if(para1)
+		SD_LowLevel_Init(); 
+	else
+		SD_LowLevel_DeInit();
+    }
     con_send('\n');
 
     return;

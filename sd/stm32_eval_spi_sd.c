@@ -136,6 +136,10 @@ uint8_t SD_GetRes(void)
 
 uint8_t getres_SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc)
 {
+	SD_CS_HIGH();
+	SD_WriteByte(SD_DUMMY_BYTE);
+	SD_CS_LOW();
+  
 	SD_SendCmd(Cmd, Arg, Crc);
 	return SD_GetRes();
 }
@@ -779,7 +783,7 @@ void SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc)
   uint32_t i = 0x00;
   
   uint8_t Frame[6];
-  
+
   Frame[0] = (Cmd | 0x40); /*!< Construct byte 1 */
   
   Frame[1] = (uint8_t)(Arg >> 24); /*!< Construct byte 2 */
@@ -924,7 +928,7 @@ SD_Error SD_GoIdleState(void)
   /*!< SD chip select low */
   SD_CS_LOW();
   
-  /*!< Send CMD0 (SD_CMD_GO_IDLE_STATE) to put SD in SPI mode */
+  /*!< Send CMD0 (SD_CMD_GO_IDLE_STATE) with CS low to put SD in SPI mode */
   SD_SendCmd(SD_CMD_GO_IDLE_STATE, 0, 0x95);
   r1 = SD_GetRes();
   if (r1 != (SD_IN_IDLE_STATE))
