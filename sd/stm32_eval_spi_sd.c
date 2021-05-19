@@ -140,6 +140,7 @@ uint8_t getres_SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc)
 	SD_WriteByte(SD_DUMMY_BYTE);
 	SD_CS_LOW();
   
+	lprintf("cmd %x arg %x crc %x\n");
 	SD_SendCmd(Cmd, Arg, Crc);
 	return SD_GetRes();
 }

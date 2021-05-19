@@ -31,6 +31,8 @@ void sd(char *p)
 
     lprintf("p=%s\n", p);
     strcpy(cmd_caches[ci++], p);
+    if(ci > 40)
+	    ci = 0;
     tmp = get_howmany_para(p);
     lprintf("tmp=%d\n", tmp);
     if(tmp>=1)
@@ -71,7 +73,7 @@ void sd(char *p)
     else if(cmdindex == 3){//
         str_to_hex(p, &para1);
 	lprintf("line %d para1 %x\n", __LINE__, para1);
-	SD_SPI_ReadWriteByte(para1);
+	lprintf("read byte %x\n", SD_SPI_ReadWriteByte(para1));
     }
     else if(cmdindex == 4){//
 	lprintf("SD_GetRes %x\n", SD_GetRes());
@@ -88,7 +90,7 @@ void sd(char *p)
         p = str_to_hex(p, &para1);
         p = str_to_hex(p, &para2);
         p = str_to_hex(p, &para3);
-	getres_SD_SendCmd(para1, para2, para3);
+	lprintf("return %x\n", getres_SD_SendCmd(para1, para2, para3));
     }
     else if(cmdindex == 7){//low init/deinit
         str_to_hex(p, &para1);
@@ -97,6 +99,30 @@ void sd(char *p)
 		SD_LowLevel_Init(); 
 	else
 		SD_LowLevel_DeInit();
+    }
+    else if(cmdindex == 8){//
+	lprintf("do basic Init()\n");
+	lprintf("SD_LowLevel_Init()\n");
+	/*!< Initialize SD_SPI */
+	SD_LowLevel_Init(); 
+
+	/*!< SD chip select high */
+	lprintf("SD_CS_HIGH()\n");
+	SD_CS_HIGH();
+
+	lprintf("send SD dummy bytes\n");
+	/*!< Send dummy byte 0xFF, 10 times with CS high */
+	/*!< Rise CS and MOSI for 80 clocks cycles */
+	for (int i = 0; i <= 9; i++)
+	{
+		/*!< Send dummy byte 0xFF */
+		SD_WriteByte(SD_DUMMY_BYTE);
+	}
+    }
+    else if(cmdindex == 9){//
+        str_to_hex(p, &para1);
+	lprintf("line %d para1 %x\n", __LINE__, para1);
+	lprintf("read byte %x\n", SD_ReadByte());
     }
     con_send('\n');
 
@@ -114,7 +140,7 @@ void sd_cmds(char *p)
     if(tmp==0){
 	    for(uint i =0;i<40;i++){
 		    if(strlen(cmd_caches[i])>0){
-			    lprintf("%d:%s\n", cmd_caches[i]);
+			    lprintf("%d:%s\n", i, cmd_caches[i]);
 		    }
 	    }
     }
