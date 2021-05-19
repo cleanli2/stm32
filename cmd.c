@@ -20,6 +20,8 @@ void con_send(char X)
     }
 }
 */
+uint8_t cmd_caches[40][40] = {0};
+uint32_t ci=0;
 
 void sd(char *p)
 {
@@ -27,10 +29,11 @@ void sd(char *p)
     SD_Error Status = SD_OK;
     SD_CardInfo mycard;
 
+    strcpy(cmd_caches[ci++], p);
     tmp = get_howmany_para(p);
-    if(tmp>=1)
+    if(tmp>=2)
 	    p = str_to_hex(p, &cmdindex);
-    if(tmp == 0 || cmdindex == 0){
+    if(tmp == 1 || cmdindex == 0){
 	    lprintf("sd_init\n");
 	    if((Status = SD_Init()) != SD_OK)
 	    {
@@ -93,6 +96,46 @@ void sd(char *p)
 
 error:
     lprint("Err!\ndispcchar [x] [y]\n");
+}
+
+void sd_cmds(char *p)
+{
+    uint tmp = get_howmany_para(p);
+    uint para; 
+    if(tmp==1){
+	    for(uint i =0;i<40;i++){
+		    if(strlen(cmd_caches[i])>0){
+			    lprintf("%d:%s\n", cmd_caches[i]);
+			    sd(cmd_caches[i]);
+		    }
+	    }
+    }
+    else{
+	    p = str_to_hex(p, &para);
+	    switch(para){
+		    case 0:
+			    lprintf("clear cmd caches\n");
+			    memset(*cmd_caches, 0, 1600);
+			    ci = 0;
+			    break;
+		    case 1:
+			    memset(cmd_caches[ci], 0, 40);
+			    ci--;
+			    break;
+		    case 2:
+			    for(uint i =0;i<40;i++){
+				    if(strlen(cmd_caches[i])>0){
+					    lprintf("%d:%s\n", cmd_caches[i]);
+				    }
+			    }
+			    break;
+		    default:
+			    lprintf("do nothhing\n");
+	    }
+    }
+    con_send('\n');
+
+    return;
 }
 
 void dispcchar(char *p)
@@ -193,6 +236,7 @@ static const struct command cmd_list[]=
     {"pm",print_mem},
     {"r",read_mem},
     {"sd",sd},
+    {"sdcmds",sd_cmds},
     {"szk",show_ziku},
     {"w",write_mem},
     {NULL, NULL},
