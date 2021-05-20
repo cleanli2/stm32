@@ -189,6 +189,7 @@ SD_Error SD_Init(void)
 SD_Error SD_get_type(void)
 {
 	uint8_t buf[4], r1;
+	uint32_t argument;
 	int retry;
 	SD_SendCmd(SD_CMD_SEND_IF_COND,0x1AA,0x87);
 	r1 = SD_GetRes();
@@ -202,28 +203,10 @@ SD_Error SD_get_type(void)
 			SD_CS_HIGH();
 			SD_WriteByte(SD_DUMMY_BYTE);
 			SD_CS_LOW();
-			retry=100;
-			do
+			if(getres_SD_SendCmd(CMD58,0,0X01)==1)//
 			{
-				SD_ReadByte();
-				SD_ReadByte();
-				SD_ReadByte();
-				SD_ReadByte();
-				//lprintf("55\n");
-				SD_SendCmd(CMD55,0,0);	//·¢ËÍCMD55
-				r1 = SD_GetRes();
-				//lprintf("41\n");
-				SD_SendCmd(CMD41,0x40000000,0);//·¢ËÍCMD41
-				r1 = SD_GetRes();
+				for(int i=0;i<4;i++)buf[i]=SD_ReadByte();//µÃµ½OCRÖµ
 #if 0
-				SD_SendCmd(SD_CMD_SEND_OP_COND, 0x00ffc000, 0xFF);
-				r1 = SD_GetRes();
-#endif
-			}while(r1&&retry--);
-			lprintf("r1 %x rety %x\n", r1, retry);
-			if(retry&&getres_SD_SendCmd(CMD58,0,0X01)==0)//¼ø±ðSD2.0¿¨°æ±¾¿ªÊ¼
-			{
-				for(int i=0;i<4;i++)buf[i]=SD_SPI_ReadWriteByte(0XFF);//µÃµ½OCRÖµ
 				if(buf[0]&0x40){
 					SD_Type=SD_TYPE_V2HC;    //¼ì²éCCS
 					lprintf("SD_TYPE_V2HC\n");
@@ -232,6 +215,24 @@ SD_Error SD_get_type(void)
 				       	SD_Type=SD_TYPE_V2;   
 					lprintf("SD_TYPE_V2\n");
 				}
+#endif
+				//argument = 0x40000000 + (buf[1]<<16) + (buf[2]<<8);
+				argument = 0x40ff8000;
+				retry=100;
+				do
+				{
+					//lprintf("55\n");
+					getres_SD_SendCmd(CMD55,0,0X01);
+					r1 = SD_ReadByte();
+					//lprintf("41\n");
+					r1 = getres_SD_SendCmd(CMD41,argument,1);//·¢ËÍCMD41
+#if 0
+					SD_SendCmd(SD_CMD_SEND_OP_COND, 0x00ffc000, 0xFF);
+					r1 = SD_GetRes();
+#endif
+				lprintf("r1 %x rety %x\n", r1, retry);
+				}while(r1&&retry--);
+				lprintf("r1 %x rety %x\n", r1, retry);
 			}
 		}
 	}else//SD V1.x/ MMC	V3
