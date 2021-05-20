@@ -22,6 +22,7 @@ void con_send(char X)
 */
 uint8_t cmd_caches[40][40] = {0};
 uint32_t ci=0;
+uint8_t read_buf[512];
 
 void sd(char *p)
 {
@@ -55,8 +56,8 @@ void sd(char *p)
 		    }
 	    }
 
-	    lprintf("sd_deinit\n");
-	    SD_DeInit();
+	    //lprintf("sd_deinit\n");
+	    //SD_DeInit();
     }
     else if(cmdindex == 1){//cs high/low
 	lprintf("line %d\n", __LINE__);
@@ -123,6 +124,20 @@ void sd(char *p)
         str_to_hex(p, &para1);
 	lprintf("line %d para1 %x\n", __LINE__, para1);
 	lprintf("read byte %x\n", SD_ReadByte());
+    }
+    else if(cmdindex == 0xa){//
+	lprintf("read 1 block\n");
+	SD_ReadBlock(read_buf, 0, 512);
+	char*cp = (char *)read_buf;
+	int length=512;
+	while(length){
+		lprint("\n%x: ", (int)cp);
+		for(int i=0;i<16;i++){
+			length--;
+			lprintf("%b", *cp++);
+			con_send(i == 7 ? '-':' ');
+		}
+	}
     }
     con_send('\n');
 
