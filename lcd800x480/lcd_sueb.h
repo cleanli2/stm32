@@ -121,7 +121,14 @@ extern u16  BACK_COLOR; //背景颜色.默认为白色
 #define DATAOUT(x) GPIOB->ODR=x;\
 		      (x&0x10)?(GPIOA->BSRR=1<<3):(GPIOA->BRR=1<<3);\
 		      (x&0x08)?(GPIOA->BSRR=1<<2):(GPIOA->BRR=1<<2); //数据输出
-#define DATAIN     GPIOB->IDR;   //数据输入
+//#define DATAIN     GPIOB->IDR; //数据输入
+static inline uint16_t DATAIN()
+{
+	uint16_t ret = GPIOB->IDR;
+	GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3)?(ret|=0x10):(ret&=(~0x10));
+	GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2)?(ret|=0x08):(ret&=(~0x08));
+	return ret;
+}
 
 //画笔颜色
 #define WHITE       0xFFFF

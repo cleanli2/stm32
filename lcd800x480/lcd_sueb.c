@@ -76,6 +76,33 @@ void Enable_BL(int en)//点亮背光
 	}
 }
 
+void LCD_BUS_To_write(int write)
+{
+	GPIO_InitTypeDef  GPIO_InitStructure;
+	      
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	if(write){
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2| GPIO_Pin_3;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);	
+		GPIO_SetBits(GPIOA,GPIO_Pin_2|GPIO_Pin_3);
+
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;	//  
+		GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
+		GPIO_SetBits(GPIOB,GPIO_Pin_All);	
+	}
+	else{
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2| GPIO_Pin_3;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);	
+		GPIO_SetBits(GPIOA,GPIO_Pin_2|GPIO_Pin_3);
+
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;	//  
+		GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
+		GPIO_SetBits(GPIOB,GPIO_Pin_All);	
+	}
+}
+
 void LCD_write(u16 VAL)
 {
 	LCD_CS_CLR;  
@@ -91,7 +118,7 @@ u16 LCD_read(void)
 	LCD_CS_CLR;
 	LCD_RD_CLR;
 //	delay_us(1);//延时1us	
-	data = DATAIN;
+	data = DATAIN();
 	LCD_RD_SET;
 	LCD_CS_SET;
 	return data;
@@ -172,19 +199,25 @@ void LCD_WriteReg(u16 LCD_Reg, u16 LCD_RegValue)
 void LCD_ReadReg(u16 LCD_Reg,u8 *Rval,int n)
 {
 	LCD_WR_REG(LCD_Reg); 
+	LCD_BUS_To_write(0);
+	/*
 	GPIOB->CRL=0X88888888; //PB0-7  上拉输入
 	GPIOB->CRH=0X88888888; //PB8-15 上拉输入
 	GPIOA->CRL|=0X00008800; //PA2-3 上拉输入
 	GPIOB->ODR=0X0000;     //全部输出高
+	*/
 	while(n--)
 	{		
 		*(Rval++) = LCD_RD_DATA();
 	}
+	LCD_BUS_To_write(1);
 	
+	/*
 	GPIOB->CRL=0X33333333; 		//PB0-7  上拉输出
 	GPIOB->CRH=0X33333333; 		//PB8-15 上拉输出
 	GPIOA->CRL|=0X00003300; //PA2-3
 	GPIOB->ODR=0XFFFF;    		//全部输出高  
+	*/
 }
 
 /*****************************************************************************
@@ -258,28 +291,28 @@ u16 Lcd_ReadData_16Bit(void)
 	//dummy data
 	LCD_RD_CLR;
 	delay_us(1);//延时1us	
-	r = DATAIN;
+	r = DATAIN();
 	LCD_RD_SET;
 	
 	//8bit:red data
 	//16bit:red and green data
 	LCD_RD_CLR;
 	delay_us(1);//延时1us	
-	r = DATAIN;
+	r = DATAIN();
 	LCD_RD_SET;
 	
 	//8bit:green data
 	//16bit:blue data
 	LCD_RD_CLR;
 	delay_us(1);//延时1us	
-	g = DATAIN;
+	g = DATAIN();
 	LCD_RD_SET;
 	
 	#if LCD_USE8BIT_MODEL	
 	//blue data
 	LCD_RD_CLR;
 	delay_us(1);//延时1us	
-	b = DATAIN;
+	b = DATAIN();
 	LCD_RD_SET;
 	r >>= 8;
 	g >>= 8;
@@ -324,15 +357,11 @@ u16 LCD_ReadPoint(u16 x,u16 y)
 	}
 	LCD_SetCursor(x,y);//设置光标位置 
 	LCD_ReadRAM_Prepare();
-	GPIOB->CRL=0X88888888; //PB0-7  上拉输入
-	GPIOB->CRH=0X88888888; //PB8-15 上拉输入
-	GPIOB->ODR=0XFFFF;     //全部输出高
+	LCD_BUS_To_write(0);
 	
 	color = Lcd_ReadData_16Bit();
 	
-	GPIOB->CRL=0X33333333; 		//PB0-7  上拉输出
-	GPIOB->CRH=0X33333333; 		//PB8-15 上拉输出
-	GPIOB->ODR=0XFFFF;    		//全部输出高  
+	LCD_BUS_To_write(1);
 	return color;
 }
 
@@ -379,10 +408,7 @@ void LCD_GPIOInit(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure); //GPIOA
 	GPIO_SetBits(GPIOA,GPIO_Pin_8|GPIO_Pin_11| GPIO_Pin_12);	
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;	//  
-	GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
-	GPIO_SetBits(GPIOB,GPIO_Pin_All);	
-	
+	LCD_BUS_To_write(1);
 	lprintf("LCD gpio init done\n");
 }
 
@@ -460,9 +486,7 @@ void LCD_hw_test(int testitem)
 			break;
                case LCD_HW_READ_TEST:
                        lprintf("LCD_HW_READ_TEST:\n");
-                       GPIOB->CRL=0X88888888;
-                       GPIOB->CRH=0X88888888;
-                       GPIOB->ODR=0X0000;
+		       LCD_BUS_To_write(0);
                        while(1){
                                lprintf("Read %x\n", LCD_RD_DATA());
                                delay_ms(1000);
