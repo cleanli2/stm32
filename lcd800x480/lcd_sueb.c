@@ -66,6 +66,16 @@ _lcd_dev lcddev;
 u16 POINT_COLOR = 0x0000,BACK_COLOR = 0xFFFF;  
 u16 DeviceCode;	 
 
+void Enable_BL(int en)//点亮背光	 
+{
+	if(en){
+	    GPIOC->BSRR = 0x00002000;
+	}
+	else{
+	    GPIOC->BRR = 0x00002000;
+	}
+}
+
 void LCD_write(u16 VAL)
 {
 	LCD_CS_CLR;  
@@ -355,15 +365,18 @@ void LCD_GPIOInit(void)
 {
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	      
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO,ENABLE);
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable , ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO,ENABLE);
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10| GPIO_Pin_7| GPIO_Pin_8| GPIO_Pin_9 | GPIO_Pin_6 | GPIO_Pin_4; //GPIOC10,6,7,8,9,4
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14| GPIO_Pin_15; //GPIOC14,15
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;   //推挽输出
 	GPIO_Init(GPIOC, &GPIO_InitStructure);	
-	GPIO_SetBits(GPIOC,GPIO_Pin_10|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_6|GPIO_Pin_4);
+	GPIO_SetBits(GPIOC,GPIO_Pin_14|GPIO_Pin_15);
 	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_11| GPIO_Pin_12; //GPIOA8, 11,12
+	GPIO_Init(GPIOA, &GPIO_InitStructure); //GPIOA
+	GPIO_SetBits(GPIOA,GPIO_Pin_8|GPIO_Pin_11| GPIO_Pin_12);	
+
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;	//  
 	GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
 	GPIO_SetBits(GPIOB,GPIO_Pin_All);	
@@ -738,7 +751,7 @@ void lcd_sueb_init(void)
 	delay_ms(50);
 	LCD_WR_REG(0x2C00); 
   LCD_direction(USE_HORIZONTAL);//设置LCD显示方向
-	LCD_LED=1;//点亮背光	 
+	Enable_BL(1);//点亮背光	 
 	LCD_Clear(WHITE);//清全屏白色
 }
  

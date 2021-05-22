@@ -234,7 +234,7 @@ void ledtest(char *p)
 
     tmp = get_howmany_para(p);
     if( tmp < 1){
-	    para = !(GPIOC->ODR & 0x00002000);
+	    para = (GPIOC->ODR & 0x00002000);
     }
     p = str_to_hex(p, &para);
     if(para){

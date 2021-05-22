@@ -29,12 +29,12 @@
 //     DB8~DB15      接        PB8~PB15        //液晶屏高8位并口数据信号
 //=======================================液晶屏控制线接线==========================================//
 //     LCD模块 				        STM32单片机 
-//       WR          接          PC7           //液晶屏写数据控制信号
-//       RD          接          PC6           //液晶屏读数据控制信号
-//       RS          接          PC8           //液晶屏数据/命令控制信号
-//       RST         接          PC4           //液晶屏复位控制信号
-//       CS          接          PC9           //液晶屏片选控制信号
-//       BL          接          PC10          //液晶屏背光控制信号
+//       WR          接          PA11           //液晶屏写数据控制信号
+//       RD          接          PC14           //液晶屏读数据控制信号
+//       RS          接          PC15           //液晶屏数据/命令控制信号
+//       RST         接          PA8           //液晶屏复位控制信号
+//       CS          接          PA12           //液晶屏片选控制信号
+//       BL          接          PC13          //液晶屏背光控制信号
 //=========================================触摸屏触接线=========================================//
 //如果模块不带触摸功能或者带有触摸功能，但是不需要触摸功能，则不需要进行触摸屏接线
 //	   LCD模块                STM32单片机 
@@ -89,31 +89,29 @@ extern u16  BACK_COLOR; //背景颜色.默认为白色
 ////////////////////////////////////////////////////////////////////
 //-----------------LCD端口定义---------------- 
 #define GPIO_TYPE  GPIOC  //GPIO组类型
-#define LED      10        //背光控制引脚      PC10
-#define LCD_CS   9       //片选引脚            PC9
-#define LCD_RS   8       //寄存器/数据选择引脚 PC8 
-#define LCD_RST  4       //复位引脚            PC4
-#define LCD_WR   7       //写引脚              PC7
-#define LCD_RD   6       //读引脚              PC6
+#define LED      13        //背光控制引脚      PC13
+#define LCD_CS   12       //片选引脚            PA12
+#define LCD_RS   15       //寄存器/数据选择引脚 PC15 
+#define LCD_RST  8       //复位引脚            PA8
+#define LCD_WR   11       //写引脚              PA11
+#define LCD_RD   14       //读引脚              PC14
 
-//QDtech全系列模块采用了三极管控制背光亮灭，用户也可以接PWM调节背光亮度
-#define	LCD_LED PCout(LED) //LCD背光    		 PC10
 //如果使用官方库函数定义下列底层，速度将会下降到14帧每秒，建议采用我司推荐方法
 //以下IO定义直接操作寄存器，快速IO操作，刷屏速率可以达到28帧每秒！ 
 
 //GPIO置位（拉高）
-#define	LCD_CS_SET  GPIO_TYPE->BSRR=1<<LCD_CS    //片选端口  	
-#define	LCD_RS_SET	GPIO_TYPE->BSRR=1<<LCD_RS    //数据/命令    
-#define	LCD_RST_SET	GPIO_TYPE->BSRR=1<<LCD_RST   //复位			  
-#define	LCD_WR_SET	GPIO_TYPE->BSRR=1<<LCD_WR    //写 	
-#define LCD_RD_SET  GPIO_TYPE->BSRR=1<<LCD_RD    //读		  
+#define	LCD_CS_SET  GPIOA->BSRR=1<<LCD_CS    //片选端口  	
+#define	LCD_RS_SET	GPIOC->BSRR=1<<LCD_RS    //数据/命令    
+#define	LCD_RST_SET	GPIOA->BSRR=1<<LCD_RST   //复位			  
+#define	LCD_WR_SET	GPIOA->BSRR=1<<LCD_WR    //写 	
+#define LCD_RD_SET  GPIOC->BSRR=1<<LCD_RD    //读		  
 
 //GPIO复位（拉低）							    
-#define	LCD_CS_CLR  GPIO_TYPE->BRR=1<<LCD_CS     //片选端口  	
-#define	LCD_RS_CLR	GPIO_TYPE->BRR=1<<LCD_RS     //数据/命令  	 
-#define	LCD_RST_CLR	GPIO_TYPE->BRR=1<<LCD_RST    //复位			  
-#define	LCD_WR_CLR	GPIO_TYPE->BRR=1<<LCD_WR     //写
-#define LCD_RD_CLR  GPIO_TYPE->BRR=1<<LCD_RD     //读	  		  
+#define	LCD_CS_CLR  GPIOA->BRR=1<<LCD_CS     //片选端口  	
+#define	LCD_RS_CLR	GPIOC->BRR=1<<LCD_RS     //数据/命令  	 
+#define	LCD_RST_CLR	GPIOA->BRR=1<<LCD_RST    //复位			  
+#define	LCD_WR_CLR	GPIOA->BRR=1<<LCD_WR     //写
+#define LCD_RD_CLR  GPIOC->BRR=1<<LCD_RD     //读	  		  
 
 //PB0~15,作为数据线
 //注意：如果使用8位模式数据总线，则液晶屏的数据高8位是接到MCU的高8位总线上
