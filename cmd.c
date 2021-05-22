@@ -189,6 +189,17 @@ void sd_cmds(char *p)
     return;
 }
 
+void lcdsuebinit(char *p)
+{
+    lcd_sueb_init();
+    con_send('\n');
+
+    return;
+
+error:
+    lprint("Err!\ndispcchar [x] [y]\n");
+}
+
 void lcd19264init(char *p)
 {
   lcd_init();
@@ -340,6 +351,7 @@ static const struct command cmd_list[]=
     {"help",print_help},
     {"lcd19264init",lcd19264init},
     {"lcd19264dc",dispcchar},
+    {"lcdsuebinit",lcdsuebinit},
     {"led",ledtest},
     {"pm",print_mem},
     {"r",read_mem},
