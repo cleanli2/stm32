@@ -151,6 +151,7 @@ extern u16  BACK_COLOR; //背景颜色.默认为白色
 	    	
 #define LCD_HW_GPIO_TEST 1
 #define LCD_HW_WRITE_TEST 2
+#define LCD_HW_READ_TEST 3
 void lcd_sueb_init(int testitem);
 void LCD_write(u16 VAL);
 u16 LCD_read(void);

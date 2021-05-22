@@ -456,6 +456,17 @@ void LCD_hw_test(int testitem)
 				delay_ms(1000);	
 			}
 			break;
+               case LCD_HW_READ_TEST:
+                       lprintf("LCD_HW_READ_TEST:\n");
+                       GPIOB->CRL=0X88888888;
+                       GPIOB->CRH=0X88888888;
+                       GPIOB->ODR=0X0000;
+                       while(1){
+                               lprintf("Read %x\n", LCD_RD_DATA());
+                               delay_ms(1000);
+                       }
+                       break;
+
 		default:
 			lprintf("no HW test request\n");
 	}
