@@ -69,10 +69,10 @@ u16 DeviceCode;
 void Enable_BL(int en)//点亮背光	 
 {
 	if(en){
-	    GPIOC->BSRR = 0x00002000;
+	    GPIOC->BRR = 0x00002000;
 	}
 	else{
-	    GPIOC->BRR = 0x00002000;
+	    GPIOC->BSRR = 0x00002000;
 	}
 }
 
@@ -406,9 +406,12 @@ void LCD_RESET(void)
 ******************************************************************************/	 	 
 void lcd_sueb_init(void)
 {  
+	u16 lcd_id;
 	LCD_GPIOInit();//LCD GPIO初始化
 	delay_ms(100);
  	LCD_RESET(); //LCD 复位
+	lcd_id = LCD_Read_ID();
+	lprintf("read id %x\n", lcd_id);
 //************* OTM8009初始化**********//	
 	//3.97inch OTM8009 Init 20190116
 	LCD_WR_REG(0xff00);
