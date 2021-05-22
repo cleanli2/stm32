@@ -198,6 +198,7 @@ void lcdsuebinit(char *p)
     }
     lprintf("para %x\n", para);
     lcd_sueb_init(para);
+    lcd_sueb_test();
     con_send('\n');
 
     return;
