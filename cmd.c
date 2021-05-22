@@ -189,6 +189,61 @@ void sd_cmds(char *p)
     return;
 }
 
+void lcd19264init(char *p)
+{
+  lcd_init();
+  Display_Chinese2_12(0,0,ziku12+(0x18*2));//page 0, column 0
+  Display_Chinese2_12(0,20,ziku12+(0x18*3));//page 0, column 20
+  Display_Chinese_r90(0,40,lei1);//page 0, column 20
+  /*
+  Display_Chinese2(0,40,ziku);
+  Display_Chinese2(0,60,ziku+0x20);
+  Display_Chinese2(0,80,ziku+0x40);
+  Display_Chinese2(0,100,ziku+0x60);
+  Display_Chinese2(0,120,ziku+0x180);
+  Display_Chinese2(0,140,ziku+0x1a0);
+  Display_Chinese2(0,160,ziku+0x1b0);
+  */
+  for (int ti = 0;ti < 3;ti++){
+      for(int tj = 0;tj < 12;tj++){
+          Display_Chinese2((ti+1)*2,tj*16,ziku+(0x20*(ti*12+tj)));
+      }
+  }
+    con_send('\n');
+
+    return;
+
+error:
+    lprint("Err!\ndispcchar [x] [y]\n");
+}
+
+void ledtest(char *p)
+{
+    uint para = 0, tmp;
+
+    tmp = get_howmany_para(p);
+    if( tmp < 1){
+	    para = !(GPIOC->ODR & 0x00002000);
+    }
+    p = str_to_hex(p, &para);
+    if(para){
+	    /* Set PC13 */
+	    GPIOC->BSRR = 0x00002000;
+	    lprintf("\n\rSet PC13\n\r");
+    }
+    else{
+	    /* ReSet PC13 */
+	    GPIOC->BRR  = 0x00002000;
+	    lprintf("\n\rClr PC13\n\r");
+    }
+    con_send('\n');
+
+    return;
+
+error:
+    lprint("Err!\ndispcchar [x] [y]\n");
+}
+
 void dispcchar(char *p)
 {
     uint x = 0, y=0, offset = 0, tmp;
@@ -280,10 +335,12 @@ void show_ziku(char *p)
 
 static const struct command cmd_list[]=
 {
-    {"dispcchar",dispcchar},
     {"dwb",dispwb},
     {"go",go},
     {"help",print_help},
+    {"lcd19264init",lcd19264init},
+    {"lcd19264dc",dispcchar},
+    {"led",ledtest},
     {"pm",print_mem},
     {"r",read_mem},
     {"sd",sd},

@@ -177,7 +177,7 @@ int main(void)
        To reconfigure the default setting of SystemInit() function, refer to
        system_stm32f10x.c file
      */     
-       
+  int looptimes = 3;
   RCC_ClocksTypeDef RCC_ClocksStatus;
   delay_init();
   /* GPIOC Periph clock enable */
@@ -203,42 +203,24 @@ int main(void)
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.  */
   RCC_GetClocksFreq(&RCC_ClocksStatus);
-  lcd_init();
-  Display_Chinese2_12(0,0,ziku12+(0x18*2));//page 0, column 0
-  Display_Chinese2_12(0,20,ziku12+(0x18*3));//page 0, column 20
-  Display_Chinese_r90(0,40,lei1);//page 0, column 20
-  /*
-  Display_Chinese2(0,40,ziku);
-  Display_Chinese2(0,60,ziku+0x20);
-  Display_Chinese2(0,80,ziku+0x40);
-  Display_Chinese2(0,100,ziku+0x60);
-  Display_Chinese2(0,120,ziku+0x180);
-  Display_Chinese2(0,140,ziku+0x1a0);
-  Display_Chinese2(0,160,ziku+0x1b0);
-  */
-  for (int ti = 0;ti < 3;ti++){
-      for(int tj = 0;tj < 12;tj++){
-          Display_Chinese2((ti+1)*2,tj*16,ziku+(0x20*(ti*12+tj)));
-      }
-  }
-  //while (1)
+  lprintf("clk %d %d %d %d %d Hz\n\r",
+		  RCC_ClocksStatus.SYSCLK_Frequency,
+		  RCC_ClocksStatus.HCLK_Frequency,
+		  RCC_ClocksStatus.PCLK1_Frequency,
+		  RCC_ClocksStatus.PCLK2_Frequency,
+		  RCC_ClocksStatus.ADCCLK_Frequency);
+  while (looptimes--)
   {
-    lprintf("clk %d %d %d %d %d Hz\n\r",
-            RCC_ClocksStatus.SYSCLK_Frequency,
-            RCC_ClocksStatus.HCLK_Frequency,
-            RCC_ClocksStatus.PCLK1_Frequency,
-            RCC_ClocksStatus.PCLK2_Frequency,
-            RCC_ClocksStatus.ADCCLK_Frequency);
     /* Set PC13 */
     GPIOC->BSRR = 0x00002000;
     lprintf("\n\rSet PC13\n\r");
     //__io_putchar('s');
-    delay_ms(500);
+    delay_ms(200);
     /* Reset PC13 */
     GPIOC->BRR  = 0x00002000;
     lprintf("\n\rClr PC13\n\r");
     //__io_putchar('c');
-    delay_ms(500);
+    delay_ms(200);
   }
   run_cmd_interface();
 }
