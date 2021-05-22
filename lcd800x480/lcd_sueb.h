@@ -117,7 +117,10 @@ extern u16  BACK_COLOR; //背景颜色.默认为白色
 //注意：如果使用8位模式数据总线，则液晶屏的数据高8位是接到MCU的高8位总线上
 //举例：如果接8位模式则本示例接线为液晶屏DB10-DB17对应接至单片机GPIOB_Pin8-GPIOB_Pin15
 //举例：如果是16位模式：DB0-DB7分别接GPIOB_Pin0-GPIOB_Pin7,DB10-DB17对应接至单片机GPIOB_Pin8-GPIOB_Pin15
-#define DATAOUT(x) GPIOB->ODR=x; //数据输出
+//Note:DB4<->A3 DB3<->A2 for HW problem
+#define DATAOUT(x) GPIOB->ODR=x;\
+		      (x&0x10)?(GPIOA->BSRR=1<<3):(GPIOA->BRR=1<<3);\
+		      (x&0x08)?(GPIOA->BSRR=1<<2):(GPIOA->BRR=1<<2); //数据输出
 #define DATAIN     GPIOB->IDR;   //数据输入
 
 //画笔颜色

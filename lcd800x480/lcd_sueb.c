@@ -69,10 +69,10 @@ u16 DeviceCode;
 void Enable_BL(int en)//点亮背光	 
 {
 	if(en){
-	    GPIOC->BRR = 0x00002000;
+	    GPIOC->BSRR = 0x00002000;
 	}
 	else{
-	    GPIOC->BSRR = 0x00002000;
+	    GPIOC->BRR = 0x00002000;
 	}
 }
 
@@ -174,6 +174,7 @@ void LCD_ReadReg(u16 LCD_Reg,u8 *Rval,int n)
 	LCD_WR_REG(LCD_Reg); 
 	GPIOB->CRL=0X88888888; //PB0-7  上拉输入
 	GPIOB->CRH=0X88888888; //PB8-15 上拉输入
+	GPIOA->CRL|=0X00008800; //PA2-3 上拉输入
 	GPIOB->ODR=0X0000;     //全部输出高
 	while(n--)
 	{		
@@ -182,6 +183,7 @@ void LCD_ReadReg(u16 LCD_Reg,u8 *Rval,int n)
 	
 	GPIOB->CRL=0X33333333; 		//PB0-7  上拉输出
 	GPIOB->CRH=0X33333333; 		//PB8-15 上拉输出
+	GPIOA->CRL|=0X00003300; //PA2-3
 	GPIOB->ODR=0XFFFF;    		//全部输出高  
 }
 
@@ -373,7 +375,7 @@ void LCD_GPIOInit(void)
 	GPIO_Init(GPIOC, &GPIO_InitStructure);	
 	GPIO_SetBits(GPIOC,GPIO_Pin_14|GPIO_Pin_15);
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_11| GPIO_Pin_12; //GPIOA8, 11,12
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_11| GPIO_Pin_12|GPIO_Pin_2|GPIO_Pin_3; //GPIOA8, 11,12
 	GPIO_Init(GPIOA, &GPIO_InitStructure); //GPIOA
 	GPIO_SetBits(GPIOA,GPIO_Pin_8|GPIO_Pin_11| GPIO_Pin_12);	
 
