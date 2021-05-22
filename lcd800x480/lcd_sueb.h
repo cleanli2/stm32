@@ -148,8 +148,10 @@ extern u16  BACK_COLOR; //背景颜色.默认为白色
 
 #define LGRAYBLUE      	0XA651 //浅灰蓝色(中间层颜色)
 #define LBBLUE          0X2B12 //浅棕蓝色(选择条目的反色)
-	    															  
-void lcd_sueb_init(void);
+	    	
+#define LCD_HW_GPIO_TEST 1
+#define LCD_HW_WRITE_TEST 2
+void lcd_sueb_init(int testitem);
 void LCD_write(u16 VAL);
 u16 LCD_read(void);
 void LCD_Clear(u16 Color);	 

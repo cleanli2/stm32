@@ -191,7 +191,13 @@ void sd_cmds(char *p)
 
 void lcdsuebinit(char *p)
 {
-    lcd_sueb_init();
+    uint tmp = get_howmany_para(p);
+    uint para = 0; 
+    if(tmp>=1){
+	    p = str_to_hex(p, &para);
+    }
+    lprintf("para %x\n", para);
+    lcd_sueb_init(para);
     con_send('\n');
 
     return;

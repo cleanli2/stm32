@@ -380,6 +380,8 @@ void LCD_GPIOInit(void)
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;	//  
 	GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
 	GPIO_SetBits(GPIOB,GPIO_Pin_All);	
+	
+	lprintf("LCD gpio init done\n");
 }
 
 /*****************************************************************************
@@ -397,6 +399,68 @@ void LCD_RESET(void)
 	delay_ms(50);
 }
 
+void LCD_hw_test(int testitem)
+{
+	u16 testdata = 1;
+	int i = 0;
+	switch(testitem){
+		case LCD_HW_GPIO_TEST:
+			lprintf("LCD_HW_GPIO_TEST:\n");
+			while(1){
+				lprintf("LCD RST low\n");
+				LCD_RST_CLR;
+					delay_ms(1000);	
+					lprintf("LCD RST high\n");
+				LCD_RST_SET;
+					delay_ms(1000);
+
+					lprintf("LCD CS low\n");
+				LCD_CS_CLR;     
+					delay_ms(1000);	
+					lprintf("LCD CS high\n");
+				LCD_CS_SET;
+					delay_ms(1000);
+
+					lprintf("LCD RD low\n");
+				LCD_RD_CLR;     
+					delay_ms(1000);	
+					lprintf("LCD RD high\n");
+				LCD_RD_SET;
+					delay_ms(1000);
+
+					lprintf("LCD WR low\n");
+				LCD_WR_CLR;     
+					delay_ms(1000);	
+					lprintf("LCD WR high\n");
+				LCD_WR_SET;
+					delay_ms(1000);
+
+					lprintf("LCD RS low\n");
+				LCD_RS_CLR;     
+					delay_ms(1000);	
+					lprintf("LCD RS high\n");
+				LCD_RS_SET;
+					delay_ms(1000);
+			}
+			break;
+		case LCD_HW_WRITE_TEST:
+			lprintf("LCD_HW_WRITE_TEST:\n");
+			while(1){
+				lprintf("B%x=1 testdata %x\n", i++, testdata);
+				LCD_write(testdata);
+				testdata<<=1;
+				if(i>15){
+					i = 0;
+					testdata = 1;
+				}
+				delay_ms(1000);	
+			}
+			break;
+		default:
+			lprintf("no HW test request\n");
+	}
+}
+
 /*****************************************************************************
  * @name       :void lcd_sueb_init(void)
  * @date       :2018-08-09 
@@ -404,10 +468,11 @@ void LCD_RESET(void)
  * @parameters :None
  * @retvalue   :None
 ******************************************************************************/	 	 
-void lcd_sueb_init(void)
+void lcd_sueb_init(int testitem)
 {  
 	u16 lcd_id;
 	LCD_GPIOInit();//LCD GPIO≥ı ºªØ
+	LCD_hw_test(testitem);
 	delay_ms(100);
  	LCD_RESET(); //LCD ∏¥Œª
 	lcd_id = LCD_Read_ID();
