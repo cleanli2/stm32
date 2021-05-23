@@ -223,6 +223,8 @@ int main(void)
     delay_ms(200);
   }
   run_cmd_interface();
+  lcd_sueb_init(0);
+  pure_lcd_sueb_test();
 }
 
 #ifdef  USE_FULL_ASSERT

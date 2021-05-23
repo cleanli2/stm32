@@ -309,7 +309,7 @@ void Touch_Test(void)
 	LCD_Fill(lcddev.width-50,2,lcddev.width-50+22,18,RED); 
 		while(1)
 	{
-	 	key=con_recv();
+	 	//key=con_recv();
 		tp_dev.scan(0); 		 
 		if(tp_dev.sta&TP_PRES_DOWN)			//´¥ÃþÆÁ±»°´ÏÂ
 		{	

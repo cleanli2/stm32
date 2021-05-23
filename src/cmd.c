@@ -24,6 +24,7 @@ uint8_t cmd_caches[40][40] = {0};
 uint32_t ci=0;
 uint8_t read_buf[512];
 
+#if 0
 void sd(char *p)
 {
     uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
@@ -146,7 +147,6 @@ void sd(char *p)
 error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
-
 void sd_cmds(char *p)
 {
     uint tmp = get_howmany_para(p);
@@ -188,6 +188,7 @@ void sd_cmds(char *p)
 
     return;
 }
+#endif
 
 void lcdsuebinit(char *p)
 {
@@ -387,8 +388,8 @@ static const struct command cmd_list[]=
     {"lstest",lcdsuebtest},
     {"pm",print_mem},
     {"r",read_mem},
-    {"sd",sd},
-    {"sdcmds",sd_cmds},
+    //{"sd",sd},
+    //{"sdcmds",sd_cmds},
     //{"szk",show_ziku},
     {"w",write_mem},
     {NULL, NULL},
@@ -568,9 +569,19 @@ uint time_limit_recv_byte(uint limit, char * c);
 void run_cmd_interface()
 {
 	char c;
+	int timeout = 10;
 	
 	mrw_addr = (uint32_t*)0x20000000;
-	lprint("\n\nclean_cmd. \nAnykey stop auto load file\n");
+	lprint("\n\nclean_cmd. \nAnykey go cmd...\n");
+	while(timeout--){
+		delay_ms(1000);
+		if(con_is_recved())break;
+		lprintf("timeout %d\n", timeout);
+		if(timeout == 1){
+			lprintf("Timeout. Quit cmd\n");
+			return;
+		}
+	}
 	lmemset(cmd_buf, 0, COM_MAX_LEN);
 	cmd_buf_p = 0;
 	lprint("\nCleanCMD>");
