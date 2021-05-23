@@ -304,13 +304,16 @@ u8 TP_Scan(u8 tp)
 		if(tp_dev.sta&TP_PRES_DOWN)//之前是被按下的
 		{
 			lprintf("touch up\n");
-		}else//之前就没有被按下
+		}
+#if 0
+		else//之前就没有被按下
 		{
 			tp_dev.x0=0;
 			tp_dev.y0=0;
 			tp_dev.x=0xffff;
 			tp_dev.y=0xffff;
 		}	    
+#endif
 		tp_dev.sta&=~(TP_PRES_DOWN);//标记按键松开	
 	}
 	return tp_dev.sta&TP_PRES_DOWN;//返回当前的触屏状态
@@ -333,19 +336,19 @@ void TP_Save_Adjdata(void)
 	//保存校正结果!		   							  
 	temp=tp_dev.xfac*100000000;//保存x校正因素      
     //AT24CXX_WriteLenByte(SAVE_ADDR_BASE,temp,4);   
-    lprintf("adjdata x:%d\n",temp);
+    lprintf("adjdata x:%x\n",temp);
 	temp=tp_dev.yfac*100000000;//保存y校正因素    
     //AT24CXX_WriteLenByte(SAVE_ADDR_BASE+4,temp,4);
-    lprintf("adjdata y:%d\n",temp);
+    lprintf("adjdata y:%x\n",temp);
 	//保存x偏移量
     //AT24CXX_WriteLenByte(SAVE_ADDR_BASE+8,tp_dev.xoff,2);		    
-    lprintf("adjdata xoff:%d\n",tp_dev.xoff);
+    lprintf("adjdata xoff:%x\n",tp_dev.xoff);
 	//保存y偏移量
 	//AT24CXX_WriteLenByte(SAVE_ADDR_BASE+10,tp_dev.yoff,2);	
-    lprintf("adjdata yoff:%d\n",tp_dev.yoff);
+    lprintf("adjdata yoff:%x\n",tp_dev.yoff);
 	//保存触屏类型
 	//AT24CXX_WriteOneByte(SAVE_ADDR_BASE+12,tp_dev.touchtype);	
-    lprintf("adjdata touchtype:%d\n",tp_dev.touchtype);
+    lprintf("adjdata touchtype:%x\n",tp_dev.touchtype);
 	temp=0X0A;//标记校准过了
 	//AT24CXX_WriteOneByte(SAVE_ADDR_BASE+13,temp); 
 #endif
@@ -361,20 +364,27 @@ void TP_Save_Adjdata(void)
 ******************************************************************************/ 	
 u8 TP_Get_Adjdata(void)
 {					  
-#if 0
+#if 1
 	s32 tempfac;
+	/*
 	tempfac=AT24CXX_ReadOneByte(SAVE_ADDR_BASE+13);//读取标记字,看是否校准过！ 		 
 	if(tempfac==0X0A)//触摸屏已经校准过了			   
+	*/
 	{    												 
-		tempfac=AT24CXX_ReadLenByte(SAVE_ADDR_BASE,4);		   
+		//tempfac=AT24CXX_ReadLenByte(SAVE_ADDR_BASE,4);		   
+		tempfac=0xC252BF;
 		tp_dev.xfac=(float)tempfac/100000000;//得到x校准参数
-		tempfac=AT24CXX_ReadLenByte(SAVE_ADDR_BASE+4,4);			          
+		//tempfac=AT24CXX_ReadLenByte(SAVE_ADDR_BASE+4,4);			          
+		tempfac=0xFEC8C368;
 		tp_dev.yfac=(float)tempfac/100000000;//得到y校准参数
 	    //得到x偏移量
-		tp_dev.xoff=AT24CXX_ReadLenByte(SAVE_ADDR_BASE+8,2);			   	  
+		//tp_dev.xoff=AT24CXX_ReadLenByte(SAVE_ADDR_BASE+8,2);			   	  
+		tp_dev.xoff=0xFFFFFFEB;
  	    //得到y偏移量
-		tp_dev.yoff=AT24CXX_ReadLenByte(SAVE_ADDR_BASE+10,2);				 	  
- 		tp_dev.touchtype=AT24CXX_ReadOneByte(SAVE_ADDR_BASE+12);//读取触屏类型标记
+		//tp_dev.yoff=AT24CXX_ReadLenByte(SAVE_ADDR_BASE+10,2);				 	  
+		tp_dev.yoff=0x32B;
+ 		//tp_dev.touchtype=AT24CXX_ReadOneByte(SAVE_ADDR_BASE+12);//读取触屏类型标记
+ 		tp_dev.touchtype=0;
 		if(tp_dev.touchtype)//X,Y方向与屏幕相反
 		{
 			CMD_RDX=0X90;
@@ -472,8 +482,8 @@ void TP_Adjust(void)
 						   			   
 			pos_temp[cnt][0]=tp_dev.x;
 			pos_temp[cnt][1]=tp_dev.y;
-			cnt++;	  
 			lprintf("x %d y %d cnt %d\n", pos_temp[cnt][0], pos_temp[cnt][1], cnt);
+			cnt++;	  
 			switch(cnt)
 			{			   
 				case 1:						 
