@@ -317,7 +317,7 @@ void Touch_Test(void)
 			{	
 				if(tp_dev.x>(lcddev.width-24)&&tp_dev.y<16)
 				{
-					DrawTestPage("测试10:Touch测试(按KEY0键校准)   ");//清除
+					DrawTestPage("测试10:Touch测试(按'1'键校准)   ");//清除
 					LCD_ShowString(lcddev.width-24,0,16,"RST",1);//显示清屏区域
 					POINT_COLOR=colorTemp;
 					LCD_Fill(lcddev.width-50,2,lcddev.width-50+22,18,POINT_COLOR); 
@@ -339,10 +339,13 @@ void Touch_Test(void)
 			LCD_Clear(WHITE);//清屏
 		    TP_Adjust();  //屏幕校准 
 			TP_Save_Adjdata();	 
-			DrawTestPage("测试10:Touch测试(按KEY0键校准)   ");
+			DrawTestPage("测试10:Touch测试(按'1'键校准)   ");
 			LCD_ShowString(lcddev.width-24,0,16,"RST",1);//显示清屏区域
 			POINT_COLOR=colorTemp;
 			LCD_Fill(lcddev.width-50,2,lcddev.width-50+22,18,POINT_COLOR); 
+		}
+		else if(key == 'x'){
+			break;
 		}
 		i++;
 		if(i==30)

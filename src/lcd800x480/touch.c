@@ -89,7 +89,7 @@ u8 CMD_RDY=0X90;
 void TP_Write_Byte(u8 num)    
 {  
 	u8 count=0;   
-	lprintf("TPw:%x\n", num);
+	//lprintf("TPw:%x\n", num);
 	for(count=0;count<8;count++)  
 	{ 	  
 		if(num&0x80)TDIN(1);  
@@ -129,7 +129,7 @@ u16 TP_Read_AD(u8 CMD)
 	}  	
 	Num>>=4;   	//只有高12位有效.
 	TCS(1);		//释放片选	 
-	lprintf("TPr:%x\n", Num);
+	//lprintf("TPr:%x\n", Num);
 	return(Num);  
 //#endif
 }
@@ -267,6 +267,7 @@ void TP_Draw_Big_Point(u16 x,u16 y,u16 color)
 	LCD_DrawPoint(x+1,y);
 	LCD_DrawPoint(x,y+1);
 	LCD_DrawPoint(x+1,y+1);	 	  	
+	gui_circle(x,y,POINT_COLOR,4,0);//画中心圈
 }	
 
 /*****************************************************************************
@@ -290,7 +291,7 @@ u8 TP_Scan(u8 tp)
 		{
 	 		tp_dev.x=tp_dev.xfac*tp_dev.x+tp_dev.xoff;//将结果转换为屏幕坐标
 			tp_dev.y=tp_dev.yfac*tp_dev.y+tp_dev.yoff;  
-			lprintf("line%d:x %x y %x ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
+			lprintf("line%d:x %d y %d ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
 	 	} 
 		if((tp_dev.sta&TP_PRES_DOWN)==0)//之前没有被按下
 		{		 
@@ -300,7 +301,6 @@ u8 TP_Scan(u8 tp)
 		}			   
 	}else
 	{
-		tp_dev.sta&=~(TP_PRES_DOWN|TP_CATH_PRES);//标记按键松开	
 		if(tp_dev.sta&TP_PRES_DOWN)//之前是被按下的
 		{
 			lprintf("touch up\n");
@@ -311,6 +311,7 @@ u8 TP_Scan(u8 tp)
 			tp_dev.x=0xffff;
 			tp_dev.y=0xffff;
 		}	    
+		tp_dev.sta&=~(TP_PRES_DOWN);//标记按键松开	
 	}
 	return tp_dev.sta&TP_PRES_DOWN;//返回当前的触屏状态
 }
@@ -327,21 +328,26 @@ u8 TP_Scan(u8 tp)
 ******************************************************************************/ 										    
 void TP_Save_Adjdata(void)
 {
-#if 0
+#if 1
 	s32 temp;			 
 	//保存校正结果!		   							  
 	temp=tp_dev.xfac*100000000;//保存x校正因素      
-    AT24CXX_WriteLenByte(SAVE_ADDR_BASE,temp,4);   
+    //AT24CXX_WriteLenByte(SAVE_ADDR_BASE,temp,4);   
+    lprintf("adjdata x:%d\n",temp);
 	temp=tp_dev.yfac*100000000;//保存y校正因素    
-    AT24CXX_WriteLenByte(SAVE_ADDR_BASE+4,temp,4);
+    //AT24CXX_WriteLenByte(SAVE_ADDR_BASE+4,temp,4);
+    lprintf("adjdata y:%d\n",temp);
 	//保存x偏移量
-    AT24CXX_WriteLenByte(SAVE_ADDR_BASE+8,tp_dev.xoff,2);		    
+    //AT24CXX_WriteLenByte(SAVE_ADDR_BASE+8,tp_dev.xoff,2);		    
+    lprintf("adjdata xoff:%d\n",tp_dev.xoff);
 	//保存y偏移量
-	AT24CXX_WriteLenByte(SAVE_ADDR_BASE+10,tp_dev.yoff,2);	
+	//AT24CXX_WriteLenByte(SAVE_ADDR_BASE+10,tp_dev.yoff,2);	
+    lprintf("adjdata yoff:%d\n",tp_dev.yoff);
 	//保存触屏类型
-	AT24CXX_WriteOneByte(SAVE_ADDR_BASE+12,tp_dev.touchtype);	
+	//AT24CXX_WriteOneByte(SAVE_ADDR_BASE+12,tp_dev.touchtype);	
+    lprintf("adjdata touchtype:%d\n",tp_dev.touchtype);
 	temp=0X0A;//标记校准过了
-	AT24CXX_WriteOneByte(SAVE_ADDR_BASE+13,temp); 
+	//AT24CXX_WriteOneByte(SAVE_ADDR_BASE+13,temp); 
 #endif
 }
 
