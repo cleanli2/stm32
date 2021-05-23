@@ -58,9 +58,8 @@
 #include "common.h"
 #include "gui.h"
 #include "test.h"
-//#include "touch.h"
+#include "touch.h"
 //#include "key.h" 
-//#include "led.h"
 #include "pic.h"
 
 //========================variable==========================//
@@ -290,7 +289,6 @@ void Rotate_Test(void)
 	LCD_direction(USE_HORIZONTAL);
 }
 
-#if 0
 /*****************************************************************************
  * @name       :void Touch_Test(void)
  * @date       :2018-08-09 
@@ -305,15 +303,13 @@ void Touch_Test(void)
 	u16 j=0;
 	u16 colorTemp=0;
 	TP_Init();
-	KEY_Init();
-	LED_Init();
-	DrawTestPage("测试10:Touch测试(按KEY0键校准)   ");
+	DrawTestPage("测试10:Touch测试(按'1'键校准)   ");
 	LCD_ShowString(lcddev.width-24,0,16,"RST",1);//显示清屏区域
 	POINT_COLOR=RED;
 	LCD_Fill(lcddev.width-50,2,lcddev.width-50+22,18,RED); 
 		while(1)
 	{
-	 	key=KEY_Scan();
+	 	key=con_recv();
 		tp_dev.scan(0); 		 
 		if(tp_dev.sta&TP_PRES_DOWN)			//触摸屏被按下
 		{	
@@ -337,7 +333,7 @@ void Touch_Test(void)
 				else TP_Draw_Big_Point(tp_dev.x,tp_dev.y,POINT_COLOR);		//画图	  			   
 			}
 		}else delay_ms(10);	//没有按键按下的时候 	    
-		if(key==1)	//KEY_RIGHT按下,则执行校准程序
+		if(key=='1')	//KEY_RIGHT按下,则执行校准程序
 		{
 
 			LCD_Clear(WHITE);//清屏
@@ -352,12 +348,11 @@ void Touch_Test(void)
 		if(i==30)
 		{
 			i=0;
-			LED0=!LED0;
+			lprintf("LED0=!LED0\n");
 			//break;
 		}
 	}   
 }
-#endif
 
 /*****************************************************************************
  * @name       :void Test_Read(void)

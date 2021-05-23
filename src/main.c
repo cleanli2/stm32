@@ -22,7 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 #include "board.h"
-#include "lcd.h"
+//#include "lcd.h"
 #include "cmd.h"
 #include "lprintf.h"
 #include <stdio.h>

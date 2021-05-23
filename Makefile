@@ -8,14 +8,15 @@ export OBJCOPY        = arm-none-eabi-objcopy
 TOP=$(shell pwd)
 
 INC_FLAGS= \
-           -I $(TOP)/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/inc             \
-		   -I $(TOP)/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/      \
-		   -I $(TOP)/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/CoreSupport/ \
-		   -I $(TOP)
+           -I $(TOP)/src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/inc             \
+		   -I $(TOP)/src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/      \
+		   -I $(TOP)/src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/CoreSupport/ \
+		   -I $(TOP)/src \
+		   -I $(TOP)/src/lcd800x480 \
 
 
 CFLAGS =  -W -Wall -g -mcpu=cortex-m3 -mthumb -D STM32F10X_MD -D USE_STDPERIPH_DRIVER $(INC_FLAGS) -O0 -std=gnu11
-C_SRC=$(shell find ./ -name '*.c')  
+C_SRC=$(shell find src/ -name '*.c')  
 C_OBJ=$(C_SRC:%.c=%.o)          
 
 .PHONY: all clean

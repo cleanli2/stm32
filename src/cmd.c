@@ -1,5 +1,5 @@
 #include "cmd.h"
-#include "lcd.h"
+//#include "lcd.h"
 #include "lprintf.h"
 #include "sd/stm32_eval_spi_sd.h"
 #include <stdint.h>
@@ -207,6 +207,7 @@ error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
 
+#if 0
 void lcd19264init(char *p)
 {
   lcd_init();
@@ -234,6 +235,7 @@ void lcd19264init(char *p)
 error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
+#endif
 
 void ledtest(char *p)
 {
@@ -262,6 +264,7 @@ error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
 
+#if 0
 void dispcchar(char *p)
 {
     uint x = 0, y=0, offset = 0, tmp;
@@ -350,21 +353,22 @@ void show_ziku(char *p)
 
     return;
 }
+#endif
 
 static const struct command cmd_list[]=
 {
-    {"dwb",dispwb},
+    //{"dwb",dispwb},
     {"go",go},
     {"help",print_help},
-    {"lcd19264init",lcd19264init},
-    {"lcd19264dc",dispcchar},
+    //{"lcd19264init",lcd19264init},
+    //{"lcd19264dc",dispcchar},
     {"led",ledtest},
     {"lst",lcdsuebinit},
     {"pm",print_mem},
     {"r",read_mem},
     {"sd",sd},
     {"sdcmds",sd_cmds},
-    {"szk",show_ziku},
+    //{"szk",show_ziku},
     {"w",write_mem},
     {NULL, NULL},
 };
