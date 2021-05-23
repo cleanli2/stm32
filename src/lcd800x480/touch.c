@@ -153,6 +153,7 @@ u16 TP_Read_XOY(u8 xy)
 	u16 buf[READ_TIMES];
 	u16 sum=0;
 	u16 temp;
+	u16 sum_count=0;
 	for(i=0;i<READ_TIMES;i++)buf[i]=TP_Read_AD(xy);		 		    
 	for(i=0;i<READ_TIMES-1; i++)//排序
 	{
@@ -167,8 +168,14 @@ u16 TP_Read_XOY(u8 xy)
 		}
 	}	  
 	sum=0;
-	for(i=LOST_VAL;i<READ_TIMES-LOST_VAL;i++)sum+=buf[i];
-	temp=sum/(READ_TIMES-2*LOST_VAL);
+	sum_count=0;
+	for(i=LOST_VAL;i<READ_TIMES-LOST_VAL;i++){
+		if(buf[i]!=0&&buf[i]!=0xfff){
+			sum_count++;
+			sum+=buf[i];
+		}
+	}
+	temp=sum/(sum_count);
 	return temp;   
 } 
 
@@ -186,7 +193,7 @@ u8 TP_Read_XY(u16 *x,u16 *y)
 	u16 xtemp,ytemp;			 	 		  
 	xtemp=TP_Read_XOY(CMD_RDX);
 	ytemp=TP_Read_XOY(CMD_RDY);	  												   
-	//if(xtemp<100||ytemp<100)return 0;//读数失败
+	if(xtemp==0||ytemp==0||xtemp==0xfff||ytemp==0xfff)return 0;//读数失败
 	*x=xtemp;
 	*y=ytemp;
 	return 1;//读数成功
@@ -274,13 +281,16 @@ void TP_Draw_Big_Point(u16 x,u16 y,u16 color)
 ******************************************************************************/  					  
 u8 TP_Scan(u8 tp)
 {			   
-	if(PEN==0)//有按键按下
+	u8 ret;
+	if(PEN==0 && (ret=TP_Read_XY2(&tp_dev.x,&tp_dev.y)))//有按键按下
 	{
-		if(tp)TP_Read_XY2(&tp_dev.x,&tp_dev.y);//读取物理坐标
-		else if(TP_Read_XY2(&tp_dev.x,&tp_dev.y))//读取屏幕坐标
+		lprintf("touch pressed\n");
+		lprintf("line%d:x %x y %x ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
+		if(!tp)
 		{
 	 		tp_dev.x=tp_dev.xfac*tp_dev.x+tp_dev.xoff;//将结果转换为屏幕坐标
 			tp_dev.y=tp_dev.yfac*tp_dev.y+tp_dev.yoff;  
+			lprintf("line%d:x %x y %x ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
 	 	} 
 		if((tp_dev.sta&TP_PRES_DOWN)==0)//之前没有被按下
 		{		 
@@ -290,9 +300,10 @@ u8 TP_Scan(u8 tp)
 		}			   
 	}else
 	{
+		tp_dev.sta&=~(TP_PRES_DOWN|TP_CATH_PRES);//标记按键松开	
 		if(tp_dev.sta&TP_PRES_DOWN)//之前是被按下的
 		{
-			tp_dev.sta&=~(1<<7);//标记按键松开	
+			lprintf("touch up\n");
 		}else//之前就没有被按下
 		{
 			tp_dev.x0=0;
@@ -456,6 +467,7 @@ void TP_Adjust(void)
 			pos_temp[cnt][0]=tp_dev.x;
 			pos_temp[cnt][1]=tp_dev.y;
 			cnt++;	  
+			lprintf("x %d y %d cnt %d\n", pos_temp[cnt][0], pos_temp[cnt][1], cnt);
 			switch(cnt)
 			{			   
 				case 1:						 
@@ -569,7 +581,7 @@ void TP_Adjust(void)
 		}
 		delay_ms(10);
 		outtime++;
-		if(outtime>1000)
+		if(outtime>10000)
 		{
 			TP_Get_Adjdata();
 			break;
@@ -605,7 +617,6 @@ u8 TP_Init(void)
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //上拉输入
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 	GPIO_SetBits(GPIOA, GPIO_Pin_1|GPIO_Pin_6);	
- 	   
 
   	TP_Read_XY(&tp_dev.x,&tp_dev.y);//第一次读取初始化	 
 	if(TP_Get_Adjdata())return 0;//已经校准
