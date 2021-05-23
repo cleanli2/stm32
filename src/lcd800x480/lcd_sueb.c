@@ -891,8 +891,10 @@ void lcd_sueb_test()
 		con_recv();
 		lprintf("test rotate display.Any key continue...\n");
 		Rotate_Test();   //旋转显示测试
+		lprintf("test touch.Any key continue...\n");
+		con_recv();
 		//如果不带触摸，或者不需要触摸功能，请注释掉下面触摸屏测试项
-		//Touch_Test();		//触摸屏手写测试		
+		Touch_Test();		//触摸屏手写测试		
 	}
 }
 

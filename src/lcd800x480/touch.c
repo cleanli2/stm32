@@ -591,14 +591,14 @@ u8 TP_Init(void)
 		    		   
 	//注意,时钟使能之后,对GPIO的操作才有效
 	//所以上拉之前,必须使能时钟.才能实现真正的上拉输出
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC  | RCC_APB2Periph_AFIO, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA| RCC_APB2Periph_AFIO, ENABLE);
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3|GPIO_Pin_0|GPIO_Pin_13;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7|GPIO_Pin_5|GPIO_Pin_0;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);	
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //上拉输入
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
  	   
