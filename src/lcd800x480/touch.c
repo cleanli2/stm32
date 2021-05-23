@@ -89,6 +89,7 @@ u8 CMD_RDY=0X90;
 void TP_Write_Byte(u8 num)    
 {  
 	u8 count=0;   
+	lprintf("TPw:%x\n", num);
 	for(count=0;count<8;count++)  
 	{ 	  
 		if(num&0x80)TDIN(1);  
@@ -128,6 +129,7 @@ u16 TP_Read_AD(u8 CMD)
 	}  	
 	Num>>=4;   	//只有高12位有效.
 	TCS(1);		//释放片选	 
+	lprintf("TPr:%x\n", Num);
 	return(Num);  
 //#endif
 }
@@ -596,11 +598,13 @@ u8 TP_Init(void)
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7|GPIO_Pin_5|GPIO_Pin_0;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);	
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_SetBits(GPIOA,GPIO_Pin_7|GPIO_Pin_5|GPIO_Pin_0);
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //上拉输入
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_SetBits(GPIOA, GPIO_Pin_1|GPIO_Pin_6);	
  	   
 
   	TP_Read_XY(&tp_dev.x,&tp_dev.y);//第一次读取初始化	 
