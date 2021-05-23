@@ -605,6 +605,11 @@ void TP_Adjust(void)
 ******************************************************************************/  
 u8 TP_Init(void)
 {			    		   
+	static int tp_inited = 0;
+	if(tp_inited){
+		lprintf("Touch inited already\n");
+		return 1;
+	}
 	//注意,时钟使能之后,对GPIO的操作才有效
 	//所以上拉之前,必须使能时钟.才能实现真正的上拉输出
 	GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
@@ -631,6 +636,7 @@ u8 TP_Init(void)
 		LCD_Clear(WHITE);//清屏
 	    TP_Adjust();  //屏幕校准 
 		TP_Save_Adjdata();	 
+		tp_inited = 1;
 	}			
 	TP_Get_Adjdata();	
 	return 1; 									 

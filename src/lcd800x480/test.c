@@ -303,7 +303,7 @@ void Touch_Test(void)
 	u16 j=0;
 	u16 colorTemp=0;
 	TP_Init();
-	DrawTestPage("测试10:Touch测试(按'1'键校准)   ");
+	DrawTestPage("测试10:Touch测试(按'1'键校准，or draw point)   ");
 	LCD_ShowString(lcddev.width-24,0,16,"RST",1);//显示清屏区域
 	POINT_COLOR=RED;
 	LCD_Fill(lcddev.width-50,2,lcddev.width-50+22,18,RED); 

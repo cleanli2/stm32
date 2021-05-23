@@ -207,6 +207,17 @@ error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
 
+void lcdsuebtest(char *p)
+{
+    lcd_sueb_test();
+    con_send('\n');
+
+    return;
+
+error:
+    lprint("Err!\ndispcchar [x] [y]\n");
+}
+
 #if 0
 void lcd19264init(char *p)
 {
@@ -364,6 +375,7 @@ static const struct command cmd_list[]=
     //{"lcd19264dc",dispcchar},
     {"led",ledtest},
     {"lst",lcdsuebinit},
+    {"lstest",lcdsuebtest},
     {"pm",print_mem},
     {"r",read_mem},
     {"sd",sd},
