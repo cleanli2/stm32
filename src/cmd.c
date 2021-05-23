@@ -366,10 +366,19 @@ void show_ziku(char *p)
 }
 #endif
 
+void gpiotest(char *p)
+{
+    con_send('\n');
+    gpio_test();
+
+    return;
+
+}
 static const struct command cmd_list[]=
 {
     //{"dwb",dispwb},
     {"go",go},
+    {"gpiotest",gpiotest},
     {"help",print_help},
     //{"lcd19264init",lcd19264init},
     //{"lcd19264dc",dispcchar},

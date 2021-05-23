@@ -69,4 +69,5 @@ void Touch_Test(void);
 void main_test(void);
 void Rotate_Test(void);
 void Test_Read(void);
+void gpio_test(void);
 #endif
