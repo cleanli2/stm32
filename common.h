@@ -5,6 +5,7 @@
 #include<string.h>
 #include "lprintf.h"
 #include "lcd.h"
+#include "cmd.h"
 void delay_us(u32 nus);
 void delay_ms(uint16_t nms);
 

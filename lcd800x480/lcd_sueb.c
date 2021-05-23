@@ -862,26 +862,34 @@ void lcd_sueb_init(int testitem)
  
 void lcd_sueb_test()
 {
-	while(1)
+	//while(1)
 	{
-		lprintf("test main interface\n");
+		lprintf("test main interface.Any key continue...\n");
 		main_test(); 		//测试主界面
 		//Test_Read();     //读ID和颜色值测试
-		lprintf("test simple fill color\n");
+		con_recv();
+		lprintf("test simple fill color.Any key continue...\n");
 		Test_Color();  		//简单刷屏填充测试
-		lprintf("test rect drawing\n");
+		con_recv();
+		lprintf("test rect drawing.Any key continue...\n");
 		Test_FillRec();		//GUI矩形绘图测试
-		lprintf("test circle drawing\n");
+		con_recv();
+		lprintf("test circle drawing.Any key continue...\n");
 		Test_Circle(); 		//GUI画圆测试
-		lprintf("test trigangle drawing\n");
+		con_recv();
+		lprintf("test trigangle drawing.Any key continue...\n");
 		Test_Triangle();    //GUI三角形绘图测试
-		lprintf("test english font\n");
+		con_recv();
+		lprintf("test english font.Any key continue...\n");
 		English_Font_test();//英文字体示例测试
-		lprintf("test chinese font\n");
+		con_recv();
+		lprintf("test chinese font.Any key continue...\n");
 		Chinese_Font_test();//中文字体示例测试
-		lprintf("test pic display\n");
+		con_recv();
+		lprintf("test pic display.Any key continue...\n");
 		Pic_test();			//图片显示示例测试
-		lprintf("test rotate display\n");
+		con_recv();
+		lprintf("test rotate display.Any key continue...\n");
 		Rotate_Test();   //旋转显示测试
 		//如果不带触摸，或者不需要触摸功能，请注释掉下面触摸屏测试项
 		//Touch_Test();		//触摸屏手写测试		
