@@ -136,7 +136,8 @@ void LCD_WR_REG(u16 data)
 { 
    LCD_RS_CLR;     
 	 #if LCD_USE8BIT_MODEL
-	 LCD_write(data<<8);
+	 LCD_write(data>>8);
+	 LCD_write(data);
 	 #else
 	 LCD_write(data);
 	 #endif
@@ -153,7 +154,7 @@ void LCD_WR_DATA(u16 data)
 {
 	 LCD_RS_SET;
 	 #if LCD_USE8BIT_MODEL
-	 LCD_write(data<<8);
+	 LCD_write(data);
 	 #else
 	 LCD_write(data);
 	 #endif
@@ -170,7 +171,7 @@ u16 LCD_RD_DATA(void)
 {
 	LCD_RS_SET; 
 	#if LCD_USE8BIT_MODEL
-	return (LCD_read()>>8);
+	return LCD_read();
 	#else
 	return LCD_read();
 	#endif
@@ -267,10 +268,10 @@ void Lcd_WriteData_16Bit(u16 Data)
    LCD_RS_SET; 
 	 #if LCD_USE8BIT_MODEL
 		LCD_CS_CLR;
-		DATAOUT(Data);
+		DATAOUT(Data>>8);
 		LCD_WR_CLR; 
 		LCD_WR_SET;
-		DATAOUT(Data<<8);
+		DATAOUT(Data);
 		LCD_WR_CLR; 
 		LCD_WR_SET;
 		LCD_CS_SET;
@@ -325,9 +326,6 @@ u16 Lcd_ReadData_16Bit(void)
 	delay_us(1);//ÑÓÊ±1us	
 	b = DATAIN();
 	LCD_RD_SET;
-	r >>= 8;
-	g >>= 8;
-	b >>= 8;
 	#else
 	b = g>>8;
 	g = r&0xFF; 
