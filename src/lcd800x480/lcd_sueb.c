@@ -176,6 +176,16 @@ u16 LCD_RD_DATA(void)
 	#endif
 }
 
+u16 LCD_RD_REG(void)
+{
+	LCD_RS_CLR; 
+	#if LCD_USE8BIT_MODEL
+	return (LCD_read()>>8);
+	#else
+	return LCD_read();
+	#endif
+}
+
 /*****************************************************************************
  * @name       :void LCD_WriteReg(u16 LCD_Reg, u16 LCD_RegValue)
  * @date       :2018-08-09 
@@ -499,6 +509,13 @@ void LCD_hw_test(int testitem)
 	}
 }
 
+void lcd_sueb_basicinit()
+{
+	LCD_GPIOInit();//LCD GPIO初始化
+	delay_ms(100);
+ 	LCD_RESET(); //LCD 复位
+}
+
 /*****************************************************************************
  * @name       :void lcd_sueb_init(void)
  * @date       :2018-08-09 
@@ -509,10 +526,8 @@ void LCD_hw_test(int testitem)
 void lcd_sueb_init(int testitem)
 {  
 	u16 lcd_id;
-	LCD_GPIOInit();//LCD GPIO初始化
+	lcd_sueb_basicinit();
 	LCD_hw_test(testitem);
-	delay_ms(100);
- 	LCD_RESET(); //LCD 复位
 	lcd_id = LCD_Read_ID();
 	lprintf("read id %x\n", lcd_id);
 //************* OTM8009初始化**********//	

@@ -330,7 +330,10 @@ void Touch_Test(void)
 				delay_ms(10);
 				}
 
-				else TP_Draw_Big_Point(tp_dev.x,tp_dev.y,POINT_COLOR);		//画图	  			   
+				else {
+					TP_Draw_Big_Point(tp_dev.x,tp_dev.y,POINT_COLOR);		//画图	  			   
+					if(tp_dev.x-tp_dev.y < 100)break;
+				}
 			}
 		}else delay_ms(10);	//没有按键按下的时候 	    
 		if(key=='1')	//KEY_RIGHT按下,则执行校准程序

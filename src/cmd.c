@@ -367,6 +367,58 @@ void show_ziku(char *p)
 }
 #endif
 
+void lcdsuebstep(char *p)
+{
+    uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
+
+    lprintf("p=%s\n", p);
+    tmp = get_howmany_para(p);
+    lprintf("tmp=%d\n", tmp);
+    if(tmp>=1)
+	    p = str_to_hex(p, &cmdindex);
+    if(tmp == 0 || cmdindex == 0){
+	    lprintf("lcd basic_init\n");
+	    lcd_sueb_basicinit();
+    }
+    else if(cmdindex == 1){//cs high/low
+	lprintf("line %d read reg %x\n", __LINE__, LCD_RD_REG());
+    }
+    else if(cmdindex == 2){//
+	lprintf("line %d read data %x\n", __LINE__, LCD_RD_DATA());
+    }
+    else if(cmdindex == 3){//
+	if (tmp<2)goto error;
+
+        str_to_hex(p, &para1);
+	lprintf("para1 %x\n", para1);
+	lprintf("line %d wr reg para1 %x\n", __LINE__, LCD_WR_REG(para1));
+    }
+    else if(cmdindex == 4){//
+	if (tmp<2)goto error;
+
+        str_to_hex(p, &para1);
+	lprintf("para1 %x\n", para1);
+	lprintf("line %d wr data para1 %x\n", __LINE__, LCD_WR_DATA(para1));
+    }
+    else if(cmdindex == 5){//cmd
+    }
+    else if(cmdindex == 6){//cmd
+    }
+    else if(cmdindex == 7){//low init/deinit
+    }
+    else if(cmdindex == 8){//
+    }
+    else if(cmdindex == 9){//
+    }
+    else if(cmdindex == 0xa){//
+    }
+    con_send('\n');
+
+    return;
+
+error:
+    lprint("Err!\ndispcchar [x] [y]\n");
+}
 void gpiotest(char *p)
 {
     con_send('\n');
@@ -385,6 +437,7 @@ static const struct command cmd_list[]=
     //{"lcd19264dc",dispcchar},
     {"led",ledtest},
     {"lst",lcdsuebinit},
+    {"lstep",lcdsuebstep},
     {"lstest",lcdsuebtest},
     {"pm",print_mem},
     {"r",read_mem},
@@ -569,7 +622,7 @@ uint time_limit_recv_byte(uint limit, char * c);
 void run_cmd_interface()
 {
 	char c;
-	int timeout = 10;
+	int timeout = 6;
 	
 	mrw_addr = (uint32_t*)0x20000000;
 	lprint("\n\nclean_cmd. \nAnykey go cmd...\n");
