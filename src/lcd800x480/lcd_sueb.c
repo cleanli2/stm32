@@ -137,7 +137,7 @@ void LCD_WR_REG(u16 data)
    LCD_RS_CLR;     
 	 #if LCD_USE8BIT_MODEL
 	 LCD_write(data>>8);
-	 LCD_write(data);
+	 LCD_write(data&0xff);
 	 #else
 	 LCD_write(data);
 	 #endif
@@ -154,7 +154,8 @@ void LCD_WR_DATA(u16 data)
 {
 	 LCD_RS_SET;
 	 #if LCD_USE8BIT_MODEL
-	 LCD_write(data);
+	 LCD_write(data>>8);
+	 LCD_write(data&0xff);
 	 #else
 	 LCD_write(data);
 	 #endif
@@ -171,7 +172,7 @@ u16 LCD_RD_DATA(void)
 {
 	LCD_RS_SET; 
 	#if LCD_USE8BIT_MODEL
-	return LCD_read();
+	return 0xff&LCD_read();
 	#else
 	return LCD_read();
 	#endif
@@ -374,6 +375,19 @@ u16 LCD_ReadPoint(u16 x,u16 y)
 	return color;
 }
 
+void lcd_clr_window(u16 Color, u16 xs, u16 ys, u16 xe, u16 ye)
+{
+  unsigned int i;//,m;  
+	LCD_SetWindows(xs,ys,xe,ye);   
+	for(i=0;i<(xe-xs)*(ye-ys);i++)
+	{
+ //   for(m=0;m<lcddev.width;m++)
+  //  {	
+			Lcd_WriteData_16Bit(Color);
+	//	}
+	}
+} 
+
 /*****************************************************************************
  * @name       :void LCD_Clear(u16 Color)
  * @date       :2018-08-09 
@@ -383,16 +397,8 @@ u16 LCD_ReadPoint(u16 x,u16 y)
 ******************************************************************************/	
 void LCD_Clear(u16 Color)
 {
-  unsigned int i;//,m;  
-	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);   
-	for(i=0;i<lcddev.height*lcddev.width;i++)
-	{
- //   for(m=0;m<lcddev.width;m++)
-  //  {	
-			Lcd_WriteData_16Bit(Color);
-	//	}
-	}
-} 
+	lcd_clr_window(Color, 0,0,lcddev.width-1,lcddev.height-1);
+}
 
 /*****************************************************************************
  * @name       :void LCD_GPIOInit(void)

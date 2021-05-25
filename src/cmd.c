@@ -369,7 +369,7 @@ void show_ziku(char *p)
 
 void lcdsuebstep(char *p)
 {
-    uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
+    uint32_t para1 = 0, para2=0, para3 = 0, para4 = 0, color = 0,tmp, cmdindex;
 
     lprintf("p=%s\n", p);
     tmp = get_howmany_para(p);
@@ -401,8 +401,17 @@ void lcdsuebstep(char *p)
 	lprintf("line %d wr data para1 %x\n", __LINE__, LCD_WR_DATA(para1));
     }
     else if(cmdindex == 5){//cmd
+	if (tmp<5)goto error;
+        p=str_to_hex(p, &para1);
+        p=str_to_hex(p, &para2);
+        p=str_to_hex(p, &para3);
+        p=str_to_hex(p, &para4);
+	if(tmp==6)
+        p=str_to_hex(p, &color);
+        lcd_clr_window(color, para1, para2, para3, para4);
     }
     else if(cmdindex == 6){//cmd
+	lcd_sueb_init(0);
     }
     else if(cmdindex == 7){//low init/deinit
     }

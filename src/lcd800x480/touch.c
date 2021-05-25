@@ -639,6 +639,7 @@ u8 TP_Init(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 	GPIO_SetBits(GPIOA, GPIO_Pin_1|GPIO_Pin_6);	
 
+	tp_inited = 1;
   	TP_Read_XY(&tp_dev.x,&tp_dev.y);//第一次读取初始化	 
 	if(TP_Get_Adjdata())return 0;//已经校准
 	else			   //未校准?
@@ -646,7 +647,6 @@ u8 TP_Init(void)
 		LCD_Clear(WHITE);//清屏
 	    TP_Adjust();  //屏幕校准 
 		TP_Save_Adjdata();	 
-		tp_inited = 1;
 	}			
 	TP_Get_Adjdata();	
 	return 1; 									 

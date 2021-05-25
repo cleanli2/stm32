@@ -169,6 +169,7 @@ void LCD_Clear(u16 Color);
 void LCD_SetCursor(u16 Xpos, u16 Ypos);
 void LCD_DrawPoint(u16 x,u16 y);//画点
 u16  LCD_ReadPoint(u16 x,u16 y); //读点	   
+void lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye);
 void LCD_SetWindows(u16 xStar, u16 yStar,u16 xEnd,u16 yEnd);
 u16 LCD_RD_DATA(void);//读取LCD数据								    
 void LCD_WriteReg(u16 LCD_Reg, u16 LCD_RegValue);
