@@ -332,7 +332,11 @@ void Touch_Test(void)
 
 				else {
 					TP_Draw_Big_Point(tp_dev.x,tp_dev.y,POINT_COLOR);		//画图	  			   
-					if(tp_dev.x-tp_dev.y < 100)break;
+					if(tp_dev.x<100 && tp_dev.y < 100){
+						lprintf("quit\n");
+						LCD_ShowString(20,86,0,"Quit",1);
+						break;
+					}
 				}
 			}
 		}else delay_ms(10);	//没有按键按下的时候 	    
