@@ -89,11 +89,11 @@ extern u16  BACK_COLOR; //背景颜色.默认为白色
 ////////////////////////////////////////////////////////////////////
 //-----------------LCD端口定义---------------- 
 #define GPIO_TYPE  GPIOC  //GPIO组类型
-#define LED      13        //背光控制引脚      PC13
-#define LCD_CS   12       //片选引脚            PA12
-#define LCD_RS   15       //寄存器/数据选择引脚 PC15 
-#define LCD_RST  8       //复位引脚            PA8
-#define LCD_WR   11       //写引脚              PA11
+#define LED      8        //背光控制引脚      PA8
+#define LCD_CS   0       //片选引脚            PA0
+#define LCD_RS   1       //寄存器/数据选择引脚 PA1 
+#define LCD_RST  13       //复位引脚            PC13
+#define LCD_WR   15       //写引脚              PC15
 #define LCD_RD   14       //读引脚              PC14
 
 //如果使用官方库函数定义下列底层，速度将会下降到14帧每秒，建议采用我司推荐方法
@@ -101,32 +101,32 @@ extern u16  BACK_COLOR; //背景颜色.默认为白色
 
 //GPIO置位（拉高）
 #define	LCD_CS_SET  GPIOA->BSRR=1<<LCD_CS    //片选端口  	
-#define	LCD_RS_SET	GPIOC->BSRR=1<<LCD_RS    //数据/命令    
-#define	LCD_RST_SET	GPIOA->BSRR=1<<LCD_RST   //复位			  
-#define	LCD_WR_SET	GPIOA->BSRR=1<<LCD_WR    //写 	
+#define	LCD_RS_SET	GPIOA->BSRR=1<<LCD_RS    //数据/命令    
+#define	LCD_RST_SET	GPIOC->BSRR=1<<LCD_RST   //复位			  
+#define	LCD_WR_SET	GPIOC->BSRR=1<<LCD_WR    //写 	
 #define LCD_RD_SET  GPIOC->BSRR=1<<LCD_RD    //读		  
+#define LCD_LED_SET  GPIOA->BSRR=1<<LED      //读		  
 
 //GPIO复位（拉低）							    
 #define	LCD_CS_CLR  GPIOA->BRR=1<<LCD_CS     //片选端口  	
-#define	LCD_RS_CLR	GPIOC->BRR=1<<LCD_RS     //数据/命令  	 
-#define	LCD_RST_CLR	GPIOA->BRR=1<<LCD_RST    //复位			  
-#define	LCD_WR_CLR	GPIOA->BRR=1<<LCD_WR     //写
+#define	LCD_RS_CLR	GPIOA->BRR=1<<LCD_RS     //数据/命令  	 
+#define	LCD_RST_CLR	GPIOC->BRR=1<<LCD_RST    //复位			  
+#define	LCD_WR_CLR	GPIOC->BRR=1<<LCD_WR     //写
 #define LCD_RD_CLR  GPIOC->BRR=1<<LCD_RD     //读	  		  
+#define LCD_LED_CLR  GPIOA->BRR=1<<LED      //读		  
 
 //PB0~15,作为数据线
 //注意：如果使用8位模式数据总线，则液晶屏的数据高8位是接到MCU的高8位总线上
 //举例：如果接8位模式则本示例接线为液晶屏DB10-DB17对应接至单片机GPIOB_Pin8-GPIOB_Pin15
 //举例：如果是16位模式：DB0-DB7分别接GPIOB_Pin0-GPIOB_Pin7,DB10-DB17对应接至单片机GPIOB_Pin8-GPIOB_Pin15
 //Note:DB4<->A3 DB3<->A2 for HW problem
-#define DATAOUT(x) GPIOB->ODR=x;\
-		      (x&0x10)?(GPIOA->BSRR=1<<3):(GPIOA->BRR=1<<3);\
-		      (x&0x08)?(GPIOA->BSRR=1<<2):(GPIOA->BRR=1<<2); //数据输出
+#define DATAOUT(x) GPIOB->ODR=x;
 //#define DATAIN     GPIOB->IDR; //数据输入
 static inline uint16_t DATAIN()
 {
 	uint16_t ret = GPIOB->IDR;
-	GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3)?(ret|=0x10):(ret&=(~0x10));
-	GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2)?(ret|=0x08):(ret&=(~0x08));
+	//GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3)?(ret|=0x10):(ret&=(~0x10));
+	//GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2)?(ret|=0x08):(ret&=(~0x08));
 	return ret;
 }
 

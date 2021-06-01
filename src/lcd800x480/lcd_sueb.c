@@ -136,8 +136,8 @@ void LCD_WR_REG(u16 data)
 { 
    LCD_RS_CLR;     
 	 #if LCD_USE8BIT_MODEL
-	 LCD_write(data>>8);
-	 LCD_write(data&0xff);
+	 LCD_write(data);
+	 LCD_write(data<<8);
 	 #else
 	 LCD_write(data);
 	 #endif
@@ -154,8 +154,8 @@ void LCD_WR_DATA(u16 data)
 {
 	 LCD_RS_SET;
 	 #if LCD_USE8BIT_MODEL
-	 LCD_write(data>>8);
-	 LCD_write(data&0xff);
+	 LCD_write(data);
+	 LCD_write(data<<8);
 	 #else
 	 LCD_write(data);
 	 #endif
@@ -172,7 +172,7 @@ u16 LCD_RD_DATA(void)
 {
 	LCD_RS_SET; 
 	#if LCD_USE8BIT_MODEL
-	return 0xff&LCD_read();
+	return LCD_read()>>8;
 	#else
 	return LCD_read();
 	#endif
@@ -269,10 +269,10 @@ void Lcd_WriteData_16Bit(u16 Data)
    LCD_RS_SET; 
 	 #if LCD_USE8BIT_MODEL
 		LCD_CS_CLR;
-		DATAOUT(Data>>8);
+		DATAOUT(Data);
 		LCD_WR_CLR; 
 		LCD_WR_SET;
-		DATAOUT(Data);
+		DATAOUT(Data<<8);
 		LCD_WR_CLR; 
 		LCD_WR_SET;
 		LCD_CS_SET;
@@ -304,28 +304,28 @@ u16 Lcd_ReadData_16Bit(void)
 	//dummy data
 	LCD_RD_CLR;
 	delay_us(1);//延时1us	
-	r = DATAIN();
+	r = DATAIN()>>8;
 	LCD_RD_SET;
 	
 	//8bit:red data
 	//16bit:red and green data
 	LCD_RD_CLR;
 	delay_us(1);//延时1us	
-	r = DATAIN();
+	r = DATAIN()>>8;
 	LCD_RD_SET;
 	
 	//8bit:green data
 	//16bit:blue data
 	LCD_RD_CLR;
 	delay_us(1);//延时1us	
-	g = DATAIN();
+	g = DATAIN()>>8;
 	LCD_RD_SET;
 	
 	#if LCD_USE8BIT_MODEL	
 	//blue data
 	LCD_RD_CLR;
 	delay_us(1);//延时1us	
-	b = DATAIN();
+	b = DATAIN()>>8;
 	LCD_RD_SET;
 	#else
 	b = g>>8;
@@ -413,15 +413,15 @@ void LCD_GPIOInit(void)
 	      
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO,ENABLE);
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14| GPIO_Pin_15; //GPIOC14,15
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 |GPIO_Pin_14| GPIO_Pin_15; //GPIOC14,15
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;   //推挽输出
 	GPIO_Init(GPIOC, &GPIO_InitStructure);	
-	GPIO_SetBits(GPIOC,GPIO_Pin_14|GPIO_Pin_15);
+	GPIO_SetBits(GPIOC,GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15);
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_11| GPIO_Pin_12|GPIO_Pin_2|GPIO_Pin_3; //GPIOA8, 11,12
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_1| GPIO_Pin_0; //GPIOA8, 11,12
 	GPIO_Init(GPIOA, &GPIO_InitStructure); //GPIOA
-	GPIO_SetBits(GPIOA,GPIO_Pin_8|GPIO_Pin_11| GPIO_Pin_12);	
+	GPIO_SetBits(GPIOA,GPIO_Pin_8|GPIO_Pin_1| GPIO_Pin_8);	
 
 	LCD_BUS_To_write(1);
 	lprintf("LCD gpio init done\n");
