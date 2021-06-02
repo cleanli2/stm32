@@ -94,11 +94,11 @@ extern _m_tp_dev tp_dev;	 	//触屏控制器在touch.c里面定义
 #define TCLK_GG GPIOA
 #define TCS_GG GPIOA
 
-#define PEN_PIN GPIO_Pin_1
+#define PEN_PIN GPIO_Pin_11
 #define DOUT_PIN GPIO_Pin_6
 #define TDIN_PIN GPIO_Pin_7
 #define TCLK_PIN GPIO_Pin_5
-#define TCS_PIN GPIO_Pin_0
+#define TCS_PIN GPIO_Pin_12
 
 #define PEN  GPIO_ReadInputDataBit(PEN_GG, PEN_PIN)    //PA1  INT
 #define DOUT GPIO_ReadInputDataBit(DOUT_GG, DOUT_PIN)     //PA6  MISO
