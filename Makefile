@@ -1,4 +1,4 @@
-TARGET = gpio_toggle
+TARGET = stm32lcd
 
 export CC             = arm-none-eabi-gcc           
 export AS             = arm-none-eabi-as
