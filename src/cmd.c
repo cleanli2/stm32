@@ -24,7 +24,7 @@ uint8_t cmd_caches[40][40] = {0};
 uint32_t ci=0;
 uint8_t read_buf[512];
 
-#if 0
+#if 1
 void sd(char *p)
 {
     uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
@@ -247,7 +247,6 @@ void lcd19264init(char *p)
 error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
-#endif
 
 void ledtest(char *p)
 {
@@ -275,6 +274,7 @@ void ledtest(char *p)
 error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
+#endif
 
 #if 0
 void dispcchar(char *p)
@@ -366,7 +366,7 @@ void show_ziku(char *p)
     return;
 }
 #endif
-
+#if 0
 void lcdsuebstep(char *p)
 {
     uint32_t para1 = 0, para2=0, para3 = 0, para4 = 0, color = 0,tmp, cmdindex;
@@ -436,33 +436,35 @@ void gpiotest(char *p)
     return;
 
 }
+#endif
 static const struct command cmd_list[]=
 {
     //{"dwb",dispwb},
-    {"go",go},
-    {"gpiotest",gpiotest},
+    //{"go",go},
+    //{"gpiotest",gpiotest},
     {"help",print_help},
     //{"lcd19264init",lcd19264init},
     //{"lcd19264dc",dispcchar},
-    {"led",ledtest},
+    //{"led",ledtest},
     {"lst",lcdsuebinit},
-    {"lstep",lcdsuebstep},
+    //{"lstep",lcdsuebstep},
     {"lstest",lcdsuebtest},
     {"pm",print_mem},
     {"r",read_mem},
-    //{"sd",sd},
-    //{"sdcmds",sd_cmds},
+    {"sd",sd},
+    {"sdcmds",sd_cmds},
     //{"szk",show_ziku},
     {"w",write_mem},
     {NULL, NULL},
 };
 static uint32_t * mrw_addr;
-
+#if 0
 void go(char *para)
 {
     (void)para;
 	(*((void (*)())mrw_addr))();
 }
+#endif
 
 void print_help(char *para)
 {
