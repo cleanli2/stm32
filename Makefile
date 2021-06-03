@@ -15,14 +15,15 @@ INC_FLAGS= \
 		   -I $(TOP)/src/lcd800x480 \
 
 
-CFLAGS =  -W -Wall -g -mcpu=cortex-m3 -mthumb -D STM32F10X_MD -D USE_STDPERIPH_DRIVER $(INC_FLAGS) -O0 -std=gnu11
+CFLAGS =  -W -Wall -g -mcpu=cortex-m3 -mthumb -D STM32F10X_MD -D USE_STDPERIPH_DRIVER $(INC_FLAGS) -O0 -std=gnu11 -ffunction-sections -fdata-sections
+LDFLAGS =  -mthumb -mcpu=cortex-m3 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=Project.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80
 C_SRC=$(shell find src/ -name '*.c')  
 C_OBJ=$(C_SRC:%.c=%.o)          
 
 .PHONY: all clean
 
 all:$(C_OBJ)
-	$(CC) $(C_OBJ) -T stm32_f103ze_gcc.ld -o $(TARGET).elf   -mthumb -mcpu=cortex-m3 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=Project.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80 
+	$(CC) $(C_OBJ) -T stm32_f103ze_gcc.ld -o $(TARGET).elf $(LDFLAGS)
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).bin -Obinary 
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).hex -Oihex
 
