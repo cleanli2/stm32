@@ -884,6 +884,7 @@ void pure_lcd_sueb_test()
 {
 	//while(1)
 	{
+#if 0
 		lprintf("test main interface.Any key continue...\n");
 		main_test(); 		//测试主界面
 		//Test_Read();     //读ID和颜色值测试
@@ -902,6 +903,7 @@ void pure_lcd_sueb_test()
 		lprintf("test pic display.Any key continue...\n");
 		Pic_test();			//图片显示示例测试
 		lprintf("test rotate display.Any key continue...\n");
+#endif
 		Rotate_Test();   //旋转显示测试
 		lprintf("test touch.\n");
 		//如果不带触摸，或者不需要触摸功能，请注释掉下面触摸屏测试项
@@ -918,6 +920,7 @@ void lcd_sueb_test()
 		//如果不带触摸，或者不需要触摸功能，请注释掉下面触摸屏测试项
 		Touch_Test();		//触摸屏手写测试		
 		lprintf("test main interface.Any key continue...\n");
+#if 0
 		main_test(); 		//测试主界面
 		//Test_Read();     //读ID和颜色值测试
 		lprintf("test simple fill color.Any key continue...\n");
@@ -941,6 +944,7 @@ void lcd_sueb_test()
 		lprintf("test pic display.Any key continue...\n");
 		con_recv();
 		Pic_test();			//图片显示示例测试
+#endif
 		lprintf("test rotate display.Any key continue...\n");
 		con_recv();
 		Rotate_Test();   //旋转显示测试

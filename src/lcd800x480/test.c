@@ -284,6 +284,7 @@ void Rotate_Test(void)
 	DrawTestPage("²âÊÔ9:ÆÁÄ»Ðý×ª²âÊÔ");
 	Show_Str(20,30,BLUE,YELLOW,Direction[i],16,1);
 	Gui_Drawbmp16(30,50,40,40,gImage_qq);
+	Chinese_Font_test();
 	delay_ms(1000);delay_ms(1000);
 	}
 	LCD_direction(USE_HORIZONTAL);

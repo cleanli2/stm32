@@ -180,6 +180,7 @@ int main(void)
   int looptimes = 3;
   RCC_ClocksTypeDef RCC_ClocksStatus;
   delay_init();
+#if 0
   /* GPIOC Periph clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 
@@ -188,6 +189,27 @@ int main(void)
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
+#endif
+
+  //led
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+  /* Configure PD0 and PD2 in output pushpull mode */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  GPIO_ResetBits(GPIOA,GPIO_Pin_2);	
+
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+  /* Configure PD0 and PD2 in output pushpull mode */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+  GPIO_ResetBits(GPIOB,GPIO_Pin_2);	
+  //led end
 
   USART_InitStructure.USART_BaudRate = 9600;
   USART_InitStructure.USART_WordLength = USART_WordLength_8b;
@@ -209,22 +231,26 @@ int main(void)
 		  RCC_ClocksStatus.PCLK1_Frequency,
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
+  lcd_sueb_init(0);
+  pure_lcd_sueb_test();
   while (looptimes--)
   {
     /* Set PC13 */
-    GPIOC->BSRR = 0x00002000;
+    //GPIOC->BSRR = 0x00002000;
+    GPIO_ResetBits(GPIOB,GPIO_Pin_2);	
+    GPIO_ResetBits(GPIOA,GPIO_Pin_2);	
     lprintf("\n\rSet PC13\n\r");
     //__io_putchar('s');
     delay_ms(200);
     /* Reset PC13 */
-    GPIOC->BRR  = 0x00002000;
+    //GPIOC->BRR  = 0x00002000;
+    GPIO_SetBits(GPIOB,GPIO_Pin_2);	
+    GPIO_SetBits(GPIOA,GPIO_Pin_2);	
     lprintf("\n\rClr PC13\n\r");
     //__io_putchar('c');
     delay_ms(200);
   }
   run_cmd_interface();
-  lcd_sueb_init(0);
-  pure_lcd_sueb_test();
 }
 
 #ifdef  USE_FULL_ASSERT
