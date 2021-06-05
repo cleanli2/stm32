@@ -12,7 +12,7 @@
 #define SD_SPI_MOSI_PIN                  GPIO_Pin_7                  /* PA.07 */
 #define SD_SPI_MOSI_GPIO_PORT            GPIOA                       /* GPIOA */
 #define SD_SPI_MOSI_GPIO_CLK             RCC_APB2Periph_GPIOA
-#define SD_CS_PIN                        GPIO_Pin_6                  /* PC.12 */
+#define SD_CS_PIN                        GPIO_Pin_1                  /* PC.12 */
 #define SD_CS_GPIO_PORT                  GPIOB                       /* GPIOC */
 #define SD_CS_GPIO_CLK                   RCC_APB2Periph_GPIOB
 #if 1
