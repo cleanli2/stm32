@@ -1,5 +1,5 @@
 #include "cmd.h"
-//#include "lcd.h"
+#include "common.h"
 #include "lprintf.h"
 #include "sd/stm32_eval_spi_sd.h"
 #include <stdint.h>
@@ -389,14 +389,16 @@ void lcdsuebstep(char *p)
 
         str_to_hex(p, &para1);
 	lprintf("para1 %x\n", para1);
-	lprintf("line %d wr reg para1 %x\n", __LINE__, LCD_WR_REG(para1));
+	LCD_WR_REG(para1);
+	lprintf("line %d wr reg para1 %x\n", __LINE__);
     }
     else if(cmdindex == 4){//
 	if (tmp<2)goto error;
 
         str_to_hex(p, &para1);
 	lprintf("para1 %x\n", para1);
-	lprintf("line %d wr data para1 %x\n", __LINE__, LCD_WR_DATA(para1));
+	lprintf("line %d wr data para1 %x\n", __LINE__);
+	LCD_WR_DATA(para1);
     }
     else if(cmdindex == 5){//cmd
 	if (tmp<5)goto error;
@@ -684,6 +686,7 @@ void run_cmd_interface()
 	int timeout = 6;
 	
 	mrw_addr = (uint32_t*)0x20000000;
+	lprintf("Version %s%s", VERSION, GIT_SHA1);
 	lprint("\n\nclean_cmd. \nAnykey go cmd...\n");
 	while(timeout--){
 		delay_ms(1000);
