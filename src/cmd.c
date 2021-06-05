@@ -425,10 +425,52 @@ void lcdsuebstep(char *p)
 	Show_Str(para1,para2,para3,para4,&para5,para6,para7);
     }
     else if(cmdindex == 8){//
+	    main_test(); 		//测试主界面
     }
     else if(cmdindex == 9){//
+	    Test_Color();  		//简单刷屏填充测试
     }
     else if(cmdindex == 0xa){//
+	    Test_FillRec();		//GUI矩形绘图测试
+    }
+    else if(cmdindex == 0xb){//
+	    lprintf("test english font.Any key continue...\n");
+	    English_Font_test();//英文字体示例测试
+    }
+    else if(cmdindex == 0xc){//
+	    lprintf("test trigangle drawing.Any key continue...\n");
+	    Test_Triangle();    //GUI三角形绘图测试
+    }
+    else if(cmdindex == 0xd){//
+	    lprintf("test chinese font.Any key continue...\n");
+	    Chinese_Font_test();//中文字体示例测试
+    }
+    else if(cmdindex == 0xe){//
+	    lprintf("test pic display.Any key continue...\n");
+	    Pic_test();			//图片显示示例测试
+    }
+    else if(cmdindex == 0xf){//
+	    lprintf("test touch.\n");
+	    //如果不带触摸，或者不需要触摸功能，请注释掉下面触摸屏测试项
+	    Touch_Test();		//触摸屏手写测试		
+    }
+    else if(cmdindex == 0x10){//
+	    lprintf("test rotate display.Any key continue...\n");
+	    Rotate_Test();   //旋转显示测试
+    }
+    else if(cmdindex == 0x11){//
+	    lprintf("test circle drawing.Any key continue...\n");
+	    Test_Circle(); 		//GUI画圆测试
+    }
+    else if(cmdindex == 0x12){//
+    }
+    else if(cmdindex == 0x13){//
+    }
+    else if(cmdindex == 0x14){//
+    }
+    else if(cmdindex == 0x15){//
+    }
+    else if(cmdindex == 0x16){//
     }
     con_send('\n');
 
