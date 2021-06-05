@@ -70,10 +70,12 @@ u16 DeviceCode;
 void Enable_BL(int en)//µãÁÁ±³¹â	 
 {
 	if(en){
-	    GPIOC->BSRR = 0x00002000;
+	    LCD_LED_CLR;     
+	    //GPIOC->BSRR = 0x00002000;
 	}
 	else{
-	    GPIOC->BRR = 0x00002000;
+	    LCD_LED_SET;     
+	    //GPIOC->BRR = 0x00002000;
 	}
 }
 
@@ -88,9 +90,9 @@ void LCD_BUS_To_write(int write)
 		GPIO_Init(GPIOA, &GPIO_InitStructure);	
 		GPIO_SetBits(GPIOA,GPIO_Pin_2|GPIO_Pin_3);
 
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;	//  
+		GPIO_InitStructure.GPIO_Pin = LCD_PORT_GPIO_Pins;	//  
 		GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
-		GPIO_SetBits(GPIOB,GPIO_Pin_All);	
+		GPIO_SetBits(GPIOB,LCD_PORT_GPIO_Pins);	
 	}
 	else{
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2| GPIO_Pin_3;
@@ -98,9 +100,9 @@ void LCD_BUS_To_write(int write)
 		GPIO_Init(GPIOA, &GPIO_InitStructure);	
 		GPIO_SetBits(GPIOA,GPIO_Pin_2|GPIO_Pin_3);
 
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;	//  
+		GPIO_InitStructure.GPIO_Pin = LCD_PORT_GPIO_Pins;	//  
 		GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
-		GPIO_SetBits(GPIOB,GPIO_Pin_All);	
+		GPIO_SetBits(GPIOB,LCD_PORT_GPIO_Pins);	
 	}
 }
 
@@ -483,6 +485,12 @@ void LCD_hw_test(int testitem)
 					delay_ms(1000);	
 					lprintf("LCD RS high\n");
 				LCD_RS_SET;
+					delay_ms(1000);
+					lprintf("LCD LED low\n");
+				LCD_LED_CLR;     
+					delay_ms(1000);	
+					lprintf("LCD LED high\n");
+				LCD_LED_SET;
 					delay_ms(1000);
 			}
 			break;

@@ -115,6 +115,7 @@ extern u16  BACK_COLOR; //背景颜色.默认为白色
 #define LCD_RD_CLR  GPIOC->BRR=1<<LCD_RD     //读	  		  
 #define LCD_LED_CLR  GPIOA->BRR=1<<LED      //读		  
 
+#define LCD_PORT_GPIO_Pins               ((uint16_t)0xFF00)  /*!< High 8 pins selected */
 //PB0~15,作为数据线
 //注意：如果使用8位模式数据总线，则液晶屏的数据高8位是接到MCU的高8位总线上
 //举例：如果接8位模式则本示例接线为液晶屏DB10-DB17对应接至单片机GPIOB_Pin8-GPIOB_Pin15

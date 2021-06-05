@@ -247,6 +247,7 @@ void lcd19264init(char *p)
 error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
+#endif
 
 void ledtest(char *p)
 {
@@ -274,8 +275,6 @@ void ledtest(char *p)
 error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
-#endif
-
 #if 0
 void dispcchar(char *p)
 {
@@ -323,7 +322,6 @@ void dispwb(char *p)
 error:
     lprint("Err!\ndwb [page] [col] [data]\n");
 }
-
 void Display_Chinese2_fullscreen(uint32_t x, uint32_t y, uint32_t zi_offset)
 {
     for(int i = 0; i <48; i++)
@@ -366,10 +364,10 @@ void show_ziku(char *p)
     return;
 }
 #endif
-#if 0
 void lcdsuebstep(char *p)
 {
     uint32_t para1 = 0, para2=0, para3 = 0, para4 = 0, color = 0,tmp, cmdindex;
+    uint32_t para5 = 0, para6=0, para7 = 0, para8 = 0;
 
     lprintf("p=%s\n", p);
     tmp = get_howmany_para(p);
@@ -411,9 +409,20 @@ void lcdsuebstep(char *p)
         lcd_clr_window(color, para1, para2, para3, para4);
     }
     else if(cmdindex == 6){//cmd
-	lcd_sueb_init(0);
+	if (tmp<2)goto error;
+        p=str_to_hex(p, &para1);
+	lcd_sueb_init(para1);
     }
-    else if(cmdindex == 7){//low init/deinit
+    else if(cmdindex == 7){
+	if (tmp<7)goto error;
+        p=str_to_hex(p, &para1);
+        p=str_to_hex(p, &para2);
+        p=str_to_hex(p, &para3);
+        p=str_to_hex(p, &para4);
+        p=str_to_hex(p, &para5);
+        p=str_to_hex(p, &para6);
+        p=str_to_hex(p, &para7);
+	Show_Str(para1,para2,para3,para4,&para5,para6,para7);
     }
     else if(cmdindex == 8){//
     }
@@ -436,18 +445,17 @@ void gpiotest(char *p)
     return;
 
 }
-#endif
 static const struct command cmd_list[]=
 {
     //{"dwb",dispwb},
-    //{"go",go},
-    //{"gpiotest",gpiotest},
+    {"go",go},
+    {"gpiotest",gpiotest},
     {"help",print_help},
     //{"lcd19264init",lcd19264init},
     //{"lcd19264dc",dispcchar},
-    //{"led",ledtest},
+    {"led",ledtest},
     {"lst",lcdsuebinit},
-    //{"lstep",lcdsuebstep},
+    {"lstep",lcdsuebstep},
     {"lstest",lcdsuebtest},
     {"pm",print_mem},
     {"r",read_mem},
@@ -458,13 +466,11 @@ static const struct command cmd_list[]=
     {NULL, NULL},
 };
 static uint32_t * mrw_addr;
-#if 0
 void go(char *para)
 {
     (void)para;
 	(*((void (*)())mrw_addr))();
 }
-#endif
 
 void print_help(char *para)
 {

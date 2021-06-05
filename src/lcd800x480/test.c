@@ -284,6 +284,7 @@ void Rotate_Test(void)
 	DrawTestPage("测试9:屏幕旋转测试");
 	Show_Str(20,30,BLUE,YELLOW,Direction[i],16,1);
 	Gui_Drawbmp16(30,50,40,40,gImage_qq);
+	delay_ms(1000);
 	Chinese_Font_test();
 	delay_ms(1000);delay_ms(1000);
 	}
@@ -304,13 +305,15 @@ void Touch_Test(void)
 	u16 j=0;
 	u16 colorTemp=0;
 	TP_Init();
+	lprintf("touch test start: 'x' key quit\n");
 	DrawTestPage("测试10:Touch测试(按'1'键校准，or draw point)   ");
 	LCD_ShowString(lcddev.width-24,0,16,"RST",1);//显示清屏区域
 	POINT_COLOR=RED;
 	LCD_Fill(lcddev.width-50,2,lcddev.width-50+22,18,RED); 
 		while(1)
 	{
-	 	//key=con_recv();
+		if(con_is_recved())
+			key=con_recv();
 		tp_dev.scan(0); 		 
 		if(tp_dev.sta&TP_PRES_DOWN)			//触摸屏被按下
 		{	

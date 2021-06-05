@@ -22,7 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 #include "board.h"
-//#include "lcd.h"
+#include "common.h"
 #include "cmd.h"
 #include "lprintf.h"
 #include <stdio.h>
@@ -204,11 +204,11 @@ int main(void)
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
   /* Configure PD0 and PD2 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_2;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
-  GPIO_ResetBits(GPIOB,GPIO_Pin_2);	
+  GPIO_ResetBits(GPIOB,GPIO_Pin_0|GPIO_Pin_2);	
   //led end
 
   USART_InitStructure.USART_BaudRate = 9600;
@@ -250,6 +250,7 @@ int main(void)
     //__io_putchar('c');
     delay_ms(200);
   }
+  LCD_Clear(WHITE);
   run_cmd_interface();
 }
 
