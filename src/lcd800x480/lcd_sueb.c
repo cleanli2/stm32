@@ -70,11 +70,11 @@ u16 DeviceCode;
 void Enable_BL(int en)//µãÁÁ±³¹â	 
 {
 	if(en){
-	    LCD_LED_CLR;     
+	    LCD_LED_SET;     
 	    //GPIOC->BSRR = 0x00002000;
 	}
 	else{
-	    LCD_LED_SET;     
+	    LCD_LED_CLR;     
 	    //GPIOC->BRR = 0x00002000;
 	}
 }
