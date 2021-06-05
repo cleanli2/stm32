@@ -520,6 +520,7 @@ void print_help(char *para)
 {
     (void)para;
     uint i = 0;
+    lprintf("Version %s%s\n", VERSION, GIT_SHA1);
     lprint("Cmd:\n");
     while(1){
             if(cmd_list[i].cmd_name == NULL)
@@ -686,7 +687,7 @@ void run_cmd_interface()
 	int timeout = 6;
 	
 	mrw_addr = (uint32_t*)0x20000000;
-	lprintf("Version %s%s", VERSION, GIT_SHA1);
+	lprintf("Version %s%s\n", VERSION, GIT_SHA1);
 	lprint("\n\nclean_cmd. \nAnykey go cmd...\n");
 	while(timeout--){
 		delay_ms(1000);

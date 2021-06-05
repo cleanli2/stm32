@@ -225,7 +225,7 @@ int main(void)
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.  */
   RCC_GetClocksFreq(&RCC_ClocksStatus);
-  lprintf("Version %s%s", VERSION, GIT_SHA1);
+  lprintf("Version %s%s\n", VERSION, GIT_SHA1);
   lprintf("clk %d %d %d %d %d Hz\n\r",
 		  RCC_ClocksStatus.SYSCLK_Frequency,
 		  RCC_ClocksStatus.HCLK_Frequency,
