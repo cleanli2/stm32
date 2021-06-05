@@ -195,20 +195,20 @@ int main(void)
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
   /* Configure PD0 and PD2 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12|GPIO_Pin_2;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
-  GPIO_ResetBits(GPIOA,GPIO_Pin_2);	
+  GPIO_ResetBits(GPIOA,GPIO_Pin_12|GPIO_Pin_2);	
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
   /* Configure PD0 and PD2 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_2;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
-  GPIO_ResetBits(GPIOB,GPIO_Pin_0|GPIO_Pin_2);	
+  GPIO_ResetBits(GPIOB,GPIO_Pin_0);	
   //led end
 
   USART_InitStructure.USART_BaudRate = 9600;
@@ -238,14 +238,14 @@ int main(void)
   {
     /* Set PC13 */
     //GPIOC->BSRR = 0x00002000;
-    GPIO_ResetBits(GPIOB,GPIO_Pin_2);	
+    GPIO_ResetBits(GPIOA,GPIO_Pin_12);	
     GPIO_ResetBits(GPIOA,GPIO_Pin_2);	
     lprintf("\n\rSet PC13\n\r");
     //__io_putchar('s');
     delay_ms(200);
     /* Reset PC13 */
     //GPIOC->BRR  = 0x00002000;
-    GPIO_SetBits(GPIOB,GPIO_Pin_2);	
+    GPIO_SetBits(GPIOA,GPIO_Pin_12);	
     GPIO_SetBits(GPIOA,GPIO_Pin_2);	
     lprintf("\n\rClr PC13\n\r");
     //__io_putchar('c');
