@@ -520,6 +520,14 @@ void poweroff(char *p)
     return;
 
 }
+void adc(char *p)
+{
+    con_send('\n');
+    adc_test();
+
+    return;
+
+}
 void gpiotest(char *p)
 {
     con_send('\n');
@@ -531,6 +539,7 @@ void gpiotest(char *p)
 static const struct command cmd_list[]=
 {
     //{"dwb",dispwb},
+    {"adc",adc},
     {"bz",buzztest},
     {"go",go},
     {"gpiotest",gpiotest},

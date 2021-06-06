@@ -7,6 +7,7 @@
 #include "lprintf.h"
 #include "lcd_sueb.h"
 #include "cmd.h"
+#include "adc.h"
 void delay_us(u32 nus);
 void delay_ms(uint16_t nms);
 
