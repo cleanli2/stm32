@@ -49,7 +49,18 @@ void adc_test()
         lprintf("adc already inited\n");
     }
 
-    lprintf("start adc1 convertion\n");
+    lprintf("start adc1 PA3 convertion\n");
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 1, ADC_SampleTime_28Cycles5);
+    ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+    do
+    {
+        delay_us(50);
+        lprintf("waiting convertion done...\n");
+    }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
+    lprintf("result = %x\n", ADC_GetConversionValue(ADC1));
+
+    lprintf("start adc1 PA4 convertion\n");
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 1, ADC_SampleTime_28Cycles5);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     do
     {

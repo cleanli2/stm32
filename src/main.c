@@ -233,7 +233,7 @@ int main(void)
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
   lcd_sueb_init(0);
-  pure_lcd_sueb_test();
+  Touch_Test();
   while (looptimes--)
   {
     /* Set PC13 */
