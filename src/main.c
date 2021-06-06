@@ -59,6 +59,24 @@ void delay_init()
     fac_ms=(u16)fac_us*1000;
 }
 
+void led_flash(u32 led_flag, u32 ms_ct)
+{
+    if(led_flag & 0x2){
+        GPIO_ResetBits(GPIOA,GPIO_Pin_2);	
+    }
+    if(led_flag & 0x1){
+        GPIO_ResetBits(GPIOA,GPIO_Pin_12);	
+    }
+    delay_ms(ms_ct);
+    if(led_flag & 0x2){
+        GPIO_SetBits(GPIOA,GPIO_Pin_2);	
+    }
+    if(led_flag & 0x1){
+        GPIO_SetBits(GPIOA,GPIO_Pin_12);	
+    }
+    delay_ms(200);
+}
+
 void delay_us(u32 nus)
 {
     u32 temp;
@@ -236,20 +254,7 @@ int main(void)
   //Touch_Test();
   while (looptimes--)
   {
-    /* Set PC13 */
-    //GPIOC->BSRR = 0x00002000;
-    GPIO_ResetBits(GPIOA,GPIO_Pin_12);	
-    GPIO_ResetBits(GPIOA,GPIO_Pin_2);	
-    lprintf("\n\rSet PC13\n\r");
-    //__io_putchar('s');
-    delay_ms(200);
-    /* Reset PC13 */
-    //GPIOC->BRR  = 0x00002000;
-    GPIO_SetBits(GPIOA,GPIO_Pin_12);	
-    GPIO_SetBits(GPIOA,GPIO_Pin_2);	
-    lprintf("\n\rClr PC13\n\r");
-    //__io_putchar('c');
-    delay_ms(200);
+      led_flash(0x3, 100);
   }
   LCD_Clear(WHITE);
   run_cmd_interface();

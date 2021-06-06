@@ -81,4 +81,5 @@ void adc_test()
     memset(lcd_print_buf, 0, 32);
     slprintf(lcd_print_buf, "real vbat = %d0mv", v_bat);
     Show_Str(90, 390,0,0xffff,lcd_print_buf,24,0);
+    led_flash(3, 50);
 }
