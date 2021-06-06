@@ -7,5 +7,6 @@ uint16_t __io_getchar();
 int __io_char_received();
 
 void lprintf(const char *fmt, ...);
+void slprintf(char*buf, const char *fmt, ...);
 
 #endif

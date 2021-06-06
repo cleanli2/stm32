@@ -7,6 +7,8 @@ void adc_test()
     static int adc_inited = 0;
     GPIO_InitTypeDef GPIO_InitStructure;
     ADC_InitTypeDef ADC_InitStructure;
+    char lcd_print_buf[32];
+    uint32_t v_core, v_bat, v_ref;
 
     if(ADC_INITED!=adc_inited){
         lprintf("performing adc init\n");
@@ -57,7 +59,11 @@ void adc_test()
         delay_us(50);
         lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
-    lprintf("result = %x\n", ADC_GetConversionValue(ADC1));
+    lprintf("raw ref result = %x\n", v_ref=ADC_GetConversionValue(ADC1));
+    v_core = 250 * 4096 / v_ref;
+    lprintf("real vcore = %d\n", v_core);
+    slprintf(lcd_print_buf, "real vcore = %d\n", v_core);
+    Show_Str(30, 30,0,0xff,lcd_print_buf,24,1);
 
     lprintf("start adc1 PA4 convertion\n");
     ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 1, ADC_SampleTime_28Cycles5);
@@ -67,5 +73,10 @@ void adc_test()
         delay_us(50);
         lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
-    lprintf("result = %x\n", ADC_GetConversionValue(ADC1));
+    lprintf("raw vbat result = %x\n", v_bat=ADC_GetConversionValue(ADC1));
+    v_bat = 250 * v_bat / v_ref;
+    v_bat = v_bat * (330 + 680) / 330;
+    lprintf("real vbat = %d\n", v_bat);
+    slprintf(lcd_print_buf, "real vbat = %d\n", v_bat);
+    Show_Str(30, 90,0,0xff,lcd_print_buf,24,1);
 }

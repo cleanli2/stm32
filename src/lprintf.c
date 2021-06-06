@@ -192,3 +192,12 @@ void lprintf(const char *fmt, ...)
     putchars(fmt);
 #endif
 }
+
+void slprintf(char*buf, const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap,fmt);
+    vslprintf(buf,fmt,ap);
+    va_end(ap);
+}
