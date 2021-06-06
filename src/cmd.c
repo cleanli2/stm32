@@ -554,6 +554,14 @@ void gpiotest(char *p)
     return;
 
 }
+void rtc_read(char *p)
+{
+    con_send('\n');
+    rtc_test();
+
+    return;
+
+}
 static const struct command cmd_list[]=
 {
     //{"dwb",dispwb},
@@ -572,6 +580,7 @@ static const struct command cmd_list[]=
     {"pm",print_mem},
     {"poff",poweroff},
     {"r",read_mem},
+    {"rtc",rtc_read},
     {"sd",sd},
     {"sdcmds",sd_cmds},
     //{"szk",show_ziku},
