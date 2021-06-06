@@ -249,24 +249,54 @@ error:
 }
 #endif
 
+void buzztest(char *p)
+{
+    uint para = 0, tmp;
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+    GPIO_InitTypeDef GPIO_InitStructure;
+    /* Configure PD0 and PD2 in output pushpull mode */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    GPIO_ResetBits(GPIOB,GPIO_Pin_5);	
+  //led end
+
+    while(!con_is_recved()){
+	    /* Set*/
+	    GPIO_ResetBits(GPIOB,GPIO_Pin_5);	
+	    delay_ms(1);
+	    /* ReSet PC13 */
+	    GPIO_SetBits(GPIOB,GPIO_Pin_5);	
+	    delay_ms(1);
+    }
+    con_send('\n');
+
+    return;
+
+error:
+    lprint("Err!\ndispcchar [x] [y]\n");
+}
 void ledtest(char *p)
 {
     uint para = 0, tmp;
 
     tmp = get_howmany_para(p);
-    if( tmp < 1){
-	    para = (GPIOC->ODR & 0x00002000);
+    if( tmp >= 1){
+	    p = str_to_hex(p, &para);
     }
-    p = str_to_hex(p, &para);
     if(para){
-	    /* Set PC13 */
-	    GPIOC->BSRR = 0x00002000;
-	    lprintf("\n\rSet PC13\n\r");
+	    /* Set*/
+	    GPIO_ResetBits(GPIOA,GPIO_Pin_12);	
+	    GPIO_ResetBits(GPIOA,GPIO_Pin_2);	
+	    lprintf("\n\rSet\n\r");
     }
     else{
 	    /* ReSet PC13 */
-	    GPIOC->BRR  = 0x00002000;
-	    lprintf("\n\rClr PC13\n\r");
+	    GPIO_SetBits(GPIOA,GPIO_Pin_12);	
+	    GPIO_SetBits(GPIOA,GPIO_Pin_2);	
+	    lprintf("\n\rClr\n\r");
     }
     con_send('\n');
 
@@ -481,6 +511,15 @@ void lcdsuebstep(char *p)
 error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
+void poweroff(char *p)
+{
+    lprintf("Power OFF!\n");
+    GPIO_SetBits(GPIOB,GPIO_Pin_0);	
+    con_send('\n');
+
+    return;
+
+}
 void gpiotest(char *p)
 {
     con_send('\n');
@@ -492,6 +531,7 @@ void gpiotest(char *p)
 static const struct command cmd_list[]=
 {
     //{"dwb",dispwb},
+    {"bz",buzztest},
     {"go",go},
     {"gpiotest",gpiotest},
     {"help",print_help},
@@ -502,6 +542,7 @@ static const struct command cmd_list[]=
     {"lstep",lcdsuebstep},
     {"lstest",lcdsuebtest},
     {"pm",print_mem},
+    {"poff",poweroff},
     {"r",read_mem},
     {"sd",sd},
     {"sdcmds",sd_cmds},
