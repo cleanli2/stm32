@@ -61,8 +61,9 @@ void adc_test()
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     lprintf("raw ref result = %x\n", v_ref=ADC_GetConversionValue(ADC1));
     v_core = 250 * 4096 / v_ref;
-    lprintf("real vcore = %d\n", v_core);
-    slprintf(lcd_print_buf, "real vcore = %d\n", v_core);
+    lprintf("real vcore = %d0mv\n", v_core);
+    memset(lcd_print_buf, 0, 32);
+    slprintf(lcd_print_buf, "real vcore = %d0mv\n", v_core);
     Show_Str(30, 30,0,0xff,lcd_print_buf,24,1);
 
     lprintf("start adc1 PA4 convertion\n");
@@ -76,7 +77,8 @@ void adc_test()
     lprintf("raw vbat result = %x\n", v_bat=ADC_GetConversionValue(ADC1));
     v_bat = 250 * v_bat / v_ref;
     v_bat = v_bat * (330 + 680) / 330;
-    lprintf("real vbat = %d\n", v_bat);
-    slprintf(lcd_print_buf, "real vbat = %d\n", v_bat);
+    lprintf("real vbat = %d0mv\n", v_bat);
+    memset(lcd_print_buf, 0, 32);
+    slprintf(lcd_print_buf, "real vbat = %d0mv\n", v_bat);
     Show_Str(30, 90,0,0xff,lcd_print_buf,24,1);
 }

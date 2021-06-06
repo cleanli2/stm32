@@ -253,6 +253,10 @@ int main(void)
   }
   LCD_Clear(WHITE);
   run_cmd_interface();
+  while(1){
+      delay_ms(1000);
+      adc_test();
+  }
 }
 
 #ifdef  USE_FULL_ASSERT
