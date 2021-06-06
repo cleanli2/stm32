@@ -8,6 +8,7 @@
 
 static char cmd_buf[COM_MAX_LEN] = "";
 static uint cmd_buf_p = COM_MAX_LEN;
+static uint quit_cmd = 0;
 
 uint get_howmany_para(char *s);
 char * str_to_hex(char *s, uint * result);
@@ -528,6 +529,14 @@ void adc(char *p)
     return;
 
 }
+void cmd_exit(char *p)
+{
+    con_send('Quit CMD!\n');
+    quit_cmd = 1;
+
+    return;
+
+}
 void gpiotest(char *p)
 {
     con_send('\n');
@@ -541,6 +550,7 @@ static const struct command cmd_list[]=
     //{"dwb",dispwb},
     {"adc",adc},
     {"bz",buzztest},
+    {"exit",cmd_exit},
     {"go",go},
     {"gpiotest",gpiotest},
     {"help",print_help},
@@ -752,7 +762,7 @@ void run_cmd_interface()
 	cmd_buf_p = 0;
 	lprint("\nCleanCMD>");
 	
-	while(1){
+	while(!quit_cmd){
 		c = con_recv();
 		if(c == ENTER_CHAR || c == 0x1b || c== 0x03){
 			if(c == ENTER_CHAR)
