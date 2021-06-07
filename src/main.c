@@ -182,6 +182,29 @@ int __io_char_received()
 {
   return (USART_GetFlagStatus(BOARD_COM1, USART_FLAG_RXNE) == SET);
 }
+
+void beep(uint32_t hz, uint32_t t_ms)
+{
+    uint32_t pd, ct;
+    if(pd > 1000000)return;
+
+    pd = 1000000/hz/2;
+    ct = hz*t_ms/1000;
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    GPIO_ResetBits(GPIOB,GPIO_Pin_5);	
+    while(ct--){
+	    GPIO_ResetBits(GPIOB,GPIO_Pin_5);	
+	    delay_us(pd);
+	    GPIO_SetBits(GPIOB,GPIO_Pin_5);	
+	    delay_us(pd);
+    }
+}
 /**
   * @brief  Main program.
   * @param  None
@@ -268,6 +291,9 @@ int main(void)
       delay_ms(1);
       if(get_TP_point(&tx, &ty)){
           TP_Draw_Big_Point(tx,ty,BLACK);		//画图	  			   
+          if(tx < 100 && ty < 100){
+              beep(1000, 2000);
+          }
       }
   }
 }
