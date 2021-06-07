@@ -295,6 +295,9 @@ int main(void)
               beep(1000, 2000);
           }
       }
+      if(con_is_recved() && (con_recv() == 'c')){
+          run_cmd_interface();
+      }
   }
 }
 

@@ -617,7 +617,7 @@ u8 TP_Init(void)
 {			    		   
 	static int tp_inited = 0;
 	if(tp_inited){
-		lprintf("Touch inited already\n");
+		//lprintf("Touch inited already\n");
 		return 1;
 	}
 	//注意,时钟使能之后,对GPIO的操作才有效
