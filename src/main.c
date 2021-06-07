@@ -219,7 +219,7 @@ int main(void)
        system_stm32f10x.c file
      */     
   int looptimes = 3;
-  int ict;
+  uint32_t ict;
   RCC_ClocksTypeDef RCC_ClocksStatus;
   delay_init();
 #if 0
@@ -282,6 +282,7 @@ int main(void)
   }
   LCD_Clear(WHITE);
   run_cmd_interface();
+  ict=0;
   while(1){
       int tx = 0, ty=0;
       if(ict++>1000){
