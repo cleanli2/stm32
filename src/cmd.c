@@ -762,7 +762,7 @@ uint time_limit_recv_byte(uint limit, char * c);
 void run_cmd_interface()
 {
 	char c;
-	int timeout = 6;
+	int timeout = 3;
 	
 	mrw_addr = (uint32_t*)0x20000000;
 	lprintf("Version %s%s\n", VERSION, GIT_SHA1);

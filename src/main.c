@@ -196,6 +196,7 @@ int main(void)
        system_stm32f10x.c file
      */     
   int looptimes = 3;
+  int ict;
   RCC_ClocksTypeDef RCC_ClocksStatus;
   delay_init();
 #if 0
@@ -259,8 +260,15 @@ int main(void)
   LCD_Clear(WHITE);
   run_cmd_interface();
   while(1){
-      delay_ms(1000);
-      adc_test();
+      int tx = 0, ty=0;
+      if(ict++>1000){
+          adc_test();
+          ict = 0;
+      }
+      delay_ms(1);
+      if(get_TP_point(&tx, &ty)){
+          TP_Draw_Big_Point(tx,ty,BLACK);		//画图	  			   
+      }
   }
 }
 

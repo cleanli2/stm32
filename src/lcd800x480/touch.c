@@ -658,4 +658,15 @@ u8 TP_Init(void)
 	return 1; 									 
 }
 
-
+u8 get_TP_point(uint16_t * x, uint16_t * y)
+{
+	TP_Init();
+    tp_dev.scan(0); 		 
+    if(tp_dev.sta&TP_PRES_DOWN)			//´¥ÃþÆÁ±»°´ÏÂ
+    {	
+        *x = tp_dev.x;
+        *y = tp_dev.y;
+        return 1;
+    }
+    return 0;
+}
