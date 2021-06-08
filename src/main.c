@@ -204,6 +204,8 @@ void beep(uint32_t hz, uint32_t t_ms)
 	    GPIO_SetBits(GPIOB,GPIO_Pin_5);	
 	    delay_us(pd);
     }
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 
 void mytimer(uint32_t w_seconds)
@@ -329,18 +331,22 @@ int main(void)
   ict=0;
   lcd_clr_window(0xf00f, 0, 0, 100, 100);
   lcd_clr_window(0xff0f, 0, 100, 100, 200);
+  {
+      uint8_t rtc_alrt;
+      char*date = get_rtc_time();
+      Show_Str(90, 700,0,0xffff,date,24,0);
+      rtc_alrt = rtc_read_reg(1);
+      if(rtc_alrt == 0x1A){
+          rtc_write_reg(1,0x12);
+          my_repeat_timer(3, 300);
+      }
+  }
   while(1){
       int tx = 0, ty=0;
       if(ict++>1000){
-          uint32_t dt[6] = {0,1,2,3,4,5};
-          uint8_t lpb[32];
-#if 0
-          rtc_read(dt);
-#endif
-          memset(lpb, 0, 32);
-          slprintf(lpb, "date : %x %x %x %x %x %x",
-                  dt[0], dt[1], dt[2], dt[3], dt[4], dt[5]);
-          Show_Str(90, 700,0,0xffff,lpb,24,0);
+          char*date = get_rtc_time();
+          
+          Show_Str(90, 700,0,0xffff,date,24,0);
           adc_test();
           ict = 0;
       }

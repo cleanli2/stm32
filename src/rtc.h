@@ -13,7 +13,10 @@
 #define SCL_LOW GPIO_WriteBit(SCL_GG, SCL_PIN, 0)
 #define GET_SDA GPIO_ReadInputDataBit(SDA_GG, SDA_PIN)
 
-void rtc_read(uint32_t*);
-void rtc_write(uint32_t*);
+void rtc_read(uint8_t*);
+void rtc_write(uint8_t*);
+char* get_rtc_time();
+uint8_t rtc_read_reg(uint8_t addr);
+void rtc_write_reg(uint8_t addr, uint8_t data);
 
 #endif

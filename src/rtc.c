@@ -6,6 +6,7 @@
 uchar g8563_Store[6]; /*时间交换区,全局变量声明*/
 uchar c8563_Store[6]={0x13,0x09,0x22,0x10,0x40,0x00}; /*写入时间初值：星期一 07:59:00*/
 
+void SDA_set_input(uint8_t en);
 /********************************************
   内部函数，延时1
  ********************************************/
@@ -162,17 +163,18 @@ void ReadData1(uchar address,uchar count,uchar * buff) /*多字节*/
 /********************************************
   内部函数,读入时间到内部缓冲区
  ********************************************/
-void P8563_Read(uint32_t*ip)
+void P8563_Read(uint8_t*ip)
 {   
     uchar time[7];
-    uchar ict=6;
+    uchar ict=7;
     ReadData1(0x02,0x07,time);
     ip[0]=time[0]&0x7f; /*秒 */
     ip[1]=time[1]&0x7f; /*分 */
     ip[2]=time[2]&0x3f; /*小时 */
     ip[3]=time[3]&0x3f; /*日 */
-    ip[4]=time[5]&0x1f; /*月 */
-    ip[5]=time[6]; /*年  */
+    ip[4]=time[4]&0x07; /*week */
+    ip[5]=time[5]&0x9f; /*月 */
+    ip[6]=time[6]; /*年  */
 
     while(ict--){
         lprintf("ip[%d]=%x\n", ict, ip[ict]);
@@ -181,16 +183,16 @@ void P8563_Read(uint32_t*ip)
 /********************************************
   读入时间到内部缓冲区----外部调用 
  ********************************************/
-void P8563_gettime()
+void P8563_gettime(uint8_t*ip)
 {
-    P8563_Read(g8563_Store);
-    if(g8563_Store[0]==0)
-        P8563_Read(g8563_Store); /*如果为秒=0，为防止时间变化，再读一次*/
+    P8563_Read(ip);
+    if(ip[0]==0)
+        P8563_Read(ip); /*如果为秒=0，为防止时间变化，再读一次*/
 }	
 /********************************************
   写时间修改值
  ********************************************/
-void P8563_settime(uint32_t*ip)
+void P8563_settime(uint8_t*ip)
 {
     //uchar i;
     writeData(8,ip[0]); //年 
@@ -200,10 +202,10 @@ void P8563_settime(uint32_t*ip)
     writeData(3,ip[4]); //分  
     writeData(2,ip[5]); //秒 
     delay_ms(1000);
-    P8563_gettime();
+    //P8563_gettime(g8563_Store);
 }
 
-void SDA_set_input(uint32_t en)
+void SDA_set_input(uint8_t en)
 {
     GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
 
@@ -225,7 +227,7 @@ void SDA_set_input(uint32_t en)
  ********************************************/
 void P8563_init()
 {
-    uchar i;
+    //uchar i;
 
 
     GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
@@ -256,13 +258,45 @@ void P8563_init()
     //      writeData(0xd,0xf0);  //编程输出32.768K的频率
     //  }
 }
-void rtc_write(uint32_t*ip)
+void rtc_write(uint8_t*ip)
 {
     P8563_init();
     P8563_settime(ip);
 }
-void rtc_read(uint32_t*ip)
+void rtc_read(uint8_t*ip)
 {
     P8563_init();
     P8563_gettime(ip);
+}
+static char t_d[24];
+char* get_rtc_time()
+{
+    uint8_t time_date[7];
+    rtc_read(time_date);
+    memset(t_d, 0, 24);
+    if(time_date[5] & 0x80){
+        t_d[0] = '1';
+        t_d[1] = '9';
+    }
+    else{
+        t_d[0] = '2';
+        t_d[1] = '0';
+    }
+    slprintf(&t_d[2], "%b.%b.%b W%x %b:%b:%b",
+            time_date[6], time_date[5]&0x1f, time_date[3],
+            time_date[4], time_date[2],
+            time_date[1], time_date[0]);
+    lprintf("%s\n", t_d);
+    return t_d;
+}
+uint8_t rtc_read_reg(uint8_t addr)
+{
+    uint8_t ret;
+    ReadData1(addr,1,&ret);
+    return ret;
+}
+
+void rtc_write_reg(uint8_t addr, uint8_t data)
+{
+    writeData(addr,data);
 }

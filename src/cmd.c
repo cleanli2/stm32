@@ -556,14 +556,10 @@ void gpiotest(char *p)
 }
 void rtc_cmd(char *p)
 {
-    uint32_t d[6], tmp, *ip=0;
+    uint8_t d[6], tmp, *ip=0;
 
     tmp = get_howmany_para(p);
     lprintf("tmp=%d\n", tmp);
-    if(tmp>1 && tmp != 6){
-        lprintf("error \n");
-        return;
-    }
     if(tmp==6){
         p = str_to_hex(p, &d[0]);
         p = str_to_hex(p, &d[1]);
@@ -573,8 +569,21 @@ void rtc_cmd(char *p)
         p = str_to_hex(p, &d[5]);
         rtc_write(d);
     }
-    else{
+    else if(tmp==0){
         rtc_read(d);
+    }
+    else if(tmp==1){
+        p = str_to_hex(p, &d[0]);
+        lprintf("read reg %b=%b\n", d[0], rtc_read_reg(d[0]));
+    }
+    else if(tmp==2){
+        p = str_to_hex(p, &d[0]);
+        p = str_to_hex(p, &d[1]);
+        lprintf("write reg %b->%b\n", d[0], d[1]);
+        rtc_write_reg(d[0], d[1]);
+    }
+    else{
+        lprintf("error \n");
     }
     con_send('\n');
 
@@ -821,4 +830,5 @@ void run_cmd_interface()
 			}
 		}
 	}
+    quit_cmd = 1;
 }
