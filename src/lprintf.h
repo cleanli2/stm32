@@ -8,5 +8,6 @@ int __io_char_received();
 
 void lprintf(const char *fmt, ...);
 void slprintf(char*buf, const char *fmt, ...);
+void lcd_lprintf(uint32_t x, uint32_t y, const char *fmt, ...);
 
 #endif

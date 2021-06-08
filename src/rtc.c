@@ -162,20 +162,20 @@ void ReadData1(uchar address,uchar count,uchar * buff) /*多字节*/
 /********************************************
   内部函数,读入时间到内部缓冲区
  ********************************************/
-void P8563_Read()
+void P8563_Read(uint32_t*ip)
 {   
     uchar time[7];
     uchar ict=6;
     ReadData1(0x02,0x07,time);
-    g8563_Store[0]=time[0]&0x7f; /*秒 */
-    g8563_Store[1]=time[1]&0x7f; /*分 */
-    g8563_Store[2]=time[2]&0x3f; /*小时 */
-    g8563_Store[3]=time[3]&0x3f; /*日 */
-    g8563_Store[4]=time[5]&0x1f; /*月 */
-    g8563_Store[5]=time[6]; /*年  */
+    ip[0]=time[0]&0x7f; /*秒 */
+    ip[1]=time[1]&0x7f; /*分 */
+    ip[2]=time[2]&0x3f; /*小时 */
+    ip[3]=time[3]&0x3f; /*日 */
+    ip[4]=time[5]&0x1f; /*月 */
+    ip[5]=time[6]; /*年  */
 
     while(ict--){
-        lprintf("g8563_Store[%d]=%x\n", ict, g8563_Store[ict]);
+        lprintf("ip[%d]=%x\n", ict, ip[ict]);
     }
 }
 /********************************************
@@ -183,22 +183,24 @@ void P8563_Read()
  ********************************************/
 void P8563_gettime()
 {
-    P8563_Read();
+    P8563_Read(g8563_Store);
     if(g8563_Store[0]==0)
-        P8563_Read(); /*如果为秒=0，为防止时间变化，再读一次*/
+        P8563_Read(g8563_Store); /*如果为秒=0，为防止时间变化，再读一次*/
 }	
 /********************************************
   写时间修改值
  ********************************************/
-void P8563_settime()
+void P8563_settime(uint32_t*ip)
 {
     //uchar i;
-    writeData(8,g8563_Store[0]); //年 
-    writeData(7,g8563_Store[1]); //月 
-    writeData(5,g8563_Store[2]); //日 
-    writeData(4,g8563_Store[3]); //时 
-    writeData(3,g8563_Store[4]); //分  
-    writeData(2,g8563_Store[5]); //秒 
+    writeData(8,ip[0]); //年 
+    writeData(7,ip[1]); //月 
+    writeData(5,ip[2]); //日 
+    writeData(4,ip[3]); //时 
+    writeData(3,ip[4]); //分  
+    writeData(2,ip[5]); //秒 
+    delay_ms(1000);
+    P8563_gettime();
 }
 
 void SDA_set_input(uint32_t en)
@@ -254,8 +256,13 @@ void P8563_init()
     //      writeData(0xd,0xf0);  //编程输出32.768K的频率
     //  }
 }
-void rtc_test()
+void rtc_write(uint32_t*ip)
 {
     P8563_init();
-    P8563_gettime();
+    P8563_settime(ip);
+}
+void rtc_read(uint32_t*ip)
+{
+    P8563_init();
+    P8563_gettime(ip);
 }

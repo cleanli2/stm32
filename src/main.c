@@ -186,7 +186,7 @@ int __io_char_received()
 void beep(uint32_t hz, uint32_t t_ms)
 {
     uint32_t pd, ct;
-    if(pd > 1000000)return;
+    if(hz > 1000000)return;
 
     pd = 1000000/hz/2;
     ct = hz*t_ms/1000;
@@ -204,6 +204,50 @@ void beep(uint32_t hz, uint32_t t_ms)
 	    GPIO_SetBits(GPIOB,GPIO_Pin_5);	
 	    delay_us(pd);
     }
+}
+
+void mytimer(uint32_t w_seconds)
+{
+    uint32_t seconds = w_seconds;
+    uint32_t t;
+    lcd_clr_window(0, 120, 10, 400, 30);
+    while(seconds){
+        delay_ms(1000);
+        seconds--;
+        t = (400-120)*(w_seconds-seconds)/w_seconds;
+        if(t>0) lcd_clr_window(0xff, 120, 10, t+120, 30);
+        lcd_lprintf(430, 10, "%d", seconds);
+    }
+    lprintf("beep\n");
+    beep(1000, 3000);
+}
+
+void power_off()
+{
+    Show_Str(20, 630,0xff00,0xffff,"Power off in 3 seconds",24,0);
+    beep(1000, 500);
+    delay_ms(1000);
+    beep(1000, 500);
+    delay_ms(1000);
+    beep(1000, 500);
+    delay_ms(1000);
+    GPIO_SetBits(GPIOB,GPIO_Pin_0);	
+}
+
+void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
+{
+    uint32_t repts = w_repts;
+    uint32_t t;
+    lcd_clr_window(0, 120, 50, 400, 70);
+    beep(1000, 3000);
+    while(repts){
+        mytimer(seconds);
+        repts--;
+        t = (400-120)*(w_repts-repts)/w_repts;
+        if(t>0)lcd_clr_window(0xff, 120, 50, t+120, 70);
+        lcd_lprintf(430, 50, "%d", repts);
+    }
+    power_off();
 }
 /**
   * @brief  Main program.
@@ -283,17 +327,33 @@ int main(void)
   LCD_Clear(WHITE);
   run_cmd_interface();
   ict=0;
+  lcd_clr_window(0xf00f, 0, 0, 100, 100);
+  lcd_clr_window(0xff0f, 0, 100, 100, 200);
   while(1){
       int tx = 0, ty=0;
       if(ict++>1000){
+          uint32_t dt[6] = {0,1,2,3,4,5};
+          uint8_t lpb[32];
+#if 0
+          rtc_read(dt);
+#endif
+          memset(lpb, 0, 32);
+          slprintf(lpb, "date : %x %x %x %x %x %x",
+                  dt[0], dt[1], dt[2], dt[3], dt[4], dt[5]);
+          Show_Str(90, 700,0,0xffff,lpb,24,0);
           adc_test();
           ict = 0;
       }
       delay_ms(1);
       if(get_TP_point(&tx, &ty)){
           TP_Draw_Big_Point(tx,ty,BLACK);		//画图	  			   
+          if(tx < 100 && ty < 200 && ty > 100){
+              my_repeat_timer(3, 10);
+              //beep(1000, 2000);
+          }
           if(tx < 100 && ty < 100){
-              beep(1000, 2000);
+              my_repeat_timer(3, 300);
+              //beep(1000, 2000);
           }
       }
       if(con_is_recved() && (con_recv() == 'c')){

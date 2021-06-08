@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <string.h>
+#include "common.h"
 
 char lprintf_buf[256];
 char halfbyte2char(char c)
@@ -200,4 +201,14 @@ void slprintf(char*buf, const char *fmt, ...)
     va_start(ap,fmt);
     vslprintf(buf,fmt,ap);
     va_end(ap);
+}
+void lcd_lprintf(uint32_t x, uint32_t y, const char *fmt, ...)
+{
+    va_list ap;
+    uint8_t lpb[32];
+    memset(lpb, 0, 32);
+    va_start(ap,fmt);
+    vslprintf(lpb,fmt,ap);
+    va_end(ap);
+    Show_Str(x, y,0,0xffff,lpb,24,0);
 }

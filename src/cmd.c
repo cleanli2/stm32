@@ -554,10 +554,29 @@ void gpiotest(char *p)
     return;
 
 }
-void rtc_read(char *p)
+void rtc_cmd(char *p)
 {
+    uint32_t d[6], tmp, *ip=0;
+
+    tmp = get_howmany_para(p);
+    lprintf("tmp=%d\n", tmp);
+    if(tmp>1 && tmp != 6){
+        lprintf("error \n");
+        return;
+    }
+    if(tmp==6){
+        p = str_to_hex(p, &d[0]);
+        p = str_to_hex(p, &d[1]);
+        p = str_to_hex(p, &d[2]);
+        p = str_to_hex(p, &d[3]);
+        p = str_to_hex(p, &d[4]);
+        p = str_to_hex(p, &d[5]);
+        rtc_write(d);
+    }
+    else{
+        rtc_read(d);
+    }
     con_send('\n');
-    rtc_test();
 
     return;
 
@@ -580,7 +599,7 @@ static const struct command cmd_list[]=
     {"pm",print_mem},
     {"poff",poweroff},
     {"r",read_mem},
-    {"rtc",rtc_read},
+    {"rtc",rtc_cmd},
     {"sd",sd},
     {"sdcmds",sd_cmds},
     //{"szk",show_ziku},
