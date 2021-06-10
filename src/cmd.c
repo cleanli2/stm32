@@ -505,6 +505,11 @@ void lcdsuebstep(char *p)
 	    Test_Circle(); 		//GUI画圆测试
     }
     else if(cmdindex == 0x12){//
+        if (tmp<2)goto error;
+        p=str_to_hex(p, &para1);
+        para1&=0xffff;
+        lprintf("para1 %x\n", para1);
+        set_BL_value(para1);
     }
     else if(cmdindex == 0x13){//
     }

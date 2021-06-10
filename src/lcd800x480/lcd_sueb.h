@@ -184,6 +184,7 @@ u16 Lcd_ReadData_16Bit(void);
 void LCD_direction(u8 direction );
 u16 Color_To_565(u8 r, u8 g, u8 b);
 u16 LCD_Read_ID(void);
+void set_BL_value(uint16_t v);
 
 //如果仍然觉得速度不够快，可以使用下面的宏定义,提高速度.
 //注意要去掉lcd.c中void LCD_WR_DATA(u16 data)函数定义哦
