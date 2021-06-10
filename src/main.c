@@ -331,6 +331,7 @@ int main(void)
   ict=0;
   lcd_clr_window(0xf00f, 0, 0, 100, 100);
   lcd_clr_window(0xff0f, 0, 100, 100, 200);
+  lcd_clr_window(0, 120, 760, 400, 780);
   {
       uint8_t rtc_alrt;
       char*date = get_rtc_time();
@@ -360,6 +361,13 @@ int main(void)
           if(tx < 100 && ty < 100){
               my_repeat_timer(3, 300);
               //beep(1000, 2000);
+          }
+          if(tx < 400 && tx > 120 && ty < 780 && ty > 760){
+              uint16_t lcd_brt;
+              lcd_clr_window(0, 120, 760, 400, 780);
+              lcd_clr_window(0xf0f, 120, 760, tx, 780);
+              lcd_brt = (tx - 120)*0x90/280*0x100;
+              set_BL_value(lcd_brt);
           }
       }
       if(con_is_recved() && (con_recv() == 'c')){
