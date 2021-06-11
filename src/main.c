@@ -376,6 +376,12 @@ int main(void)
   }
 }
 
+void soft_reset_system()
+{
+    __disable_fault_irq();
+    NVIC_SystemReset();
+}
+
 #ifdef  USE_FULL_ASSERT
 
 /**

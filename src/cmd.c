@@ -551,6 +551,13 @@ void cmd_exit(char *p)
     return;
 
 }
+void reboot(char *p)
+{
+    soft_reset_system();
+
+    return;
+
+}
 void gpiotest(char *p)
 {
     con_send('\n');
@@ -613,6 +620,7 @@ static const struct command cmd_list[]=
     {"pm",print_mem},
     {"poff",poweroff},
     {"r",read_mem},
+    {"reboot",reboot},
     {"rtc",rtc_cmd},
     {"sd",sd},
     {"sdcmds",sd_cmds},
