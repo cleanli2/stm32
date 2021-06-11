@@ -1,5 +1,5 @@
 TARGET = stm32lcd
-GIT_SHA1="$(shell git log --format='_%h ' -1)"
+GIT_SHA1="$(shell git log --format='_%h' -1)"
 DIRTY="$(shell git diff --quiet || echo 'dirty')"
 CLEAN="$(shell git diff --quiet && echo 'clean')"
 
@@ -30,6 +30,8 @@ all:$(C_OBJ)
 	$(CC) $(C_OBJ) -T stm32_f103ze_gcc.ld -o $(TARGET).elf $(LDFLAGS)
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).bin -Obinary 
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).hex -Oihex
+	rm $(TARGET)_*.hex
+	cp $(TARGET).hex $(TARGET)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 
 $(C_OBJ):%.o:%.c
 	$(CC) -c $(CFLAGS) -o $@ $<
