@@ -64,7 +64,7 @@ void adc_test()
     lprintf("real vcore = %d0mv\n", v_core);
     memset(lcd_print_buf, 0, 32);
     slprintf(lcd_print_buf, "real vcore = %d0mv", v_core);
-    Show_Str(90, 230,0,0xffff,lcd_print_buf,24,0);
+    Show_Str(190, 230,0,0xffff,lcd_print_buf,24,0);
 
     lprintf("start adc1 PA4 convertion\n");
     ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 1, ADC_SampleTime_28Cycles5);
@@ -80,6 +80,6 @@ void adc_test()
     lprintf("real vbat = %d0mv\n", v_bat);
     memset(lcd_print_buf, 0, 32);
     slprintf(lcd_print_buf, "real vbat = %d0mv", v_bat);
-    Show_Str(90, 390,0,0xffff,lcd_print_buf,24,0);
+    Show_Str(190, 390,0,0xffff,lcd_print_buf,24,0);
     led_flash(3, 50);
 }

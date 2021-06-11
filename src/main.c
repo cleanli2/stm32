@@ -331,11 +331,13 @@ int main(void)
   ict=0;
   lcd_clr_window(0xf00f, 0, 0, 100, 100);
   lcd_clr_window(0xff0f, 0, 100, 100, 200);
+  lcd_clr_window(0xff0f, 0, 200, 100, 300);
+  lcd_lprintf(5, 250, "PowerOff");
   lcd_clr_window(0, 120, 760, 400, 780);
   {
       uint8_t rtc_alrt;
       char*date = get_rtc_time();
-      Show_Str(90, 700,0,0xffff,date,24,0);
+      Show_Str(190, 700,0,0xffff,date,24,0);
       rtc_alrt = rtc_read_reg(1);
       if(rtc_alrt == 0x1A){
           rtc_write_reg(1,0x12);
@@ -347,13 +349,17 @@ int main(void)
       if(ict++>1000){
           char*date = get_rtc_time();
           
-          Show_Str(90, 700,0,0xffff,date,24,0);
+          Show_Str(190, 700,0,0xffff,date,24,0);
           adc_test();
           ict = 0;
       }
       delay_ms(1);
       if(get_TP_point(&tx, &ty)){
           TP_Draw_Big_Point(tx,ty,BLACK);		//画图	  			   
+          if(tx < 100 && ty < 300 && ty > 200){//poweroff
+              rtc_write_reg(1,0x12);
+              power_off();
+          }
           if(tx < 100 && ty < 200 && ty > 100){
               my_repeat_timer(3, 10);
               //beep(1000, 2000);
