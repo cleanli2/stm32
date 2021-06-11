@@ -269,7 +269,15 @@ void rtc_read(uint8_t*ip)
     P8563_gettime(ip);
 }
 static char t_d[24];
-char* get_rtc_time()
+uint8_t hex2bcd(uint8_t ipt)
+{
+    return (ipt/10)*0x10 + (ipt%10);
+}
+uint8_t bcd2hex(uint8_t ipt)
+{
+    return (ipt&0xf0)*10 + (ipt&0xf);
+}
+char* get_rtc_time(date_info_t*dit)
 {
     uint8_t time_date[7];
     rtc_read(time_date);
@@ -277,15 +285,32 @@ char* get_rtc_time()
     if(time_date[5] & 0x80){
         t_d[0] = '1';
         t_d[1] = '9';
+        if(dit!=0){
+            dit->year = 1900 + bcd2hex(time_date[6]);
+        }
     }
     else{
         t_d[0] = '2';
         t_d[1] = '0';
+        if(dit!=0){
+            dit->year = 2000 + bcd2hex(time_date[6]);
+        }
     }
     slprintf(&t_d[2], "%b.%b.%b W%x %b:%b:%b",
             time_date[6], time_date[5]&0x1f, time_date[3],
             time_date[4], time_date[2],
             time_date[1], time_date[0]);
+    if(dit!=0){
+        dit->month = bcd2hex(time_date[5]&0x1f);
+        dit->day = bcd2hex(time_date[3]);
+        dit->weekday = time_date[4];
+        dit->hour = bcd2hex(time_date[2]);
+        dit->minute = bcd2hex(time_date[1]);
+        dit->second = bcd2hex(time_date[0]);
+    }
+    lprintf("dit:%d.%d.%d %d:%d:%d week%d\n",
+            dit->year, dit->month, dit->day,
+            dit->hour, dit->minute, dit->second, dit->weekday);
     lprintf("%s\n", t_d);
     return t_d;
 }
@@ -299,4 +324,52 @@ uint8_t rtc_read_reg(uint8_t addr)
 void rtc_write_reg(uint8_t addr, uint8_t data)
 {
     writeData(addr,data);
+}
+
+uint32_t diff_with_inc_step(uint32_t f, uint32_t b, uint32_t inc_step)
+{
+    return (f>=b)?f-b:f+inc_step-b;
+}
+uint32_t add_with_back_limit(uint32_t * iptp, uint32_t diff, uint32_t limit)
+{
+    uint32_t ret = 0;
+    uint32_t t = *iptp + diff;
+    if(t>=limit){
+        ret = 1;
+    }
+    *iptp = ret?t-limit:t;
+    return ret;
+}
+uint32_t time_diff_minutes(date_info_t* dtp_f, date_info_t * dtp)
+{
+    uint32_t ret, h = dtp_f->hour;
+    ret = diff_with_inc_step(dtp_f->minute, dtp->minute, 60);
+    if(dtp_f->minute < dtp->minute){
+        h = diff_with_inc_step(h, 1, 24);
+    }
+    ret += diff_with_inc_step(h, dtp->hour, 24)*60;
+    return ret;
+}
+
+void add_time_diff_minutes(date_info_t*dtp, uint32_t tsms)
+{
+    dtp->hour += add_with_back_limit(&dtp->minute, tsms, 60);
+}
+void auto_time_alert_set(uint32_t time_step_minutes)
+{
+    date_info_t dt, dt_alt;
+    uint32_t h;
+
+    get_rtc_time(&dt);
+    dt_alt.hour = bcd2hex(rtc_read_reg(0x0a));
+    h = dt_alt.hour;
+    dt_alt.minute = bcd2hex(rtc_read_reg(0x09));
+    while(time_diff_minutes(&dt_alt, &dt)>time_step_minutes)
+    {
+        add_time_diff_minutes(&dt_alt, time_step_minutes);
+    }
+    if(h != dt_alt.hour){
+        rtc_write_reg(0x0a, hex2bcd(dt_alt.hour));
+    }
+    lcd_lprintf(190, 150, "Next auto power on: %d:%d", dt_alt.hour, dt_alt.minute);
 }

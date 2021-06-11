@@ -226,6 +226,7 @@ void mytimer(uint32_t w_seconds)
 
 void power_off()
 {
+    rtc_write_reg(1,0x12);//clear rtc int pin
     Show_Str(20, 630,0xff00,0xffff,"Power off in 3 seconds",24,0);
     beep(1000, 500);
     delay_ms(1000);
@@ -233,6 +234,7 @@ void power_off()
     delay_ms(1000);
     beep(1000, 500);
     delay_ms(1000);
+    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
     GPIO_SetBits(GPIOB,GPIO_Pin_0);	
 }
 
@@ -251,6 +253,7 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
     }
     power_off();
 }
+
 /**
   * @brief  Main program.
   * @param  None
@@ -334,30 +337,21 @@ int main(void)
   lcd_clr_window(0xff0f, 0, 200, 100, 300);
   lcd_lprintf(5, 250, "PowerOff");
   lcd_clr_window(0, 120, 760, 400, 780);
+  auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
   {
-#define ALERT_HOUR_INCREASE 6
       uint8_t rtc_alrt;
-      char*date = get_rtc_time();
+      char*date = get_rtc_time(0);
       Show_Str(190, 700,0,0xffff,date,24,0);
       rtc_alrt = rtc_read_reg(1);
       if(rtc_alrt == 0x1A){
-          uint8_t hour_alert, m_alt;
           rtc_write_reg(1,0x12);
-          hour_alert = rtc_read_reg(0x0a);
-          hour_alert =+ ALERT_HOUR_INCREASE;
-          if(hour_alert > 23){
-              hour_alert -= 24;
-          }
-          rtc_write_reg(0x0a, hour_alert);
-          m_alt = rtc_read_reg(0x09);
-          lcd_lprintf(190, 150, "Next auto power on: %d:%d", hour_alert, m_alt);
           my_repeat_timer(3, 300);
       }
   }
   while(1){
       int tx = 0, ty=0;
       if(ict++>1000){
-          char*date = get_rtc_time();
+          char*date = get_rtc_time(0);
           
           Show_Str(190, 700,0,0xffff,date,24,0);
           adc_test();
@@ -367,7 +361,6 @@ int main(void)
       if(get_TP_point(&tx, &ty)){
           TP_Draw_Big_Point(tx,ty,BLACK);		//画图	  			   
           if(tx < 100 && ty < 300 && ty > 200){//poweroff
-              rtc_write_reg(1,0x12);
               power_off();
           }
           if(tx < 100 && ty < 200 && ty > 100){
