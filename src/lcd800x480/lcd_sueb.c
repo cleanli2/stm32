@@ -979,9 +979,8 @@ void lcd_sueb_init(int testitem)
 	delay_ms(50);
 	LCD_WR_REG(0x2C00); 
   LCD_direction(USE_HORIZONTAL);//设置LCD显示方向
-	Enable_BL(1);//点亮背光	 
+    set_BL_value(25);//quater bright
 	LCD_Clear(WHITE);//清全屏白色
-    set_BL_value(0x7000);//quater bright
 }
  
 void pure_lcd_sueb_test()
