@@ -366,7 +366,7 @@ int main(void)
               uint16_t lcd_brt;
               lcd_clr_window(0, 120, 760, 400, 780);
               lcd_clr_window(0xf0f, 120, 760, tx, 780);
-              lcd_brt = (tx - 120)*0x90/280*0x100;
+              lcd_brt = (tx - 120)*100/280;
               set_BL_value(lcd_brt);
           }
       }
@@ -378,6 +378,7 @@ int main(void)
 
 void soft_reset_system()
 {
+    set_BL_value(0);
     __disable_fault_irq();
     NVIC_SystemReset();
 }

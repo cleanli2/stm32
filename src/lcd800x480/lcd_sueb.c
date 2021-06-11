@@ -576,16 +576,51 @@ void BL_PWM_init()
     TIM_Cmd(TIM1, ENABLE);  //Ê¹ÄÜTIM1
 }
 
-//0-0x9000
+void BL_PWM_deinit()
+{
+    GPIO_InitTypeDef GPIO_InitStructure;
+
+    TIM_Cmd(TIM1, DISABLE);
+
+    TIM_ARRPreloadConfig(TIM1, DISABLE);
+
+    TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Disable);
+
+    TIM_CtrlPWMOutputs(TIM1,DISABLE);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_ResetBits(GPIOA, GPIO_Pin_8);
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, DISABLE);
+}
+
+//0-100
 void set_BL_value(uint16_t v)
 {
     static int BL_PWM_inited = 0;
-    TIM_SetCompare1(TIM1,v);
-    if(!BL_PWM_inited){
-        BL_PWM_init();
-        BL_PWM_inited = 1;
+    uint16_t comp_v;
+    lprintf("v=%d\n", v);
+    if(v>100){
+        lprintf("err:BL v>100\n");
+        return;
     }
-    TIM_SetCompare1(TIM1,v);
+    if(v>0){
+        comp_v = 0x9000/100*(100-v);
+        lprintf("comp_v=%x\n", comp_v);
+        TIM_SetCompare1(TIM1,comp_v);
+        if(!BL_PWM_inited){
+            BL_PWM_init();
+            BL_PWM_inited = 1;
+        }
+        TIM_SetCompare1(TIM1,comp_v);
+    }
+    else{//v=0
+        BL_PWM_deinit();
+        BL_PWM_inited = 0;
+    }
 }
 
 /*****************************************************************************
