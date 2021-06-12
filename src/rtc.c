@@ -54,8 +54,9 @@ void WriteACK(uchar ack)
 /********************************************
   内部函数，等待ACK
  ********************************************/
-void WaitACK()
+uint8_t WaitACK()
 {  
+    uint8_t ret = 1;
     uchar errtime=20;
     SDA_HIGH;
     Delay(); /*读ACK*/
@@ -67,19 +68,20 @@ void WaitACK()
         errtime--;
         if(!errtime){
             lprintf("wait ack timeout\n");
-            Stop();
+            ret = 0;
             break;
         }
     }
     SCL_LOW;
     Delay();
     SDA_set_input(0);
+    return ret;
 }
 /********************************************
   内部函数.输出数据字节
   入口:B=数据
  ********************************************/
-void writebyte(uchar wdata)
+uint8_t writebyte(uchar wdata)
 {
     uchar i;
     //lprintf("i2c write=%x\n", wdata);
@@ -94,7 +96,7 @@ void writebyte(uchar wdata)
         Delay();
         SCL_LOW;
     }
-    WaitACK();     //I2C器件或通讯出错，将会退出I2C通讯
+    return WaitACK();     //I2C器件或通讯出错，将会退出I2C通讯
 }
 /********************************************
   内部函数.输入数据
@@ -120,13 +122,21 @@ uchar Readbyte()
 /********************************************
   输出数据->pcf8563
  ********************************************/
-void writeData(uchar address,uchar mdata)
+uint8_t writeData(uchar address,uchar mdata)
 {
+    uint8_t ret;
     Start();
-    writebyte(0xa2); /*写命令*/
-    writebyte(address); /*写地址*/
-    writebyte(mdata); /*写数据*/
+    ret=writebyte(0xa2); /*写命令*/
+    if(ret==0)goto err;
+    ret=writebyte(address); /*写地址*/
+    if(ret==0)goto err;
+    ret=writebyte(mdata); /*写数据*/
     Stop();
+    return ret;
+err:
+    Stop();
+    lprintf("writeData addr %b data %b error\n", address, mdata);
+    return ret;
 }
 /********************************************
   输入数据<-pcf8563
@@ -144,14 +154,18 @@ void writeData(uchar address,uchar mdata)
   Stop();
   return(rdata);
   }	*/
-void ReadData1(uchar address,uchar count,uchar * buff) /*多字节*/
+uint8_t ReadData1(uchar address,uchar count,uchar * buff) /*多字节*/
 {  
+    uint8_t ret;
     uchar i;
     Start();
-    writebyte(0xa2); /*写命令*/
-    writebyte(address); /*写地址*/
+    ret=writebyte(0xa2); /*写命令*/
+    if(ret==0)goto err;
+    ret=writebyte(address); /*写地址*/
+    if(ret==0)goto err;
     Start();
-    writebyte(0xa3); /*读命令*/
+    ret=writebyte(0xa3); /*读命令*/
+    if(ret==0)goto err;
     for(i=0;i<count;i++)
     {
         buff[i]=Readbyte();
@@ -159,16 +173,26 @@ void ReadData1(uchar address,uchar count,uchar * buff) /*多字节*/
             WriteACK(0);
     }
     WriteACK(1);
+err:
     Stop();
+    return ret;
 }  
 /********************************************
   内部函数,读入时间到内部缓冲区
  ********************************************/
-void P8563_Read(uint8_t*ip)
+uint8_t P8563_Read(uint8_t*ip)
 {   
+    uint8_t ret = 0, maxtry = 3;
     uchar time[7];
-    uchar ict=7;
-    ReadData1(0x02,0x07,time);
+    //uchar ict=7;
+    while(maxtry--){
+        ret = ReadData1(0x02,0x07,time);
+        if(ret)break;
+    }
+    if(!ret){
+        lprintf("RTC read error\n");
+        return ret;
+    }
     ip[0]=time[0]&0x7f; /*秒 */
     ip[1]=time[1]&0x7f; /*分 */
     ip[2]=time[2]&0x3f; /*小时 */
@@ -182,6 +206,7 @@ void P8563_Read(uint8_t*ip)
         lprintf("ip[%d]=%x\n", ict, ip[ict]);
     }
 #endif
+    return ret;
 }
 /********************************************
   读入时间到内部缓冲区----外部调用 
