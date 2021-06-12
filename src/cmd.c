@@ -529,7 +529,7 @@ error:
 void poweroff(char *p)
 {
     lprintf("Power OFF!\n");
-    GPIO_SetBits(GPIOB,GPIO_Pin_0);	
+    power_off();
     con_send('\n');
 
     return;
@@ -582,7 +582,7 @@ void rtc_cmd(char *p)
         rtc_write(d);
     }
     else if(tmp==0){
-        rtc_read(d);
+        lprintf("%s\n", get_rtc_time(0));
     }
     else if(tmp==1){
         p = str_to_hex(p, &d[0]);

@@ -226,7 +226,7 @@ void mytimer(uint32_t w_seconds)
 
 void power_off()
 {
-    rtc_write_reg(1,0x12);//clear rtc int pin
+    check_rtc_alert_and_clear();
     Show_Str(20, 630,0xff00,0xffff,"Power off in 3 seconds",24,0);
     beep(1000, 500);
     delay_ms(1000);
@@ -341,9 +341,7 @@ int main(void)
       uint8_t rtc_alrt;
       char*date = get_rtc_time(0);
       Show_Str(190, 700,0,0xffff,date,24,0);
-      rtc_alrt = rtc_read_reg(1);
-      if(rtc_alrt == 0x1A){
-          rtc_write_reg(1,0x12);
+      if(check_rtc_alert_and_clear()){
           my_repeat_timer(3, 300);
       }
   }

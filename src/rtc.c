@@ -82,7 +82,7 @@ void WaitACK()
 void writebyte(uchar wdata)
 {
     uchar i;
-    lprintf("i2c write=%x\n", wdata);
+    //lprintf("i2c write=%x\n", wdata);
     for(i=0;i<8;i++)
     {
         if(wdata&0x80) 
@@ -114,7 +114,7 @@ uchar Readbyte()
         Delay();
     }
     SDA_set_input(0);
-    lprintf("i2c read=%x\n", bytedata);
+    //lprintf("i2c read=%x\n", bytedata);
     return(bytedata);
 }
 /********************************************
@@ -177,9 +177,11 @@ void P8563_Read(uint8_t*ip)
     ip[5]=time[5]&0x9f; /*月 */
     ip[6]=time[6]; /*年  */
 
+#if 0
     while(ict--){
         lprintf("ip[%d]=%x\n", ict, ip[ict]);
     }
+#endif
 }
 /********************************************
   读入时间到内部缓冲区----外部调用 
@@ -253,9 +255,9 @@ void P8563_init()
     //	    P3_4 = 0;
     //       for(i=0;i<=3;i++) g8563_Store[i]=c8563_Store[i]; /*初始化时间*/
     //       P8563_settime();
-    //       writeData(0x0,0x00);
+    writeData(0x0,0x00);
     //       writeData(0xa,0x8); /*8:00报警*/
-    //       writeData(0x1,0x12); /*报警有效*/
+    writeData(0x1,0x12|rtc_read_reg(0x1)); /*报警有效*/
     //      writeData(0xd,0xf0);  //编程输出32.768K的频率
     //  }
 }
@@ -308,11 +310,13 @@ char* get_rtc_time(date_info_t*dit)
         dit->hour = bcd2hex(time_date[2]);
         dit->minute = bcd2hex(time_date[1]);
         dit->second = bcd2hex(time_date[0]);
+#if 0
         lprintf("dit:%d.%d.%d %d:%d:%d week%d\n",
                 (uint32_t)dit->year, (uint32_t)dit->month, (uint32_t)dit->day,
                 (uint32_t)dit->hour, (uint32_t)dit->minute, (uint32_t)dit->second, (uint32_t)dit->weekday);
+#endif
     }
-    lprintf("%s\n", t_d);
+    //lprintf("%s\n", t_d);
     return t_d;
 }
 uint8_t rtc_read_reg(uint8_t addr)
@@ -364,12 +368,13 @@ void add_time_diff_minutes(date_info_t*dtp, uint32_t tsms)
 void auto_time_alert_set(uint32_t time_step_minutes)
 {
     date_info_t dt, dt_alt;
-    uint32_t h;
+    uint32_t h, m;
 
     get_rtc_time(&dt);
     dt_alt.hour = bcd2hex(rtc_read_reg(0x0a));
     h = dt_alt.hour;
     dt_alt.minute = bcd2hex(rtc_read_reg(0x09));
+    m = dt_alt.minute;
     while(time_diff_minutes(&dt_alt, &dt)>time_step_minutes)
     {
         add_time_diff_minutes(&dt_alt, time_step_minutes);
@@ -377,5 +382,18 @@ void auto_time_alert_set(uint32_t time_step_minutes)
     if(h != dt_alt.hour){
         rtc_write_reg(0x0a, hex2bcd(dt_alt.hour));
     }
-    lcd_lprintf(190, 150, "Next auto power on: %d:%d", dt_alt.hour, dt_alt.minute);
+    if(m != dt_alt.minute){
+        rtc_write_reg(0x09, hex2bcd(dt_alt.minute));
+    }
+    lcd_lprintf(190, 150, "Next auto power on: %b:%b", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
+}
+uint8_t check_rtc_alert_and_clear()
+{
+    uint8_t ret = 0;
+    ret = rtc_read_reg(1)&0x08;
+    if(ret){
+        lprintf("rtc flag set found!!!!!!!!!\n");
+        rtc_write_reg(1,0x12);//clear rtc int pin
+    }
+    return ret;
 }
