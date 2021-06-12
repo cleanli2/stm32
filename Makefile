@@ -30,6 +30,7 @@ all:$(C_OBJ)
 	$(CC) $(C_OBJ) -T stm32_f103ze_gcc.ld -o $(TARGET).elf $(LDFLAGS)
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).bin -Obinary 
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).hex -Oihex
+	cp $(TARGET).hex $(TARGET)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 	rm $(TARGET)_*.hex
 	cp $(TARGET).hex $(TARGET)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 
