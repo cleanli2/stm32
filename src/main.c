@@ -347,7 +347,7 @@ int main(void)
   }
   while(1){
       int tx = 0, ty=0;
-      if(ict++>1000){
+      if(ict++>600){
           char*date = get_rtc_time(0);
           
           Show_Str(190, 700,0,0xffff,date,24,0);
