@@ -269,19 +269,6 @@ int main(void)
      */     
   int looptimes = 3;
   uint32_t ict;
-  RCC_ClocksTypeDef RCC_ClocksStatus;
-  delay_init();
-#if 0
-  /* GPIOC Periph clock enable */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-
-  /* Configure PD0 and PD2 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
-#endif
-
   //led
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
@@ -301,6 +288,19 @@ int main(void)
   GPIO_Init(GPIOB, &GPIO_InitStructure);
   GPIO_ResetBits(GPIOB,GPIO_Pin_0);	
   //led end
+
+  RCC_ClocksTypeDef RCC_ClocksStatus;
+  delay_init();
+#if 0
+  /* GPIOC Periph clock enable */
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+
+  /* Configure PD0 and PD2 in output pushpull mode */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+#endif
 
   USART_InitStructure.USART_BaudRate = 9600;
   USART_InitStructure.USART_WordLength = USART_WordLength_8b;
@@ -329,8 +329,7 @@ int main(void)
   {
       led_flash(0x3, 100);
   }
-  LCD_Clear(WHITE);
-  run_cmd_interface();
+  //run_cmd_interface();
   ict=0;
   lcd_clr_window(0xf00f, 0, 0, 100, 100);
   lcd_clr_window(0xff0f, 0, 100, 100, 200);
