@@ -836,6 +836,12 @@ void run_cmd_interface()
                         cmd_buf[--cmd_buf_p] = 0;
                         lprintf("\b \b");
 		}
+		else if(c == 0x7f){
+			if(!cmd_buf_p)
+				continue;
+            cmd_buf[--cmd_buf_p] = 0;
+            con_send(c);
+		}
 		else{
 			if(cmd_buf_p < (COM_MAX_LEN - 1)){
 				cmd_buf[cmd_buf_p++] = c;
@@ -843,5 +849,5 @@ void run_cmd_interface()
 			}
 		}
 	}
-    quit_cmd = 1;
+    quit_cmd = 0;
 }
