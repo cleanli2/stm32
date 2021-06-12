@@ -331,30 +331,35 @@ uint32_t diff_with_inc_step(uint32_t f, uint32_t b, uint32_t inc_step)
 {
     return (f>=b)?f-b:f+inc_step-b;
 }
-uint32_t add_with_back_limit(uint32_t * iptp, uint32_t diff, uint32_t limit)
+uint8_t add_with_back_limit(uint8_t * iptp, uint8_t diff, uint8_t limit)
 {
-    uint32_t ret = 0;
-    uint32_t t = *iptp + diff;
+    uint8_t ret = 0;
+    //lprintf("&&in %d %d %d\n", *iptp, diff, limit);
+    uint8_t t = *iptp + diff;
     if(t>=limit){
         ret = 1;
     }
     *iptp = ret?t-limit:t;
+    //lprintf("&&out %d %d\n", *iptp, ret);
     return ret;
 }
 uint32_t time_diff_minutes(date_info_t* dtp_f, date_info_t * dtp)
 {
     uint32_t ret, h = dtp_f->hour;
+    //lprintf("%d %d - %d %d\n", dtp_f->hour, dtp_f->minute,
+    //        dtp->hour, dtp->minute);
     ret = diff_with_inc_step(dtp_f->minute, dtp->minute, 60);
     if(dtp_f->minute < dtp->minute){
         h = diff_with_inc_step(h, 1, 24);
     }
     ret += diff_with_inc_step(h, dtp->hour, 24)*60;
+    //lprintf("ret %d\n", ret);
     return ret;
 }
 
 void add_time_diff_minutes(date_info_t*dtp, uint32_t tsms)
 {
-    dtp->hour += add_with_back_limit(&dtp->minute, tsms, 60);
+    add_with_back_limit(&dtp->hour, add_with_back_limit(&dtp->minute, tsms, 60), 24);
 }
 void auto_time_alert_set(uint32_t time_step_minutes)
 {
