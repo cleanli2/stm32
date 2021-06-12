@@ -370,15 +370,16 @@ uint32_t diff_with_inc_step(uint32_t f, uint32_t b, uint32_t inc_step)
 {
     return (f>=b)?f-b:f+inc_step-b;
 }
-uint8_t add_with_back_limit(uint8_t * iptp, uint8_t diff, uint8_t limit)
+uint8_t add_with_back_limit(uint8_t * iptp, uint32_t diff, uint8_t limit)
 {
     uint8_t ret = 0;
     //lprintf("&&in %d %d %d\n", *iptp, diff, limit);
-    uint8_t t = *iptp + diff;
-    if(t>=limit){
-        ret = 1;
+    uint32_t t = *iptp + diff;
+    while(t>=limit){
+        ret++;
+        t-=limit;
     }
-    *iptp = ret?t-limit:t;
+    *iptp = t;
     //lprintf("&&out %d %d\n", *iptp, ret);
     return ret;
 }
