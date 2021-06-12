@@ -223,12 +223,12 @@ void P8563_gettime(uint8_t*ip)
 void P8563_settime(uint8_t*ip)
 {
     //uchar i;
-    writeData(8,ip[0]); //年 
-    writeData(7,ip[1]); //月 
-    writeData(5,ip[2]); //日 
-    writeData(4,ip[3]); //时 
-    writeData(3,ip[4]); //分  
-    writeData(2,ip[5]); //秒 
+    rtc_write_reg(8,ip[0]); //年 
+    rtc_write_reg(7,ip[1]); //月 
+    rtc_write_reg(5,ip[2]); //日 
+    rtc_write_reg(4,ip[3]); //时 
+    rtc_write_reg(3,ip[4]); //分  
+    rtc_write_reg(2,ip[5]); //秒 
     delay_ms(1000);
     //P8563_gettime(g8563_Store);
 }
@@ -284,9 +284,9 @@ void P8563_init()
     //       P8563_settime();
     lprintf("rtc reg0=%b\n", rtc_read_reg(0));
     lprintf("rtc reg1=%b\n", rtc_read_reg(1));
-    writeData(0x0,0x00);
+    rtc_write_reg(0x0,0x00);
     //       writeData(0xa,0x8); /*8:00报警*/
-    writeData(0x1,0x12|rtc_read_reg(0x1)); /*报警有效*/
+    rtc_write_reg(0x1,0x12|rtc_read_reg(0x1)); /*报警有效*/
     //      writeData(0xd,0xf0);  //编程输出32.768K的频率
     //  }
     rtc_inited = 1;
@@ -356,9 +356,14 @@ uint8_t rtc_read_reg(uint8_t addr)
     return ret;
 }
 
-void rtc_write_reg(uint8_t addr, uint8_t data)
+uint8_t rtc_write_reg(uint8_t addr, uint8_t data)
 {
-    writeData(addr,data);
+    uint8_t ret = 0, maxtry = 3;
+    while(maxtry--){
+        ret = writeData(addr,data);
+        if(ret)break;
+    }
+    return ret;
 }
 
 uint32_t diff_with_inc_step(uint32_t f, uint32_t b, uint32_t inc_step)

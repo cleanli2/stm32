@@ -30,7 +30,7 @@ void rtc_read(uint8_t*);
 void rtc_write(uint8_t*);
 char* get_rtc_time(date_info_t*);
 uint8_t rtc_read_reg(uint8_t addr);
-void rtc_write_reg(uint8_t addr, uint8_t data);
+uint8_t rtc_write_reg(uint8_t addr, uint8_t data);
 void auto_time_alert_set(uint32_t time_step_minutes);
 
 #endif
