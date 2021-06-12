@@ -598,6 +598,7 @@ void BL_PWM_deinit()
 }
 
 //0-100
+static uint16_t cur_bl_value = 0;
 void set_BL_value(uint16_t v)
 {
     static int BL_PWM_inited = 0;
@@ -607,6 +608,7 @@ void set_BL_value(uint16_t v)
         lprintf("err:BL v>100\n");
         return;
     }
+    cur_bl_value = v;
     if(v>0){
         comp_v = 0x9000/100*(100-v);
         lprintf("comp_v=%x\n", comp_v);
@@ -621,6 +623,11 @@ void set_BL_value(uint16_t v)
         BL_PWM_deinit();
         BL_PWM_inited = 0;
     }
+}
+
+uint16_t get_BL_value()
+{
+    return cur_bl_value;
 }
 
 /*****************************************************************************
@@ -979,7 +986,7 @@ void lcd_sueb_init(int testitem)
 	delay_ms(50);
 	LCD_WR_REG(0x2C00); 
   LCD_direction(USE_HORIZONTAL);//设置LCD显示方向
-    set_BL_value(25);//quater bright
+    set_BL_value(DEFAULT_BL);//quater bright
 	LCD_Clear(WHITE);//清全屏白色
 }
  

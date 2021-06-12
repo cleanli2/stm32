@@ -356,6 +356,9 @@ int main(void)
       }
       delay_ms(1);
       if(get_TP_point(&tx, &ty)){
+          if(get_BL_value()==0){
+              set_BL_value(DEFAULT_BL);
+          }
           TP_Draw_Big_Point(tx,ty,BLACK);		//画图	  			   
           if(tx < 100 && ty < 300 && ty > 200){//poweroff
               power_off();

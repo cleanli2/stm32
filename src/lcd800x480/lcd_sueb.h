@@ -159,7 +159,8 @@ static inline uint16_t DATAIN()
 
 #define LGRAYBLUE      	0XA651 //浅灰蓝色(中间层颜色)
 #define LBBLUE          0X2B12 //浅棕蓝色(选择条目的反色)
-	    	
+
+#define DEFAULT_BL 20
 #define LCD_HW_GPIO_TEST 1
 #define LCD_HW_WRITE_TEST 2
 #define LCD_HW_READ_TEST 3
@@ -185,6 +186,7 @@ void LCD_direction(u8 direction );
 u16 Color_To_565(u8 r, u8 g, u8 b);
 u16 LCD_Read_ID(void);
 void set_BL_value(uint16_t v);
+uint16_t get_BL_value();
 
 //如果仍然觉得速度不够快，可以使用下面的宏定义,提高速度.
 //注意要去掉lcd.c中void LCD_WR_DATA(u16 data)函数定义哦
