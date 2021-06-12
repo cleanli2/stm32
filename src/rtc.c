@@ -255,8 +255,10 @@ void SDA_set_input(uint8_t en)
  ********************************************/
 void P8563_init()
 {
+    static int rtc_inited = 0;
     //uchar i;
 
+    if(rtc_inited)return;
 
     GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
     
@@ -280,11 +282,14 @@ void P8563_init()
     //	    P3_4 = 0;
     //       for(i=0;i<=3;i++) g8563_Store[i]=c8563_Store[i]; /*初始化时间*/
     //       P8563_settime();
+    lprintf("rtc reg0=%b\n", rtc_read_reg(0));
+    lprintf("rtc reg1=%b\n", rtc_read_reg(1));
     writeData(0x0,0x00);
     //       writeData(0xa,0x8); /*8:00报警*/
     writeData(0x1,0x12|rtc_read_reg(0x1)); /*报警有效*/
     //      writeData(0xd,0xf0);  //编程输出32.768K的频率
     //  }
+    rtc_inited = 1;
 }
 void rtc_write(uint8_t*ip)
 {
