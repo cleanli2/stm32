@@ -59,15 +59,16 @@ void WaitACK()
     uchar errtime=20;
     SDA_HIGH;
     Delay(); /*¶ÁACK*/
+    SDA_set_input(1);
     SCL_HIGH;
     Delay();
-    SDA_set_input(1);
     while(GET_SDA)
     {  
         errtime--;
         if(!errtime){
             lprintf("wait ack timeout\n");
             Stop();
+            break;
         }
     }
     SCL_LOW;
@@ -275,7 +276,7 @@ uint8_t hex2bcd(uint8_t ipt)
 }
 uint8_t bcd2hex(uint8_t ipt)
 {
-    return (ipt&0xf0)*10 + (ipt&0xf);
+    return ((ipt&0xf0)>>4)*10 + (ipt&0xf);
 }
 char* get_rtc_time(date_info_t*dit)
 {
@@ -307,10 +308,10 @@ char* get_rtc_time(date_info_t*dit)
         dit->hour = bcd2hex(time_date[2]);
         dit->minute = bcd2hex(time_date[1]);
         dit->second = bcd2hex(time_date[0]);
+        lprintf("dit:%d.%d.%d %d:%d:%d week%d\n",
+                (uint32_t)dit->year, (uint32_t)dit->month, (uint32_t)dit->day,
+                (uint32_t)dit->hour, (uint32_t)dit->minute, (uint32_t)dit->second, (uint32_t)dit->weekday);
     }
-    lprintf("dit:%d.%d.%d %d:%d:%d week%d\n",
-            dit->year, dit->month, dit->day,
-            dit->hour, dit->minute, dit->second, dit->weekday);
     lprintf("%s\n", t_d);
     return t_d;
 }
