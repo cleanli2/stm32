@@ -627,6 +627,7 @@ void set_BL_value(uint16_t v)
 
 uint16_t get_BL_value()
 {
+    //lprintf("%d\n", (uint32_t)cur_bl_value);
     return cur_bl_value;
 }
 

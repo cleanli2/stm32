@@ -361,7 +361,7 @@ int main(void)
       delay_ms(1);
       if(get_TP_point(&tx, &ty)){
           no_touch_count = 0;
-          if(get_BL_value()<=3){
+          if(get_BL_value()<=DEFAULT_IDLE_BL){
               set_BL_value(DEFAULT_BL);
           }
           TP_Draw_Big_Point(tx,ty,BLACK);		//画图	  			   
@@ -394,7 +394,12 @@ int main(void)
           if(no_touch_count-AUTO_POWER_OFF_COUNT>9000)power_off();
       }
       if(no_touch_count>AUTO_POWER_OFF_COUNT/5){
-              set_BL_value(3);
+          if(((no_touch_count/2000)%10) == 0){
+              if(get_BL_value() != DEFAULT_BL) set_BL_value(DEFAULT_BL);
+          }
+          else{
+              if(get_BL_value() != DEFAULT_IDLE_BL) set_BL_value(DEFAULT_IDLE_BL);
+          }
       }
   }
 }
