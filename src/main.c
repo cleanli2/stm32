@@ -461,11 +461,13 @@ int main(void)
       if(con_is_recved() && (con_recv() == 'c')){
           run_cmd_interface();
       }
-      if(no_touch_count++>AUTO_POWER_OFF_COUNT){
-          if((no_touch_count-AUTO_POWER_OFF_COUNT)%1000 == 0){
-              beep(1000-(no_touch_count-AUTO_POWER_OFF_COUNT)/100, 200);
+      if(!g_timer.running){
+          if(no_touch_count++>AUTO_POWER_OFF_COUNT){
+              if((no_touch_count-AUTO_POWER_OFF_COUNT)%1000 == 0){
+                  beep(1000-(no_touch_count-AUTO_POWER_OFF_COUNT)/100, 200);
+              }
+              if(no_touch_count-AUTO_POWER_OFF_COUNT>9000)power_off();
           }
-          if(no_touch_count-AUTO_POWER_OFF_COUNT>9000)power_off();
       }
       if(no_touch_count>AUTO_POWER_OFF_COUNT/5){
           if(((no_touch_count/2000)%10) == 0){
