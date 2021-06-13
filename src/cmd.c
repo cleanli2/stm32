@@ -603,7 +603,7 @@ err:
 }
 void fmwtest(char *p)
 {
-    uint32_t len = 0xffff, ne_ct = 0, data = 0, addr;
+    uint32_t len = 1, ne_ct = 0, data = 0, addr;
     uint32_t dp = (uint32_t*)0x08010000;
     FLASH_Status fret;
 
@@ -612,17 +612,22 @@ void fmwtest(char *p)
     if(tmp>=2){
         p = str_to_hex(p, &data);
         p = str_to_hex(p, &addr);
+        if(tmp>=3) p = str_to_hex(p, &len);
         FLASH_Unlock();
-        if(FLASH_COMPLETE == (fret=FLASH_ProgramWord(addr, data))){
-            lprintf("flash oper done\n");
-        }
-        else{
-            lprintf("flash oper err:%d\n", fret);
+        while(len){
+            if(FLASH_COMPLETE == (fret=FLASH_ProgramWord(addr, data))){
+                //lprintf("flash oper done\n");
+            }
+            else{
+                lprintf("flash oper err:%d adr %X\n", fret, addr);
+            }
+            addr+=4;
+            len-=4;
         }
         FLASH_Lock();
     }
     else{
-        lprintf("err:fmwtest data addr\n");
+        lprintf("err:fmwtest data addr (len)\n");
     }
 #if 0
     while(len){
@@ -655,11 +660,12 @@ void fmrtest(char *p)
         while(len){
             if(*dp++ != data){
                 ne_ct++;
-                lprintf("\rNE:%X addr %X", ne_ct, (uint32_t)dp);
+                lprintf("\rNE:%X addr %X", ne_ct, (uint32_t)(dp-1));
             }
             len -= 4;
         }
     }
+    lprintf("\n\n");
     return;
 
 err:
