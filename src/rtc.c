@@ -383,6 +383,23 @@ uint8_t add_with_back_limit(uint8_t * iptp, uint32_t diff, uint8_t limit)
     //lprintf("&&out %d %d\n", *iptp, ret);
     return ret;
 }
+uint32_t time_diff_seconds(date_info_t* dtp_f, date_info_t * dtp)
+{
+    uint32_t ret, h = dtp_f->hour, m  = dtp_f->minute;
+    //lprintf("%d %d - %d %d\n", dtp_f->hour, dtp_f->minute,
+    //        dtp->hour, dtp->minute);
+    ret = diff_with_inc_step(dtp_f->second, dtp->second, 60);
+    if(dtp_f->second < dtp->second){
+        m = diff_with_inc_step(m, 1, 60);
+    }
+    ret += diff_with_inc_step(m, dtp->minute, 60)*60;
+    if(dtp_f->minute < dtp->minute){
+        h = diff_with_inc_step(h, 1, 24);
+    }
+    ret += diff_with_inc_step(h, dtp->hour, 24)*3600;
+    //lprintf("ret %d\n", ret);
+    return ret;
+}
 uint32_t time_diff_minutes(date_info_t* dtp_f, date_info_t * dtp)
 {
     uint32_t ret, h = dtp_f->hour;

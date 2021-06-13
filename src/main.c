@@ -241,9 +241,9 @@ void power_off()
 typedef struct timer_struct
 {
     date_info_t start;
-    uint32_t minutes_len:18;
-    uint32_t repeat:6;
-    uint32_t to_repeat:6;
+    uint32_t seconds_len;
+    uint32_t repeat:15;
+    uint32_t to_repeat:15;
     uint8_t running:1;
     uint8_t timeout_poff:1;
 } timer_struct_t;
@@ -301,9 +301,12 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
 #endif
     g_timer.timeout_poff = 1;
     get_rtc_time(&g_timer.start);
-    g_timer.minutes_len = seconds/60;
+    g_timer.seconds_len = seconds;
     g_timer.running = 1;
     g_timer.repeat = w_repts;
+    g_timer.to_repeat = w_repts;
+    update_progress_indicator(&g_timer_repeat_pi, 0, g_timer.repeat);
+    beep(800, 3000);
 }
 #define AUTO_POWER_OFF_COUNT 100000
 /**
@@ -402,13 +405,15 @@ int main(void)
       if(ict==0){
           char*date = get_rtc_time(&g_cur_date);
           if(g_timer.running){//timer
-              uint32_t timer_ran = time_diff_minutes(&g_cur_date, &g_timer.start);
-              if(timer_ran>g_timer.minutes_len){
+              uint32_t timer_ran = time_diff_seconds(&g_cur_date, &g_timer.start);
+              if(timer_ran>g_timer.seconds_len){
                   beep(800, 3000);
-                  if(g_timer.to_repeat>0){
+                  if(g_timer.to_repeat>1){
                       g_timer.to_repeat--;
                       g_timer.start = g_cur_date;
-                      update_progress_indicator(&g_timer_pi, g_timer.to_repeat, g_timer.repeat);
+                      update_progress_indicator(&g_timer_repeat_pi,
+                              g_timer.repeat - g_timer.to_repeat,
+                              g_timer.repeat);
                   }
                   else{
                       g_timer.running = 0;
@@ -418,7 +423,7 @@ int main(void)
                   }
               }
               else{
-                  update_progress_indicator(&g_timer_repeat_pi, g_timer.to_repeat, g_timer.repeat);
+                  update_progress_indicator(&g_timer_pi, timer_ran, g_timer.seconds_len);
               }
           }
           Show_Str(190, 700,0,0xffff,(uint8_t*)date,24,0);
