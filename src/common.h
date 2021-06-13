@@ -10,6 +10,7 @@
 #include "adc.h"
 #include "gui.h"
 #include "rtc.h"
+#include "touch.h"
 void delay_us(u32 nus);
 void delay_ms(uint16_t nms);
 void led_flash(u32 led_flag, u32 ms_ct);

@@ -227,7 +227,7 @@ void mytimer(uint32_t w_seconds)
 void power_off()
 {
     check_rtc_alert_and_clear();
-    Show_Str(20, 630,RED,0xffff,"Power off in 3 seconds",24,0);
+    Show_Str(20, 630,RED,0xffff,(uint8_t*)"Power off in 3 seconds",24,0);
     beep(1000, 400);
     delay_ms(200);
     beep(800, 400);
@@ -238,9 +238,54 @@ void power_off()
     GPIO_SetBits(GPIOB,GPIO_Pin_0);	
     delay_ms(200);
 }
+typedef struct timer_struct
+{
+    date_info_t start;
+    uint32_t minutes_len:18;
+    uint32_t repeat:6;
+    uint32_t to_repeat:6;
+    uint8_t running:1;
+    uint8_t timeout_poff:1;
+} timer_struct_t;
+timer_struct_t g_timer = {0};
+date_info_t g_cur_date = {0};
 
+typedef struct progress_indicator
+{
+    uint32_t x;
+    uint32_t y;
+    uint32_t w;
+    uint32_t h;
+    uint16_t f_color;
+    uint16_t b_color;
+} progress_indicator_t;
+progress_indicator_t g_timer_repeat_pi={
+    120,
+    50,
+    280,
+    20,
+    BLUE,
+    BLACK
+};
+progress_indicator_t g_timer_pi={
+    120,
+    10,
+    280,
+    20,
+    BLUE,
+    BLACK
+};
+void update_progress_indicator(progress_indicator_t*pip, uint32_t progressed, uint32_t total)
+{
+    uint32_t t;
+    lcd_clr_window(pip->b_color, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
+    t = pip->w*progressed/total;
+    if(t>0)lcd_clr_window(pip->f_color, pip->x, pip->y, pip->x+t, pip->y+pip->h);
+    lcd_lprintf(pip->x+pip->w+30, pip->y, "%d/%d", progressed, total);
+}
 void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
 {
+#if 0
     uint32_t repts = w_repts;
     uint32_t t;
     lcd_clr_window(0, 120, 50, 400, 70);
@@ -253,6 +298,12 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
         lcd_lprintf(430, 50, "%d", repts);
     }
     power_off();
+#endif
+    g_timer.timeout_poff = 1;
+    get_rtc_time(&g_timer.start);
+    g_timer.minutes_len = seconds/60;
+    g_timer.running = 1;
+    g_timer.repeat = w_repts;
 }
 #define AUTO_POWER_OFF_COUNT 100000
 /**
@@ -339,20 +390,38 @@ int main(void)
   lcd_clr_window(0, 120, 760, 400, 780);
   auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
   {
-      uint8_t rtc_alrt;
       char*date = get_rtc_time(0);
-      Show_Str(190, 700,0,0xffff,date,24,0);
+      Show_Str(190, 700,0,0xffff,(uint8_t*)date,24,0);
       if(check_rtc_alert_and_clear()){
           my_repeat_timer(3, 300);
       }
   }
   while(1){
       static uint32_t no_touch_count = 0;
-      int tx = 0, ty=0;
+      uint16_t tx = 0, ty=0;
       if(ict==0){
-          char*date = get_rtc_time(0);
-          
-          Show_Str(190, 700,0,0xffff,date,24,0);
+          char*date = get_rtc_time(&g_cur_date);
+          if(g_timer.running){//timer
+              uint32_t timer_ran = time_diff_minutes(&g_cur_date, &g_timer.start);
+              if(timer_ran>g_timer.minutes_len){
+                  beep(800, 3000);
+                  if(g_timer.to_repeat>0){
+                      g_timer.to_repeat--;
+                      g_timer.start = g_cur_date;
+                      update_progress_indicator(&g_timer_pi, g_timer.to_repeat, g_timer.repeat);
+                  }
+                  else{
+                      g_timer.running = 0;
+                      if(g_timer.timeout_poff){
+                          power_off();
+                      }
+                  }
+              }
+              else{
+                  update_progress_indicator(&g_timer_repeat_pi, g_timer.to_repeat, g_timer.repeat);
+              }
+          }
+          Show_Str(190, 700,0,0xffff,(uint8_t*)date,24,0);
           adc_test();
       }
       if(ict++>600){
