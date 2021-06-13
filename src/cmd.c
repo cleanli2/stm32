@@ -558,6 +558,49 @@ void reboot(char *p)
     return;
 
 }
+#define BLOCK_SIZE 0x400
+void fmerase(char *p)
+{
+    uint32_t len = 0xffff, er_ct = 1, data = 0, addr;
+    uint32_t dp = (uint32_t*)0x08010000;
+    FLASH_Status fret;
+
+    lprintf("\n");
+    uint32_t tmp = get_howmany_para(p);
+    if(tmp==0)goto err;
+    if(tmp>=1){
+        p = str_to_hex(p, &addr);
+    }
+    if(tmp>=2){
+        p = str_to_hex(p, &er_ct);
+    }
+    FLASH_Unlock();
+    while(er_ct--){
+        if(FLASH_COMPLETE == (fret=FLASH_ErasePage(addr))){
+            lprintf("flash oper done @%X\n", addr);
+        }
+        else{
+            lprintf("flash oper err:%d @addr %X\n", fret, addr);
+        }
+        addr+=BLOCK_SIZE;
+    }
+    FLASH_Lock();
+#if 0
+    while(len){
+        if(*dp++ != data){
+            ne_ct++;
+            lprintf("\rNE:%d", ne_ct);
+        }
+        len -= 4;
+    }
+#endif
+
+    return;
+err:
+    lprintf("err:fmerase addr count\n");
+    return;
+
+}
 void fmwtest(char *p)
 {
     uint32_t len = 0xffff, ne_ct = 0, data = 0, addr;
@@ -617,6 +660,7 @@ void fmrtest(char *p)
             len -= 4;
         }
     }
+    return;
 
 err:
     lprintf("fmrtest data addr len\n");
@@ -682,6 +726,7 @@ static const struct command cmd_list[]=
     {"lst",lcdsuebinit},
     {"lstep",lcdsuebstep},
     {"lstest",lcdsuebtest},
+    {"fmerase",fmerase},
     {"fmrtest",fmrtest},
     {"fmwtest",fmwtest},
     {"pm",print_mem},
