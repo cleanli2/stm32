@@ -558,6 +558,71 @@ void reboot(char *p)
     return;
 
 }
+void fmwtest(char *p)
+{
+    uint32_t len = 0xffff, ne_ct = 0, data = 0, addr;
+    uint32_t dp = (uint32_t*)0x08010000;
+    FLASH_Status fret;
+
+    lprintf("\n");
+    uint32_t tmp = get_howmany_para(p);
+    if(tmp>=2){
+        p = str_to_hex(p, &data);
+        p = str_to_hex(p, &addr);
+        FLASH_Unlock();
+        if(FLASH_COMPLETE == (fret=FLASH_ProgramWord(addr, data))){
+            lprintf("flash oper done\n");
+        }
+        else{
+            lprintf("flash oper err:%d\n", fret);
+        }
+        FLASH_Lock();
+    }
+    else{
+        lprintf("err:fmwtest data addr\n");
+    }
+#if 0
+    while(len){
+        if(*dp++ != data){
+            ne_ct++;
+            lprintf("\rNE:%d", ne_ct);
+        }
+        len -= 4;
+    }
+#endif
+
+    return;
+
+}
+void fmrtest(char *p)
+{
+    uint32_t len = 0xffff, ne_ct = 0, data = 0, addr;
+    uint32_t* dp = (uint32_t*)0x08010000;
+
+    lprintf("\n");
+    uint32_t tmp = get_howmany_para(p);
+    if(tmp<3){
+        goto err;
+    }
+    else{
+        p = str_to_hex(p, &data);
+        p = str_to_hex(p, &addr);
+        p = str_to_hex(p, &len);
+        dp = (uint32_t*)addr;
+        while(len){
+            if(*dp++ != data){
+                ne_ct++;
+                lprintf("\rNE:%X addr %X", ne_ct, (uint32_t)dp);
+            }
+            len -= 4;
+        }
+    }
+
+err:
+    lprintf("fmrtest data addr len\n");
+    return;
+
+}
 void gpiotest(char *p)
 {
     con_send('\n');
@@ -617,6 +682,8 @@ static const struct command cmd_list[]=
     {"lst",lcdsuebinit},
     {"lstep",lcdsuebstep},
     {"lstest",lcdsuebtest},
+    {"fmrtest",fmrtest},
+    {"fmwtest",fmwtest},
     {"pm",print_mem},
     {"poff",poweroff},
     {"r",read_mem},
