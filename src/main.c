@@ -228,14 +228,15 @@ void power_off()
 {
     check_rtc_alert_and_clear();
     Show_Str(20, 630,RED,0xffff,"Power off in 3 seconds",24,0);
-    beep(1000, 500);
+    beep(1000, 400);
     delay_ms(200);
-    beep(800, 500);
+    beep(800, 400);
     delay_ms(200);
-    beep(600, 500);
+    beep(600, 400);
     delay_ms(200);
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
     GPIO_SetBits(GPIOB,GPIO_Pin_0);	
+    delay_ms(200);
 }
 
 void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
@@ -348,17 +349,19 @@ int main(void)
   while(1){
       static uint32_t no_touch_count = 0;
       int tx = 0, ty=0;
-      if(ict++>600){
+      if(ict==0){
           char*date = get_rtc_time(0);
           
           Show_Str(190, 700,0,0xffff,date,24,0);
           adc_test();
+      }
+      if(ict++>600){
           ict = 0;
       }
       delay_ms(1);
       if(get_TP_point(&tx, &ty)){
           no_touch_count = 0;
-          if(get_BL_value()==0){
+          if(get_BL_value()<=3){
               set_BL_value(DEFAULT_BL);
           }
           TP_Draw_Big_Point(tx,ty,BLACK);		//画图	  			   
@@ -389,6 +392,9 @@ int main(void)
               beep(1000-(no_touch_count-AUTO_POWER_OFF_COUNT)/100, 200);
           }
           if(no_touch_count-AUTO_POWER_OFF_COUNT>9000)power_off();
+      }
+      if(no_touch_count>AUTO_POWER_OFF_COUNT/5){
+              set_BL_value(3);
       }
   }
 }

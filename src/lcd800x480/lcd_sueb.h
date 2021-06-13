@@ -160,7 +160,7 @@ static inline uint16_t DATAIN()
 #define LGRAYBLUE      	0XA651 //浅灰蓝色(中间层颜色)
 #define LBBLUE          0X2B12 //浅棕蓝色(选择条目的反色)
 
-#define DEFAULT_BL 20
+#define DEFAULT_BL 10
 #define LCD_HW_GPIO_TEST 1
 #define LCD_HW_WRITE_TEST 2
 #define LCD_HW_READ_TEST 3
