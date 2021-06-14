@@ -420,6 +420,12 @@ int main(void)
   lcd_clr_window(GREEN, 40, 500, 440, 600);
   lcd_clr_window(0xf0f, 56, 500, 440, 600);
   lcd_lprintf(60, 580, "0 hours 0 minutes 16 seconds");
+  LCD_DrawLine(71, 500, 71, 600);
+  LCD_DrawLine(109, 500, 109, 600);//5min
+  LCD_DrawLine(138, 500, 138, 600);//10min
+  LCD_DrawLine(210, 500, 210, 600);//30min
+  LCD_DrawLine(240, 500, 240, 600);//60min
+  lcd_lprintf(68, 620, "1  5  10  30    60  mins");
   auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
   {
       char*date = get_rtc_time(0);
@@ -493,14 +499,21 @@ int main(void)
               set_BL_value(lcd_brt);
           }
           if(tx < 440 && tx > 40 && ty < 600 && ty > 500){
-              uint32_t h, m, s;
-              lcd_clr_window(GREEN, 40, 500, 440, 600);
-              lcd_clr_window(0xf0f, 40, 500, tx, 600);
-              single_timer_len = (tx - 40)*(tx - 40)/16;
-              h = single_timer_len/3600;
-              m = (single_timer_len%3600)/60;
-              s = single_timer_len%60;
-              lcd_lprintf(60, 580, "%d hours %d minutes %d seconds", h, m, s);
+              if(!g_timer.running){
+                  uint32_t h, m, s;
+                  lcd_clr_window(GREEN, 40, 500, 440, 600);
+                  lcd_clr_window(0xf0f, 40, 500, tx, 600);
+                  LCD_DrawLine(71, 500, 71, 600);//11min
+                  LCD_DrawLine(109, 500, 109, 600);//5min
+                  LCD_DrawLine(138, 500, 138, 600);//10min
+                  LCD_DrawLine(210, 500, 210, 600);//30min
+                  LCD_DrawLine(240, 500, 240, 600);//60min
+                  single_timer_len = (tx - 40)*(tx - 40)/16;
+                  h = single_timer_len/3600;
+                  m = (single_timer_len%3600)/60;
+                  s = single_timer_len%60;
+                  lcd_lprintf(60, 580, "%d hours %d minutes %d seconds", h, m, s);
+              }
           }
       }
       if(con_is_recved() && (con_recv() == 'c')){
