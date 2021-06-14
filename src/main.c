@@ -393,6 +393,9 @@ int main(void)
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
   lcd_sueb_init(0);
+
+  //PB3 PB4 PA15 PA13 PA14 set to gpio instead of SWJ
+  GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
   //Touch_Test();
   while (looptimes--)
   {
