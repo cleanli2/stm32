@@ -262,17 +262,17 @@ typedef struct progress_indicator
 progress_indicator_t g_timer_repeat_pi={
     120,
     50,
-    280,
+    260,
     20,
-    BLUE,
+    YELLOW,
     BLACK
 };
 progress_indicator_t g_timer_pi={
     120,
     10,
-    280,
+    260,
     20,
-    BLUE,
+    YELLOW,
     BLACK
 };
 void clear_progress_indicator(progress_indicator_t*pip)
@@ -285,7 +285,7 @@ void update_progress_indicator(progress_indicator_t*pip, uint32_t progressed, ui
     lcd_clr_window(pip->b_color, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
     t = pip->w*progressed/total;
     if(t>0)lcd_clr_window(pip->f_color, pip->x, pip->y, pip->x+t, pip->y+pip->h);
-    lcd_lprintf(pip->x+pip->w+30, pip->y, "%d/%d", progressed, total);
+    lcd_lprintf(pip->x+pip->w+5, pip->y, "%d/%d", progressed, total);
 }
 void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
 {
@@ -404,7 +404,7 @@ int main(void)
   //run_cmd_interface();
   ict=0;
   lcd_clr_window(0xf00f, 0, 0, 100, 100);
-  lcd_clr_window(0xff0f, 0, 100, 100, 200);
+  lcd_clr_window(BLUE, 0, 100, 100, 200);
   lcd_clr_window(0xff0f, 0, 200, 100, 300);
   lcd_lprintf(5, 250, "PowerOff");
   lcd_clr_window(0xff, 0, 300, 100, 400);
@@ -415,6 +415,7 @@ int main(void)
   lcd_lprintf(5, 450, "Download");
 
   lcd_clr_window(0, 120, 760, 400, 780);
+  lcd_clr_window(0xf0f, 120, 760, 163, 780);
 
   lcd_clr_window(GREEN, 40, 500, 440, 600);
   lcd_clr_window(0xf0f, 56, 500, 440, 600);
