@@ -277,7 +277,6 @@ progress_indicator_t g_timer_pi={
 };
 void clear_progress_indicator(progress_indicator_t*pip)
 {
-    uint32_t t;
     lcd_clr_window(WHITE, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
 }
 void update_progress_indicator(progress_indicator_t*pip, uint32_t progressed, uint32_t total)
@@ -306,8 +305,8 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
 #endif
     if(g_timer.running){
         g_timer.running = 0;
-        clear_progress_indecator(&g_timer_repeat_pi);
-        clear_progress_indecator(&g_timer__pi);
+        clear_progress_indicator(&g_timer_repeat_pi);
+        clear_progress_indicator(&g_timer_pi);
         beep(400, 300);
         return;
     }
@@ -323,6 +322,7 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
     beep(800, 3000);
 }
 #define AUTO_POWER_OFF_COUNT 100000
+static uint32_t single_timer_len = 64;
 /**
   * @brief  Main program.
   * @param  None
@@ -404,7 +404,13 @@ int main(void)
   lcd_clr_window(0xff0f, 0, 100, 100, 200);
   lcd_clr_window(0xff0f, 0, 200, 100, 300);
   lcd_lprintf(5, 250, "PowerOff");
+  lcd_clr_window(0xff, 0, 300, 100, 400);
+  lcd_lprintf(5, 350, "Timer");
   lcd_clr_window(0, 120, 760, 400, 780);
+
+  lcd_clr_window(GREEN, 40, 500, 440, 600);
+  lcd_clr_window(0xf0f, 48, 500, 440, 600);
+  lcd_lprintf(60, 580, "0 hours 1 minutes 4 seconds");
   auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
   {
       char*date = get_rtc_time(0);
@@ -453,6 +459,9 @@ int main(void)
               set_BL_value(DEFAULT_BL);
           }
           TP_Draw_Big_Point(tx,ty,BLACK);		//画图	  			   
+          if(tx < 100 && ty < 400 && ty > 300){//single timer
+              my_repeat_timer(1, single_timer_len);
+          }
           if(tx < 100 && ty < 300 && ty > 200){//poweroff
               power_off();
           }
@@ -470,6 +479,16 @@ int main(void)
               lcd_clr_window(0xf0f, 120, 760, tx, 780);
               lcd_brt = (tx - 120)*100/280;
               set_BL_value(lcd_brt);
+          }
+          if(tx < 440 && tx > 40 && ty < 600 && ty > 500){
+              uint32_t h, m, s;
+              lcd_clr_window(GREEN, 40, 500, 440, 600);
+              lcd_clr_window(0xf0f, 40, 500, tx, 600);
+              single_timer_len = (tx - 40)*(tx - 40)/4;
+              h = single_timer_len/3600;
+              m = (single_timer_len - 3600*h)/60;
+              s = (single_timer_len - 3600*h - 60*m)/60;
+              lcd_lprintf(60, 580, "%d hours %d minutes %d seconds", h, m, s);
           }
       }
       if(con_is_recved() && (con_recv() == 'c')){
