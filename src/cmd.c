@@ -551,6 +551,14 @@ void cmd_exit(char *p)
     return;
 
 }
+void rebootd(char *p)
+{
+
+    reboot_download();
+
+    return;
+
+}
 void reboot(char *p)
 {
     soft_reset_system();

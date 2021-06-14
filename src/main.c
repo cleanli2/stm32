@@ -342,11 +342,11 @@ int main(void)
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
   /* Configure PD0 and PD2 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12|GPIO_Pin_2;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12|GPIO_Pin_2|GPIO_Pin_13;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
-  GPIO_ResetBits(GPIOA,GPIO_Pin_12|GPIO_Pin_2);	
+  GPIO_ResetBits(GPIOA,GPIO_Pin_12|GPIO_Pin_2|GPIO_Pin_13);
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
@@ -409,6 +409,11 @@ int main(void)
   lcd_lprintf(5, 250, "PowerOff");
   lcd_clr_window(0xff, 0, 300, 100, 400);
   lcd_lprintf(5, 350, "Timer");
+
+  //reboot to download mode
+  lcd_clr_window(RED, 0, 400, 100, 480);
+  lcd_lprintf(5, 450, "Download");
+
   lcd_clr_window(0, 120, 760, 400, 780);
 
   lcd_clr_window(GREEN, 40, 500, 440, 600);
@@ -461,7 +466,10 @@ int main(void)
           if(get_BL_value()<=DEFAULT_IDLE_BL){
               set_BL_value(DEFAULT_BL);
           }
-          TP_Draw_Big_Point(tx,ty,BLACK);		//画图	  			   
+          TP_Draw_Big_Point(tx,ty,BLACK);		//画图
+          if(tx < 100 && ty < 480 && ty > 400){//single timer
+              reboot_download();
+          }
           if(tx < 100 && ty < 400 && ty > 300){//single timer
               my_repeat_timer(1, single_timer_len);
           }
@@ -521,6 +529,13 @@ void soft_reset_system()
     set_BL_value(0);
     __disable_fault_irq();
     NVIC_SystemReset();
+}
+
+void reboot_download()
+{
+    GPIO_SetBits(GPIOA,GPIO_Pin_13);
+    delay_ms(1000);
+    soft_reset_system();
 }
 
 #ifdef  USE_FULL_ASSERT
