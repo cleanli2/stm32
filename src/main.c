@@ -424,7 +424,7 @@ int main(void)
   LCD_DrawLine(109, 500, 109, 600);//5min
   LCD_DrawLine(138, 500, 138, 600);//10min
   LCD_DrawLine(210, 500, 210, 600);//30min
-  LCD_DrawLine(240, 500, 240, 600);//60min
+  LCD_DrawLine(280, 500, 280, 600);//60min
   lcd_lprintf(68, 620, "1  5  10  30    60  mins");
   auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
   {
@@ -507,7 +507,7 @@ int main(void)
                   LCD_DrawLine(109, 500, 109, 600);//5min
                   LCD_DrawLine(138, 500, 138, 600);//10min
                   LCD_DrawLine(210, 500, 210, 600);//30min
-                  LCD_DrawLine(240, 500, 240, 600);//60min
+                  LCD_DrawLine(280, 500, 280, 600);//60min
                   single_timer_len = (tx - 40)*(tx - 40)/16;
                   h = single_timer_len/3600;
                   m = (single_timer_len%3600)/60;
