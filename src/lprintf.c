@@ -205,10 +205,9 @@ void slprintf(char*buf, const char *fmt, ...)
 void lcd_lprintf(uint32_t x, uint32_t y, const char *fmt, ...)
 {
     va_list ap;
-    uint8_t lpb[32];
-    memset(lpb, 0, 32);
+    memset(lprintf_buf, 0, 32);
     va_start(ap,fmt);
-    vslprintf(lpb,fmt,ap);
+    vslprintf(lprintf_buf,fmt,ap);
     va_end(ap);
-    Show_Str(x, y,0,0xffff,lpb,24,0);
+    Show_Str(x, y,0,0xffff,(uint8_t*)lprintf_buf,24,0);
 }
