@@ -322,7 +322,7 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
     beep(800, 3000);
 }
 #define AUTO_POWER_OFF_COUNT 100000
-static uint32_t single_timer_len = 64;
+static uint32_t single_timer_len = 16;
 /**
   * @brief  Main program.
   * @param  None
@@ -409,8 +409,8 @@ int main(void)
   lcd_clr_window(0, 120, 760, 400, 780);
 
   lcd_clr_window(GREEN, 40, 500, 440, 600);
-  lcd_clr_window(0xf0f, 48, 500, 440, 600);
-  lcd_lprintf(60, 580, "0 hours 1 minutes 4 seconds");
+  lcd_clr_window(0xf0f, 56, 500, 440, 600);
+  lcd_lprintf(60, 580, "0 hours 0 minutes 16 seconds");
   auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
   {
       char*date = get_rtc_time(0);
@@ -484,10 +484,10 @@ int main(void)
               uint32_t h, m, s;
               lcd_clr_window(GREEN, 40, 500, 440, 600);
               lcd_clr_window(0xf0f, 40, 500, tx, 600);
-              single_timer_len = (tx - 40)*(tx - 40)/4;
+              single_timer_len = (tx - 40)*(tx - 40)/16;
               h = single_timer_len/3600;
-              m = (single_timer_len - 3600*h)/60;
-              s = (single_timer_len - 3600*h - 60*m)/60;
+              m = (single_timer_len%3600)/60;
+              s = single_timer_len%60;
               lcd_lprintf(60, 580, "%d hours %d minutes %d seconds", h, m, s);
           }
       }
