@@ -403,7 +403,7 @@ void gpio_test()
 	      
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOA, ENABLE);
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11| GPIO_Pin_15|GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11| GPIO_Pin_15|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);	
 
@@ -414,12 +414,12 @@ void gpio_test()
 	while(1){
 		lprintf("set High\n");
 		GPIO_SetBits(GPIOB,GPIO_Pin_3| GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_6);	
-		GPIO_SetBits(GPIOA, GPIO_Pin_11| GPIO_Pin_15|GPIO_Pin_12);
+		GPIO_SetBits(GPIOA, GPIO_Pin_11| GPIO_Pin_15|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14);
 		delay_ms(2000);
 		lprintf("set low\n");
 #if 1
 		GPIO_ResetBits(GPIOB, GPIO_Pin_3| GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_6);	
-		GPIO_ResetBits(GPIOA, GPIO_Pin_11| GPIO_Pin_15|GPIO_Pin_12);
+		GPIO_ResetBits(GPIOA, GPIO_Pin_11| GPIO_Pin_15|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14);
 #else
 		GPIOA->BRR = GPIO_Pin_11| GPIO_Pin_15|GPIO_Pin_12;
 		GPIOB->BRR = GPIO_Pin_3| GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_6;	
