@@ -381,7 +381,7 @@ void lcd_clr_window(u16 Color, u16 xs, u16 ys, u16 xe, u16 ye)
 {
   unsigned int i;//,m;  
 	LCD_SetWindows(xs,ys,xe,ye);   
-	for(i=0;i<(xe-xs)*(ye-ys);i++)
+	for(i=0;i<(xe-xs+1)*(ye-ys+1);i++)
 	{
  //   for(m=0;m<lcddev.width;m++)
   //  {	
