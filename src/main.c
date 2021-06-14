@@ -275,6 +275,11 @@ progress_indicator_t g_timer_pi={
     BLUE,
     BLACK
 };
+void clear_progress_indicator(progress_indicator_t*pip)
+{
+    uint32_t t;
+    lcd_clr_window(WHITE, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
+}
 void update_progress_indicator(progress_indicator_t*pip, uint32_t progressed, uint32_t total)
 {
     uint32_t t;
@@ -299,13 +304,22 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
     }
     power_off();
 #endif
+    if(g_timer.running){
+        g_timer.running = 0;
+        clear_progress_indecator(&g_timer_repeat_pi);
+        clear_progress_indecator(&g_timer__pi);
+        beep(400, 300);
+        return;
+    }
     g_timer.timeout_poff = 1;
     get_rtc_time(&g_timer.start);
     g_timer.seconds_len = seconds;
     g_timer.running = 1;
     g_timer.repeat = w_repts;
     g_timer.to_repeat = w_repts;
-    update_progress_indicator(&g_timer_repeat_pi, 0, g_timer.repeat);
+    if(w_repts>1){
+        update_progress_indicator(&g_timer_repeat_pi, 0, g_timer.repeat);
+    }
     beep(800, 3000);
 }
 #define AUTO_POWER_OFF_COUNT 100000
@@ -462,14 +476,14 @@ int main(void)
           run_cmd_interface();
       }
       if(!g_timer.running){
-          if(no_touch_count++>AUTO_POWER_OFF_COUNT){
+          if(no_touch_count>AUTO_POWER_OFF_COUNT){
               if((no_touch_count-AUTO_POWER_OFF_COUNT)%1000 == 0){
                   beep(1000-(no_touch_count-AUTO_POWER_OFF_COUNT)/100, 200);
               }
               if(no_touch_count-AUTO_POWER_OFF_COUNT>9000)power_off();
           }
       }
-      if(no_touch_count>AUTO_POWER_OFF_COUNT/5){
+      if(no_touch_count++>AUTO_POWER_OFF_COUNT/5){
           if(((no_touch_count/2000)%10) == 0){
               if(get_BL_value() != DEFAULT_BL) set_BL_value(DEFAULT_BL);
           }
