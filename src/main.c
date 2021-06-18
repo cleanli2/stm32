@@ -50,6 +50,53 @@ USART_InitTypeDef USART_InitStructure;
 
 static u8  fac_us=0;
 static u16 fac_ms=0;
+void timer_init(uint16_t arr, uint16_t psr)
+{
+    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+    TIM_OCInitTypeDef  TIM_OCInitStructure;
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+
+    TIM_DeInit(TIM2);
+    TIM_InternalClockConfig(TIM2);
+    /* Time base configuration */
+    TIM_TimeBaseStructure.TIM_Period = arr;
+    TIM_TimeBaseStructure.TIM_Prescaler = psr;
+    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
+    TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+
+#if 0
+    /* Output Compare Toggle Mode configuration: Channel1 */
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+    TIM_OCInitStructure.TIM_Pulse = arr/2;
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
+    TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Disable;
+    TIM_OCInitStructure.TIM_OCNPolarity = TIM_OCNPolarity_High;
+    TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCNIdleState_Set;
+    TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
+    TIM_OC1Init(TIM2, &TIM_OCInitStructure);
+
+    TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Disable);
+
+    /* Output Compare Toggle Mode configuration: Channel2 */
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+    TIM_OCInitStructure.TIM_Pulse = arr/4;
+
+    TIM_OC2Init(TIM2, &TIM_OCInitStructure);
+
+#endif
+
+    TIM_ARRPreloadConfig(TIM2, DISABLE);
+    /* TIM enable counter */
+    TIM_Cmd(TIM2, ENABLE);
+
+    /* TIM IT enable */
+    //TIM_ITConfig(TIM2, TIM_IT_CC1 | TIM_IT_CC2, ENABLE);
+}
+
 void delay_init()
 {
 
@@ -434,6 +481,7 @@ int main(void)
           my_repeat_timer(3, 300);
       }
   }
+  timer_init(4999, 7199);
   while(1){
       static uint32_t no_touch_count = 0;
       uint16_t tx = 0, ty=0;
@@ -463,6 +511,8 @@ int main(void)
           }
           Show_Str(190, 700,0,0xffff,(uint8_t*)date,24,0);
           adc_test();
+          lprintf("timer %x\n", TIM_GetCounter(TIM2));;
+          lprintf("timer11 %x\n", TIM_GetCounter(TIM1));;
       }
       if(ict++>600){
           ict = 0;
