@@ -53,8 +53,9 @@ static u16 fac_ms=0;
 void timer_init(uint16_t arr, uint16_t psr)
 {
     TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-    TIM_OCInitTypeDef  TIM_OCInitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;
 
+    lprintf("arr %x psr %x\n", arr, psr);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 
     TIM_DeInit(TIM2);
@@ -90,11 +91,16 @@ void timer_init(uint16_t arr, uint16_t psr)
 #endif
 
     TIM_ARRPreloadConfig(TIM2, DISABLE);
+
+    //TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
+    NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+
     /* TIM enable counter */
     TIM_Cmd(TIM2, ENABLE);
-
-    /* TIM IT enable */
-    //TIM_ITConfig(TIM2, TIM_IT_CC1 | TIM_IT_CC2, ENABLE);
 }
 
 void delay_init()
@@ -104,6 +110,14 @@ void delay_init()
     fac_us=SystemCoreClock/8000000;
 
     fac_ms=(u16)fac_us*1000;
+}
+
+void TIM2_IRQHandler(void)
+{
+	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
+	{
+		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+	}
 }
 
 void led_flash(u32 led_flag, u32 ms_ct)
@@ -481,7 +495,6 @@ int main(void)
           my_repeat_timer(3, 300);
       }
   }
-  timer_init(4999, 7199);
   while(1){
       static uint32_t no_touch_count = 0;
       uint16_t tx = 0, ty=0;

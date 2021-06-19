@@ -334,6 +334,8 @@ void Default_Reset_Handler(void)
 static void Default_Handler(void) 
 {
   /* Go into an infinite loop. */
+    lprintf("%d-%ss\n", __LINE__, __func__);
+
   while (1) 
   {
   }

@@ -681,6 +681,17 @@ err:
     return;
 
 }
+void test(char *p)
+{
+    uint32_t p1, p2;
+    p = str_to_hex(p, &p1);
+    p = str_to_hex(p, &p2);
+    timer_init(p1, p2);
+    lprintf("\n\n");
+
+    return;
+
+}
 void gpiotest(char *p)
 {
     con_send('\n');
@@ -750,6 +761,7 @@ static const struct command cmd_list[]=
     {"rtc",rtc_cmd},
     {"sd",sd},
     {"sdcmds",sd_cmds},
+    {"test",test},
     //{"szk",show_ziku},
     {"w",write_mem},
     {NULL, NULL},
