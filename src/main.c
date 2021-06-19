@@ -431,8 +431,6 @@ int main(void)
 
   RCC_ClocksTypeDef RCC_ClocksStatus;
   delay_init();
-  /*1us/timer_count, 10ms/timer_intrpt*/
-  timer_init(10000, 72);
 #if 0
   /* GPIOC Periph clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
@@ -470,6 +468,9 @@ int main(void)
   //PB3 PB4 PA15 PA13 PA14 set to gpio instead of SWJ
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
   //Touch_Test();
+
+  /*1us/timer_count, 10ms/timer_intrpt*/
+  timer_init(10000, 72);
   while (looptimes--)
   {
       led_flash(0x3, 100);
