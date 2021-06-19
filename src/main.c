@@ -50,6 +50,7 @@ USART_InitTypeDef USART_InitStructure;
 
 static u8  fac_us=0;
 static u16 fac_ms=0;
+static uint32_t g_10ms_count = 0;
 void timer_init(uint16_t arr, uint16_t psr)
 {
     TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
@@ -92,7 +93,7 @@ void timer_init(uint16_t arr, uint16_t psr)
 
     TIM_ARRPreloadConfig(TIM2, DISABLE);
 
-    //TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
+    TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
     NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
@@ -112,11 +113,20 @@ void delay_init()
     fac_ms=(u16)fac_us*1000;
 }
 
+uint64_t get_system_us()
+{
+    uint64_t system_us_count;
+
+    system_us_count = g_10ms_count * 10000 + TIM_GetCounter(TIM2);
+    return system_us_count;
+}
+
 void TIM2_IRQHandler(void)
 {
-	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
+	//if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
 	{
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+        g_10ms_count++;
 	}
 }
 
@@ -421,6 +431,8 @@ int main(void)
 
   RCC_ClocksTypeDef RCC_ClocksStatus;
   delay_init();
+  /*1us/timer_count, 10ms/timer_intrpt*/
+  timer_init(10000, 72);
 #if 0
   /* GPIOC Periph clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
@@ -524,8 +536,7 @@ int main(void)
           }
           Show_Str(190, 700,0,0xffff,(uint8_t*)date,24,0);
           adc_test();
-          lprintf("timer %x\n", TIM_GetCounter(TIM2));;
-          lprintf("timer11 %x\n", TIM_GetCounter(TIM1));;
+          lprintf("sys_us %U\n", get_system_us());;
       }
       if(ict++>600){
           ict = 0;

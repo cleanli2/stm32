@@ -61,7 +61,7 @@ void putchars(const char *pt)
         __io_putchar(*pt++);
 }
 
-char * num2str(uint32_t jt, char * s, char n)
+char * num2str(uint64_t jt, char * s, char n)
 {
         char * st, k = 1, j;
         uint32_t tmp;
@@ -93,6 +93,15 @@ void print_uint(uint32_t num)
         char nc[11];
         num2str(num, nc, 10);
         putchars(nc);
+}
+
+int sprint_uint64(char*s, uint32_t num)
+{
+    char nc[21];
+    memset(nc, 0, 21);
+    num2str(num, nc, 10);
+    strcpy(s, nc);
+    return strlen(nc);
 }
 
 int sprint_uint(char*s, uint32_t num)
@@ -151,6 +160,10 @@ void vslprintf(char*s_buf, const char *fmt, va_list args)
             case 'd':
                 d = va_arg(ap, uint32_t);
                 sp += sprint_uint(sp, d);
+                break;
+            case 'U':
+                d = va_arg(ap, uint64_t);
+                sp += sprint_uint64(sp, d);
                 break;
 	    case 'c':
                 d = va_arg(ap, uint32_t);
