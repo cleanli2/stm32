@@ -683,11 +683,32 @@ err:
 }
 void test(char *p)
 {
-    uint32_t p1, p2;
+    uint32_t n, p1, p2;
+    uint64_t t1, t2, t3,t4,t5,t6,t7;
+    t1= get_system_us();
+    n = get_howmany_para(p);
+    t2= get_system_us();
     p = str_to_hex(p, &p1);
-    p = str_to_hex(p, &p2);
-    timer_init(p1, p2);
-    lprintf("\n\n");
+    t3= get_system_us();
+    if(n==1){
+    t4= get_system_us();
+        delay_us(p1);
+    t5= get_system_us();
+    }
+    else{
+    t4= get_system_us();
+        delay_ms(p1);
+    t5= get_system_us();
+    }
+    t6= get_system_us();
+    t7= get_system_us();
+    lprintf("1:%U\n", t1);
+    lprintf("2:%U\n", t2);
+    lprintf("3:%U\n", t3);
+    lprintf("4:%U\n", t4);
+    lprintf("5:%U\n", t5);
+    lprintf("6:%U\n", t6);
+    lprintf("7:%U\n", t7);
 
     return;
 
