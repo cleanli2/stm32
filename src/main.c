@@ -430,6 +430,7 @@ int main(void)
   //PB3 PB4 PA15 PA13 PA14 set to gpio instead of SWJ
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
   //Touch_Test();
+  timer_init(10000, 72);
 
   //led
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
@@ -462,7 +463,6 @@ int main(void)
   lcd_sueb_init(0);
 
   /*1us/timer_count, 10ms/timer_intrpt*/
-  timer_init(10000, 72);
   while (looptimes--)
   {
       led_flash(0x3, 100);
