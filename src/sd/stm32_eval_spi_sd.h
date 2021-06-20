@@ -256,6 +256,12 @@ typedef struct
   * @}
   */ 
 
+//SPI Flash
+#define SF_CS_LOW()     GPIO_ResetBits(SF_CS_GPIO_PORT, SF_CS_PIN)
+/** 
+  * @brief  Deselect SD Card: ChipSelect pin high   
+  */ 
+#define SF_CS_HIGH()    GPIO_SetBits(SF_CS_GPIO_PORT, SF_CS_PIN)
 /** @defgroup STM32_EVAL_SPI_SD_Exported_Functions
   * @{
   */ 
@@ -281,6 +287,8 @@ uint8_t SD_WriteByte(uint8_t byte);
 uint8_t SD_SPI_ReadWriteByte(uint8_t byte);
 uint8_t SD_ReadByte(void);
 uint8_t SD_GetRes(void);
+
+void sf_read_id();
 
 #ifdef __cplusplus
 }

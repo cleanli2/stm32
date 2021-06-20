@@ -115,6 +115,24 @@ uint8_t SD_SPI_ReadWriteByte(uint8_t data)
 	return SD_ReadByte();
 }	  
 
+void sf_read_id()
+{
+    uint16_t id;
+	SD_CS_HIGH();
+	SF_CS_HIGH();
+	SF_CS_LOW();
+	SD_WriteByte(0x90);
+	SD_WriteByte(0x00);
+	SD_WriteByte(0x00);
+	SD_WriteByte(0x00);
+
+    id = SD_ReadByte();
+    id <<= 8;
+    id |= SD_ReadByte();
+    lprintf("id=%x\n", id);
+	SF_CS_HIGH();
+}
+
 void SD_DisSelect(void)
 {
 	SD_CS_HIGH();

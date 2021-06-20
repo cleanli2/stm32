@@ -141,6 +141,9 @@ void sd(char *p)
 		}
 	}
     }
+    else if(cmdindex == 0xb){//
+        sf_read_id();
+    }
     con_send('\n');
 
     return;

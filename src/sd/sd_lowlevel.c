@@ -77,6 +77,11 @@ void SD_LowLevel_Init(void)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(SD_CS_GPIO_PORT, &GPIO_InitStructure);
 
+  /*!< Configure SF_SPI_CS_PIN pin: SPI FLASH CS pin */
+  GPIO_InitStructure.GPIO_Pin = SF_CS_PIN;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(SF_CS_GPIO_PORT, &GPIO_InitStructure);
+
   /*!< Configure SD_SPI_DETECT_PIN pin: SD Card detect pin */
   GPIO_InitStructure.GPIO_Pin = SD_DETECT_PIN;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;

@@ -21,6 +21,11 @@
 #define SD_DETECT_GPIO_CLK               RCC_APB2Periph_GPIOE
 #endif
 
+//spi flash
+#define SF_CS_PIN                 GPIO_Pin_4                  /* PC.12 */
+#define SF_CS_GPIO_PORT           GPIOB                       /* GPIOC */
+#define SF_CS_GPIO_CLK            RCC_APB2Periph_GPIOB
+
 void SD_LowLevel_Init(void);
 void SD_LowLevel_DeInit(void);
 #endif
