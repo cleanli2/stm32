@@ -63,7 +63,7 @@ void adc_test()
     v_core = 2500 * 4096 / v_ref;
     lprintf("real vcore = %dmv\n", v_core);
     memset(lcd_print_buf, 0, 32);
-    slprintf(lcd_print_buf, "real vcore = %d0mv", v_core);
+    slprintf(lcd_print_buf, "real vcore = %dmv  ", v_core);
     Show_Str(190, 230,0,0xffff,lcd_print_buf,24,0);
 
     lprintf("start adc1 PA4 convertion\n");
@@ -79,7 +79,7 @@ void adc_test()
     v_bat = v_bat * (330 + 680) / 330;
     lprintf("real vbat = %dmv\n", v_bat);
     memset(lcd_print_buf, 0, 32);
-    slprintf(lcd_print_buf, "real vbat = %d0mv", v_bat);
+    slprintf(lcd_print_buf, "real vbat = %dmv  ", v_bat);
     Show_Str(190, 310,0,0xffff,lcd_print_buf,24,0);
 
     lprintf("start adc1 PA2 convertion\n");
@@ -96,7 +96,7 @@ void adc_test()
     v_currt = 100 * v_currt / 500;
     lprintf("real I = %dmA\n", v_currt);
     memset(lcd_print_buf, 0, 32);
-    slprintf(lcd_print_buf, "real I = %dmA", v_currt);
+    slprintf(lcd_print_buf, "real I = %dmA  ", v_currt);
     Show_Str(190, 390,0,0xffff,lcd_print_buf,24,0);
     led_flash(3, 50);
 }
