@@ -60,8 +60,8 @@ void adc_test()
         lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     lprintf("raw ref result = %x\n", v_ref=ADC_GetConversionValue(ADC1));
-    v_core = 250 * 4096 / v_ref;
-    lprintf("real vcore = %d0mv\n", v_core);
+    v_core = 2500 * 4096 / v_ref;
+    lprintf("real vcore = %dmv\n", v_core);
     memset(lcd_print_buf, 0, 32);
     slprintf(lcd_print_buf, "real vcore = %d0mv", v_core);
     Show_Str(190, 230,0,0xffff,lcd_print_buf,24,0);
@@ -75,9 +75,9 @@ void adc_test()
         lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     lprintf("raw vbat result = %x\n", v_bat=ADC_GetConversionValue(ADC1));
-    v_bat = 250 * v_bat / v_ref;
+    v_bat = 2500 * v_bat / v_ref;
     v_bat = v_bat * (330 + 680) / 330;
-    lprintf("real vbat = %d0mv\n", v_bat);
+    lprintf("real vbat = %dmv\n", v_bat);
     memset(lcd_print_buf, 0, 32);
     slprintf(lcd_print_buf, "real vbat = %d0mv", v_bat);
     Show_Str(190, 310,0,0xffff,lcd_print_buf,24,0);
@@ -91,12 +91,12 @@ void adc_test()
         lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     lprintf("raw v_currt result = %x\n", v_currt=ADC_GetConversionValue(ADC1));
-    v_currt = 250 * v_currt / v_ref;
-    lprintf("real v_currt = %d0mv\n", v_currt);
-    v_currt = 100 * v_currt / 50;
+    v_currt = 2500 * v_currt / v_ref;
+    lprintf("real v_currt = %dmv\n", v_currt);
+    v_currt = 100 * v_currt / 500;
     lprintf("real I = %dmA\n", v_currt);
     memset(lcd_print_buf, 0, 32);
-    slprintf(lcd_print_buf, "real I = %x", v_currt);
+    slprintf(lcd_print_buf, "real I = %dmA", v_currt);
     Show_Str(190, 390,0,0xffff,lcd_print_buf,24,0);
     led_flash(3, 50);
 }
