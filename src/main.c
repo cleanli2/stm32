@@ -409,6 +409,23 @@ int main(void)
      */     
   int looptimes = 3;
   uint32_t ict;
+  RCC_ClocksTypeDef RCC_ClocksStatus;
+
+  delay_init();
+
+  USART_InitStructure.USART_BaudRate = 9600;
+  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+  USART_InitStructure.USART_StopBits = USART_StopBits_1;
+  USART_InitStructure.USART_Parity = USART_Parity_No;
+  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+  USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+
+  STM_COMInit(COM1, &USART_InitStructure);
+  /* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
+     You can monitor PD0 or PD2 on the scope to measure the output signal. 
+     If you need to fine tune this frequency, you can add more GPIO set/reset 
+     cycles to minimize more the infinite loop timing.
+     This code needs to be compiled with high speed optimization option.  */
 
   //PB3 PB4 PA15 PA13 PA14 set to gpio instead of SWJ
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
@@ -434,32 +451,6 @@ int main(void)
   GPIO_ResetBits(GPIOB,GPIO_Pin_0);	
   //led end
 
-  RCC_ClocksTypeDef RCC_ClocksStatus;
-  delay_init();
-#if 0
-  /* GPIOC Periph clock enable */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-
-  /* Configure PD0 and PD2 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
-#endif
-
-  USART_InitStructure.USART_BaudRate = 9600;
-  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-  USART_InitStructure.USART_StopBits = USART_StopBits_1;
-  USART_InitStructure.USART_Parity = USART_Parity_No;
-  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-  USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-
-  STM_COMInit(COM1, &USART_InitStructure);
-  /* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
-     You can monitor PD0 or PD2 on the scope to measure the output signal. 
-     If you need to fine tune this frequency, you can add more GPIO set/reset 
-     cycles to minimize more the infinite loop timing.
-     This code needs to be compiled with high speed optimization option.  */
   RCC_GetClocksFreq(&RCC_ClocksStatus);
   lprintf("Version %s%s\n", VERSION, GIT_SHA1);
   lprintf("clk %d %d %d %d %d Hz\n\r",
@@ -469,10 +460,6 @@ int main(void)
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
   lcd_sueb_init(0);
-
-  //PB3 PB4 PA15 PA13 PA14 set to gpio instead of SWJ
-  GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
-  //Touch_Test();
 
   /*1us/timer_count, 10ms/timer_intrpt*/
   timer_init(10000, 72);
