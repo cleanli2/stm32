@@ -608,6 +608,7 @@ int main(void)
 void soft_reset_system()
 {
     set_BL_value(0);
+    LCD_RESET();
     __disable_fault_irq();
     NVIC_SystemReset();
 }
