@@ -782,6 +782,7 @@ static const struct command cmd_list[]=
     {"poff",poweroff},
     {"r",read_mem},
     {"reboot",reboot},
+    {"rebootd",rebootd},
     {"rtc",rtc_cmd},
     {"sd",sd},
     {"sdcmds",sd_cmds},
