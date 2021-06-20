@@ -133,17 +133,17 @@ void TIM2_IRQHandler(void)
 void led_flash(u32 led_flag, u32 ms_ct)
 {
     if(led_flag & 0x2){
-        GPIO_ResetBits(GPIOA,GPIO_Pin_2);	
+        GPIO_ResetBits(GPIOA,GPIO_Pin_14);	
     }
     if(led_flag & 0x1){
-        GPIO_ResetBits(GPIOA,GPIO_Pin_12);	
+        GPIO_ResetBits(GPIOA,GPIO_Pin_15);	
     }
     delay_ms(ms_ct);
     if(led_flag & 0x2){
-        GPIO_SetBits(GPIOA,GPIO_Pin_2);	
+        GPIO_SetBits(GPIOA,GPIO_Pin_14);	
     }
     if(led_flag & 0x1){
-        GPIO_SetBits(GPIOA,GPIO_Pin_12);	
+        GPIO_SetBits(GPIOA,GPIO_Pin_15);	
     }
     delay_ms(200);
 }
@@ -409,15 +409,20 @@ int main(void)
      */     
   int looptimes = 3;
   uint32_t ict;
+
+  //PB3 PB4 PA15 PA13 PA14 set to gpio instead of SWJ
+  GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
+  //Touch_Test();
+
   //led
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
   /* Configure PD0 and PD2 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12|GPIO_Pin_2|GPIO_Pin_13;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
-  GPIO_ResetBits(GPIOA,GPIO_Pin_12|GPIO_Pin_2|GPIO_Pin_13);
+  GPIO_ResetBits(GPIOA,GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13);
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
@@ -464,10 +469,6 @@ int main(void)
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
   lcd_sueb_init(0);
-
-  //PB3 PB4 PA15 PA13 PA14 set to gpio instead of SWJ
-  GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
-  //Touch_Test();
 
   /*1us/timer_count, 10ms/timer_intrpt*/
   timer_init(10000, 72);

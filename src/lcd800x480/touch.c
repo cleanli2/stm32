@@ -634,10 +634,15 @@ u8 TP_Init(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 	GPIO_SetBits(GPIOA,GPIO_Pin_7|GPIO_Pin_5);
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11|GPIO_Pin_6;
+	GPIO_InitStructure.GPIO_Pin = DOUT_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //上拉输入
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	GPIO_SetBits(GPIOA, GPIO_Pin_1|GPIO_Pin_6);	
+	GPIO_Init(DOUT_GG, &GPIO_InitStructure);
+	GPIO_SetBits(DOUT_GG, DOUT_PIN);	
+
+	GPIO_InitStructure.GPIO_Pin = PEN_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //上拉输入
+	GPIO_Init(PEN_GG, &GPIO_InitStructure);
+	GPIO_SetBits(PEN_GG, PEN_PIN);	
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 

@@ -88,13 +88,13 @@ extern _m_tp_dev tp_dev;	 	//触屏控制器在touch.c里面定义
 
 //与触摸屏芯片连接引脚	   
 //与触摸屏芯片连接引脚	   
-#define PEN_GG GPIOA
+#define PEN_GG GPIOB
 #define DOUT_GG GPIOA
 #define TDIN_GG GPIOA
 #define TCLK_GG GPIOA
 #define TCS_GG GPIOB
 
-#define PEN_PIN GPIO_Pin_11
+#define PEN_PIN GPIO_Pin_3
 #define DOUT_PIN GPIO_Pin_6
 #define TDIN_PIN GPIO_Pin_7
 #define TCLK_PIN GPIO_Pin_5

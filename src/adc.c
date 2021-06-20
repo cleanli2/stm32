@@ -8,7 +8,7 @@ void adc_test()
     GPIO_InitTypeDef GPIO_InitStructure;
     ADC_InitTypeDef ADC_InitStructure;
     char lcd_print_buf[32];
-    uint32_t v_core, v_bat, v_ref;
+    uint32_t v_core, v_bat, v_ref, v_currt;
 
     if(ADC_INITED!=adc_inited){
         lprintf("performing adc init\n");
@@ -16,7 +16,7 @@ void adc_test()
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1|RCC_APB2Periph_GPIOA, ENABLE);
 
         /* Configure PA.03, PA.04 (ADC Channel3, ADC Channel4 as analog inputs */
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4;
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_2;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
         GPIO_Init(GPIOA, &GPIO_InitStructure);
 
@@ -80,6 +80,20 @@ void adc_test()
     lprintf("real vbat = %d0mv\n", v_bat);
     memset(lcd_print_buf, 0, 32);
     slprintf(lcd_print_buf, "real vbat = %d0mv", v_bat);
+    Show_Str(190, 310,0,0xffff,lcd_print_buf,24,0);
+
+    lprintf("start adc1 PA2 convertion\n");
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_28Cycles5);
+    ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+    do
+    {
+        delay_us(50);
+        lprintf("waiting convertion done...\n");
+    }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
+    lprintf("raw v_currt result = %x\n", v_currt=ADC_GetConversionValue(ADC1));
+    //lprintf("real vbat = %d0mv\n", v_bat);
+    memset(lcd_print_buf, 0, 32);
+    slprintf(lcd_print_buf, "raw vcurrt = %x", v_currt);
     Show_Str(190, 390,0,0xffff,lcd_print_buf,24,0);
     led_flash(3, 50);
 }
