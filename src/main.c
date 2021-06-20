@@ -254,6 +254,77 @@ int __io_char_received()
   return (USART_GetFlagStatus(BOARD_COM1, USART_FLAG_RXNE) == SET);
 }
 
+static uint32_t beep_st = 0;
+void beep_by_timer(uint32_t hz)
+{
+    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    GPIO_InitTypeDef GPIO_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;
+
+    if(hz>0){
+        beep_st = 0;
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5; //TIM_CH1
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //复用推挽输出
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_Init(GPIOB, &GPIO_InitStructure);
+        GPIO_ResetBits(GPIOB,GPIO_Pin_5);
+
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+        TIM_DeInit(TIM3);
+        TIM_InternalClockConfig(TIM3);
+        /* Time base configuration */
+        TIM_TimeBaseStructure.TIM_Period = 40000/hz/2;
+        TIM_TimeBaseStructure.TIM_Prescaler = 1800;
+        TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+        TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
+        TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+
+        TIM_ARRPreloadConfig(TIM3, DISABLE);
+
+        TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
+        NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+        NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+        NVIC_Init(&NVIC_InitStructure);
+
+        /* TIM enable counter */
+        TIM_Cmd(TIM3, ENABLE);
+    }
+    else{
+        TIM_Cmd(TIM3, DISABLE);
+        NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+        NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+        NVIC_Init(&NVIC_InitStructure);
+        TIM_ITConfig(TIM3, TIM_IT_Update, DISABLE);
+        TIM_DeInit(TIM3);
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, DISABLE);
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+        GPIO_Init(GPIOB, &GPIO_InitStructure);
+        GPIO_SetBits(GPIOB,GPIO_Pin_5);
+    }
+}
+
+void TIM3_IRQHandler(void)
+{
+    //if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
+    {
+        TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+        if(beep_st++&0x1){
+            GPIO_SetBits(GPIOB,GPIO_Pin_5);
+        }
+        else{
+            GPIO_ResetBits(GPIOB,GPIO_Pin_5);
+        }
+    }
+}
+
 void beep(uint32_t hz, uint32_t t_ms)
 {
     uint32_t pd, ct;

@@ -692,6 +692,8 @@ void test(char *p)
     n = get_howmany_para(p);
     t2= get_system_us();
     p = str_to_hex(p, &p1);
+    beep_by_timer(p1);
+    return;
     t3= get_system_us();
     if(n==1){
     t4= get_system_us();
