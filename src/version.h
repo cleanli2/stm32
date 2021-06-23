@@ -1,6 +1,6 @@
 #ifndef _VERSION_H
 #define _VERSION_H
 
-#define VERSION "0.13_REBOOT_DOWNLOAD"
+#define VERSION "0.14_CURRENT_MEASURING"
 
 #endif
