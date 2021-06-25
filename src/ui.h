@@ -2,6 +2,7 @@
 #define _UI_H
 #include "task.h"
 #include "type.h"
+#include "common.h"
 
 #define TIME_DISP_EN (1<<0)
 #define TIME_DISP_SECOND (1<<1)
@@ -14,21 +15,43 @@
 #define UI_TRANSFER_DEFAULT (-2)
 #define UI_RESET_TIMEOUT (-3)
 
+enum UI_NAME_INDEX {
+    UI_MAIN_MENU,
+    UI_ADC,
+    UI_CLOCK,
+    UI_MAX
+};
+
 extern int8 cur_ui_index ;
 extern int8 last_ui_index ;
 
+typedef struct button {
+    int x1;
+    int y1;
+    int x2;
+    int y2;
+    func_p click_func;
+    int ui_goto;
+    int need_re_init_ui;
+    const char* text;
+} button_t;
+
 typedef struct ui_info_ {
+#if 0
     const char* ui_name;
-    func_p ui_init;
-    func_p ui_process_event;
-    func_p ui_quit;
     uint timeout;
     uint8 time_disp_mode;
     uint8 time_position_of_dispmem;
     uint8 power_position_of_dispmem;
     int8 ui_event_transfer[EVENT_MAX];
     const signed char*timeout_music;
-} ui_info;
+#endif
+    func_p init;
+    func_p process_event;
+    func_p quit;
+    button_t* button_info;
+    int ui_index;
+} ui_t;
 
 typedef struct change_level_info_{
     uint factor;
@@ -46,7 +69,5 @@ enum SWITCH_CURSOR_TYPE{
     SWITCH_CURSOR_BY_LEFT_KEY,
 };
 
-void ui_start();
-extern ui_info* current_ui;
-extern const ui_info all_ui[];
+void ui_init();
 #endif
