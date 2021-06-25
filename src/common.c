@@ -540,6 +540,7 @@ void main_init(void)
   }
   //run_cmd_interface();
   ict=0;
+#if 0
   lcd_clr_window(0xf00f, 0, 0, 100, 100);
   lcd_clr_window(BLUE, 0, 100, 100, 200);
   lcd_clr_window(0xff0f, 0, 200, 100, 300);
@@ -674,6 +675,7 @@ void main_init(void)
           }
       }
   }
+#endif
 }
 
 void soft_reset_system()

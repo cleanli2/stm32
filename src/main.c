@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include <limits.h>
-#include "type.h"
-#include "music.h"
+//#include "music.h"
 #include "common.h"
 #include "ui.h"
 #include "task.h"
