@@ -55,6 +55,8 @@ typedef struct ui_info {
     button_t* button_info;
     int ui_index;
     uint timeout;
+    uint8 time_disp_mode;
+    const signed char*timeout_music;
 } ui_t;
 
 typedef struct change_level_info_{
@@ -74,4 +76,6 @@ enum SWITCH_CURSOR_TYPE{
 };
 
 void ui_start();
+extern ui_t*current_ui;
+
 #endif

@@ -1,9 +1,11 @@
 #include "common.h"
+#include "music.h"
 #include "ui.h"
 
 ui_t working_ui_t;
 int cur_ui_index = 0;
 int last_ui_index = 0;
+ui_t*current_ui;
 void main_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -12,6 +14,12 @@ void main_ui_process_event(void*vp)
 void poff_ctd_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    if(cur_task_event_flag & (1<<EVENT_MUSIC_PLAY_END)){
+        power_off();
+    }
+    if(g_flag_1s){
+        play_music_note(8, 100);
+    }
     common_process_event(vp);
 }
 button_t common_button[]={
@@ -37,6 +45,8 @@ ui_t ui_list[]={
         main_menu_button,
         UI_MAIN_MENU,
         0,
+        0,// disp_mode
+        NULL,
     },
     {
         NULL,
@@ -45,6 +55,8 @@ ui_t ui_list[]={
         NULL,
         UI_POFF_CTD,
         10, //timeout
+        TIME_OUT_EN,
+        pwroff_music,//char*timeout_music;
     },
 
 #if 0
@@ -130,11 +142,16 @@ void process_button(ui_t* uif, button_t*pbt)
     }
 }
 
-ui_t*current_ui;
 void common_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     button_t* p_bt = uif->button_info;
+    if(uif->time_disp_mode & TIMER_TRIGGER_START){
+        cur_task_timer_started = false;
+    }
+    else{
+        cur_task_timer_started = true;
+    }
     LCD_Clear(WHITE);	//fill all screen with some color
     draw_button(p_bt);
     draw_button(common_button);
@@ -229,11 +246,11 @@ void common_process_event(void*vp)
                     cur_task_timeout_ct = uif->timeout;
                 }
             }
+#endif
             //lprintf("ev flag %x EVUTO %x\r\n", evt_flag, EVENT_UI_TIMEOUT);
             if(evt_flag == (1<<EVENT_UI_TIMEOUT) && uif->timeout_music){
                 play_music(uif->timeout_music, 0);
             }
-#endif
             if(evt_flag == (1<<EVENT_TOUCH_UP)){
                 button_t* p_bt = current_ui->button_info;
                 process_button(uif, p_bt);

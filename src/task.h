@@ -6,6 +6,8 @@
 extern uint16_t cached_touch_x;
 extern uint16_t cached_touch_y;
 extern uint no_touch_down_ct;
+extern uint g_flag_1s ;
+extern uint g_flag_10ms ;
 #define NO_KEY_DOWN_CT_MAX 100
 #define NO_KEY_DOWN_PWSAVE_MAX 20
 #define LCD_POWER_SAVE_CYCLE 60
