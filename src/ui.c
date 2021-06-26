@@ -7,6 +7,8 @@ int cur_ui_index = 0;
 int last_ui_index = 0;
 ui_t*current_ui;
 uint32_t ui_buf[8];
+
+void often_used_timer();
 void main_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -32,18 +34,22 @@ void poff_ctd_ui_process_event(void*vp)
 #define TMR_TMOUT_INDX 0
 #define TMR_REPET_INDX 1
 #define TMR_TMOUTCT_INDX 2
+#define TMR_MAGIC_INDX 3
 void timer_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
-    ui_buf[TMR_TMOUT_INDX] = 20;
-    ui_buf[TMR_REPET_INDX] = 2;
-    ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
+    if(ui_buf[TMR_MAGIC_INDX] != 0xF1EE4){
+        ui_buf[TMR_TMOUT_INDX] = uif->timeout;
+        ui_buf[TMR_REPET_INDX] = 2;
+        ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
+    }
     common_ui_init(vp);
 }
 void timer_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
-    if(cur_task_event_flag & (1<<EVENT_MUSIC_PLAY_END)){
+    if(cur_task_event_flag & (1<<EVENT_MUSIC_PLAY_END)
+            && ui_buf[TMR_REPET_INDX]==0){
         ui_transfer(UI_MAIN_MENU);
     }
     if(g_flag_1s){
@@ -61,6 +67,12 @@ void timer_ui_process_event(void*vp)
     }
     common_process_event(vp);
 }
+void timer_ui_uninit(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    ui_buf[TMR_MAGIC_INDX] = 0;
+    lprintf("clr TMR_MAGIC_INDX\n");
+}
 button_t common_button[]={
     {10,730,200, 60, NULL, UI_LAST, 0, "RETURN"},
     {270,730,200, 60, NULL, 0, 0, "HOME"},
@@ -73,13 +85,13 @@ void music_test()
 }
 
 button_t main_menu_button[]={
-    //{130,70,200, 95, NULL, UI_CLOCK, 0, "CLOCK"},
-    {130,90,200, 60, NULL, UI_POFF_CTD, 0, "PowerOffCountDown"},
-    {130,150,200, 60, soft_reset_system, -1, 0, "Reboot"},
-    {130,220,200, 60, reboot_download, -1, 0, "RebootDownload"},
-    {130,290,200, 60, power_off, -1, 0, "PowerOff"},
-    {130,360,200, 60, music_test, -1, 0, "MusicTest"},
-    {130,430,200, 60, NULL, UI_TIMER, 0, "TIMER"},
+    {130,40,200, 60, often_used_timer, 0, 0, "CLOCK"},
+    {130,110,200, 60, NULL, UI_POFF_CTD, 0, "PowerOffCountDown"},
+    {130,170,200, 60, soft_reset_system, -1, 0, "Reboot"},
+    {130,240,200, 60, reboot_download, -1, 0, "RebootDownload"},
+    {130,310,200, 60, power_off, -1, 0, "PowerOff"},
+    {130,380,200, 60, music_test, -1, 0, "MusicTest"},
+    {130,450,200, 60, NULL, UI_TIMER, 0, "TIMER"},
     //{130,210,200, 190, exit_ui, -1, 0, "Exit"},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
@@ -126,6 +138,28 @@ ui_t ui_list[]={
         NULL,//char*timeout_music;
     },
 };
+
+void often_used_timer()
+{
+    last_ui_index = cur_ui_index;
+    cur_ui_index = UI_TIMER;
+    if(current_ui->ui_uninit){
+        current_ui->ui_uninit(current_ui);
+    }
+    memcpy(&working_ui_t, &ui_list[UI_TIMER], sizeof(ui_t));
+    current_ui = &working_ui_t;
+    ui_buf[TMR_MAGIC_INDX] = 0xF1EE4;
+    ui_buf[TMR_TMOUT_INDX] = 300;
+    ui_buf[TMR_REPET_INDX] = 3;
+    ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
+    if(current_ui->ui_init){
+        current_ui->ui_init(current_ui);
+    }
+    else{
+        common_ui_init(current_ui);
+    }
+    lprintf("ui %u->TIMER OFTEN\r\n", last_ui_index);
+}
 
 void PutPixel(int x, int y, int color)
 {
