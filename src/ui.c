@@ -90,6 +90,7 @@ void draw_sq(int x1, int y1, int x2, int y2, int color)
 
 void draw_button(button_t*pbt)
 {
+    if(!pbt)return;
     while(pbt->x >=0){
         draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, BLACK);
         if(pbt->text){
@@ -150,7 +151,7 @@ void common_ui_init(void*vp)
         //cur_task_timeout_ct = input_timeout;
     //}
     //led_flash_per_second = true;
-    printf("cur task timect---init %x\r\n", cur_task_timeout_ct);
+    lprintf("cur task timect---init %x\r\n", cur_task_timeout_ct);
     cur_task_event_flag = 0;
     no_touch_down_ct = 0;
 }
@@ -179,7 +180,10 @@ void ui_transfer(uint8 ui_id)
     if(current_ui->ui_init){
         current_ui->ui_init(current_ui);
     }
-    printf("ui %u->%u\r\n", last_ui_index, ui_id);
+    else{
+        common_ui_init(current_ui);
+    }
+    lprintf("ui %u->%u\r\n", last_ui_index, ui_id);
 }
 
 void common_process_event(void*vp)
@@ -204,7 +208,7 @@ void common_process_event(void*vp)
 #endif
     for(int8 i = 0; i < EVENT_MAX; i++){
         uint8 evt_flag=1<<i;
-        //if(dg) printf("ev flag %x %x i %x\r\n", cur_task_event_flag, evt_flag, i);
+        //if(dg) lprintf("ev flag %x %x i %x\r\n", cur_task_event_flag, evt_flag, i);
         if(cur_task_event_flag & evt_flag){
 #if 0
             if(uif->ui_event_transfer[i]>=0){
@@ -225,7 +229,7 @@ void common_process_event(void*vp)
                     cur_task_timeout_ct = uif->timeout;
                 }
             }
-            //printf("ev flag %x EVUTO %x\r\n", evt_flag, EVENT_UI_TIMEOUT);
+            //lprintf("ev flag %x EVUTO %x\r\n", evt_flag, EVENT_UI_TIMEOUT);
             if(evt_flag == (1<<EVENT_UI_TIMEOUT) && uif->timeout_music){
                 play_music(uif->timeout_music, 0);
             }
