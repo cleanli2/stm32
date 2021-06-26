@@ -156,6 +156,7 @@ void led_flash(u32 led_flag, u32 ms_ct)
     led_raw_set(led_flag|0xc);
     delay_ms(ms_ct);
     led_raw_set(led_flag|0x0);
+    delay_ms(ms_ct);
 }
 
 void delay_us(u32 nus)

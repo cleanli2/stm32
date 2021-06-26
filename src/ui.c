@@ -70,7 +70,7 @@ void draw_sq(int x1, int y1, int x2, int y2, int color)
 
 #define MIN(x,y) ((x)<(y)?(x):(y))
 ui_t*current_ui;
-void ui_start()
+void ui_init()
 {
     button_t* p_bt = current_ui->button_info;
     if(current_ui->init){
@@ -91,10 +91,10 @@ void ui_start()
     }
 }
 
-void ui_init()
+void ui_start()
 {
     current_ui = & ui_list[0];
-    ui_start();
+    ui_init();
 }
 
 #define IN_RANGE(x, x1, x2) ((((x1)<(x2))&&((x1)<(x))&&((x)<(x2))) ||\
@@ -116,7 +116,7 @@ void task_ui(struct task*vp)
                 draw_sq(p_bt->x, p_bt->y, p_bt->x+p_bt->w, p_bt->y+p_bt->h, 0xffff);
 #endif
                 if(p_bt->need_re_init_ui){
-                    ui_start();
+                    ui_init();
                 }
                 if(p_bt->click_func){
                     p_bt->click_func(NULL);

@@ -305,7 +305,7 @@ void task_misc(struct task*vp)
     if(con_is_recved() && (con_recv() == 'c')){
         LCD_Clear(BLACK);	//fill all screen with some color
         run_cmd_interface();
-        ui_init();
+        ui_start();
     }
 #if 0
     if(!stop_feed_wtd){

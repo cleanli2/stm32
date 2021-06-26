@@ -69,5 +69,5 @@ enum SWITCH_CURSOR_TYPE{
     SWITCH_CURSOR_BY_LEFT_KEY,
 };
 
-void ui_init();
+void ui_start();
 #endif
