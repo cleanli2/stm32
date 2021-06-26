@@ -4,7 +4,8 @@
 button_t main_menu_button[]={
     //{130,70,200, 95, NULL, UI_CLOCK, 0, "CLOCK"},
     //{130,110,200, 135, NULL, UI_ADC, 0, "ADC"},
-    {130,150,200, 175, soft_reset_system, -1, 0, "Reboot"},
+    {130,150,200, 60, soft_reset_system, -1, 0, "Reboot"},
+    {130,200,200, 60, reboot_download, -1, 0, "Reboot"},
     //{130,210,200, 190, exit_ui, -1, 0, "Exit"},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
@@ -66,7 +67,7 @@ void draw_sq(int x1, int y1, int x2, int y2, int color)
     }while(y!=y2);
 }
 
-#define MIN(x,y) (x<y?x:y)
+#define MIN(x,y) ((x)<(y)?(x):(y))
 ui_t*current_ui;
 void ui_start()
 {
@@ -77,12 +78,12 @@ void ui_start()
     else{
         LCD_Clear(WHITE);	//fill all screen with some color
     }
-    //lprintf("but x1 %x\n", p_bt->x1);
-    while(p_bt->x1 >=0){
-        draw_sq(p_bt->x1, p_bt->y1, p_bt->x2, p_bt->y2, BLACK);
+    //lprintf("but x %x\n", p_bt->x);
+    while(p_bt->x >=0){
+        draw_sq(p_bt->x, p_bt->y, p_bt->x+p_bt->w, p_bt->y+p_bt->h, BLACK);
         if(p_bt->text){
-            int lx = MIN(p_bt->x1, p_bt->x2);
-            int ly = MIN(p_bt->y1, p_bt->y2);
+            int lx = MIN(p_bt->x, p_bt->x+p_bt->w);
+            int ly = MIN(p_bt->y, p_bt->y+p_bt->h);
             lcd_lprintf(lx+5,ly+5,p_bt->text);
         }
         p_bt++;
@@ -95,8 +96,8 @@ void ui_init()
     ui_start();
 }
 
-#define IN_RANGE(x, x1, x2) (((x1<x2)&&(x1<x)&&(x<x2)) ||\
-    ((x2<x1)&&(x2<x)&&(x<x1)))
+#define IN_RANGE(x, x1, x2) ((((x1)<(x2))&&((x1)<(x))&&((x)<(x2))) ||\
+    (((x2)<(x1))&&((x2)<(x))&&((x)<(x1))))
 void task_ui(struct task*vp)
 {
     vp;//fix unused variable warning
@@ -104,14 +105,14 @@ void task_ui(struct task*vp)
     uint16_t x, y;
     button_t* p_bt = current_ui->button_info;
     if(get_TP_point(&x, &y)){
-        while(p_bt->x1 >=0){
-            if(IN_RANGE(x, p_bt->x1, p_bt->x2) &&
-                    IN_RANGE(y, p_bt->y1, p_bt->y2)){
+        while(p_bt->x >=0){
+            if(IN_RANGE(x, p_bt->x, p_bt->x+p_bt->w) &&
+                    IN_RANGE(y, p_bt->y, p_bt->y+p_bt->h)){
 #if 0
-                draw_sq(p_bt->x1, p_bt->y1, p_bt->x2, p_bt->y2, 0x0f0f);
+                draw_sq(p_bt->x, p_bt->y, p_bt->x+p_bt->w, p_bt->y+p_bt->h, 0x0f0f);
                 lprintf("in button\n");
                 udelay(100*1000);
-                draw_sq(p_bt->x1, p_bt->y1, p_bt->x2, p_bt->y2, 0xffff);
+                draw_sq(p_bt->x, p_bt->y, p_bt->x+p_bt->w, p_bt->y+p_bt->h, 0xffff);
 #endif
                 if(p_bt->need_re_init_ui){
                     ui_start();

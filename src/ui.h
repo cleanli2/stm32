@@ -26,10 +26,10 @@ extern int8 cur_ui_index ;
 extern int8 last_ui_index ;
 
 typedef struct button {
-    int x1;
-    int y1;
-    int x2;
-    int y2;
+    int x;
+    int y;
+    int w;
+    int h;
     func_p click_func;
     int ui_goto;
     int need_re_init_ui;
