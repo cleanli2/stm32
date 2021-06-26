@@ -17,6 +17,8 @@ uint16_t touch_x;
 uint16_t touch_y;
 uint16_t cached_touch_x = 0;
 uint16_t cached_touch_y = 0;
+uint16_t draw_x = 0;
+uint16_t draw_y = 0;
 uint16_t touch_status = 0;
 uint16_t last_touch_status = 0;
 uint no_touch_down_ct = 0;
@@ -345,6 +347,10 @@ void task_misc(struct task*vp)
         touch_status = 0;
         if(last_touch_status == 1){
             cur_task_event_flag |= 1<<EVENT_TOUCH_UP;
+            TP_Draw_Big_Point(draw_x,draw_y,WHITE);
+            TP_Draw_Big_Point(cached_touch_x,cached_touch_y,BLACK);
+            draw_x = cached_touch_x;
+            draw_y = cached_touch_y;
         }
     }
 }

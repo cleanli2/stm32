@@ -15,15 +15,18 @@
 #define UI_TRANSFER_DEFAULT (-2)
 #define UI_RESET_TIMEOUT (-3)
 
+#define MIN(x,y) ((x)<(y)?(x):(y))
+#define IN_RANGE(x, x1, x2) ((((x1)<(x2))&&((x1)<(x))&&((x)<(x2))) ||\
+    (((x2)<(x1))&&((x2)<(x))&&((x)<(x1))))
 enum UI_NAME_INDEX {
     UI_MAIN_MENU,
-    UI_ADC,
-    UI_CLOCK,
+    UI_POFF_CTD,
+    UI_LAST,
     UI_MAX
 };
 
-extern int8 cur_ui_index ;
-extern int8 last_ui_index ;
+extern int cur_ui_index ;
+extern int last_ui_index ;
 
 typedef struct button {
     int x;

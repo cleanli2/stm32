@@ -1,14 +1,27 @@
 #include "common.h"
 #include "ui.h"
 
+ui_t working_ui_t;
+int cur_ui_index = 0;
+int last_ui_index = 0;
 void main_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     common_process_event(vp);
 }
+void poff_ctd_ui_process_event(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    common_process_event(vp);
+}
+button_t common_button[]={
+    {10,730,200, 60, NULL, UI_LAST, 0, "RETURN"},
+    {270,730,200, 60, NULL, 0, 0, "HOME"},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL},
+};
 button_t main_menu_button[]={
     //{130,70,200, 95, NULL, UI_CLOCK, 0, "CLOCK"},
-    //{130,110,200, 135, NULL, UI_ADC, 0, "ADC"},
+    {130,90,200, 60, NULL, UI_POFF_CTD, 0, "PowerOffCountDown"},
     {130,150,200, 60, soft_reset_system, -1, 0, "Reboot"},
     {130,220,200, 60, reboot_download, -1, 0, "RebootDownload"},
     {130,290,200, 60, power_off, -1, 0, "PowerOff"},
@@ -25,15 +38,16 @@ ui_t ui_list[]={
         UI_MAIN_MENU,
         0,
     },
-#if 0
     {
-        adc_ui_init,
+        NULL,
+        poff_ctd_ui_process_event,
         NULL,
         NULL,
-        adc_ctr_button,
-        UI_ADC,
+        UI_POFF_CTD,
+        10, //timeout
     },
 
+#if 0
     {
         NULL,
         NULL,
@@ -74,22 +88,55 @@ void draw_sq(int x1, int y1, int x2, int y2, int color)
     }while(y!=y2);
 }
 
-#define MIN(x,y) ((x)<(y)?(x):(y))
+void draw_button(button_t*pbt)
+{
+    while(pbt->x >=0){
+        draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, BLACK);
+        if(pbt->text){
+            int lx = MIN(pbt->x, pbt->x+pbt->w);
+            int ly = MIN(pbt->y, pbt->y+pbt->h);
+            lcd_lprintf(lx+5,ly+5,pbt->text);
+        }
+        pbt++;
+    }
+}
+
+void process_button(ui_t* uif, button_t*pbt)
+{
+    uint16_t x = cached_touch_x, y = cached_touch_y;
+    while(pbt->x >=0){
+        if(IN_RANGE(x, pbt->x, pbt->x+pbt->w) &&
+                IN_RANGE(y, pbt->y, pbt->y+pbt->h)){
+            lprintf("in botton %s\n", pbt->text);
+#if 0
+            draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, 0x0f0f);
+            lprintf("in button\n");
+            udelay(100*1000);
+            draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, 0xffff);
+#endif
+            if(pbt->need_re_init_ui){
+                uif->ui_init(uif);
+            }
+            if(pbt->click_func){
+                pbt->click_func(NULL);
+            }
+            lprintf("uigot %x\n", pbt->ui_goto);
+            if(pbt->ui_goto != -1){
+                ui_transfer(pbt->ui_goto);
+            }
+        }
+        pbt++;
+    }
+}
+
 ui_t*current_ui;
 void common_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     button_t* p_bt = uif->button_info;
     LCD_Clear(WHITE);	//fill all screen with some color
-    while(p_bt->x >=0){
-        draw_sq(p_bt->x, p_bt->y, p_bt->x+p_bt->w, p_bt->y+p_bt->h, BLACK);
-        if(p_bt->text){
-            int lx = MIN(p_bt->x, p_bt->x+p_bt->w);
-            int ly = MIN(p_bt->y, p_bt->y+p_bt->h);
-            lcd_lprintf(lx+5,ly+5,p_bt->text);
-        }
-        p_bt++;
-    }
+    draw_button(p_bt);
+    draw_button(common_button);
 #if 0
     if(uif->time_disp_mode & TIMER_TRIGGER_START){
         cur_task_timer_started = false;
@@ -108,8 +155,33 @@ void common_ui_init(void*vp)
     no_touch_down_ct = 0;
 }
 
-#define IN_RANGE(x, x1, x2) ((((x1)<(x2))&&((x1)<(x))&&((x)<(x2))) ||\
-    (((x2)<(x1))&&((x2)<(x))&&((x)<(x1))))
+void ui_transfer(uint8 ui_id)
+{
+    if(ui_id == UI_LAST){
+        if(last_ui_index == cur_ui_index){
+            return;
+        }
+        else{
+            uint8 tmp = cur_ui_index;
+            cur_ui_index = last_ui_index;
+            last_ui_index = tmp;
+        }
+    }
+    else{
+        last_ui_index = cur_ui_index;
+        cur_ui_index = ui_id;
+    }
+    if(current_ui->ui_uninit){
+        current_ui->ui_uninit(current_ui);
+    }
+    memcpy(&working_ui_t, &ui_list[cur_ui_index], sizeof(ui_t));
+    current_ui = &working_ui_t;
+    if(current_ui->ui_init){
+        current_ui->ui_init(current_ui);
+    }
+    printf("ui %u->%u\r\n", last_ui_index, ui_id);
+}
+
 void common_process_event(void*vp)
 {
     //bool dg = g_flag_1s;
@@ -160,31 +232,8 @@ void common_process_event(void*vp)
 #endif
             if(evt_flag == (1<<EVENT_TOUCH_UP)){
                 button_t* p_bt = current_ui->button_info;
-                uint16_t x = cached_touch_x, y = cached_touch_y;
-                while(p_bt->x >=0){
-                    if(IN_RANGE(x, p_bt->x, p_bt->x+p_bt->w) &&
-                            IN_RANGE(y, p_bt->y, p_bt->y+p_bt->h)){
-#if 0
-                        draw_sq(p_bt->x, p_bt->y, p_bt->x+p_bt->w, p_bt->y+p_bt->h, 0x0f0f);
-                        lprintf("in button\n");
-                        udelay(100*1000);
-                        draw_sq(p_bt->x, p_bt->y, p_bt->x+p_bt->w, p_bt->y+p_bt->h, 0xffff);
-#endif
-                        if(p_bt->need_re_init_ui){
-                            uif->ui_init(current_ui);
-                        }
-                        if(p_bt->click_func){
-                            p_bt->click_func(NULL);
-                        }
-#if 0
-                        lprintf("%x\n", p_bt->ui_goto);
-                        if(p_bt->ui_goto != -1){
-                            ui_transfer(p_bt->ui_goto);
-                        }
-#endif
-                    }
-                    p_bt++;
-                }
+                process_button(uif, p_bt);
+                process_button(uif, common_button);
             }
         }
     }
@@ -193,7 +242,8 @@ void common_process_event(void*vp)
 
 void ui_start()
 {
-    current_ui = & ui_list[0];
+    memcpy(&working_ui_t, &ui_list[0], sizeof(ui_t));
+    current_ui = & working_ui_t;
     if(current_ui->ui_init){
         current_ui->ui_init(current_ui);
     }
