@@ -563,6 +563,7 @@ int main(void)
   LCD_DrawLine(280, 500, 280, 600);//60min
   lcd_lprintf(60, 580, "0 hours 0 minutes 16 seconds");
   lcd_lprintf(68, 620, "1    5   10       30        60  mins");
+  lcd_lprintf(20, 660, "Version %s%s", VERSION, GIT_SHA1);
   auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
   {
       char*date = get_rtc_time(0);
