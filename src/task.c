@@ -59,12 +59,6 @@ void time_hms(char*buf, uint t)
 }
 #endif
 
-void task_ui(struct task*vp)
-{
-    vp;//fix unused variable warning
-    //current_ui->ui_process_event(current_ui);
-}
-
 void task_key_status(struct task*vp)
 {
     vp;//fix unused variable warning
