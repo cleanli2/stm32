@@ -6,6 +6,7 @@ ui_t working_ui_t;
 int cur_ui_index = 0;
 int last_ui_index = 0;
 ui_t*current_ui;
+uint32_t ui_buf[8];
 void main_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -28,16 +29,35 @@ void poff_ctd_ui_process_event(void*vp)
     }
     common_process_event(vp);
 }
+#define TMR_TMOUT_INDX 0
+#define TMR_REPET_INDX 1
+#define TMR_TMOUTCT_INDX 2
 void timer_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    ui_buf[TMR_TMOUT_INDX] = 20;
+    ui_buf[TMR_REPET_INDX] = 2;
+    ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
     common_ui_init(vp);
 }
 void timer_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     if(cur_task_event_flag & (1<<EVENT_MUSIC_PLAY_END)){
-        power_off();
+        ui_transfer(UI_MAIN_MENU);
+    }
+    if(g_flag_1s){
+        if(ui_buf[TMR_REPET_INDX]==0){
+            play_music(uif->timeout_music, 0);
+        }
+        else{
+            ui_buf[TMR_TMOUTCT_INDX]--;
+            if(ui_buf[TMR_TMOUTCT_INDX] == 0){
+                ui_buf[TMR_REPET_INDX]--;
+                ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
+                play_music(notice_music, 0);
+            }
+        }
     }
     common_process_event(vp);
 }
@@ -92,7 +112,7 @@ ui_t ui_list[]={
         NULL,
         UI_TIMER,
         10, //timeout
-        TIME_OUT_EN,
+        0,
         xiyouji1,//char*timeout_music;
     },
     {
