@@ -59,7 +59,7 @@ button_t main_menu_button[]={
     {130,220,200, 60, reboot_download, -1, 0, "RebootDownload"},
     {130,290,200, 60, power_off, -1, 0, "PowerOff"},
     {130,360,200, 60, music_test, -1, 0, "MusicTest"},
-    {130,430,200, 60, NULL, UI_TIMER, 0, "MusicTest"},
+    {130,430,200, 60, NULL, UI_TIMER, 0, "TIMER"},
     //{130,210,200, 190, exit_ui, -1, 0, "Exit"},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
@@ -71,8 +71,8 @@ ui_t ui_list[]={
         NULL,
         main_menu_button,
         UI_MAIN_MENU,
-        0,
-        0,// disp_mode
+        20,
+        TIME_OUT_EN,// disp_mode
         NULL,
     },
     {
@@ -270,10 +270,6 @@ void common_process_event(void*vp)
                 return;
             }
             if(uif->ui_event_transfer[i]==UI_TRANSFER_DEFAULT){
-                if(last_ui_index != cur_ui_index){
-                    ui_transfer(last_ui_index);
-                    return;
-                }
             }
             if(uif->ui_event_transfer[i]==UI_RESET_TIMEOUT){
                 if(uif->time_disp_mode & TIME_OUT_INPUT){
@@ -285,8 +281,16 @@ void common_process_event(void*vp)
             }
 #endif
             //lprintf("ev flag %x EVUTO %x\r\n", evt_flag, EVENT_UI_TIMEOUT);
-            if(evt_flag == (1<<EVENT_UI_TIMEOUT) && uif->timeout_music){
-                play_music(uif->timeout_music, 0);
+            if(evt_flag == (1<<EVENT_UI_TIMEOUT)){
+                if(uif->timeout_music){
+                    play_music(uif->timeout_music, 0);
+                }
+                else{
+                    if(UI_POFF_CTD != cur_ui_index){
+                        ui_transfer(UI_POFF_CTD);
+                        return;
+                    }
+                }
             }
             if(evt_flag == (1<<EVENT_TOUCH_UP)){
                 button_t* p_bt = current_ui->button_info;
