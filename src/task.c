@@ -13,6 +13,15 @@ uint count_10ms=0;
 uint g_flag_1s ;
 uint g_flag_10ms ;
 date_info_t g_cur_date = {0};
+uint16_t touch_x;
+uint16_t touch_y;
+uint16_t cached_touch_x = 0;
+uint16_t cached_touch_y = 0;
+uint16_t touch_status = 0;
+uint16_t last_touch_status = 0;
+uint no_touch_down_ct = 0;
+uint32_t cur_task_event_flag;
+uint cur_task_timeout_ct;
 struct delay_work_info delayed_works[]={
     {
         NULL,
@@ -214,7 +223,7 @@ void play_music(__code const signed char* pu, uint note_period)
 
 void set_delayed_work(uint tct, func_p f, void*pa)
 {
-    for(int8 i = 0; i<NUMBER_OF_DELAYED_WORKS; i++){
+    for(uint i = 0; i<NUMBER_OF_DELAYED_WORKS; i++){
         if(delayed_works[i].function == NULL){
             delayed_works[i].function = f;
             delayed_works[i].ct_10ms = tct;
@@ -304,6 +313,7 @@ void task_misc(struct task*vp)
     vp;//fix unused variable warning
     if(con_is_recved() && (con_recv() == 'c')){
         LCD_Clear(BLACK);	//fill all screen with some color
+        lcd_lprintf(0,0,"CMD mode");
         run_cmd_interface();
         ui_start();
     }
@@ -313,7 +323,7 @@ void task_misc(struct task*vp)
     }
 #endif
     if(g_flag_10ms){
-        for(int8 i = 0; i<NUMBER_OF_DELAYED_WORKS; i++){
+        for(uint8 i = 0; i<NUMBER_OF_DELAYED_WORKS; i++){
             if(delayed_works[i].ct_10ms > 0){
                 delayed_works[i].ct_10ms--;
                 if(delayed_works[i].ct_10ms==0 && delayed_works[i].function != NULL){
@@ -321,6 +331,20 @@ void task_misc(struct task*vp)
                     delayed_works[i].function = NULL;
                 }
             }
+        }
+    }
+    //touch screen
+    cached_touch_x = touch_x;
+    cached_touch_y = touch_y;
+    last_touch_status = touch_status;
+    if(get_TP_point(&touch_x, &touch_y)){
+        touch_status = 1;
+        cur_task_event_flag |= 1<<EVENT_TOUCH_DOWN;
+    }
+    else{
+        touch_status = 0;
+        if(last_touch_status == 1){
+            cur_task_event_flag |= 1<<EVENT_TOUCH_UP;
         }
     }
 }

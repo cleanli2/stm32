@@ -3,6 +3,9 @@
 
 #include "type.h"
 
+extern uint16_t cached_touch_x;
+extern uint16_t cached_touch_y;
+extern uint no_touch_down_ct;
 #define NO_KEY_DOWN_CT_MAX 100
 #define NO_KEY_DOWN_PWSAVE_MAX 20
 #define LCD_POWER_SAVE_CYCLE 60
@@ -12,6 +15,8 @@ enum EVENT_TYPE{
     EVENT_KEYA2_UP,
     EVENT_KEYA3_UP,
     EVENT_KEYA4_UP,
+    EVENT_TOUCH_DOWN,
+    EVENT_TOUCH_UP,
     EVENT_UI_TIMEOUT,
     EVENT_MUSIC_PLAY_END,
     EVENT_NOKEYCT_MAXREACHED,
@@ -32,7 +37,7 @@ struct delay_work_info {
 extern struct task all_tasks[];
 extern uint8 cur_task_timer_started;
 extern uint cur_task_timeout_ct;
-extern uint8 cur_task_event_flag;
+extern uint32_t cur_task_event_flag;
 extern uint8 cursor_cmd ;
 extern stop_feed_wtd;
 extern disp_mem_update ;

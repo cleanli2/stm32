@@ -36,7 +36,7 @@ typedef struct button {
     const char* text;
 } button_t;
 
-typedef struct ui_info_ {
+typedef struct ui_info {
 #if 0
     const char* ui_name;
     uint timeout;
@@ -46,11 +46,12 @@ typedef struct ui_info_ {
     int8 ui_event_transfer[EVENT_MAX];
     const signed char*timeout_music;
 #endif
-    func_p init;
-    func_p process_event;
-    func_p quit;
+    func_p ui_init;
+    func_p ui_process_event;
+    func_p ui_uninit;
     button_t* button_info;
     int ui_index;
+    uint timeout;
 } ui_t;
 
 typedef struct change_level_info_{
