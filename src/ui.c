@@ -11,6 +11,12 @@ void main_ui_process_event(void*vp)
     ui_t* uif =(ui_t*)vp;
     common_process_event(vp);
 }
+void poff_ctd_ui_init(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    common_ui_init(vp);
+    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
+}
 void poff_ctd_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -49,7 +55,7 @@ ui_t ui_list[]={
         NULL,
     },
     {
-        NULL,
+        poff_ctd_ui_init,
         poff_ctd_ui_process_event,
         NULL,
         NULL,

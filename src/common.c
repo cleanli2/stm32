@@ -386,12 +386,7 @@ void power_off()
 {
     check_rtc_alert_and_clear();
     Show_Str(20, 630,RED,0xffff,(uint8_t*)"Power off in 3 seconds",24,0);
-    beep(1000, 400);
-    delay_ms(200);
-    beep(800, 400);
-    delay_ms(200);
-    beep(600, 400);
-    delay_ms(200);
+    beep(600, 100);
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
     GPIO_SetBits(GPIOB,GPIO_Pin_0);	
     delay_ms(200);
