@@ -28,6 +28,19 @@ void poff_ctd_ui_process_event(void*vp)
     }
     common_process_event(vp);
 }
+void timer_ui_init(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    common_ui_init(vp);
+}
+void timer_ui_process_event(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    if(cur_task_event_flag & (1<<EVENT_MUSIC_PLAY_END)){
+        power_off();
+    }
+    common_process_event(vp);
+}
 button_t common_button[]={
     {10,730,200, 60, NULL, UI_LAST, 0, "RETURN"},
     {270,730,200, 60, NULL, 0, 0, "HOME"},
@@ -46,6 +59,7 @@ button_t main_menu_button[]={
     {130,220,200, 60, reboot_download, -1, 0, "RebootDownload"},
     {130,290,200, 60, power_off, -1, 0, "PowerOff"},
     {130,360,200, 60, music_test, -1, 0, "MusicTest"},
+    {130,430,200, 60, NULL, UI_TIMER, 0, "MusicTest"},
     //{130,210,200, 190, exit_ui, -1, 0, "Exit"},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
@@ -71,16 +85,26 @@ ui_t ui_list[]={
         TIME_OUT_EN,
         pwroff_music,//char*timeout_music;
     },
-
-#if 0
+    {
+        timer_ui_init,
+        timer_ui_process_event,
+        NULL,
+        NULL,
+        UI_TIMER,
+        10, //timeout
+        TIME_OUT_EN,
+        xiyouji1,//char*timeout_music;
+    },
     {
         NULL,
         NULL,
-        clock_doing_ui,
-        clock_button,
-        UI_CLOCK,
+        NULL,
+        NULL,
+        UI_MAX,
+        0, //timeout
+        0,
+        NULL,//char*timeout_music;
     },
-#endif
 };
 
 void PutPixel(int x, int y, int color)
