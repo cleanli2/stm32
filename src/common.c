@@ -390,7 +390,6 @@ typedef struct timer_struct
     uint8_t timeout_poff:1;
 } timer_struct_t;
 timer_struct_t g_timer = {0};
-date_info_t g_cur_date = {0};
 
 typedef struct progress_indicator
 {

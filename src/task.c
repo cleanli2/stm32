@@ -6,6 +6,13 @@
 #include "ui.h"
 #include "task.h"
 
+uint last_count_1s = 0;
+uint last_count_10ms = 0;
+uint count_1s=0;
+uint count_10ms=0;
+uint g_flag_1s ;
+uint g_flag_10ms ;
+date_info_t g_cur_date = {0};
 struct delay_work_info delayed_works[]={
     {
         NULL,
@@ -77,16 +84,20 @@ void task_power(struct task*vp)
 void task_timer(struct task*vp)
 {
     vp;//fix unused variable warning
-#if 0
     g_flag_1s = false;
-    count_1s = timer_ct/tcops;
-    count_10ms = (timer_ct - tcops*count_1s)/COUNT10MS;
     g_flag_10ms = false;
+    uint64_t systime = get_system_us();
+    count_1s = systime/1000000;
+    count_10ms = (systime - 1000000*count_1s)/10000;
     if(count_10ms != last_count_10ms){
         g_flag_10ms = true;
     }
     if(count_1s != last_count_1s){
+        char*date = get_rtc_time(&g_cur_date);
         g_flag_1s = true;
+        lcd_lprintf(0,0,date);
+        Show_Str(190, 700,0,0xffff,(uint8_t*)date,24,0);
+#if 0
         //printf("task timect %u\r\n", cur_task_timeout_ct);
         if(cur_task_timeout_ct > 0 && (current_ui->time_disp_mode & TIME_OUT_EN)){
             if(cur_task_timer_started){
@@ -113,10 +124,10 @@ void task_timer(struct task*vp)
                 disp_mem_update = true;
             }
         }
+#endif
     }
     last_count_1s = count_1s;
     last_count_10ms = count_10ms;
-#endif
 }
 
 void task_disp(struct task*vp)
@@ -276,6 +287,11 @@ void task_music(struct task*vp)
 void task_misc(struct task*vp)
 {
     vp;//fix unused variable warning
+    if(con_is_recved() && (con_recv() == 'c')){
+        LCD_Clear(BLACK);	//fill all screen with some color
+        run_cmd_interface();
+        ui_init();
+    }
 #if 0
     if(!stop_feed_wtd){
         feed_watch_dog();

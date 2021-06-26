@@ -34,11 +34,8 @@ extern uint8 cur_task_timer_started;
 extern uint cur_task_timeout_ct;
 extern uint8 cur_task_event_flag;
 extern uint8 cursor_cmd ;
-extern uint8 count_10ms;
 extern stop_feed_wtd;
 extern disp_mem_update ;
-extern g_flag_1s ;
-extern g_flag_10ms ;
 
 void task_ui(struct task*v);
 void task_key_status(struct task*v);
