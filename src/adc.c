@@ -7,7 +7,6 @@ void adc_test()
     static int adc_inited = 0;
     GPIO_InitTypeDef GPIO_InitStructure;
     ADC_InitTypeDef ADC_InitStructure;
-    char lcd_print_buf[32];
     uint32_t v_core, v_bat, v_ref, v_currt;
 
     if(ADC_INITED!=adc_inited){
@@ -62,9 +61,6 @@ void adc_test()
     lprintf("raw ref result = %x\n", v_ref=ADC_GetConversionValue(ADC1));
     v_core = 2500 * 4096 / v_ref;
     lprintf("real vcore = %dmv\n", v_core);
-    memset(lcd_print_buf, 0, 32);
-    slprintf(lcd_print_buf, "real vcore = %dmv  ", v_core);
-    Show_Str(190, 230,0,0xffff,lcd_print_buf,24,0);
 
     lprintf("start adc1 PA4 convertion\n");
     ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 1, ADC_SampleTime_28Cycles5);
@@ -78,9 +74,6 @@ void adc_test()
     v_bat = 2500 * v_bat / v_ref;
     v_bat = v_bat * (330 + 680) / 330;
     lprintf("real vbat = %dmv\n", v_bat);
-    memset(lcd_print_buf, 0, 32);
-    slprintf(lcd_print_buf, "real vbat = %dmv  ", v_bat);
-    Show_Str(190, 310,0,0xffff,lcd_print_buf,24,0);
 
     lprintf("start adc1 PA2 convertion\n");
     ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_28Cycles5);
@@ -95,8 +88,5 @@ void adc_test()
     lprintf("real v_currt = %dmv\n", v_currt);
     v_currt = 100 * v_currt / 500;
     lprintf("real I = %dmA\n", v_currt);
-    memset(lcd_print_buf, 0, 32);
-    slprintf(lcd_print_buf, "real I = %dmA  ", v_currt);
-    Show_Str(190, 390,0,0xffff,lcd_print_buf,24,0);
-    led_flash(3, 50);
+    lcd_lprintf(240, 0, "%dmv %dmv %dmA", v_core, v_bat, v_currt);
 }

@@ -76,9 +76,25 @@ void task_lcd_bklight(struct task*vp)
     vp;//fix unused variable warning
 }
 
+void delayed_close_led(void*p)
+{
+    uint led_cmd = (uint)p;
+    led_raw_set(led_cmd);
+}
+
+void flash_led(uint8 led_cmd, uint mss)
+{
+    led_raw_set(led_cmd);
+    set_delayed_work(mss, delayed_close_led, (void*)(led_cmd&(LED_Y_C|LED_R_C)));
+}
+
 void task_power(struct task*vp)
 {
     vp;
+    if(g_flag_1s){
+        adc_test();
+        flash_led(LED_Y_C|LED_Y_1, 20);
+    }
 }
 
 void task_timer(struct task*vp)
@@ -96,7 +112,6 @@ void task_timer(struct task*vp)
         char*date = get_rtc_time(&g_cur_date);
         g_flag_1s = true;
         lcd_lprintf(0,0,date);
-        Show_Str(190, 700,0,0xffff,(uint8_t*)date,24,0);
 #if 0
         //printf("task timect %u\r\n", cur_task_timeout_ct);
         if(cur_task_timeout_ct > 0 && (current_ui->time_disp_mode & TIME_OUT_EN)){
@@ -195,6 +210,7 @@ void play_music(__code const signed char* pu, uint note_period)
     }
     set_music_note_period(note_period);
 }
+#endif
 
 void set_delayed_work(uint tct, func_p f, void*pa)
 {
@@ -208,7 +224,6 @@ void set_delayed_work(uint tct, func_p f, void*pa)
     }
 }
 
-#endif
 
 void task_music(struct task*vp)
 {
@@ -296,6 +311,7 @@ void task_misc(struct task*vp)
     if(!stop_feed_wtd){
         feed_watch_dog();
     }
+#endif
     if(g_flag_10ms){
         for(int8 i = 0; i<NUMBER_OF_DELAYED_WORKS; i++){
             if(delayed_works[i].ct_10ms > 0){
@@ -307,5 +323,4 @@ void task_misc(struct task*vp)
             }
         }
     }
-#endif
 }

@@ -6,6 +6,7 @@ button_t main_menu_button[]={
     //{130,110,200, 135, NULL, UI_ADC, 0, "ADC"},
     {130,150,200, 60, soft_reset_system, -1, 0, "Reboot"},
     {130,220,200, 60, reboot_download, -1, 0, "RebootDownload"},
+    {130,290,200, 60, power_off, -1, 0, "PowerOff"},
     //{130,210,200, 190, exit_ui, -1, 0, "Exit"},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };

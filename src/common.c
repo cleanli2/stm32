@@ -130,22 +130,32 @@ void TIM2_IRQHandler(void)
 	}
 }
 
-void led_flash(u32 led_flag, u32 ms_ct)
+/*low 4 bit: Pin14Value | Pin13Value | ToCtlPin14 | ToCtlPin13*/
+void led_raw_set(u32 led_flag)
 {
     if(led_flag & 0x2){
-        GPIO_ResetBits(GPIOA,GPIO_Pin_14);	
+        if(led_flag & 0x8){
+            GPIO_ResetBits(GPIOA,GPIO_Pin_14);	
+        }
+        else{
+            GPIO_SetBits(GPIOA,GPIO_Pin_14);	
+        }
     }
     if(led_flag & 0x1){
-        GPIO_ResetBits(GPIOA,GPIO_Pin_15);	
+        if(led_flag & 0x4){
+            GPIO_ResetBits(GPIOA,GPIO_Pin_15);	
+        }
+        else{
+            GPIO_SetBits(GPIOA,GPIO_Pin_15);	
+        }
     }
+}
+
+void led_flash(u32 led_flag, u32 ms_ct)
+{
+    led_raw_set(led_flag|0xc);
     delay_ms(ms_ct);
-    if(led_flag & 0x2){
-        GPIO_SetBits(GPIOA,GPIO_Pin_14);	
-    }
-    if(led_flag & 0x1){
-        GPIO_SetBits(GPIOA,GPIO_Pin_15);	
-    }
-    delay_ms(200);
+    led_raw_set(led_flag|0x0);
 }
 
 void delay_us(u32 nus)
@@ -538,8 +548,8 @@ void main_init(void)
       led_flash(0x3, 100);
   }
   //run_cmd_interface();
-  ict=0;
 #if 0
+  ict=0;
   lcd_clr_window(0xf00f, 0, 0, 100, 100);
   lcd_clr_window(BLUE, 0, 100, 100, 200);
   lcd_clr_window(0xff0f, 0, 200, 100, 300);
