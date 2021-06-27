@@ -97,10 +97,12 @@ void timer_ui_process_event(void*vp)
             //lcd_lprintf(50, 200, "Counts :%d  ", ui_buf[TMR_TMOUTCT_INDX]);
             //lcd_lprintf(50, 250, "Repeats:%d  ", ui_buf[TMR_REPETCT_INDX]);
             ui_buf[TMR_TMOUTCT_INDX]--;
+            update_prgb(uif, uif->prgb_info);
             if(ui_buf[TMR_TMOUTCT_INDX] == 0){
                 ui_buf[TMR_REPETCT_INDX]--;
                 ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
                 draw_prgb_raw(&timer_prgb[0]);
+                update_prgb(uif, uif->prgb_info);
                 play_music(notice_music, 0);
             }
         }
@@ -186,6 +188,9 @@ void common_ui_uninit(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     cur_task_event_flag = 0;
+    if(is_playing_music()){
+        pause_music();
+    }
 }
 
 void timer_ui_transfer_with_para(uint32_t timeout,
@@ -294,8 +299,8 @@ void update_prgb(ui_t* uif, prgb_t*pip)
     while(pip->x >=0){
         if(pip->last_data != *pip->data){
             pip->last_data = *pip->data;
-            t = pip->w*((*pip->data)+1)/(*pip->max);
-            if(t>0 && t<pip->w){
+            t = pip->w*((*pip->data)-1)/(*pip->max);
+            if(t>0 && t<=pip->w){
                 lcd_clr_window(BLACK, pip->x, pip->y, pip->x+pip->w-t, pip->y+pip->h);
             }
             lcd_lprintf(pip->x+pip->w+5, pip->y,
@@ -384,6 +389,9 @@ void ui_transfer(uint8 ui_id)
     if(current_ui->ui_uninit){
         current_ui->ui_uninit(current_ui);
     }
+    else{
+        common_ui_uninit(current_ui);
+    }
     memcpy(&working_ui_t, &ui_list[cur_ui_index], sizeof(ui_t));
     current_ui = &working_ui_t;
     if(current_ui->ui_init){
@@ -454,7 +462,6 @@ void common_process_event(void*vp)
             }
         }
     }
-    update_prgb(uif, uif->prgb_info);
     cur_task_event_flag = 0;
 }
 
