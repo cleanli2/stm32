@@ -27,6 +27,8 @@ uint no_touch_down_ct = 0;
 uint32_t cur_task_event_flag;
 uint cur_task_timeout_ct;
 uint default_music_note_period = DEFAULT_MUSIC_NOTE_PERIOD;
+uint no_key_down_ct_lcd = 0;
+bool save_power_mode = true;
 struct delay_work_info delayed_works[]={
     {
         NULL,
@@ -88,6 +90,22 @@ void task_key_status(struct task*vp)
 void task_lcd_bklight(struct task*vp)
 {
     vp;//fix unused variable warning
+    if(save_power_mode){
+        if(get_BL_value() > DEFAULT_IDLE_BL){
+            if(no_key_down_ct_lcd > (LCD_POWER_SAVE_CYCLE/LCD_POWER_SAVE_RATIO)){
+                printf("lcd_\r\n");
+                no_key_down_ct_lcd = 0;
+                set_BL_value(DEFAULT_IDLE_BL);
+            }
+        }
+        else{
+            if(no_key_down_ct_lcd > (LCD_POWER_SAVE_CYCLE)){
+                printf("lcd^\r\n");
+                no_key_down_ct_lcd = 0;
+                set_BL_value(DEFAULT_BL);
+            }
+        }
+    }
 }
 
 void delayed_close_led(void*p)
@@ -353,6 +371,7 @@ void task_misc(struct task*vp)
     if(get_TP_point(&touch_x, &touch_y)){
         touch_status = 1;
         cur_task_event_flag |= 1<<EVENT_TOUCH_DOWN;
+        no_key_down_ct_lcd = 0;
     }
     else{
         touch_status = 0;
@@ -362,6 +381,9 @@ void task_misc(struct task*vp)
             TP_Draw_Big_Point(cached_touch_x,cached_touch_y,BLACK);
             draw_x = cached_touch_x;
             draw_y = cached_touch_y;
+        }
+        if(save_power_mode && g_flag_1s){
+            no_key_down_ct_lcd++;
         }
     }
 }
