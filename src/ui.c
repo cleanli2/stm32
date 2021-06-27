@@ -38,6 +38,7 @@ void poff_ctd_ui_process_event(void*vp)
 void timer_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    play_music(notice_music, 0);
     if(ui_buf[TMR_MAGIC_INDX] != 0xF1EE4){
         ui_buf[TMR_TMOUT_INDX] = uif->timeout;
         ui_buf[TMR_REPET_INDX] = 2;
@@ -59,9 +60,6 @@ void timer_ui_process_event(void*vp)
         if(ui_buf[TMR_REPET_INDX]==0){
             if(uif->timeout_music){
                 play_music(uif->timeout_music, 0);
-            }
-            else{
-                ui_transfer(UI_MAIN_MENU);
             }
         }
         else{
