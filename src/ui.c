@@ -9,6 +9,7 @@ ui_t*current_ui;
 uint32_t ui_buf[8];
 
 void often_used_timer();
+void f3mins_timer();
 void main_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -97,7 +98,7 @@ button_t main_menu_button[]={
     {130,250,200, 60, reboot_download, -1, 0, "RebootDownload"},
     {130,320,200, 60, power_off, -1, 0, "PowerOff"},
     {130,390,200, 60, music_test, -1, 0, "MusicTest"},
-    {130,460,200, 60, NULL, UI_TIMER, 0, "TIMER"},
+    {130,460,200, 60, f3mins_timer, -1, 0, "3x1mins TIMER"},
     //{130,210,200, 190, exit_ui, -1, 0, "Exit"},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
@@ -176,6 +177,11 @@ void timer_ui_transfer_with_para(uint32_t timeout,
         common_ui_init(current_ui);
     }
     lprintf("ui %u->TIMER OFTEN\r\n", last_ui_index);
+}
+
+void f3mins_timer()
+{
+    timer_ui_transfer_with_para(60, 3, shaolshi);
 }
 
 void often_used_timer()
