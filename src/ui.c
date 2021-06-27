@@ -10,6 +10,14 @@ uint32_t ui_buf[8];
 
 void often_used_timer();
 void f3mins_timer();
+void main_ui_init(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    if(check_rtc_alert_and_clear()){
+        often_used_timer();
+    }
+    common_ui_init(vp);
+}
 void main_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -20,6 +28,7 @@ void poff_ctd_ui_init(void*vp)
     ui_t* uif =(ui_t*)vp;
     common_ui_init(vp);
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
+    lcd_lprintf(20, 100, "Version:%s", VERSION);
 }
 void poff_ctd_ui_process_event(void*vp)
 {
@@ -105,7 +114,7 @@ button_t main_menu_button[]={
 
 ui_t ui_list[]={
     {
-        NULL,
+        main_ui_init,
         main_ui_process_event,
         NULL,
         main_menu_button,
