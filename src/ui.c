@@ -57,7 +57,12 @@ void timer_ui_process_event(void*vp)
     }
     if(g_flag_1s){
         if(ui_buf[TMR_REPET_INDX]==0){
-            play_music(uif->timeout_music, 0);
+            if(uif->timeout_music){
+                play_music(uif->timeout_music, 0);
+            }
+            else{
+                ui_transfer(UI_MAIN_MENU);
+            }
         }
         else{
             ui_buf[TMR_TMOUTCT_INDX]--;
@@ -164,6 +169,7 @@ void often_used_timer()
     ui_buf[TMR_TMOUT_INDX] = 300;
     ui_buf[TMR_REPET_INDX] = 3;
     ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
+    current_ui->timeout_music = NULL;
     if(current_ui->ui_init){
         current_ui->ui_init(current_ui);
     }
