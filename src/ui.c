@@ -88,7 +88,7 @@ void music_test()
 }
 
 button_t main_menu_button[]={
-    {130,40,200, 60, often_used_timer, 0, 0, "OftenTimer"},
+    {130,40,200, 60, often_used_timer, -1, 0, "OftenTimer"},
     {130,110,200, 60, NULL, UI_POFF_CTD, 0, "PowerOffCountDown"},
     {130,180,200, 60, soft_reset_system, -1, 0, "Reboot"},
     {130,250,200, 60, reboot_download, -1, 0, "RebootDownload"},
@@ -142,12 +142,21 @@ ui_t ui_list[]={
     },
 };
 
+void common_ui_uninit(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    cur_task_event_flag = 0;
+}
+
 void often_used_timer()
 {
     last_ui_index = cur_ui_index;
     cur_ui_index = UI_TIMER;
     if(current_ui->ui_uninit){
         current_ui->ui_uninit(current_ui);
+    }
+    else{
+        common_ui_uninit(current_ui);
     }
     memcpy(&working_ui_t, &ui_list[UI_TIMER], sizeof(ui_t));
     current_ui = &working_ui_t;
