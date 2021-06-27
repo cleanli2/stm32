@@ -28,7 +28,8 @@ uint32_t cur_task_event_flag;
 uint cur_task_timeout_ct;
 uint default_music_note_period = DEFAULT_MUSIC_NOTE_PERIOD;
 uint no_key_down_ct_lcd = 0;
-bool save_power_mode = true;
+uint no_key_down_ct = 0;
+bool save_power_mode = false;
 struct delay_work_info delayed_works[]={
     {
         NULL,
@@ -91,16 +92,17 @@ void task_lcd_bklight(struct task*vp)
 {
     vp;//fix unused variable warning
     if(save_power_mode){
+        //lprintf("lcdps:%d %d\n", no_key_down_ct_lcd, get_BL_value());
         if(get_BL_value() > DEFAULT_IDLE_BL){
             if(no_key_down_ct_lcd > (LCD_POWER_SAVE_CYCLE/LCD_POWER_SAVE_RATIO)){
-                printf("lcd_\r\n");
+                lprintf("lcd_\r\n");
                 no_key_down_ct_lcd = 0;
                 set_BL_value(DEFAULT_IDLE_BL);
             }
         }
         else{
             if(no_key_down_ct_lcd > (LCD_POWER_SAVE_CYCLE)){
-                printf("lcd^\r\n");
+                lprintf("lcd^\r\n");
                 no_key_down_ct_lcd = 0;
                 set_BL_value(DEFAULT_BL);
             }
@@ -339,6 +341,18 @@ void task_music(struct task*vp)
         beep_by_timer_100(0);
     }
 }
+
+void enable_power_save(bool en)
+{
+    save_power_mode = en;
+    if(en){
+        set_BL_value(DEFAULT_IDLE_BL);
+    }
+    else{
+        set_BL_value(DEFAULT_BL);
+    }
+}
+
 void task_misc(struct task*vp)
 {
     vp;//fix unused variable warning
@@ -372,6 +386,8 @@ void task_misc(struct task*vp)
         touch_status = 1;
         cur_task_event_flag |= 1<<EVENT_TOUCH_DOWN;
         no_key_down_ct_lcd = 0;
+        no_key_down_ct = 0;
+        enable_power_save(false);
     }
     else{
         touch_status = 0;
@@ -382,8 +398,20 @@ void task_misc(struct task*vp)
             draw_x = cached_touch_x;
             draw_y = cached_touch_y;
         }
-        if(save_power_mode && g_flag_1s){
-            no_key_down_ct_lcd++;
+        if(g_flag_1s){
+            no_key_down_ct++;
+            if(save_power_mode){
+                no_key_down_ct_lcd++;
+            }
+            if(no_key_down_ct > NO_KEY_DOWN_PWSAVE_MAX){
+                if(!save_power_mode){
+                    enable_power_save(true);
+                }
+            }
+            if(no_key_down_ct > NO_KEY_DOWN_CT_MAX){
+                cur_task_event_flag |= 1<<EVENT_NOKEYCT_MAXREACHED;
+                no_key_down_ct = 0;
+            }
         }
     }
 }
