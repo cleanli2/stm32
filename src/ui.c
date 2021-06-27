@@ -47,8 +47,8 @@ void poff_ctd_ui_process_event(void*vp)
 }
 
 prgb_t timer_prgb[]={
-    {20, 200, 300, 30, NULL, NULL, "Counter", 0},
-    {20, 280, 300, 30, NULL, NULL, "Repeat", 0},
+    {20, 200, 440, 30, NULL, NULL, "Counter", 0},
+    {20, 280, 440, 30, NULL, NULL, "Repeat", 0},
     {-1, -1,  -1,  -1, NULL, NULL, NULL, 0},
 };
 
@@ -89,6 +89,7 @@ void timer_ui_process_event(void*vp)
     }
     if(g_flag_1s){
         if(ui_buf[TMR_REPETCT_INDX]==0){
+            update_prgb(uif, uif->prgb_info);
             if(uif->timeout_music){
                 play_music(uif->timeout_music, 0);
             }
@@ -96,15 +97,14 @@ void timer_ui_process_event(void*vp)
         else{
             //lcd_lprintf(50, 200, "Counts :%d  ", ui_buf[TMR_TMOUTCT_INDX]);
             //lcd_lprintf(50, 250, "Repeats:%d  ", ui_buf[TMR_REPETCT_INDX]);
-            ui_buf[TMR_TMOUTCT_INDX]--;
             update_prgb(uif, uif->prgb_info);
             if(ui_buf[TMR_TMOUTCT_INDX] == 0){
                 ui_buf[TMR_REPETCT_INDX]--;
                 ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
                 draw_prgb_raw(&timer_prgb[0]);
-                update_prgb(uif, uif->prgb_info);
                 play_music(notice_music, 0);
             }
+            ui_buf[TMR_TMOUTCT_INDX]--;
         }
     }
     common_process_event(vp);
@@ -299,11 +299,11 @@ void update_prgb(ui_t* uif, prgb_t*pip)
     while(pip->x >=0){
         if(pip->last_data != *pip->data){
             pip->last_data = *pip->data;
-            t = pip->w*((*pip->data)-1)/(*pip->max);
-            if(t>0 && t<=pip->w){
+            t = pip->w*(*pip->data)/(*pip->max);
+            if(t>=0 && t<pip->w){
                 lcd_clr_window(BLACK, pip->x, pip->y, pip->x+pip->w-t, pip->y+pip->h);
             }
-            lcd_lprintf(pip->x+pip->w+5, pip->y,
+            lcd_lprintf(pip->x, pip->y - 30,
                     "%s:%d/%d  ", pip->des, (*pip->data), (*pip->max));
         }
         pip++;
