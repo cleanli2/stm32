@@ -49,6 +49,7 @@ void poff_ctd_ui_process_event(void*vp)
 prgb_t timer_prgb[]={
     {20, 200, 300, 30, NULL, NULL, "Counter", 0},
     {20, 280, 300, 30, NULL, NULL, "Repeat", 0},
+    {-1, -1,  -1,  -1, NULL, NULL, NULL, 0},
 };
 
 #define TMR_TMOUT_INDX 0
@@ -285,9 +286,8 @@ void update_prgb(ui_t* uif, prgb_t*pip)
         if(pip->last_data != *pip->data){
             pip->last_data = *pip->data;
             t = pip->w*(*pip->data)/(*pip->max);
-            lprintf("%s: t %d\n", pip->des, t);
-            if(t>0){
-                lcd_clr_window(BLACK, pip->x, pip->y, pip->x+t, pip->y+pip->h);
+            if(t>0 && t<pip->w){
+                lcd_clr_window(BLACK, pip->x, pip->y, pip->x+pip->w-t, pip->y+pip->h);
             }
             lcd_lprintf(pip->x+pip->w+5, pip->y,
                     "%s:%d/%d", pip->des, (*pip->data), (*pip->max));
