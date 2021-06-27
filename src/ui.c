@@ -39,6 +39,9 @@ void main_ui_init(void*vp)
 void main_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    if(cur_task_event_flag & (1<<EVENT_NOKEYCT_MAXREACHED)){
+        ui_transfer(UI_POFF_CTD);
+    }
     common_process_event(vp);
 }
 void poff_ctd_ui_init(void*vp)
@@ -241,7 +244,7 @@ ui_t ui_list[]={
         main_menu_button,
         UI_MAIN_MENU,
         40,
-        TIME_OUT_EN,// disp_mode
+        0,// disp_mode
         NULL,
         NULL,
     },
