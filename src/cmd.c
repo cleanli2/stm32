@@ -9,6 +9,7 @@
 static char cmd_buf[COM_MAX_LEN] = "";
 static uint cmd_buf_p = COM_MAX_LEN;
 static uint quit_cmd = 0;
+extern uint32_t task_mask;
 
 uint get_howmany_para(char *s);
 char * str_to_hex(char *s, uint * result);
@@ -718,6 +719,22 @@ void test(char *p)
     return;
 
 }
+void tm(char *p)
+{
+    uint32_t tmp, para;
+    con_send('\n');
+    tmp = get_howmany_para(p);
+    lprintf("tmp=%d\n", tmp);
+    if(tmp<1){
+        return;
+    }
+    p = str_to_hex(p, &para);
+    task_mask = para;
+    lprintf("task_mask=%X\n", task_mask);
+
+    return;
+
+}
 void gpiotest(char *p)
 {
     con_send('\n');
@@ -789,6 +806,7 @@ static const struct command cmd_list[]=
     {"sd",sd},
     {"sdcmds",sd_cmds},
     {"test",test},
+    {"taskmask",tm},
     //{"szk",show_ziku},
     {"w",write_mem},
     {NULL, NULL},
