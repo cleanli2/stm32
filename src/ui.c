@@ -148,7 +148,7 @@ button_t main_menu_button[]={
     {130,320,200, 60, power_off, -1, 0, "PowerOff"},
     {130,390,200, 60, music_test, -1, 0, "MusicTest"},
     {130,460,200, 60, f3mins_timer, -1, 0, "3x1mins TIMER"},
-    {130,530,200, 60, NULL, UI_TIMER_SET, -1, 0, "More Timer"},
+    {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer"},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
 
@@ -482,9 +482,9 @@ void ui_transfer(uint8 ui_id)
             return;
         }
         else{
-            uint8 tmp = cur_ui_index;
+            //uint8 tmp = cur_ui_index;
             cur_ui_index = last_ui_index;
-            last_ui_index = tmp;
+            last_ui_index = 0;
         }
     }
     else{
