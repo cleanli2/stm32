@@ -99,6 +99,7 @@ void timer_ui_process_event(void*vp)
             if(ui_buf[TMR_TMOUTCT_INDX] == 0){
                 ui_buf[TMR_REPETCT_INDX]--;
                 ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
+                draw_prgb_raw(&timer_prgb[0]);
                 play_music(notice_music, 0);
             }
         }
@@ -254,11 +255,18 @@ void draw_sq(int x1, int y1, int x2, int y2, int color)
     }while(y!=y2);
 }
 
+void draw_prgb_raw(prgb_t*pip)
+{
+    if(!pip)return;
+    lcd_clr_window(WHITE, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
+    draw_sq(pip->x, pip->y, pip->x+pip->w, pip->y+pip->h, BLACK);
+}
+
 void draw_prgb(prgb_t*pip)
 {
     if(!pip)return;
     while(pip->x >=0){
-        draw_sq(pip->x, pip->y, pip->x+pip->w, pip->y+pip->h, BLACK);
+        draw_prgb_raw(pip);
         pip++;
     }
 }
@@ -285,7 +293,7 @@ void update_prgb(ui_t* uif, prgb_t*pip)
     while(pip->x >=0){
         if(pip->last_data != *pip->data){
             pip->last_data = *pip->data;
-            t = pip->w*(*pip->data)/(*pip->max);
+            t = pip->w*((*pip->data)+1)/(*pip->max);
             if(t>0 && t<pip->w){
                 lcd_clr_window(BLACK, pip->x, pip->y, pip->x+pip->w-t, pip->y+pip->h);
             }
