@@ -274,7 +274,6 @@ void beep_by_timer_100(uint32_t hz_100)
     NVIC_InitTypeDef NVIC_InitStructure;
 
     if(hz_100>0){
-        beep_st = 0;
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5; //TIM_CH1
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //复用推挽输出
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -305,6 +304,8 @@ void beep_by_timer_100(uint32_t hz_100)
         TIM_Cmd(TIM3, ENABLE);
     }
     else{
+        if(beep_st == 0)return;
+        beep_st = 0;
         TIM_Cmd(TIM3, DISABLE);
         NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
         NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;

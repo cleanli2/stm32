@@ -216,6 +216,7 @@ void play_music( const signed char* pu, uint note_period)
     if(music_task_play_info.pu == pu){
         if(music_task_play_info.music_status == MUSIC_PLAYING){
             music_task_play_info.music_status = MUSIC_PAUSE;
+            beep_by_timer_100(0);
         }
         if(music_task_play_info.music_status == MUSIC_PAUSE){
             music_task_play_info.music_status = MUSIC_PLAYING;

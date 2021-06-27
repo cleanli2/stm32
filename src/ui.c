@@ -189,7 +189,7 @@ void mins_45()
 
 void mins_1h()
 {
-    timer_ui_transfer_with_para(60*60+3, ui_buf[8], xianglian);
+    timer_ui_transfer_with_para(60*63, ui_buf[8], xianglian);
 }
 
 void rp_2()
