@@ -72,12 +72,13 @@ void timer_ui_init(void*vp)
     }
     timer_prgb[0].max = &ui_buf[TMR_TMOUT_INDX];
     timer_prgb[0].data = &ui_buf[TMR_TMOUTCT_INDX];
-    timer_prgb[0].last_data = ui_buf[TMR_TMOUTCT_INDX];
+    timer_prgb[0].last_data = ui_buf[TMR_TMOUTCT_INDX]+2;
     timer_prgb[1].max = &ui_buf[TMR_REPET_INDX];
     timer_prgb[1].data = &ui_buf[TMR_REPETCT_INDX];
-    timer_prgb[1].last_data = ui_buf[TMR_REPETCT_INDX];
+    timer_prgb[1].last_data = ui_buf[TMR_REPETCT_INDX]+2;
     common_ui_init(vp);
     draw_prgb(timer_prgb);
+    update_prgb(uif, uif->prgb_info);
 }
 void timer_ui_process_event(void*vp)
 {
@@ -298,7 +299,7 @@ void update_prgb(ui_t* uif, prgb_t*pip)
                 lcd_clr_window(BLACK, pip->x, pip->y, pip->x+pip->w-t, pip->y+pip->h);
             }
             lcd_lprintf(pip->x+pip->w+5, pip->y,
-                    "%s:%d/%d", pip->des, (*pip->data), (*pip->max));
+                    "%s:%d/%d  ", pip->des, (*pip->data), (*pip->max));
         }
         pip++;
     }
