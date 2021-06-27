@@ -29,6 +29,19 @@ enum UI_NAME_INDEX {
 extern int cur_ui_index ;
 extern int last_ui_index ;
 
+typedef struct progess_bar {
+    int x;
+    int y;
+    int w;
+    int h;
+    uint32_t* max;
+    uint32_t* data;
+    char* des;
+    uint32_t last_data;
+    //uint16_t f_color;
+    //uint16_t b_color;
+} prgb_t;
+
 typedef struct button {
     int x;
     int y;
@@ -58,6 +71,7 @@ typedef struct ui_info {
     uint timeout;
     uint8 time_disp_mode;
     const signed char*timeout_music;
+    prgb_t* prgb_info;
 } ui_t;
 
 typedef struct change_level_info_{

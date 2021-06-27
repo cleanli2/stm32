@@ -10,6 +10,10 @@ uint32_t ui_buf[8];
 
 void often_used_timer();
 void f3mins_timer();
+void common_process_event(void*vp);
+void ui_transfer(uint8 ui_id);
+void common_ui_init(void*vp);
+void draw_prgb(prgb_t*pip);
 void main_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -41,10 +45,17 @@ void poff_ctd_ui_process_event(void*vp)
     }
     common_process_event(vp);
 }
+
+prgb_t timer_prgb[]={
+    {20, 200, 300, 30, NULL, NULL, "Counter", 0},
+    {20, 280, 300, 30, NULL, NULL, "Repeat", 0},
+};
+
 #define TMR_TMOUT_INDX 0
 #define TMR_REPET_INDX 1
 #define TMR_TMOUTCT_INDX 2
-#define TMR_MAGIC_INDX 3
+#define TMR_REPETCT_INDX 3
+#define TMR_MAGIC_INDX 4
 void timer_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -52,32 +63,40 @@ void timer_ui_init(void*vp)
     if(ui_buf[TMR_MAGIC_INDX] != 0xF1EE4){
         ui_buf[TMR_TMOUT_INDX] = uif->timeout;
         ui_buf[TMR_REPET_INDX] = 2;
+        ui_buf[TMR_REPETCT_INDX] = 2;
         ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
     }
     else{
         ui_buf[TMR_MAGIC_INDX] = 0;
     }
+    timer_prgb[0].max = &ui_buf[TMR_TMOUT_INDX];
+    timer_prgb[0].data = &ui_buf[TMR_TMOUTCT_INDX];
+    timer_prgb[0].last_data = ui_buf[TMR_TMOUTCT_INDX];
+    timer_prgb[1].max = &ui_buf[TMR_REPET_INDX];
+    timer_prgb[1].data = &ui_buf[TMR_REPETCT_INDX];
+    timer_prgb[1].last_data = ui_buf[TMR_REPETCT_INDX];
     common_ui_init(vp);
+    draw_prgb(timer_prgb);
 }
 void timer_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     if(cur_task_event_flag & (1<<EVENT_MUSIC_PLAY_END)
-            && ui_buf[TMR_REPET_INDX]==0){
+            && ui_buf[TMR_REPETCT_INDX]==0){
         ui_transfer(UI_MAIN_MENU);
     }
     if(g_flag_1s){
-        if(ui_buf[TMR_REPET_INDX]==0){
+        if(ui_buf[TMR_REPETCT_INDX]==0){
             if(uif->timeout_music){
                 play_music(uif->timeout_music, 0);
             }
         }
         else{
-            lcd_lprintf(50, 200, "Counts :%d  ", ui_buf[TMR_TMOUTCT_INDX]);
-            lcd_lprintf(50, 250, "Repeats:%d  ", ui_buf[TMR_REPET_INDX]);
+            //lcd_lprintf(50, 200, "Counts :%d  ", ui_buf[TMR_TMOUTCT_INDX]);
+            //lcd_lprintf(50, 250, "Repeats:%d  ", ui_buf[TMR_REPETCT_INDX]);
             ui_buf[TMR_TMOUTCT_INDX]--;
             if(ui_buf[TMR_TMOUTCT_INDX] == 0){
-                ui_buf[TMR_REPET_INDX]--;
+                ui_buf[TMR_REPETCT_INDX]--;
                 ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
                 play_music(notice_music, 0);
             }
@@ -124,6 +143,7 @@ ui_t ui_list[]={
         20,
         TIME_OUT_EN,// disp_mode
         NULL,
+        NULL,
     },
     {
         poff_ctd_ui_init,
@@ -134,6 +154,7 @@ ui_t ui_list[]={
         10, //timeout
         TIME_OUT_EN,
         pwroff_music,//char*timeout_music;
+        NULL,
     },
     {
         timer_ui_init,
@@ -144,6 +165,7 @@ ui_t ui_list[]={
         10, //timeout
         0,
         xiyouji1,//char*timeout_music;
+        timer_prgb,
     },
     {
         NULL,
@@ -164,7 +186,7 @@ void common_ui_uninit(void*vp)
 }
 
 void timer_ui_transfer_with_para(uint32_t timeout,
-        uint32_t repeat, int8_t* music)
+        uint32_t repeat, const int8_t* music)
 {
     last_ui_index = cur_ui_index;
     cur_ui_index = UI_TIMER;
@@ -179,6 +201,7 @@ void timer_ui_transfer_with_para(uint32_t timeout,
     ui_buf[TMR_MAGIC_INDX] = 0xF1EE4;
     ui_buf[TMR_TMOUT_INDX] = timeout;
     ui_buf[TMR_REPET_INDX] = repeat;
+    ui_buf[TMR_REPETCT_INDX] = repeat;
     ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
     current_ui->timeout_music = music;
     if(current_ui->ui_init){
@@ -230,6 +253,15 @@ void draw_sq(int x1, int y1, int x2, int y2, int color)
     }while(y!=y2);
 }
 
+void draw_prgb(prgb_t*pip)
+{
+    if(!pip)return;
+    while(pip->x >=0){
+        draw_sq(pip->x, pip->y, pip->x+pip->w, pip->y+pip->h, BLACK);
+        pip++;
+    }
+}
+
 void draw_button(button_t*pbt)
 {
     if(!pbt)return;
@@ -241,6 +273,26 @@ void draw_button(button_t*pbt)
             lcd_lprintf(lx+5,ly+5,pbt->text);
         }
         pbt++;
+    }
+}
+
+void update_prgb(ui_t* uif, prgb_t*pip)
+{
+    uint32_t t;
+    if(!pip)return;
+    //lcd_clr_window(pip->b_color, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
+    while(pip->x >=0){
+        if(pip->last_data != *pip->data){
+            pip->last_data = *pip->data;
+            t = pip->w*(*pip->data)/(*pip->max);
+            lprintf("%s: t %d\n", pip->des, t);
+            if(t>0){
+                lcd_clr_window(BLACK, pip->x, pip->y, pip->x+t, pip->y+pip->h);
+            }
+            lcd_lprintf(pip->x+pip->w+5, pip->y,
+                    "%s:%d/%d", pip->des, (*pip->data), (*pip->max));
+        }
+        pip++;
     }
 }
 
@@ -285,6 +337,7 @@ void common_ui_init(void*vp)
     LCD_Clear(WHITE);	//fill all screen with some color
     draw_button(p_bt);
     draw_button(common_button);
+    draw_prgb(uif->prgb_info);
 #if 0
     if(uif->time_disp_mode & TIMER_TRIGGER_START){
         cur_task_timer_started = false;
@@ -392,6 +445,7 @@ void common_process_event(void*vp)
             }
         }
     }
+    update_prgb(uif, uif->prgb_info);
     cur_task_event_flag = 0;
 }
 
