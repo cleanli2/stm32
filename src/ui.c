@@ -151,7 +151,8 @@ void common_ui_uninit(void*vp)
     cur_task_event_flag = 0;
 }
 
-void often_used_timer()
+void timer_ui_transfer_with_para(uint32_t timeout,
+        uint32_t repeat, int8_t* music)
 {
     last_ui_index = cur_ui_index;
     cur_ui_index = UI_TIMER;
@@ -164,10 +165,10 @@ void often_used_timer()
     memcpy(&working_ui_t, &ui_list[UI_TIMER], sizeof(ui_t));
     current_ui = &working_ui_t;
     ui_buf[TMR_MAGIC_INDX] = 0xF1EE4;
-    ui_buf[TMR_TMOUT_INDX] = 300;
-    ui_buf[TMR_REPET_INDX] = 3;
+    ui_buf[TMR_TMOUT_INDX] = timeout;
+    ui_buf[TMR_REPET_INDX] = repeat;
     ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
-    current_ui->timeout_music = NULL;
+    current_ui->timeout_music = music;
     if(current_ui->ui_init){
         current_ui->ui_init(current_ui);
     }
@@ -175,6 +176,11 @@ void often_used_timer()
         common_ui_init(current_ui);
     }
     lprintf("ui %u->TIMER OFTEN\r\n", last_ui_index);
+}
+
+void often_used_timer()
+{
+    timer_ui_transfer_with_para(300, 3, NULL);
 }
 
 void PutPixel(int x, int y, int color)
