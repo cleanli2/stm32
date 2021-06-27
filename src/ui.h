@@ -22,6 +22,7 @@ enum UI_NAME_INDEX {
     UI_MAIN_MENU,
     UI_POFF_CTD,
     UI_TIMER,
+    UI_TIMER_SET,
     UI_LAST,
     UI_MAX
 };

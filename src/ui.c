@@ -14,6 +14,19 @@ void common_process_event(void*vp);
 void ui_transfer(uint8 ui_id);
 void common_ui_init(void*vp);
 void draw_prgb(prgb_t*pip);
+
+void timer_set_ui_init(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    common_ui_init(vp);
+    ui_buf[8] = 1;
+    lcd_lprintf(60, 280, "Repeat %d times   ", ui_buf[8]);
+}
+void timer_set_ui_process_event(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    common_process_event(vp);
+}
 void main_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -57,11 +70,12 @@ prgb_t timer_prgb[]={
 #define TMR_TMOUTCT_INDX 2
 #define TMR_REPETCT_INDX 3
 #define TMR_MAGIC_INDX 4
+#define TMR_MAGIC 0xF1EE4u
 void timer_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     play_music(notice_music, 0);
-    if(ui_buf[TMR_MAGIC_INDX] != 0xF1EE4){
+    if(ui_buf[TMR_MAGIC_INDX] != TMR_MAGIC){
         ui_buf[TMR_TMOUT_INDX] = uif->timeout;
         ui_buf[TMR_REPET_INDX] = 2;
         ui_buf[TMR_REPETCT_INDX] = 2;
@@ -134,7 +148,87 @@ button_t main_menu_button[]={
     {130,320,200, 60, power_off, -1, 0, "PowerOff"},
     {130,390,200, 60, music_test, -1, 0, "MusicTest"},
     {130,460,200, 60, f3mins_timer, -1, 0, "3x1mins TIMER"},
-    //{130,210,200, 190, exit_ui, -1, 0, "Exit"},
+    {130,530,200, 60, NULL, UI_TIMER_SET, -1, 0, "More Timer"},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL},
+};
+
+void mins_2()
+{
+    timer_ui_transfer_with_para(60*2, ui_buf[8], xianglian);
+}
+
+void mins_3()
+{
+    timer_ui_transfer_with_para(60*3, ui_buf[8], xianglian);
+}
+
+void mins_5()
+{
+    timer_ui_transfer_with_para(60*5, ui_buf[8], xianglian);
+}
+
+void mins_10()
+{
+    timer_ui_transfer_with_para(60*10, ui_buf[8], xianglian);
+}
+
+void mins_20()
+{
+    timer_ui_transfer_with_para(60*20, ui_buf[8], xianglian);
+}
+
+void mins_30()
+{
+    timer_ui_transfer_with_para(60*30, ui_buf[8], xianglian);
+}
+
+void mins_45()
+{
+    timer_ui_transfer_with_para(60*45, ui_buf[8], xianglian);
+}
+
+void mins_1h()
+{
+    timer_ui_transfer_with_para(60*60+3, ui_buf[8], xianglian);
+}
+
+void rp_2()
+{
+    ui_buf[8]=2;
+    lcd_lprintf(60, 280, "Repeat %d times   ", ui_buf[8]);
+}
+
+void rp_3()
+{
+    ui_buf[8]=3;
+    lcd_lprintf(60, 280, "Repeat %d times   ", ui_buf[8]);
+}
+
+void rp_4()
+{
+    ui_buf[8]=4;
+    lcd_lprintf(60, 280, "Repeat %d times   ", ui_buf[8]);
+}
+
+void rp_1()
+{
+    ui_buf[8]=1;
+    lcd_lprintf(60, 280, "Repeat %d times   ", ui_buf[8]);
+}
+
+button_t timer_set_button[]={
+    { 60, 60, 80,  40, mins_2, -1, 0, "2 mins"},
+    {160, 60, 80,  40, mins_3, -1, 0, "3 mins"},
+    {260, 60, 80,  40, mins_5, -1, 0, "5 mins"},
+    {360, 60, 80,  40, mins_10, -1, 0, "10 mins"},
+    { 60,120, 80,  40, mins_20, -1, 0, "20 mins"},
+    {160,120, 80,  40, mins_30, -1, 0, "30 mins"},
+    {260,120, 80,  40, mins_45, -1, 0, "45 mins"},
+    {360,120, 80,  40, mins_1h, -1, 0, "1h+3 mins"},
+    { 60,200, 80,  40, rp_2, -1, 0, "repeat 2"},
+    {160,200, 80,  40, rp_3, -1, 0, "repeat 3"},
+    {260,200, 80,  40, rp_4, -1, 0, "repeat 4"},
+    {360,200, 80,  40, rp_1, -1, 0, "repeat 1"},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
 
@@ -145,7 +239,7 @@ ui_t ui_list[]={
         NULL,
         main_menu_button,
         UI_MAIN_MENU,
-        20,
+        40,
         TIME_OUT_EN,// disp_mode
         NULL,
         NULL,
@@ -171,6 +265,17 @@ ui_t ui_list[]={
         0,
         xiyouji1,//char*timeout_music;
         timer_prgb,
+    },
+    {
+        timer_set_ui_init,
+        timer_set_ui_process_event,
+        NULL,
+        timer_set_button,
+        UI_TIMER_SET,
+        20, //timeout
+        TIME_OUT_EN,
+        NULL,//char*timeout_music;
+        NULL,
     },
     {
         NULL,
@@ -206,7 +311,7 @@ void timer_ui_transfer_with_para(uint32_t timeout,
     }
     memcpy(&working_ui_t, &ui_list[UI_TIMER], sizeof(ui_t));
     current_ui = &working_ui_t;
-    ui_buf[TMR_MAGIC_INDX] = 0xF1EE4;
+    ui_buf[TMR_MAGIC_INDX] = TMR_MAGIC;
     ui_buf[TMR_TMOUT_INDX] = timeout;
     ui_buf[TMR_REPET_INDX] = repeat;
     ui_buf[TMR_REPETCT_INDX] = repeat;
