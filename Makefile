@@ -27,6 +27,7 @@ C_OBJ=$(C_SRC:%.c=%.o)
 .PHONY: all clean
 
 all:$(C_OBJ)
+	touch src/version.h
 	$(CC) $(C_OBJ) -T stm32_f103ze_gcc.ld -o $(TARGET).elf $(LDFLAGS)
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).bin -Obinary 
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).hex -Oihex

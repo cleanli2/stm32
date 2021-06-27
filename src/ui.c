@@ -28,7 +28,7 @@ void poff_ctd_ui_init(void*vp)
     ui_t* uif =(ui_t*)vp;
     common_ui_init(vp);
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
-    lcd_lprintf(20, 100, "Version:%s", VERSION);
+    lcd_lprintf(20, 100, "Version:%s%s", VERSION, GIT_SHA1);
 }
 void poff_ctd_ui_process_event(void*vp)
 {
@@ -73,6 +73,8 @@ void timer_ui_process_event(void*vp)
             }
         }
         else{
+            lcd_lprintf(50, 200, "Counts :%d  ", ui_buf[TMR_TMOUTCT_INDX]);
+            lcd_lprintf(50, 250, "Repeats:%d  ", ui_buf[TMR_REPET_INDX]);
             ui_buf[TMR_TMOUTCT_INDX]--;
             if(ui_buf[TMR_TMOUTCT_INDX] == 0){
                 ui_buf[TMR_REPET_INDX]--;
