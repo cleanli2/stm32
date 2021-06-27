@@ -213,6 +213,15 @@ void continue_music()
 
 void play_music( const signed char* pu, uint note_period)
 {
+    if(music_task_play_info.pu == pu){
+        if(music_task_play_info.music_status == MUSIC_PLAYING){
+            music_task_play_info.music_status = MUSIC_PAUSE;
+        }
+        if(music_task_play_info.music_status == MUSIC_PAUSE){
+            music_task_play_info.music_status = MUSIC_PLAYING;
+        }
+        return;
+    }
     music_task_play_info.pu = pu;
     music_task_play_info.pu_index = 0;
     music_task_play_info.music_status = MUSIC_PLAYING;
@@ -259,6 +268,7 @@ void task_music(struct task*vp)
             lprintf("play end\r\n");
             beep_by_timer_100(0);
             set_music_note_period(DEFAULT_MUSIC_NOTE_PERIOD);//recover default note period
+            music_task_play_info.pu = NULL;
         }
         else if(music_note==HALF_PERIOD){
             default_music_note_period /= 2;

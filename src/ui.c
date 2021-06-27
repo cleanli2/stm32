@@ -43,6 +43,9 @@ void timer_ui_init(void*vp)
         ui_buf[TMR_REPET_INDX] = 2;
         ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
     }
+    else{
+        ui_buf[TMR_MAGIC_INDX] = 0;
+    }
     common_ui_init(vp);
 }
 void timer_ui_process_event(void*vp)
@@ -85,13 +88,13 @@ void music_test()
 }
 
 button_t main_menu_button[]={
-    {130,40,200, 60, often_used_timer, 0, 0, "CLOCK"},
+    {130,40,200, 60, often_used_timer, 0, 0, "OftenTimer"},
     {130,110,200, 60, NULL, UI_POFF_CTD, 0, "PowerOffCountDown"},
-    {130,170,200, 60, soft_reset_system, -1, 0, "Reboot"},
-    {130,240,200, 60, reboot_download, -1, 0, "RebootDownload"},
-    {130,310,200, 60, power_off, -1, 0, "PowerOff"},
-    {130,380,200, 60, music_test, -1, 0, "MusicTest"},
-    {130,450,200, 60, NULL, UI_TIMER, 0, "TIMER"},
+    {130,180,200, 60, soft_reset_system, -1, 0, "Reboot"},
+    {130,250,200, 60, reboot_download, -1, 0, "RebootDownload"},
+    {130,320,200, 60, power_off, -1, 0, "PowerOff"},
+    {130,390,200, 60, music_test, -1, 0, "MusicTest"},
+    {130,460,200, 60, NULL, UI_TIMER, 0, "TIMER"},
     //{130,210,200, 190, exit_ui, -1, 0, "Exit"},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
