@@ -442,8 +442,10 @@ void auto_time_alert_set(uint32_t time_step_minutes)
 }
 uint8_t check_rtc_alert_and_clear()
 {
-    uint8_t ret = 0;
-    ret = rtc_read_reg(1)&0x08;
+    uint8_t ret = 0, reg;
+    reg = rtc_read_reg(1);
+    lprintf("rtcreg1=%x\n", reg);
+    ret = reg&0x08;
     if(ret){
         lprintf("rtc flag set found!!!!!!!!!\n");
         rtc_write_reg(1,0x12);//clear rtc int pin

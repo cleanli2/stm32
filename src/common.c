@@ -536,6 +536,8 @@ void main_init(void)
 
   RCC_GetClocksFreq(&RCC_ClocksStatus);
   lprintf("Version %s%s\n", VERSION, GIT_SHA1);
+  get_rtc_time(0);
+  lprintf("%s\n", get_rtc_time(0));
   lprintf("clk %d %d %d %d %d Hz\n\r",
 		  RCC_ClocksStatus.SYSCLK_Frequency,
 		  RCC_ClocksStatus.HCLK_Frequency,

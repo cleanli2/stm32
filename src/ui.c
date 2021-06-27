@@ -30,6 +30,7 @@ void timer_set_ui_process_event(void*vp)
 void main_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    lprintf("mainmenu\n");
     if(check_rtc_alert_and_clear()){
         often_used_timer();
     }
