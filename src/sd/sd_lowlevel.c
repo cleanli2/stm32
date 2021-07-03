@@ -2,7 +2,11 @@
 #include "sd_lowlevel.h"
 #include "common.h"
 
+#define STM32_SPI_INITED 0x55
+#define GPIO_SPI_INITED 0xaa
+#define NO_SPI_INITED 0
 static uint32_t stm32_spi_choose = 1;
+static uint32_t spi_inited = NO_SPI_INITED;
 /**
   * @brief  DeInitializes the SD/SD communication.
   * @param  None
@@ -38,6 +42,7 @@ void stm32_spi_LowLevel_DeInit(void)
   /*!< Configure SD_SPI_DETECT_PIN pin: SD Card detect pin */
   GPIO_InitStructure.GPIO_Pin = SD_DETECT_PIN;
   GPIO_Init(SD_DETECT_GPIO_PORT, &GPIO_InitStructure);
+  spi_inited = NO_SPI_INITED;
 }
 
 /**
@@ -50,7 +55,10 @@ void stm32_spi_LowLevel_Init(void)
   GPIO_InitTypeDef  GPIO_InitStructure;
   SPI_InitTypeDef   SPI_InitStructure;
 
-  lprintf("%s\n", __func__);
+  lprintf("%s spi_inited %x\n", __func__, spi_inited);
+  if(spi_inited == STM32_SPI_INITED){
+      return;
+  }
   /*!< SD_SPI_CS_GPIO, SD_SPI_MOSI_GPIO, SD_SPI_MISO_GPIO, SD_SPI_DETECT_GPIO 
        and SD_SPI_SCK_GPIO Periph clock enable */
   RCC_APB2PeriphClockCmd(SD_CS_GPIO_CLK | SD_SPI_MOSI_GPIO_CLK | SD_SPI_MISO_GPIO_CLK |
@@ -104,6 +112,7 @@ void stm32_spi_LowLevel_Init(void)
   SPI_Init(SD_SPI, &SPI_InitStructure);
   
   SPI_Cmd(SD_SPI, ENABLE); /*!< SD_SPI enable */
+  spi_inited = STM32_SPI_INITED;
 }
 
 /**
@@ -160,14 +169,19 @@ uint8_t stm32_spi_ReadByte(void)
 /*******************gpio spi**************************************************/
 void gpio_spi_LowLevel_DeInit(void)
 {
+    spi_inited = NO_SPI_INITED;
 }
 
 void gpio_spi_LowLevel_Init(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
 
-    lprintf("%s\n", __func__);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA| RCC_APB2Periph_AFIO, ENABLE);
+    lprintf("%s spi_inited %x\n", __func__, spi_inited);
+    if(spi_inited == GPIO_SPI_INITED){
+        return;
+    }
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7|GPIO_Pin_5;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
@@ -179,6 +193,7 @@ void gpio_spi_LowLevel_Init(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //上拉输入
     GPIO_Init(DOUT_GG, &GPIO_InitStructure);
     GPIO_SetBits(DOUT_GG, DOUT_PIN);	
+    spi_inited = GPIO_SPI_INITED;
 }
 
 uint8_t gpio_spi_WriteByte(uint8_t num)
