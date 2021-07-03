@@ -1,5 +1,6 @@
 #include "stm32_eval_spi_sd.h"
 #include "sd_lowlevel.h"
+#include "common.h"
 
 static uint32_t stm32_spi_choose = 1;
 /**
@@ -162,14 +163,62 @@ void gpio_spi_LowLevel_DeInit(void)
 
 void gpio_spi_LowLevel_Init(void)
 {
+    GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA| RCC_APB2Periph_AFIO, ENABLE);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7|GPIO_Pin_5;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_SetBits(GPIOA,GPIO_Pin_7|GPIO_Pin_5);
+
+    GPIO_InitStructure.GPIO_Pin = DOUT_PIN;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //上拉输入
+    GPIO_Init(DOUT_GG, &GPIO_InitStructure);
+    GPIO_SetBits(DOUT_GG, DOUT_PIN);	
 }
 
-uint8_t gpio_spi_WriteByte(uint8_t Data)
+uint8_t gpio_spi_WriteByte(uint8_t num)
 {
+    u8 count=0, ret=0;   
+    //lprintf("TPw:%x\n", num);
+    for(count=0;count<8;count++)  
+    { 	  
+        if(num&0x80){
+            TDIN(1);  
+        }
+        else{
+            TDIN(0);   
+        }
+        num<<=1;    
+        TCLK(0); 	 
+        TCLK(1);		//上升沿有效	        
+    }		 			    
+    for(count=0;count<8;count++)//读出16位数据,只有高12位有效 
+    { 				  
+        ret<<=1; 	 
+        TCLK(0);	//下降沿有效  	    	   
+        TCLK(1);
+        if(DOUT)ret++; 		 
+    }  	
+    return ret;
 }
 
 uint8_t gpio_spi_ReadByte(void)
 {
+    gpio_spi_WriteByte(SD_DUMMY_BYTE);
+    u8 count=0; 	  
+    u16 Num=0; 
+    for(count=0;count<8;count++)//读出16位数据,只有高12位有效 
+    { 				  
+        Num<<=1; 	 
+        TCLK(0);	//下降沿有效  	    	   
+        TCLK(1);
+        if(DOUT)Num++; 		 
+    }  	
+    //lprintf("TPr:%x\n", Num);
+    return Num;  
 }
 /*********************************************************************/
 void SD_LowLevel_DeInit(void)
