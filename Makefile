@@ -15,6 +15,7 @@ INC_FLAGS= \
 		   -I $(TOP)/src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/      \
 		   -I $(TOP)/src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/CoreSupport/ \
 		   -I $(TOP)/src \
+		   -I $(TOP)/src/sd \
 		   -I $(TOP)/src/lcd800x480 \
 
 

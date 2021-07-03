@@ -88,16 +88,7 @@ u8 CMD_RDY=0X90;
 ******************************************************************************/  	 			    					   
 void TP_Write_Byte(u8 num)    
 {  
-	u8 count=0;   
-	//lprintf("TPw:%x\n", num);
-	for(count=0;count<8;count++)  
-	{ 	  
-		if(num&0x80)TDIN(1);  
-		else TDIN(0);   
-		num<<=1;    
-		TCLK(0); 	 
-		TCLK(1);		//上升沿有效	        
-	}		 			    
+	SD_WriteByte(num);//发送命令字
 }
 
 /*****************************************************************************
@@ -111,23 +102,12 @@ u16 TP_Read_AD(u8 CMD)
 { 	 
 	u8 count=0; 	  
 	u16 Num=0; 
-	TCLK(0);		//先拉低时钟 	 
-	TDIN(0); 	//拉低数据线
 	TCS(0); 		//选中触摸屏IC
 	TP_Write_Byte(CMD);//发送命令字
 	delay_us(6);//ADS7846的转换时间最长为6us
-	TCLK(0); 	     	    
-	delay_us(1);    	   
-	TCLK(1);		//给1个时钟，清除BUSY	    	    
-	TCLK(0); 	     	    
-	for(count=0;count<16;count++)//读出16位数据,只有高12位有效 
-	{ 				  
-		Num<<=1; 	 
-		TCLK(0);	//下降沿有效  	    	   
-		TCLK(1);
-		if(DOUT)Num++; 		 
-	}  	
-	Num>>=4;   	//只有高12位有效.
+    Num=SD_ReadByte()<<8;
+    Num|=SD_ReadByte();
+    Num>>=3;//first bit is not data
 	TCS(1);		//释放片选	 
 	//lprintf("TPr:%x\n", Num);
 	return(Num);  
@@ -620,35 +600,26 @@ u8 TP_Init(void)
 		//lprintf("Touch inited already\n");
 		return 1;
 	}
+
+    SD_LowLevel_Init();
 	//注意,时钟使能之后,对GPIO的操作才有效
 	//所以上拉之前,必须使能时钟.才能实现真正的上拉输出
 	GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
 		    		   
 	//注意,时钟使能之后,对GPIO的操作才有效
 	//所以上拉之前,必须使能时钟.才能实现真正的上拉输出
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA| RCC_APB2Periph_AFIO, ENABLE);
-	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7|GPIO_Pin_5;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB , ENABLE);
+
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	GPIO_SetBits(GPIOA,GPIO_Pin_7|GPIO_Pin_5);
-
-	GPIO_InitStructure.GPIO_Pin = DOUT_PIN;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //上拉输入
-	GPIO_Init(DOUT_GG, &GPIO_InitStructure);
-	GPIO_SetBits(DOUT_GG, DOUT_PIN);	
-
 	GPIO_InitStructure.GPIO_Pin = PEN_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //上拉输入
 	GPIO_Init(PEN_GG, &GPIO_InitStructure);
 	GPIO_SetBits(PEN_GG, PEN_PIN);	
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Pin = TCS_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	GPIO_SetBits(GPIOB,GPIO_Pin_2);
+	GPIO_Init(TCS_GG, &GPIO_InitStructure);
+	GPIO_SetBits(TCS_GG,TCS_PIN);
 
 	tp_inited = 1;
   	TP_Read_XY(&tp_dev.x,&tp_dev.y);//第一次读取初始化	 
