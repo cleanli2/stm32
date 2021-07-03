@@ -1042,56 +1042,6 @@ SD_Error SD_GoIdleState(void)
 }
 
 /**
-  * @brief  Write a byte on the SD.
-  * @param  Data: byte to send.
-  * @retval None
-  */
-uint8_t SD_WriteByte(uint8_t Data)
-{
-  /*!< Wait until the transmit buffer is empty */
-  while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
-  {
-  }
-  
-  /*!< Send the byte */
-  SPI_I2S_SendData(SD_SPI, Data);
-  
-  /*!< Wait to receive a byte*/
-  while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_RXNE) == RESET)
-  {
-  }
-  
-  /*!< Return the byte read from the SPI bus */ 
-  return SPI_I2S_ReceiveData(SD_SPI);
-}
-
-/**
-  * @brief  Read a byte from the SD.
-  * @param  None
-  * @retval The received byte.
-  */
-uint8_t SD_ReadByte(void)
-{
-  uint8_t Data = 0;
-  
-  /*!< Wait until the transmit buffer is empty */
-  while (SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
-  {
-  }
-  /*!< Send the byte */
-  SPI_I2S_SendData(SD_SPI, SD_DUMMY_BYTE);
-
-  /*!< Wait until a data is received */
-  while (SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_RXNE) == RESET)
-  {
-  }
-  /*!< Get the received data */
-  Data = SPI_I2S_ReceiveData(SD_SPI);
-
-  /*!< Return the shifted data */
-  return Data;
-}
-/**
   * @}
   */
 

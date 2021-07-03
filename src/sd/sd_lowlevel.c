@@ -1,12 +1,13 @@
 #include "stm32_eval_spi_sd.h"
 #include "sd_lowlevel.h"
 
+static uint32_t stm32_spi_choose = 1;
 /**
   * @brief  DeInitializes the SD/SD communication.
   * @param  None
   * @retval None
   */
-void SD_LowLevel_DeInit(void)
+void stm32_spi_LowLevel_DeInit(void)
 {
   GPIO_InitTypeDef  GPIO_InitStructure;
   
@@ -43,7 +44,7 @@ void SD_LowLevel_DeInit(void)
   * @param  None
   * @retval None
   */
-void SD_LowLevel_Init(void)
+void stm32_spi_LowLevel_Init(void)
 {
   GPIO_InitTypeDef  GPIO_InitStructure;
   SPI_InitTypeDef   SPI_InitStructure;
@@ -101,4 +102,109 @@ void SD_LowLevel_Init(void)
   SPI_Init(SD_SPI, &SPI_InitStructure);
   
   SPI_Cmd(SD_SPI, ENABLE); /*!< SD_SPI enable */
+}
+
+/**
+  * @brief  Write a byte on the SD.
+  * @param  Data: byte to send.
+  * @retval None
+  */
+uint8_t stm32_spi_WriteByte(uint8_t Data)
+{
+  /*!< Wait until the transmit buffer is empty */
+  while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
+  {
+  }
+  
+  /*!< Send the byte */
+  SPI_I2S_SendData(SD_SPI, Data);
+  
+  /*!< Wait to receive a byte*/
+  while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_RXNE) == RESET)
+  {
+  }
+  
+  /*!< Return the byte read from the SPI bus */ 
+  return SPI_I2S_ReceiveData(SD_SPI);
+}
+
+/**
+  * @brief  Read a byte from the SD.
+  * @param  None
+  * @retval The received byte.
+  */
+uint8_t stm32_spi_ReadByte(void)
+{
+  uint8_t Data = 0;
+  
+  /*!< Wait until the transmit buffer is empty */
+  while (SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
+  {
+  }
+  /*!< Send the byte */
+  SPI_I2S_SendData(SD_SPI, SD_DUMMY_BYTE);
+
+  /*!< Wait until a data is received */
+  while (SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_RXNE) == RESET)
+  {
+  }
+  /*!< Get the received data */
+  Data = SPI_I2S_ReceiveData(SD_SPI);
+
+  /*!< Return the shifted data */
+  return Data;
+}
+
+/*******************gpio spi**************************************************/
+void gpio_spi_LowLevel_DeInit(void)
+{
+}
+
+void gpio_spi_LowLevel_Init(void)
+{
+}
+
+uint8_t gpio_spi_WriteByte(uint8_t Data)
+{
+}
+
+uint8_t gpio_spi_ReadByte(void)
+{
+}
+/*********************************************************************/
+void SD_LowLevel_DeInit(void)
+{
+    if(stm32_spi_choose){
+        stm32_spi_LowLevel_DeInit();
+    }
+    else{
+        gpio_spi_LowLevel_DeInit();
+    }
+}
+void SD_LowLevel_Init(void)
+{
+    if(stm32_spi_choose){
+        stm32_spi_LowLevel_Init();
+    }
+    else{
+        gpio_spi_LowLevel_Init();
+    }
+}
+uint8_t SD_WriteByte(uint8_t Data)
+{
+    if(stm32_spi_choose){
+        return stm32_spi_WriteByte(Data);
+    }
+    else{
+        return gpio_spi_WriteByte(Data);
+    }
+}
+uint8_t SD_ReadByte(void)
+{
+    if(stm32_spi_choose){
+        return stm32_spi_ReadByte();
+    }
+    else{
+        return gpio_spi_ReadByte();
+    }
 }
