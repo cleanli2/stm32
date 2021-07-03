@@ -40,4 +40,7 @@
 /*******************export api********/
 void SD_LowLevel_Init(void);
 void SD_LowLevel_DeInit(void);
+uint8_t SD_WriteByte(uint8_t Data);
+uint8_t SD_ReadByte(void);
+void spi_choose_stm32(uint8_t);
 #endif

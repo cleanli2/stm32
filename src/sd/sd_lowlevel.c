@@ -50,6 +50,7 @@ void stm32_spi_LowLevel_Init(void)
   GPIO_InitTypeDef  GPIO_InitStructure;
   SPI_InitTypeDef   SPI_InitStructure;
 
+  lprintf("%s\n", __func__);
   /*!< SD_SPI_CS_GPIO, SD_SPI_MOSI_GPIO, SD_SPI_MISO_GPIO, SD_SPI_DETECT_GPIO 
        and SD_SPI_SCK_GPIO Periph clock enable */
   RCC_APB2PeriphClockCmd(SD_CS_GPIO_CLK | SD_SPI_MOSI_GPIO_CLK | SD_SPI_MISO_GPIO_CLK |
@@ -165,6 +166,7 @@ void gpio_spi_LowLevel_Init(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
 
+    lprintf("%s\n", __func__);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA| RCC_APB2Periph_AFIO, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7|GPIO_Pin_5;
@@ -185,6 +187,7 @@ uint8_t gpio_spi_WriteByte(uint8_t num)
     //lprintf("TPw:%x\n", num);
     for(count=0;count<8;count++)  
     { 	  
+        ret<<=1; 	 
         if(num&0x80){
             TDIN(1);  
         }
@@ -193,32 +196,17 @@ uint8_t gpio_spi_WriteByte(uint8_t num)
         }
         num<<=1;    
         TCLK(0); 	 
+        delay_us(10);
         TCLK(1);		//上升沿有效	        
-    }		 			    
-    for(count=0;count<8;count++)//读出16位数据,只有高12位有效 
-    { 				  
-        ret<<=1; 	 
-        TCLK(0);	//下降沿有效  	    	   
-        TCLK(1);
+        delay_us(10);
         if(DOUT)ret++; 		 
-    }  	
+    }		 			    
     return ret;
 }
 
 uint8_t gpio_spi_ReadByte(void)
 {
-    gpio_spi_WriteByte(SD_DUMMY_BYTE);
-    u8 count=0; 	  
-    u16 Num=0; 
-    for(count=0;count<8;count++)//读出16位数据,只有高12位有效 
-    { 				  
-        Num<<=1; 	 
-        TCLK(0);	//下降沿有效  	    	   
-        TCLK(1);
-        if(DOUT)Num++; 		 
-    }  	
-    //lprintf("TPr:%x\n", Num);
-    return Num;  
+    return gpio_spi_WriteByte(SD_DUMMY_BYTE);
 }
 /*********************************************************************/
 void SD_LowLevel_DeInit(void)
@@ -232,12 +220,27 @@ void SD_LowLevel_DeInit(void)
 }
 void SD_LowLevel_Init(void)
 {
+    GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
     if(stm32_spi_choose){
         stm32_spi_LowLevel_Init();
     }
     else{
         gpio_spi_LowLevel_Init();
     }
+    //cs pins
+    RCC_APB2PeriphClockCmd(SD_CS_GPIO_CLK | SF_CS_GPIO_CLK, ENABLE);
+
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Pin = SD_CS_PIN;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(SD_CS_GPIO_PORT, &GPIO_InitStructure);
+    GPIO_SetBits(SD_CS_GPIO_PORT, SD_CS_PIN);
+
+    GPIO_InitStructure.GPIO_Pin = SF_CS_PIN;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(SF_CS_GPIO_PORT, &GPIO_InitStructure);
+    GPIO_SetBits(SF_CS_GPIO_PORT, SF_CS_PIN);
+
 }
 uint8_t SD_WriteByte(uint8_t Data)
 {
@@ -256,4 +259,8 @@ uint8_t SD_ReadByte(void)
     else{
         return gpio_spi_ReadByte();
     }
+}
+void spi_choose_stm32(uint8_t choose)
+{
+    stm32_spi_choose = choose;
 }

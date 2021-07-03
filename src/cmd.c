@@ -145,6 +145,11 @@ void sd(char *p)
     else if(cmdindex == 0xb){//
         sf_read_id();
     }
+    else if(cmdindex == 0xc){//
+        str_to_hex(p, &para1);
+        lprintf("spi choose %x\n", para1);
+        spi_choose_stm32(para1);
+    }
     con_send('\n');
 
     return;
