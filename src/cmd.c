@@ -693,6 +693,11 @@ err:
 void test(char *p)
 {
     uint32_t n, p1, p2;
+    p = str_to_hex(p, &p1);
+    lprintf("para:%x\n", p1);
+    set_LCD_Char_scale(p1);
+#if 0
+    uint32_t n, p1, p2;
     uint64_t t1, t2, t3,t4,t5,t6,t7;
     t1= get_system_us();
     n = get_howmany_para(p);
@@ -720,6 +725,7 @@ void test(char *p)
     lprintf("5:%U\n", t5);
     lprintf("6:%U\n", t6);
     lprintf("7:%U\n", t7);
+#endif
 
     return;
 

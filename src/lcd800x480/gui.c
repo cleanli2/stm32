@@ -381,6 +381,12 @@ void Fill_Triangel(u16 x0,u16 y0,u16 x1,u16 y1,u16 x2,u16 y2)
 	}
 }
 
+static u16 LCD_Char_scale = 1;
+void set_LCD_Char_scale(u16 scale)
+{
+    lprintf("set lcd char scale %d\n", scale);
+    LCD_Char_scale = scale;
+}
 /*****************************************************************************
  * @name       :void LCD_ShowChar(u16 x,u16 y,u16 fc, u16 bc, u8 num,u8 size,u8 mode)
  * @date       :2018-08-09 
@@ -399,37 +405,56 @@ void LCD_ShowChar(u16 x,u16 y,u16 fc, u16 bc, u8 num,u8 size,u8 mode)
     u8 temp;
     u8 pos,t;
 	u16 colortemp=POINT_COLOR;      
+    u16 local_scale_x;
+    u16 local_scale_y;
 		   
 	num=num-' ';//得到偏移后的值
-	LCD_SetWindows(x,y,x+size/2-1,y+size-1);//设置单个文字显示窗口
+	LCD_SetWindows(x,y,x+size*LCD_Char_scale/2-1,y+size*LCD_Char_scale-1);//设置单个文字显示窗口
 	if(!mode) //非叠加方式
-	{		
-		for(pos=0;pos<size;pos++)
-		{
-			if(size==12)temp=asc2_1206[num][pos];//调用1206字体
-			else temp=asc2_1608[num][pos];		 //调用1608字体
-			for(t=0;t<size/2;t++)
-		    {                 
-		        if(temp&0x01)Lcd_WriteData_16Bit(fc); 
-				else Lcd_WriteData_16Bit(bc); 
-				temp>>=1; 
-				
-		    }
-			
-		}	
+	{
+        for(pos=0;pos<size;pos++)
+        {
+            local_scale_y = LCD_Char_scale;
+            while(local_scale_y--){
+                if(size==12)temp=asc2_1206[num][pos];//调用1206字体
+                else temp=asc2_1608[num][pos];		 //调用1608字体
+                for(t=0;t<size/2;t++)
+                {                 
+                    if(temp&0x01){
+                        local_scale_x = LCD_Char_scale;
+                        while(local_scale_x--){
+                            Lcd_WriteData_16Bit(fc); 
+                        }
+                    }
+                    else{
+                        local_scale_x = LCD_Char_scale;
+                        while(local_scale_x--){
+                            Lcd_WriteData_16Bit(bc); 
+                        }
+                    }
+                    temp>>=1; 
+                }
+            }
+        }
 	}else//叠加方式
 	{
-		for(pos=0;pos<size;pos++)
-		{
-			if(size==12)temp=asc2_1206[num][pos];//调用1206字体
-			else temp=asc2_1608[num][pos];		 //调用1608字体
-			for(t=0;t<size/2;t++)
-		    {   
-				POINT_COLOR=fc;              
-		        if(temp&0x01)LCD_DrawPoint(x+t,y+pos);//画一个点    
-		        temp>>=1; 
-		    }
-		}
+            for(pos=0;pos<size;pos++)
+            {
+                local_scale_y = LCD_Char_scale;
+                while(local_scale_y--){
+                    if(size==12)temp=asc2_1206[num][pos];//调用1206字体
+                    else temp=asc2_1608[num][pos];		 //调用1608字体
+                    for(t=0;t<size/2;t++)
+                    {
+                        POINT_COLOR=fc;
+                        local_scale_x = LCD_Char_scale;
+                        while(local_scale_x--){
+                            if(temp&0x01)LCD_DrawPoint(x+t,y+pos);//画一个点 
+                        }
+                        temp>>=1;
+                    }
+                }
+            }
 	}
 	POINT_COLOR=colortemp;	
 	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//恢复窗口为全屏    	   	 	  
@@ -695,14 +720,14 @@ void Show_Str(u16 x, u16 y, u16 fc, u16 bc, u8 *str,u8 size,u8 mode)
     { 
         if(!bHz)
         {
-			if(x>(lcddev.width-size/2)||y>(lcddev.height-size)) 
+			if(x>(lcddev.width-(size*LCD_Char_scale)/2)||y>(lcddev.height-size*LCD_Char_scale)) 
 			return; 
 	        if(*str>0x80)bHz=1;//中文 
 	        else              //字符
 	        {          
 		        if(*str==0x0D)//换行符号
 		        {         
-		            y+=size;
+		            y+=(size*LCD_Char_scale);
 					x=x0;
 		            str++; 
 		        }  
@@ -711,12 +736,12 @@ void Show_Str(u16 x, u16 y, u16 fc, u16 bc, u8 *str,u8 size,u8 mode)
 					if(size>16)//字库中没有集成12X24 16X32的英文字体,用8X16代替
 					{  
 					LCD_ShowChar(x,y,fc,bc,*str,16,mode);
-					x+=8; //字符,为全字的一半 
+					x+=8*LCD_Char_scale; //字符,为全字的一半 
 					}
 					else
 					{
 					LCD_ShowChar(x,y,fc,bc,*str,size,mode);
-					x+=size/2; //字符,为全字的一半 
+					x+=(size*LCD_Char_scale)/2; //字符,为全字的一半 
 					}
 				} 
 				str++; 
@@ -724,7 +749,7 @@ void Show_Str(u16 x, u16 y, u16 fc, u16 bc, u8 *str,u8 size,u8 mode)
 	        }
         }else//中文 
         {   
-			if(x>(lcddev.width-size)||y>(lcddev.height-size)) 
+			if(x>(lcddev.width-(size*LCD_Char_scale))||y>(lcddev.height-(size*LCD_Char_scale))) 
 			return;  
             bHz=0;//有汉字库    
 			if(size==32)
