@@ -8,6 +8,7 @@ void adc_test()
     GPIO_InitTypeDef GPIO_InitStructure;
     ADC_InitTypeDef ADC_InitStructure;
     uint32_t v_core, v_bat, v_ref, v_currt;
+    char in_charge;
 
     if(ADC_INITED!=adc_inited){
         lprintf("performing adc init\n");
@@ -59,6 +60,7 @@ void adc_test()
         //lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     v_ref=ADC_GetConversionValue(ADC1);
+    lprintf("vref = %x\n", v_ref);
     v_core = 2500 * 4096 / v_ref;
     //lprintf("real vcore = %dmv\n", v_core);
 
@@ -84,9 +86,24 @@ void adc_test()
         //lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     v_currt=ADC_GetConversionValue(ADC1);
+    lprintf("vcur = %x\n", v_currt);
+    if(v_currt>v_ref){
+        in_charge = '+';
+        v_currt = v_currt - v_ref;
+    }
+    else{
+        in_charge = '-';
+        v_currt = v_ref - v_currt;
+    }
+#define CURRENT_MEASUREMENT_CALIBRATION 546
+#if 0
     v_currt = 2500 * v_currt / v_ref;
     //lprintf("real v_currt = %dmv\n", v_currt);
-    v_currt = 100 * v_currt / 500;
+    v_currt = 100 * v_currt * 3 / 500;
     //lprintf("real I = %dmA\n", v_currt);
-    lcd_lprintf(240, 0, "%dmv %dmv %dmA", v_core, v_bat, v_currt);
+#else
+    v_currt = v_currt * CURRENT_MEASUREMENT_CALIBRATION / 1000;
+#endif
+    lprintf("----%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
+    lcd_lprintf(240, 0, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
 }
