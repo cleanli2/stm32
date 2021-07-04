@@ -100,12 +100,19 @@ void timer_ui_init(void*vp)
 }
 void timer_ui_process_event(void*vp)
 {
+    uint32_t mins, secs;
     ui_t* uif =(ui_t*)vp;
     if(cur_task_event_flag & (1<<EVENT_MUSIC_PLAY_END)
             && ui_buf[TMR_REPETCT_INDX]==0){
         ui_transfer(UI_MAIN_MENU);
     }
     if(g_flag_1s){
+        set_LCD_Char_scale(6);
+        mins = ui_buf[TMR_TMOUTCT_INDX]/60;
+        secs = ui_buf[TMR_TMOUTCT_INDX] -  mins*60;
+        lcd_lprintf(100, 400, "%d:%d   ", mins, secs);
+        lcd_lprintf(100, 520, "RP:%d ", ui_buf[TMR_REPETCT_INDX]);
+        set_LCD_Char_scale(1);
         if(ui_buf[TMR_REPETCT_INDX]==0){
             update_prgb(uif, uif->prgb_info);
             if(uif->timeout_music){
