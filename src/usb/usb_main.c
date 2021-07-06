@@ -11,6 +11,7 @@ int usb_main_init(void)
 	u8 USB_STA;
 	u8 Divece_STA; 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//中断分组设置	 
+    SD_Init();
 	
  	USB_Port_Set(0); 	//USB先断开
 	delay_ms(300);

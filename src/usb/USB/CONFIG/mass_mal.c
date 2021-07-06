@@ -57,10 +57,11 @@ uint16_t MAL_Init(uint8_t lun)
 	u16 Status=MAL_OK;   
 	switch (lun)
 	{
-		case 0://磁盘0为 SPI FLASH
+		case 0://磁盘0为 SD卡
 			 break; 			   
-		case 1://磁盘1为 SD卡
-			break; 		  
+		case 1:
+			//break; 		  
+			return MAL_FAIL;
 		default://非法值
 			return MAL_FAIL;
 	}
@@ -110,9 +111,12 @@ uint16_t MAL_Read(uint8_t lun, uint64_t Memory_Offset, uint32_t *Readbuff, uint1
 	{
 		case 0:		    
 			//STA=SD_ReadDisk((u8*)Readbuff, Memory_Offset>>9, Transfer_Length>>9);	   
+            SD_ReadBlock((u8*)Readbuff, (Memory_Offset>>9)<<9, (Transfer_Length>>9)<<9);
+			STA=0;
 			break;			    
 		case 1:	 
-			STA=0;
+			//STA=0;
+			return MAL_FAIL;
 			//SPI_Flash_Read((u8*)Readbuff, Memory_Offset, Transfer_Length);   		  
 			break;	  
 		default:
@@ -138,7 +142,7 @@ uint16_t MAL_GetStatus (uint8_t lun)
     case 0:
         return MAL_OK;
     case 1:
-        return MAL_OK;
+        return MAL_FAIL;
     case 2:
         return MAL_FAIL;
     default:
