@@ -78,6 +78,7 @@ void USB_Interrupts_Config(void)
 	EXTI_InitStructure.EXTI_Line = EXTI_Line18; // USB resume from suspend mode
 	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;	//line 18上事件上升降沿触发
 	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
 	EXTI_Init(&EXTI_InitStructure); 	 
 
 	/* Enable the USB interrupt */
