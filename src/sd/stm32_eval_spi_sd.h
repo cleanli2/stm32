@@ -33,6 +33,7 @@
 #include "stm32f10x.h"
 #include <stdint.h>
 #include "sd/sd_lowlevel.h"
+#include "type.h"
 /** @addtogroup Utilities
   * @{
   */
@@ -287,6 +288,7 @@ uint8_t SD_WriteByte(uint8_t byte);
 uint8_t SD_SPI_ReadWriteByte(uint8_t byte);
 uint8_t SD_ReadByte(void);
 uint8_t SD_GetRes(void);
+u32 SD_GetSectorCount(void);
 
 void sf_read_id();
 

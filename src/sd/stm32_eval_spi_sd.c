@@ -336,6 +336,58 @@ SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
   return status;
 }
 
+
+u32 SD_GetSectorCount(void)
+{
+    u8 csd[16];
+    u32 Capacity;  
+    u8 n, i;
+    u16 csize;                          
+
+
+    //取CSD信息，如果期间出错，返回0
+    /*!< SD chip select low */
+    SD_CS_LOW();
+    /*!< Send CMD9 (CSD register) or CMD10(CSD register) */
+    SD_SendCmd(SD_CMD_SEND_CSD, 0, 0xFF);
+    /*!< Wait for response in the R1 format (0x00 is no errors) */
+    if (!SD_GetResponse(SD_RESPONSE_NO_ERROR))
+    {
+        if (!SD_GetResponse(SD_START_DATA_SINGLE_BLOCK_READ))
+        {
+            for (i = 0; i < 16; i++)
+            {
+                /*!< Store CSD register value on csd */
+                csd[i] = SD_ReadByte();
+            }
+        }
+        /*!< Get CRC bytes (not really needed by us, but required by SD) */
+        SD_WriteByte(SD_DUMMY_BYTE);
+        SD_WriteByte(SD_DUMMY_BYTE);
+        /*!< Set response value to success */
+    }
+    /*!< SD chip select high */
+    SD_CS_HIGH();
+    /*!< Send dummy byte: 8 Clock pulses of delay */
+    SD_WriteByte(SD_DUMMY_BYTE);
+
+    //如果为SDHC卡，按照下面方式计算
+    if((csd[0]&0xC0)==0x40)  //V2.00的卡
+    {   
+        csize = csd[9] + ((u16)csd[8] << 8) + 1;
+        Capacity = (u32)csize << 10;//得到扇区数               
+    }else//V1.XX的卡
+    {   
+        n = (csd[5] & 15) + ((csd[10] & 128) >> 7) + ((csd[9] & 3) << 1) + 2;
+        csize = (csd[8] >> 6) + ((u16)csd[7] << 2) + ((u16)(csd[6] & 3) << 10) + 1;
+        Capacity= (u32)csize << (n - 9);//得到扇区数   
+    }
+	lprintf("sd capacity %d\n", Capacity);
+    return Capacity;
+}
+
+
+
 /**
   * @brief  Reads a block of data from the SD.
   * @param  pBuffer: pointer to the buffer that receives the data read from the 

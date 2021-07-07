@@ -3,6 +3,7 @@
 #include "hw_config.h"
 #include "usb_pwr.h"
 #include "usb_bot.h"  
+#include "mass_mal.h"
 
 int usb_main_init(void)
 { 
@@ -12,6 +13,9 @@ int usb_main_init(void)
 	u8 Divece_STA; 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//中断分组设置	 
     SD_Init();
+    Mass_Memory_Size[0]=(long long)SD_GetSectorCount()*512;
+    Mass_Block_Size[0] =512;
+    Mass_Block_Count[0]=Mass_Memory_Size[0]/Mass_Block_Size[0];
 	
  	USB_Port_Set(0); 	//USB先断开
 	delay_ms(300);
