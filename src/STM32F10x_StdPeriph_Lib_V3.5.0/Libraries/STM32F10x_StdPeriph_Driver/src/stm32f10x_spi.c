@@ -66,6 +66,7 @@
 
 /* SPI registers Masks */
 #define CR1_CLEAR_Mask       ((uint16_t)0x3040)
+#define CR1_SPI_SPEED_Mask   ((uint16_t)0x38)
 #define I2SCFGR_CLEAR_Mask   ((uint16_t)0xF040)
 
 /* SPI or I2S mode selection masks */
@@ -147,6 +148,25 @@ void SPI_I2S_DeInit(SPI_TypeDef* SPIx)
   }
 }
 
+uint16_t SPI_set_speed(SPI_TypeDef* SPIx, uint32_t speed)
+{
+  uint16_t tmpreg = 0, ret;
+
+  assert_param(IS_SPI_BAUDRATE_PRESCALER(speed));
+
+  /* Get the SPIx CR1 value */
+  tmpreg = SPIx->CR1;
+  lprintf("spisetspeed:%x speed %x\n", tmpreg, speed);
+
+  ret = tmpreg & CR1_SPI_SPEED_Mask;
+  tmpreg &= (uint16_t)(~CR1_SPI_SPEED_Mask);
+  /* Set BR bits according to SPI_BaudRatePrescaler value */
+  tmpreg |= (uint16_t)((uint32_t)speed);
+  lprintf("spisetspeed:%x ret %x\n", tmpreg, ret);
+  /* Write to SPIx CR1 */
+  SPIx->CR1 = tmpreg;
+  return ret;
+}
 /**
   * @brief  Initializes the SPIx peripheral according to the specified 
   *         parameters in the SPI_InitStruct.

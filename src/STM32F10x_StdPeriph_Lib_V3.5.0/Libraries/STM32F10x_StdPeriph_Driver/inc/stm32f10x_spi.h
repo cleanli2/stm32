@@ -445,6 +445,7 @@ typedef struct
 
 void SPI_I2S_DeInit(SPI_TypeDef* SPIx);
 void SPI_Init(SPI_TypeDef* SPIx, SPI_InitTypeDef* SPI_InitStruct);
+uint16_t SPI_set_speed(SPI_TypeDef* SPIx, uint32_t speed);
 void I2S_Init(SPI_TypeDef* SPIx, I2S_InitTypeDef* I2S_InitStruct);
 void SPI_StructInit(SPI_InitTypeDef* SPI_InitStruct);
 void I2S_StructInit(I2S_InitTypeDef* I2S_InitStruct);

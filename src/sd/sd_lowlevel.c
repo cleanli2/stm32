@@ -279,3 +279,7 @@ void spi_choose_stm32(uint8_t choose)
 {
     stm32_spi_choose = choose;
 }
+uint16_t spi_speed(uint32_t speed)
+{
+  return SPI_set_speed(SD_SPI, speed);
+}
