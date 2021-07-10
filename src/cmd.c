@@ -129,23 +129,31 @@ void sd(char *p)
 	lprintf("read byte %x\n", SD_ReadByte());
     }
     else if(cmdindex == 0xa){//
-	lprintf("read 1 block\n");
-    para1=0;
-    if(tmp>1){
-        str_to_hex(p, &para1);
-    }
-	lprintf("addr %x\n", para1);
-	SD_ReadBlock(read_buf, para1, 512);
-	char*cp = (char *)read_buf;
-	int length=512;
-	while(length){
-		lprint("\n%x: ", (int)cp);
-		for(int i=0;i<16;i++){
-			length--;
-			lprintf("%b", *cp++);
-			con_send(i == 7 ? '-':' ');
-		}
-	}
+        lprintf("read sd block:sd a addr repeat\n");
+        para1=0;
+        para2=1;
+        if(tmp>1){
+            p = str_to_hex(p, &para1);
+        }
+        if(tmp>2){
+            p = str_to_hex(p, &para2);
+        }
+        lprintf("addr %x\n", para1);
+        lprintf("repeat %x\n", para2);
+        while(para2--){
+            SD_ReadBlock(read_buf, para1, 512);
+            char*cp = (char *)read_buf;
+            int length=512;
+            while(length){
+                lprint("\n%x: ", (uint32_t)cp-(uint32_t)read_buf+para1);
+                for(int i=0;i<16;i++){
+                    length--;
+                    lprintf("%b", *cp++);
+                    con_send(i == 7 ? '-':' ');
+                }
+            }
+            para1 += 0x200;
+        }
     }
     else if(cmdindex == 0xb){//
         sf_read_id();
