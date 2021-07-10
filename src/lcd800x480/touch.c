@@ -58,6 +58,7 @@
 #include "stdlib.h"
 #include "math.h"
 #include "gui.h"	    
+#include "common.h"	    
 
 _m_tp_dev tp_dev=
 {
@@ -99,7 +100,7 @@ void TP_Write_Byte(u8 num)
  * @retvalue   :Read data
 ******************************************************************************/    
 u16 TP_Read_AD(u8 CMD)	  
-{ 	 
+{
 	u8 count=0; 	  
 	u16 Num=0; 
 	TCS(0); 		//Ñ¡ÖÐ´¥ÃþÆÁIC
@@ -171,8 +172,10 @@ u16 TP_Read_XOY(u8 xy)
 u8 TP_Read_XY(u16 *x,u16 *y)
 {
 	u16 xtemp,ytemp;			 	 		  
+    uint16_t spi_sp = spi_speed(SPI_BaudRatePrescaler_128);
 	xtemp=TP_Read_XOY(CMD_RDX);
 	ytemp=TP_Read_XOY(CMD_RDY);	  												   
+    spi_speed(spi_sp);
 	if(xtemp==0||ytemp==0||xtemp==0xfff||ytemp==0xfff)return 0;//¶ÁÊýÊ§°Ü
 	*x=xtemp;
 	*y=ytemp;

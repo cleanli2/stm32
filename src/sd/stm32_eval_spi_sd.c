@@ -183,6 +183,10 @@ void SD_DeInit(void)
 SD_Error SD_Init(void)
 {
   uint32_t i = 0;
+  SD_Error ret;
+
+  //lower spi speed in SD detect
+  uint16_t speed = spi_speed(SPI_BaudRatePrescaler_256);
 
   lprintf("SD_LowLevel_Init()\n");
   /*!< Initialize SD_SPI */
@@ -201,7 +205,10 @@ SD_Error SD_Init(void)
   }
   /*------------Put SD in SPI mode--------------*/
   /*!< SD initialized and set to SPI mode properly */
-  return (SD_GoIdleState());
+  ret = SD_GoIdleState();
+  //recover the spi speed
+  spi_speed(speed);
+  return ret;
 }
 
 SD_Error SD_get_type(void)
