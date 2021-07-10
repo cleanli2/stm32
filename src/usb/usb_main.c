@@ -5,15 +5,23 @@
 #include "usb_bot.h"  
 #include "mass_mal.h"
 
+uint32_t usb_writable = 0;
 u8 Data_Buffer[BULK_MAX_PACKET_SIZE*2*4];	//为USB数据缓存区申请内存
 extern u8 Bulk_Data_Buff[BULK_MAX_PACKET_SIZE];	//申请内存
-int usb_main_init(void)
+void usb_main_init(uint32_t flag)
 { 
 	u8 offline_cnt=0;
 	u8 tct=0, retry = 3;
 	u8 USB_STA;
 	u8 Divece_STA; 
     SD_Error sd_ret = SD_RESPONSE_FAILURE;
+    usb_writable = flag;
+    if(usb_writable==0){
+        lprintf("usb readonly\n");
+    }
+    else{
+        lprintf("usb writable\n");
+    }
     memset(Data_Buffer, 0, BULK_MAX_PACKET_SIZE*2*4);
     memset(Bulk_Data_Buff, 0, BULK_MAX_PACKET_SIZE);
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//中断分组设置	 
@@ -23,12 +31,12 @@ int usb_main_init(void)
     }
     if(SD_RESPONSE_NO_ERROR!=sd_ret){
         lprintf("SD card init error: usb storage init fail!\n");
-        return -1;
+        return;
     }
     Mass_Block_Count[0]=SD_GetSectorCount();
     if(0 == Mass_Block_Count[0]){
         lprintf("SD card secotr count error: usb storage init fail!\n");
-        return -1;
+        return;
     }
     Mass_Block_Size[0] =512;
     Mass_Memory_Size[0]=(uint64_t)Mass_Block_Count[0]*Mass_Block_Size[0];
@@ -43,7 +51,7 @@ int usb_main_init(void)
  	Set_USBClock();   
  	USB_Init();	    
 	delay_ms(1800);	   	    
-    return 0;
+    return;
 #if 0
 	while(1)
 	{	

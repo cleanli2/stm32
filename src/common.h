@@ -29,6 +29,7 @@ uint64_t get_system_us();
 #define LED_R_0 0
 #define LED_Y_0 0
 void led_raw_set(u32 led_flag);
+void usb_main_init(uint32_t flag);
 
 typedef uint16_t u16;
 typedef uint8_t u8;

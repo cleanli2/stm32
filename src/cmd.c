@@ -705,7 +705,13 @@ err:
 }
 void usb_strg_init(char *p)
 {
-    usb_main_init();
+    uint32_t n, p1 = 0;
+    n = get_howmany_para(p);
+    if(n>1){
+        p = str_to_hex(p, &p1);
+        lprintf("p1=%d\n", p1);
+    }
+    usb_main_init(p1);
 }
 void test(char *p)
 {
