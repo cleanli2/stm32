@@ -37,7 +37,7 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-long long Mass_Memory_Size[MAX_LUN+1];//超过4G的SD卡，必须用long long表示其容量！！
+uint64_t Mass_Memory_Size[MAX_LUN+1];//超过4G的SD卡，必须用long long表示其容量！！
 u32 Mass_Block_Size[MAX_LUN+1];
 u32 Mass_Block_Count[MAX_LUN+1];
 
@@ -79,13 +79,20 @@ uint16_t MAL_Init(uint8_t lun)
 *******************************************************************************/
 uint16_t MAL_Write(uint8_t lun, uint64_t Memory_Offset, uint32_t *Writebuff, uint16_t Transfer_Length)
 {
-	u8 STA;
+	u8 STA=0, rty = 2;
+    SD_Error sd_ret = SD_RESPONSE_FAILURE;
 	switch (lun)
 	{
 		case 0:				  
 			//STA=SD_WriteDisk((u8*)Writebuff, Memory_Offset>>9, Transfer_Length>>9);
-            SD_WriteBlock((u8*)Writebuff, Memory_Offset, Transfer_Length);
-			STA=0;
+            while(sd_ret == SD_RESPONSE_FAILURE && rty>0){
+                sd_ret = SD_WriteBlock((u8*)Writebuff, Memory_Offset, Transfer_Length);
+                rty--;
+            }
+            if(sd_ret == SD_RESPONSE_FAILURE){
+                STA=1;
+                lprintf("sd write fail:block addr %X\n", Memory_Offset>>9);
+            }
 			break;							  
 		case 1:		 
 			STA=0;
@@ -110,8 +117,9 @@ uint16_t MAL_Write(uint8_t lun, uint64_t Memory_Offset, uint32_t *Writebuff, uin
 *******************************************************************************/
 uint16_t MAL_Read(uint8_t lun, uint64_t Memory_Offset, uint32_t *Readbuff, uint16_t Transfer_Length)
 {
-	u8 STA;
-    lprintf("lun %d o %U L %d\n", lun, Memory_Offset, Transfer_Length);
+	u8 STA=0, rty = 2;
+    SD_Error sd_ret = SD_RESPONSE_FAILURE;
+    //lprintf("lun %d o %U L %d\n", lun, Memory_Offset, Transfer_Length);
     //lprintf("lun %d o %U L %d\n", lun, Memory_Offset>>9, Transfer_Length>>9);
     //lprintf("lun %d o %U L %d\n", lun, (Memory_Offset>>9)<<9, (Transfer_Length>>9)<<9);
 	switch (lun)		//这里,根据lun的值确定所要操作的磁盘
@@ -119,9 +127,15 @@ uint16_t MAL_Read(uint8_t lun, uint64_t Memory_Offset, uint32_t *Readbuff, uint1
 		case 0:		    
 			//STA=SD_ReadDisk((u8*)Readbuff, Memory_Offset>>9, Transfer_Length>>9);	   
             //SD_ReadBlock((u8*)Readbuff, (Memory_Offset>>9)<<9, (Transfer_Length>>9)<<9);
-            SD_ReadBlock((u8*)Readbuff, Memory_Offset, Transfer_Length);
-			STA=0;
-			break;			    
+            while(sd_ret == SD_RESPONSE_FAILURE && rty>0){
+                sd_ret = SD_ReadBlock((u8*)Readbuff, Memory_Offset, Transfer_Length);
+                rty--;
+            }
+            if(sd_ret == SD_RESPONSE_FAILURE){
+                STA=1;
+                lprintf("sd read fail:block addr %X\n", Memory_Offset>>9);
+            }
+			break;							  
 		case 1:	 
 			//STA=0;
 			return MAL_FAIL;

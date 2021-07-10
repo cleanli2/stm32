@@ -47,7 +47,7 @@ uint16_t MAL_GetStatus (uint8_t lun);
 uint16_t MAL_Read(uint8_t lun, uint64_t Memory_Offset, uint32_t *Readbuff, uint16_t Transfer_Length);
 uint16_t MAL_Write(uint8_t lun, uint64_t Memory_Offset, uint32_t *Writebuff, uint16_t Transfer_Length);
 
-extern long long Mass_Memory_Size[MAX_LUN+1];
+extern uint64_t Mass_Memory_Size[MAX_LUN+1];
 extern u32 Mass_Block_Size[MAX_LUN+1];
 extern u32 Mass_Block_Count[MAX_LUN+1];
 
