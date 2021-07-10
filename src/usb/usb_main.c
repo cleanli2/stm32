@@ -5,12 +5,16 @@
 #include "usb_bot.h"  
 #include "mass_mal.h"
 
+u8 Data_Buffer[BULK_MAX_PACKET_SIZE*2*4];	//为USB数据缓存区申请内存
+u8 Bulk_Data_Buff[BULK_MAX_PACKET_SIZE];	//申请内存
 int usb_main_init(void)
 { 
 	u8 offline_cnt=0;
 	u8 tct=0;
 	u8 USB_STA;
 	u8 Divece_STA; 
+    memset(Data_Buffer, 0, BULK_MAX_PACKET_SIZE*2*4);
+    memset(Bulk_Data_Buff, 0, BULK_MAX_PACKET_SIZE);
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//中断分组设置	 
     SD_Init();
     Mass_Memory_Size[0]=(long long)SD_GetSectorCount()*512;
@@ -20,8 +24,6 @@ int usb_main_init(void)
  	USB_Port_Set(0); 	//USB先断开
 	delay_ms(300);
    	USB_Port_Set(1);	//USB再次连接   
-	u8 Data_Buffer[BULK_MAX_PACKET_SIZE*2*4];	//为USB数据缓存区申请内存
-	u8 Bulk_Data_Buff[BULK_MAX_PACKET_SIZE];	//申请内存
  	//USB配置
  	USB_Interrupts_Config();    
  	Set_USBClock();   

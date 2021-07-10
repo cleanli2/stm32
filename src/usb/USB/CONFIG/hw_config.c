@@ -50,7 +50,7 @@ void Set_USBClock(void)
 //需自行添加低功耗代码(比如关时钟等)
 void Enter_LowPowerMode(void)
 {
- 	printf("usb enter low power mode\r\n");
+ 	lprintf("usb enter low power mode\r\n");
 	bDeviceState=SUSPENDED;
 } 
 
@@ -59,7 +59,7 @@ void Enter_LowPowerMode(void)
 void Leave_LowPowerMode(void)
 {
 	DEVICE_INFO *pInfo=&Device_Info;
-	printf("leave low power mode\r\n"); 
+	lprintf("leave low power mode\r\n"); 
 	if (pInfo->Current_Configuration!=0)bDeviceState=CONFIGURED; 
 	else bDeviceState = ATTACHED; 
 } 
@@ -100,8 +100,8 @@ void USB_Interrupts_Config(void)
 //         ENABLE,上拉
 void USB_Cable_Config (FunctionalState NewState)
 { 
-	if (NewState!=DISABLE)printf("usb pull up enable\r\n"); 
-	else printf("usb pull up disable\r\n"); 
+	if (NewState!=DISABLE)lprintf("usb pull up enable\r\n"); 
+	else lprintf("usb pull up disable\r\n"); 
 }
 
 //USB使能连接/断线
@@ -173,7 +173,7 @@ void Led_RW_OFF(void)
 //提示USB还未完成配置
 void USB_NotConfigured_LED(void)
 {
-	printf("USB NotConfigured\r\n");
+	lprintf("USB NotConfigured\r\n");
 }
 
 
