@@ -703,15 +703,18 @@ err:
     return;
 
 }
+void usb_strg_init(char *p)
+{
+    usb_main_init();
+}
 void test(char *p)
 {
     uint32_t n, p1, p2;
-    usb_main_init();
-#if 0
     p = str_to_hex(p, &p1);
     lprintf("para:%x\n", p1);
     set_LCD_Char_scale(p1);
 
+#if 0
     uint32_t n, p1, p2;
     uint64_t t1, t2, t3,t4,t5,t6,t7;
     t1= get_system_us();
@@ -741,7 +744,6 @@ void test(char *p)
     lprintf("6:%U\n", t6);
     lprintf("7:%U\n", t7);
 #endif
-
     return;
 
 }
@@ -834,6 +836,7 @@ static const struct command cmd_list[]=
     {"test",test},
     {"taskmask",tm},
     //{"szk",show_ziku},
+    {"usb",usb_strg_init},
     {"w",write_mem},
     {NULL, NULL},
 };
