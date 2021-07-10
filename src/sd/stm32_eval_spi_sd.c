@@ -111,8 +111,7 @@ uint8_t  SD_Type=0;//no card
 
 uint8_t SD_SPI_ReadWriteByte(uint8_t data)
 {
-	SD_WriteByte(data);
-	return SD_ReadByte();
+	return SD_WriteByte(data);
 }	  
 
 void sf_read_id()
@@ -230,18 +229,18 @@ SD_Error SD_get_type(void)
 			SD_CS_LOW();
 			if(getres_SD_SendCmd(CMD58,0,0X01)==1)//
 			{
-				for(int i=0;i<4;i++)buf[i]=SD_ReadByte();//µÃµ½OCRÖµ
-#if 0
-				if(buf[0]&0x40){
-					SD_Type=SD_TYPE_V2HC;    //¼ì²éCCS
-					lprintf("SD_TYPE_V2HC\n");
-				}
-				else{
-				       	SD_Type=SD_TYPE_V2;   
-					lprintf("SD_TYPE_V2\n");
-				}
-#endif
-				//argument = 0x40000000 + (buf[1]<<16) + (buf[2]<<8);
+                for(int i=0;i<4;i++)buf[i]=SD_ReadByte();//µÃµ½OCRÖµ
+                lprintf("cmd58 return:\n");
+                for(int i=0;i<4;i++)lprintf("buf[%d]=%x\n",i,buf[i]);
+                if(buf[0]&0x40){
+                    SD_Type=SD_TYPE_V2HC;    //¼ì²éCCS
+                    lprintf("SD_TYPE_V2HC\n");
+                }
+                else{
+                    SD_Type=SD_TYPE_V2;   
+                    lprintf("SD_TYPE_V2\n");
+                }
+                //argument = 0x40000000 + (buf[1]<<16) + (buf[2]<<8);
 				argument = 0x40ff8000;
 				retry=100;
 				do
@@ -405,12 +404,14 @@ u32 SD_GetSectorCount(void)
   *         - SD_RESPONSE_FAILURE: Sequence failed
   *         - SD_RESPONSE_NO_ERROR: Sequence succeed
   */
-SD_Error SD_ReadBlock(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t BlockSize)
+SD_Error SD_ReadBlock(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockSize)
 {
   uint32_t i = 0;
   SD_Error rvalue = SD_RESPONSE_FAILURE;
   //lprintf("SRB:A-%x l-%d\n", ReadAddr, (uint32_t)BlockSize);
-  ReadAddr>>=9;
+  if( SD_Type==SD_TYPE_V2HC){
+      ReadAddr>>=9;
+  }
 
   /*!< SD chip select low */
   SD_CS_LOW();
@@ -461,11 +462,14 @@ SD_Error SD_ReadBlock(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t BlockSize)
   *         - SD_RESPONSE_FAILURE: Sequence failed
   *         - SD_RESPONSE_NO_ERROR: Sequence succeed
   */
-SD_Error SD_ReadMultiBlocks(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t BlockSize, uint32_t NumberOfBlocks)
+SD_Error SD_ReadMultiBlocks(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockSize, uint32_t NumberOfBlocks)
 {
   uint32_t i = 0, Offset = 0;
   SD_Error rvalue = SD_RESPONSE_FAILURE;
   
+  if( SD_Type==SD_TYPE_V2HC){
+      ReadAddr>>=9;
+  }
   /*!< SD chip select low */
   SD_CS_LOW();
   /*!< Data transfer */
@@ -521,11 +525,14 @@ SD_Error SD_ReadMultiBlocks(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t BlockS
   *         - SD_RESPONSE_FAILURE: Sequence failed
   *         - SD_RESPONSE_NO_ERROR: Sequence succeed
   */
-SD_Error SD_WriteBlock(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t BlockSize)
+SD_Error SD_WriteBlock(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize)
 {
   uint32_t i = 0;
   SD_Error rvalue = SD_RESPONSE_FAILURE;
 
+  if( SD_Type==SD_TYPE_V2HC){
+      WriteAddr>>=9;
+  }
   /*!< SD chip select low */
   SD_CS_LOW();
 
@@ -579,11 +586,14 @@ SD_Error SD_WriteBlock(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t BlockSize)
   *         - SD_RESPONSE_FAILURE: Sequence failed
   *         - SD_RESPONSE_NO_ERROR: Sequence succeed
   */
-SD_Error SD_WriteMultiBlocks(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t BlockSize, uint32_t NumberOfBlocks)
+SD_Error SD_WriteMultiBlocks(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize, uint32_t NumberOfBlocks)
 {
   uint32_t i = 0, Offset = 0;
   SD_Error rvalue = SD_RESPONSE_FAILURE;
 
+  if( SD_Type==SD_TYPE_V2HC){
+      WriteAddr>>=9;
+  }
   /*!< SD chip select low */
   SD_CS_LOW();
   /*!< Data transfer */
