@@ -402,7 +402,7 @@ SD_Error SD_ReadBlock(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t BlockSize)
 {
   uint32_t i = 0;
   SD_Error rvalue = SD_RESPONSE_FAILURE;
-  lprintf("SRB:A-%x l-%d\n", ReadAddr, (uint32_t)BlockSize);
+  //lprintf("SRB:A-%x l-%d\n", ReadAddr, (uint32_t)BlockSize);
   ReadAddr>>=9;
 
   /*!< SD chip select low */
@@ -955,7 +955,7 @@ SD_Error SD_GetResponse(uint8_t Response)
   else
   {
     /*!< Right response got */
-    lprintf("%s:%d Noerr res %x\n", __func__, __LINE__, res);
+    //lprintf("%s:%d Noerr res %x\n", __func__, __LINE__, res);
     return SD_RESPONSE_NO_ERROR;
   }
 }
