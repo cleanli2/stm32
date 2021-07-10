@@ -64,7 +64,7 @@ void putchars(const char *pt)
 char * num2str(uint64_t jt, char * s, char n)
 {
         char * st, k = 1, j;
-        uint32_t tmp;
+        uint64_t tmp;
 
         st = s;
         if(n > 16 || n < 2){
@@ -95,7 +95,7 @@ void print_uint(uint32_t num)
         putchars(nc);
 }
 
-int sprint_uint64(char*s, uint32_t num)
+int sprint_uint64(char*s, uint64_t num)
 {
     char nc[21];
     memset(nc, 0, 21);
@@ -138,6 +138,7 @@ void vslprintf(char*s_buf, const char *fmt, va_list args)
 {
     const char *s;
     uint32_t d;
+    uint64_t u;
     va_list ap;
     char*sp = s_buf;
 
@@ -162,8 +163,8 @@ void vslprintf(char*s_buf, const char *fmt, va_list args)
                 sp += sprint_uint(sp, d);
                 break;
             case 'U':
-                d = va_arg(ap, uint64_t);
-                sp += sprint_uint64(sp, d);
+                u = va_arg(ap, uint64_t);
+                sp += sprint_uint64(sp, u);
                 break;
 	    case 'c':
                 d = va_arg(ap, uint32_t);
