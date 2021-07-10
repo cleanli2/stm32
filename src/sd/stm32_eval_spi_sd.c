@@ -295,9 +295,8 @@ SD_Error SD_get_type(void)
 	}
 	SD_DisSelect();//È¡ÏûÆ¬Ñ¡
 	//SD_SPI_SpeedHigh();//¸ßËÙ
-	if(SD_Type)return 0;
-	else if(r1)return r1; 	   
-	return 0xaa;//ÆäËû´íÎó
+	if(SD_Type)return SD_RESPONSE_NO_ERROR;
+	else return SD_RESPONSE_FAILURE;//ÆäËû´íÎó
 }
 
 /**
@@ -367,10 +366,18 @@ u32 SD_GetSectorCount(void)
                 csd[i] = SD_ReadByte();
             }
         }
+        else{
+            lprintf("sd Respose error when read block\n");
+            return 0;
+        }
         /*!< Get CRC bytes (not really needed by us, but required by SD) */
         SD_WriteByte(SD_DUMMY_BYTE);
         SD_WriteByte(SD_DUMMY_BYTE);
         /*!< Set response value to success */
+    }
+    else{
+        lprintf("sd Respose error when read csd\n");
+        return 0;
     }
     /*!< SD chip select high */
     SD_CS_HIGH();
@@ -1014,6 +1021,7 @@ uint16_t SD_GetStatus(void)
 SD_Error SD_GoIdleState(void)
 {
 	uint8_t r1;
+    SD_Error ret;
 	int retry = 100;
   lprintf("%s:%d\n", __func__, __LINE__);
   /*!< SD chip select low */
@@ -1101,7 +1109,7 @@ SD_Error SD_GoIdleState(void)
   while (SD_GetResponse(SD_RESPONSE_NO_ERROR));
   
 #endif
-  SD_get_type();
+  ret = SD_get_type();
   /*!< SD chip select high */
   SD_CS_HIGH();
   
@@ -1109,7 +1117,7 @@ SD_Error SD_GoIdleState(void)
   SD_WriteByte(SD_DUMMY_BYTE);
   
   lprintf("%s:%d\n", __func__, __LINE__);
-  return SD_RESPONSE_NO_ERROR;
+  return ret;
 }
 
 /**

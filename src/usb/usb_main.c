@@ -16,8 +16,15 @@ int usb_main_init(void)
     memset(Data_Buffer, 0, BULK_MAX_PACKET_SIZE*2*4);
     memset(Bulk_Data_Buff, 0, BULK_MAX_PACKET_SIZE);
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//中断分组设置	 
-    SD_Init();
+    if(SD_RESPONSE_NO_ERROR!=SD_Init()){
+        lprintf("SD card init error: usb storage init fail!\n");
+        return -1;
+    }
     Mass_Memory_Size[0]=(long long)SD_GetSectorCount()*512;
+    if(0 == Mass_Memory_Size[0]){
+        lprintf("SD card secotr count error: usb storage init fail!\n");
+        return -1;
+    }
     Mass_Block_Size[0] =512;
     Mass_Block_Count[0]=Mass_Memory_Size[0]/Mass_Block_Size[0];
 	
@@ -29,6 +36,7 @@ int usb_main_init(void)
  	Set_USBClock();   
  	USB_Init();	    
 	delay_ms(1800);	   	    
+    return 0;
 #if 0
 	while(1)
 	{	
