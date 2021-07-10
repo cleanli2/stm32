@@ -20,13 +20,15 @@ int usb_main_init(void)
         lprintf("SD card init error: usb storage init fail!\n");
         return -1;
     }
-    Mass_Memory_Size[0]=(long long)SD_GetSectorCount()*512;
-    if(0 == Mass_Memory_Size[0]){
+    Mass_Block_Count[0]=SD_GetSectorCount();
+    if(0 == Mass_Block_Count[0]){
         lprintf("SD card secotr count error: usb storage init fail!\n");
         return -1;
     }
     Mass_Block_Size[0] =512;
-    Mass_Block_Count[0]=Mass_Memory_Size[0]/Mass_Block_Size[0];
+    Mass_Memory_Size[0]=(uint64_t)Mass_Block_Count[0]*Mass_Block_Size[0];
+    lprintf("SD: total %U Bytes, %d sectors, %d bytes/sector\n",
+            Mass_Memory_Size[0], Mass_Block_Count[0], Mass_Block_Size[0]);
 	
  	USB_Port_Set(0); 	//USBÏÈ¶Ï¿ª
 	delay_ms(300);

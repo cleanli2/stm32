@@ -83,7 +83,9 @@ uint16_t MAL_Write(uint8_t lun, uint64_t Memory_Offset, uint32_t *Writebuff, uin
 	switch (lun)
 	{
 		case 0:				  
-			//STA=SD_WriteDisk((u8*)Writebuff, Memory_Offset>>9, Transfer_Length>>9);   		  
+			//STA=SD_WriteDisk((u8*)Writebuff, Memory_Offset>>9, Transfer_Length>>9);
+            SD_WriteBlock((u8*)Writebuff, Memory_Offset, Transfer_Length);
+			STA=0;
 			break;							  
 		case 1:		 
 			STA=0;
