@@ -130,7 +130,12 @@ void sd(char *p)
     }
     else if(cmdindex == 0xa){//
 	lprintf("read 1 block\n");
-	SD_ReadBlock(read_buf, 0, 512);
+    para1=0;
+    if(tmp>1){
+        str_to_hex(p, &para1);
+    }
+	lprintf("addr %x\n", para1);
+	SD_ReadBlock(read_buf, para1, 512);
 	char*cp = (char *)read_buf;
 	int length=512;
 	while(length){
