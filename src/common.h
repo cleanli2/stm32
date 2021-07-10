@@ -13,6 +13,7 @@
 #include "rtc.h"
 #include "touch.h"
 #include "sd_lowlevel.h"
+#include "stm32_eval_spi_sd.h"
 void delay_us(u32 nus);
 void delay_ms(uint16_t nms);
 void led_flash(u32 led_flag, u32 ms_ct);

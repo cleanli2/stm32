@@ -6,7 +6,7 @@
 #include "mass_mal.h"
 
 u8 Data_Buffer[BULK_MAX_PACKET_SIZE*2*4];	//为USB数据缓存区申请内存
-u8 Bulk_Data_Buff[BULK_MAX_PACKET_SIZE];	//申请内存
+extern u8 Bulk_Data_Buff[BULK_MAX_PACKET_SIZE];	//申请内存
 int usb_main_init(void)
 { 
 	u8 offline_cnt=0;

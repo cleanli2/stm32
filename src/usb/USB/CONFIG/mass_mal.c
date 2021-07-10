@@ -30,6 +30,8 @@
 #include "platform_config.h"
 #include "mass_mal.h"
 #include "mmc_sd.h"
+#include "common.h"
+
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -107,11 +109,15 @@ uint16_t MAL_Write(uint8_t lun, uint64_t Memory_Offset, uint32_t *Writebuff, uin
 uint16_t MAL_Read(uint8_t lun, uint64_t Memory_Offset, uint32_t *Readbuff, uint16_t Transfer_Length)
 {
 	u8 STA;
+    lprintf("lun %d o %U L %d\n", lun, Memory_Offset, Transfer_Length);
+    //lprintf("lun %d o %U L %d\n", lun, Memory_Offset>>9, Transfer_Length>>9);
+    //lprintf("lun %d o %U L %d\n", lun, (Memory_Offset>>9)<<9, (Transfer_Length>>9)<<9);
 	switch (lun)		//这里,根据lun的值确定所要操作的磁盘
 	{
 		case 0:		    
 			//STA=SD_ReadDisk((u8*)Readbuff, Memory_Offset>>9, Transfer_Length>>9);	   
-            SD_ReadBlock((u8*)Readbuff, (Memory_Offset>>9)<<9, (Transfer_Length>>9)<<9);
+            //SD_ReadBlock((u8*)Readbuff, (Memory_Offset>>9)<<9, (Transfer_Length>>9)<<9);
+            SD_ReadBlock((u8*)Readbuff, Memory_Offset, Transfer_Length);
 			STA=0;
 			break;			    
 		case 1:	 

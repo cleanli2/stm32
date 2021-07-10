@@ -402,6 +402,7 @@ SD_Error SD_ReadBlock(uint8_t* pBuffer, uint32_t ReadAddr, uint16_t BlockSize)
 {
   uint32_t i = 0;
   SD_Error rvalue = SD_RESPONSE_FAILURE;
+  lprintf("SRB:A-%x l-%d\n", ReadAddr, (uint32_t)BlockSize);
 
   /*!< SD chip select low */
   SD_CS_LOW();
@@ -937,7 +938,7 @@ SD_Error SD_GetResponse(uint8_t Response)
 {
   uint32_t Count = 0xFFF;
   uint8_t res;
-  lprintf("%s:%d\n", __func__, __LINE__);
+  //lprintf("%s:%d\n", __func__, __LINE__);
 
   /*!< Check if response is got or a timeout is happen */
   while (((res=SD_ReadByte()) != Response) && Count)

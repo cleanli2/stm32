@@ -48,8 +48,9 @@ __IO uint32_t Counter = 0;
 uint32_t  Idx;
 uint8_t TransferState = TXFR_IDLE;
 /* Extern variables ----------------------------------------------------------*/
-u32 *Data_Buffer;			//外部必须用malloc申请 BULK_MAX_PACKET_SIZE*2*4 这么多字节的内存。
-extern u8 *Bulk_Data_Buff;	//在usb_bot.c里面申明了
+//u32 *Data_Buffer;			//外部必须用malloc申请 BULK_MAX_PACKET_SIZE*2*4 这么多字节的内存。
+//Data_Buffer[BULK_MAX_PACKET_SIZE*2*4];
+//extern u8 *Bulk_Data_Buff;	//在usb_bot.c里面申明了
 
 extern uint16_t Data_Len;
 extern uint8_t Bot_State;

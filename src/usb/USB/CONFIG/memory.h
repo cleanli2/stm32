@@ -38,8 +38,8 @@
 #define TXFR_ONGOING  1
 
 extern vu8 USB_STATUS_REG;	//在mass_mal.h定义，方便其他函数使用
-extern u32* Data_Buffer;	 	//使用内存管理，在mass_mal.h定义，在main函数申请内存
-extern u8* Bulk_Data_Buff;	//在usb_bot里面定义
+extern u8 Data_Buffer[];	 	//使用内存管理，在mass_mal.h定义，在main函数申请内存
+extern u8 Bulk_Data_Buff[];	//在usb_bot里面定义
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

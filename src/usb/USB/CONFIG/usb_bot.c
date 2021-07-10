@@ -41,8 +41,8 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 uint8_t Bot_State;
-u8 *Bulk_Data_Buff;	//使用malloc申请内存
-//uint8_t Bulk_Data_Buff[BULK_MAX_PACKET_SIZE];  /* data buffer*/
+//u8 *Bulk_Data_Buff;	//使用malloc申请内存
+uint8_t Bulk_Data_Buff[BULK_MAX_PACKET_SIZE];  /* data buffer*/
 uint16_t Data_Len;
 Bulk_Only_CBW CBW;
 Bulk_Only_CSW CSW;
