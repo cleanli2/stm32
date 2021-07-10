@@ -202,6 +202,7 @@ void Mass_Storage_SetConfiguration(void)
     ClearDTOG_RX(ENDP2);
 
     Bot_State = BOT_IDLE; /* set the Bot state machine to the IDLE state */
+    lprintf("USB Configured\r\n");
   }
 }
 

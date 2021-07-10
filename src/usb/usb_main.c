@@ -10,13 +10,18 @@ extern u8 Bulk_Data_Buff[BULK_MAX_PACKET_SIZE];	//申请内存
 int usb_main_init(void)
 { 
 	u8 offline_cnt=0;
-	u8 tct=0;
+	u8 tct=0, retry = 3;
 	u8 USB_STA;
 	u8 Divece_STA; 
+    SD_Error sd_ret = SD_RESPONSE_FAILURE;
     memset(Data_Buffer, 0, BULK_MAX_PACKET_SIZE*2*4);
     memset(Bulk_Data_Buff, 0, BULK_MAX_PACKET_SIZE);
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//中断分组设置	 
-    if(SD_RESPONSE_NO_ERROR!=SD_Init()){
+    while(SD_RESPONSE_NO_ERROR!=sd_ret && retry--){
+        sd_ret = SD_Init();
+        lprintf("sd init return %d retry %d\n", sd_ret, retry);
+    }
+    if(SD_RESPONSE_NO_ERROR!=sd_ret){
         lprintf("SD card init error: usb storage init fail!\n");
         return -1;
     }
