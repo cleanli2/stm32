@@ -107,6 +107,7 @@
   * @{
   */ 
 
+uint32_t logv = 0;
 uint8_t  SD_Type=0;//no card
 
 uint8_t SD_SPI_ReadWriteByte(uint8_t data)
@@ -419,6 +420,9 @@ SD_Error SD_ReadBlock(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockSize)
   if( SD_Type==SD_TYPE_V2HC){
       ReadAddr>>=9;
   }
+  if(logv){
+      lprintf("R%x\n", (uint32_t)ReadAddr);
+  }
 
   /*!< SD chip select low */
   SD_CS_LOW();
@@ -539,6 +543,9 @@ SD_Error SD_WriteBlock(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize)
 
   if( SD_Type==SD_TYPE_V2HC){
       WriteAddr>>=9;
+  }
+  if(logv){
+      lprintf("W%x\n", (uint32_t)WriteAddr);
   }
   /*!< SD chip select low */
   SD_CS_LOW();

@@ -10,6 +10,7 @@ static char cmd_buf[COM_MAX_LEN] = "";
 static uint cmd_buf_p = COM_MAX_LEN;
 static uint quit_cmd = 0;
 extern uint32_t task_mask;
+extern uint32_t logv;
 
 uint get_howmany_para(char *s);
 char * str_to_hex(char *s, uint * result);
@@ -152,6 +153,7 @@ void sd(char *p)
                     con_send(i == 7 ? '-':' ');
                 }
             }
+            lprintf("\n");
             para1 += 0x200;
         }
     }
@@ -707,11 +709,21 @@ void usb_strg_init(char *p)
 {
     uint32_t n, p1 = 0;
     n = get_howmany_para(p);
-    if(n>1){
+    if(n>0){
         p = str_to_hex(p, &p1);
         lprintf("p1=%d\n", p1);
     }
     usb_main_init(p1);
+}
+void logflag(char *p)
+{
+    uint32_t n, p1 = 0;
+    n = get_howmany_para(p);
+    if(n>0){
+        p = str_to_hex(p, &p1);
+        lprintf("logf set to %x\n", p1);
+    }
+    logv = p1;
 }
 void test(char *p)
 {
@@ -828,6 +840,7 @@ static const struct command cmd_list[]=
     //{"lcd19264init",lcd19264init},
     //{"lcd19264dc",dispcchar},
     {"led",ledtest},
+    {"logf",logflag},
     {"lst",lcdsuebinit},
     {"lstep",lcdsuebstep},
     {"lstest",lcdsuebtest},
