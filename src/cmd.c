@@ -41,11 +41,21 @@ void w25f(char *p)
         lprintf("w25 flash ID:%x\n", SPI_Flash_ReadID());
     }
     else if(cmdindex == 1){
-        p = str_to_hex(p, &para1);
+        if(tmp>1){
+            p = str_to_hex(p, &para1);
+        }
         SPI_Flash_Read((uint8_t*)&para3, para1, 4);
         lprintf("w25 read 4 bytes = %X @%x\n", para3, para1);
     }
     else if(cmdindex == 2){//
+        lprintf("w25f 2 addr data\n");
+        if(tmp<3){
+            goto err;
+        }
+        p = str_to_hex(p, &para1);//addr
+        p = str_to_hex(p, &para2);//data
+        SPI_Flash_Write((uint8_t*)&para2, para1, 4);
+        lprintf("w25 write 4 bytes = %X @%x\n", para2, para1);
     }
     else if(cmdindex == 3){//
     }
@@ -67,6 +77,8 @@ void w25f(char *p)
     con_send('\n');
 
     return;
+err:
+    lprintf("ERROR para\n");
 }
 
 #if 1

@@ -98,6 +98,23 @@ u16 SPI_Flash_ReadID(void)
 	Temp|=SPI1_ReadWriteByte(0xFF)<<8;  
 	Temp|=SPI1_ReadWriteByte(0xFF);	 
 	SPI_FLASH_CS=1;				    
+    lprintf("W25Flash ID=%x\n", Temp);
+    switch(Temp){
+        case W25Q80:
+            lprintf("W25Q80\n");
+            break;
+        case W25Q64:
+            lprintf("W25Q64\n");
+            break;
+        case W25Q32:
+            lprintf("W25Q32\n");
+            break;
+        case W25Q16:
+            lprintf("W25Q16\n");
+            break;
+        default:
+            lprintf("unknown ID\n");
+    }
 	return Temp;
 }   		    
 //读取SPI FLASH  
@@ -245,7 +262,7 @@ void SPI_Flash_Erase_Chip(void)
 //擦除一个山区的最少时间:150ms
 void SPI_Flash_Erase_Sector(u32 Dst_Addr)   
 {   
-	printf("fe:%x\r\n",Dst_Addr);	
+	lprintf("fe:%x\r\n",Dst_Addr);	
 	Dst_Addr*=4096;
     SPI_FLASH_Write_Enable();                  //SET WEL 	 
     SPI_Flash_Wait_Busy();   
