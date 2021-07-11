@@ -591,7 +591,9 @@ SD_Error SD_WriteBlock(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize)
               rvalue = SD_RESPONSE_NO_ERROR;
           }
           else{
-              lprintf("err2 %x\n", SD_GetStatus());
+              if(logv){
+                  lprintf("err2 %x rty %x\n", SD_GetStatus(), rtry);
+              }
               SD_CS_HIGH();
               delay_us(10);
               if(spi_sp_bak == 0xffff){
@@ -604,7 +606,9 @@ SD_Error SD_WriteBlock(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize)
           }
       }
       else{
-          lprintf("err1 %x\n", SD_GetStatus());
+          if(logv){
+              lprintf("err1 %x rty %x\n", SD_GetStatus(), rtry);
+          }
           SD_CS_HIGH();
           delay_us(10);
           if(spi_sp_bak == 0xffff){
@@ -617,6 +621,14 @@ SD_Error SD_WriteBlock(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize)
       }
   }
   while(rvalue != SD_RESPONSE_NO_ERROR && rtry--);
+  if(rvalue == SD_RESPONSE_NO_ERROR){
+      if(logv){
+          lprintf("BWO\n");
+      }
+  }
+  else{
+      lprintf("BWF\n");
+  }
   /*!< SD chip select high */
   SD_CS_HIGH();
   /*!< Send dummy byte: 8 Clock pulses of delay */

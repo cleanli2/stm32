@@ -170,6 +170,23 @@ void sd(char *p)
         lprintf("spi speed %x\n", para1);
         spi_speed(para1);
     }
+    else if(cmdindex == 0xe){//
+        lprintf("write sd block:sd e filldata blockaddr\n");
+        para1=0x55;
+        para2=0x200000;
+        if(tmp>1){
+            p = str_to_hex(p, &para1);
+        }
+        if(tmp>2){
+            p = str_to_hex(p, &para2);
+        }
+        lprintf("fill %x\n", para1);
+        lprintf("blockaddr %x\n", para2);
+        lprintf("dataaddr %W\n", ((uint64_t)para2)<<9);
+        memset(read_buf, para1, 512);
+        lprintf("write @%Xsd block ret:%x\n",
+            SD_WriteBlock(read_buf, ((uint64_t)para2)<<9, 512));
+    }
     con_send('\n');
 
     return;
