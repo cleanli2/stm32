@@ -47,6 +47,17 @@ int sput_hex_uint(char*s, uint32_t i)
     return 8;
 }
 
+int sput_hex_uint64(char*s, uint64_t i)
+{
+    int c = 16;
+    char* p = s;
+    while(c--){
+        *p++ = (halfbyte2char((char)((i&0xf000000000000000)>>60)));
+        i<<=4;
+    }
+    return 16;
+}
+
 void puthexchars(char *pt)
 {
     while(*pt){
@@ -173,6 +184,10 @@ void vslprintf(char*s_buf, const char *fmt, va_list args)
 	    case 'x':
                 d = va_arg(ap, uint32_t);
                 sp += sprint_hex(sp, d);
+                break;
+	    case 'W':
+                u = va_arg(ap, uint64_t);
+                sp += sput_hex_uint64(sp, u);
                 break;
 	    case 'X':
                 d = va_arg(ap, uint32_t);

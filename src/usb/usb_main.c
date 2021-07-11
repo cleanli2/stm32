@@ -42,6 +42,8 @@ void usb_main_init(uint32_t flag)
     Mass_Memory_Size[0]=(uint64_t)Mass_Block_Count[0]*Mass_Block_Size[0];
     lprintf("SD: total %U Bytes, %d sectors, %d bytes/sector\n",
             Mass_Memory_Size[0], Mass_Block_Count[0], Mass_Block_Size[0]);
+    lprintf("HEX result:total 0x%W Bytes, 0x%x sectors, 0x%x bytes/sector\n",
+            Mass_Memory_Size[0], Mass_Block_Count[0], Mass_Block_Size[0]);
 	
  	USB_Port_Set(0); 	//USBÏÈ¶Ï¿ª
 	delay_ms(300);
