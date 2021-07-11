@@ -86,7 +86,7 @@ uint16_t MAL_Write(uint8_t lun, uint64_t Memory_Offset, uint32_t *Writebuff, uin
 	{
 		case 0:				  
             if(usb_writable==0){
-                lprintf("FakeW%X\n", Memory_Offset>>9);
+                lprintf("FakeW%X\n", (uint32_t)(Memory_Offset>>9));
                 break;
             }
 			//STA=SD_WriteDisk((u8*)Writebuff, Memory_Offset>>9, Transfer_Length>>9);
@@ -96,7 +96,7 @@ uint16_t MAL_Write(uint8_t lun, uint64_t Memory_Offset, uint32_t *Writebuff, uin
             }
             if(sd_ret == SD_RESPONSE_FAILURE){
                 STA=1;
-                lprintf("sd write fail:block addr %X\n", Memory_Offset>>9);
+                lprintf("sd write fail:block addr %X\n", (uint32_t)(Memory_Offset>>9));
             }
 			break;							  
 		case 1:		 
@@ -138,7 +138,7 @@ uint16_t MAL_Read(uint8_t lun, uint64_t Memory_Offset, uint32_t *Readbuff, uint1
             }
             if(sd_ret == SD_RESPONSE_FAILURE){
                 STA=1;
-                lprintf("sd read fail:block addr %X\n", Memory_Offset>>9);
+                lprintf("sd read fail:block addr %X\n", (uint32_t)(Memory_Offset>>9));
             }
 			break;							  
 		case 1:	 
