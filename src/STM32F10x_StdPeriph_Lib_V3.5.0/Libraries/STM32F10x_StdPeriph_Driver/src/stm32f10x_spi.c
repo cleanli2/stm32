@@ -156,13 +156,13 @@ uint16_t SPI_set_speed(SPI_TypeDef* SPIx, uint32_t speed)
 
   /* Get the SPIx CR1 value */
   tmpreg = SPIx->CR1;
-  lprintf("spisetspeed:%x speed %x\n", tmpreg, speed);
+  //lprintf("spisetspeed:%x speed %x\n", tmpreg, speed);
 
   ret = tmpreg & CR1_SPI_SPEED_Mask;
   tmpreg &= (uint16_t)(~CR1_SPI_SPEED_Mask);
   /* Set BR bits according to SPI_BaudRatePrescaler value */
   tmpreg |= (uint16_t)((uint32_t)speed);
-  lprintf("spisetspeed:%x ret %x\n", tmpreg, ret);
+  //lprintf("spisetspeed:%x ret %x\n", tmpreg, ret);
   /* Write to SPIx CR1 */
   SPIx->CR1 = tmpreg;
   return ret;
