@@ -80,7 +80,7 @@ uint16_t MAL_Init(uint8_t lun)
 *******************************************************************************/
 uint16_t MAL_Write(uint8_t lun, uint64_t Memory_Offset, uint32_t *Writebuff, uint16_t Transfer_Length)
 {
-	u8 STA=0, rty = 2;
+	u8 STA=0, rty = 9;
     SD_Error sd_ret = SD_RESPONSE_FAILURE;
 	switch (lun)
 	{

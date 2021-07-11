@@ -579,6 +579,12 @@ SD_Error SD_WriteBlock(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize)
     {
       rvalue = SD_RESPONSE_NO_ERROR;
     }
+    else{
+        lprintf("err2\n");
+    }
+  }
+  else{
+      lprintf("err1\n");
   }
   /*!< SD chip select high */
   SD_CS_HIGH();
