@@ -31,6 +31,7 @@ uint64_t get_system_us();
 #define LED_Y_1 0x8
 #define LED_R_0 0
 #define LED_Y_0 0
+#define MEM_SD_SIZE 0x2000
 #define usb_writable (0x80000000&logv)
 void led_raw_set(u32 led_flag);
 void usb_main_init(uint32_t flag);

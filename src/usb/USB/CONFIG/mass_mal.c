@@ -40,6 +40,7 @@
 uint64_t Mass_Memory_Size[MAX_LUN+1];//超过4G的SD卡，必须用long long表示其容量！！
 u32 Mass_Block_Size[MAX_LUN+1];
 u32 Mass_Block_Count[MAX_LUN+1];
+extern u8 mem_sd_buf[MEM_SD_SIZE];
 //extern uint32_t usb_writable;
 
 #if defined(USE_STM3210E_EVAL) || defined(USE_STM32L152D_EVAL)
@@ -63,8 +64,7 @@ uint16_t MAL_Init(uint8_t lun)
 		case 0://磁盘0为 SD卡
 			 break; 			   
 		case 1:
-			//break; 		  
-			return MAL_FAIL;
+			 break; 		  
 		default://非法值
 			return MAL_FAIL;
 	}
@@ -100,6 +100,8 @@ uint16_t MAL_Write(uint8_t lun, uint64_t Memory_Offset, uint32_t *Writebuff, uin
             }
 			break;							  
 		case 1:		 
+            lprintf("W:lun %d o %x L %x\n", lun, (uint32_t)Memory_Offset, Transfer_Length);
+            memcpy(mem_sd_buf+Memory_Offset, Writebuff, Transfer_Length);
 			STA=0;
 			//SPI_Flash_Write((u8*)Writebuff, Memory_Offset, Transfer_Length);   		  
 			break; 
@@ -142,8 +144,9 @@ uint16_t MAL_Read(uint8_t lun, uint64_t Memory_Offset, uint32_t *Readbuff, uint1
             }
 			break;							  
 		case 1:	 
-			//STA=0;
-			return MAL_FAIL;
+            lprintf("R:lun %d o %x L %x\n", lun, (uint32_t)Memory_Offset, Transfer_Length);
+            memcpy(Readbuff, mem_sd_buf+Memory_Offset, Transfer_Length);
+			STA=0;
 			//SPI_Flash_Read((u8*)Readbuff, Memory_Offset, Transfer_Length);   		  
 			break;	  
 		default:
@@ -169,7 +172,7 @@ uint16_t MAL_GetStatus (uint8_t lun)
     case 0:
         return MAL_OK;
     case 1:
-        return MAL_FAIL;
+        return MAL_OK;
     case 2:
         return MAL_FAIL;
     default:

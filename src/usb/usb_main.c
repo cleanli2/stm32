@@ -5,6 +5,7 @@
 #include "usb_bot.h"  
 #include "mass_mal.h"
 
+u8 mem_sd_buf[MEM_SD_SIZE];
 //uint32_t usb_writable = 0;
 u8 Data_Buffer[BULK_MAX_PACKET_SIZE*2*4];	//为USB数据缓存区申请内存
 extern u8 Bulk_Data_Buff[BULK_MAX_PACKET_SIZE];	//申请内存
@@ -31,12 +32,12 @@ void usb_main_init(uint32_t flag)
     }
     if(SD_RESPONSE_NO_ERROR!=sd_ret){
         lprintf("SD card init error: usb storage init fail!\n");
-        return;
+        //return;
     }
     Mass_Block_Count[0]=SD_GetSectorCount();
     if(0 == Mass_Block_Count[0]){
         lprintf("SD card secotr count error: usb storage init fail!\n");
-        return;
+        //return;
     }
     Mass_Block_Size[0] =512;
     Mass_Memory_Size[0]=(uint64_t)Mass_Block_Count[0]*Mass_Block_Size[0];
@@ -45,6 +46,11 @@ void usb_main_init(uint32_t flag)
     lprintf("HEX result:total 0x%W Bytes, 0x%x sectors, 0x%x bytes/sector\n",
             Mass_Memory_Size[0], Mass_Block_Count[0], Mass_Block_Size[0]);
 	
+    Mass_Memory_Size[1]=MEM_SD_SIZE;
+    Mass_Block_Size[1] =0x100;
+    Mass_Block_Count[1]=Mass_Memory_Size[1]/ Mass_Block_Size[1];
+    lprintf("Disk2:total 0x%x Bytes, 0x%x sectors, 0x%x bytes/sector\n",
+            (uint32_t)Mass_Memory_Size[1], Mass_Block_Count[1], Mass_Block_Size[1]);
  	USB_Port_Set(0); 	//USB先断开
 	delay_ms(300);
    	USB_Port_Set(1);	//USB再次连接   
