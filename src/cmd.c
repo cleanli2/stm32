@@ -58,6 +58,21 @@ void w25f(char *p)
         lprintf("w25 write 4 bytes = %X @%x\n", para2, para1);
     }
     else if(cmdindex == 3){//
+        if(tmp>1){
+            p = str_to_hex(p, &para1);
+        }
+        SPI_Flash_Read((uint8_t*)read_buf, para1, 512);
+        para2 = 512;
+        char*cp = (char *)read_buf;
+        while(para2){
+            lprint("\n%X: ", (uint32_t)cp-(uint32_t)read_buf+para1);
+            for(int i=0;i<16;i++){
+                para2--;
+                lprintf("%b", *cp++);
+                con_send(i == 7 ? '-':' ');
+            }
+        }
+        lprintf("\n");
     }
     else if(cmdindex == 4){//
     }
