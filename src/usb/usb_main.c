@@ -46,11 +46,13 @@ void usb_main_init(uint32_t flag)
     lprintf("HEX result:total 0x%W Bytes, 0x%x sectors, 0x%x bytes/sector\n",
             Mass_Memory_Size[0], Mass_Block_Count[0], Mass_Block_Size[0]);
 	
+#if 0
     Mass_Memory_Size[1]=MEM_SD_SIZE;
     Mass_Block_Size[1] =0x100;
     Mass_Block_Count[1]=Mass_Memory_Size[1]/ Mass_Block_Size[1];
     lprintf("Disk2:total 0x%x Bytes, 0x%x sectors, 0x%x bytes/sector\n",
             (uint32_t)Mass_Memory_Size[1], Mass_Block_Count[1], Mass_Block_Size[1]);
+#endif
  	USB_Port_Set(0); 	//USB先断开
 	delay_ms(300);
    	USB_Port_Set(1);	//USB再次连接   
