@@ -391,6 +391,10 @@ u32 SD_GetSectorCount(void)
     {   
         csize = csd[9] + ((u16)csd[8] << 8) + 1;
         Capacity = (u32)csize << 10;//得到扇区数               
+        if( SD_Type!=SD_TYPE_V2HC){
+            lprintf("SD Type %x -> %x\n", SD_Type, SD_TYPE_V2HC);
+            SD_Type=SD_TYPE_V2HC;
+        }
     }else//V1.XX的卡
     {   
         n = (csd[5] & 15) + ((csd[10] & 128) >> 7) + ((csd[9] & 3) << 1) + 2;
