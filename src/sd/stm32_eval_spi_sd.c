@@ -542,10 +542,11 @@ SD_Error SD_ReadMultiBlocks(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockS
   *         - SD_RESPONSE_FAILURE: Sequence failed
   *         - SD_RESPONSE_NO_ERROR: Sequence succeed
   */
-SD_Error SD_WriteBlock(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize)
+SD_Error SD_WriteBlock(uint8_t* w_buf, uint64_t WriteAddr, uint16_t BlockSize)
 {
   uint32_t i = 0, sta, rtry = 5;
   uint16_t spi_sp_bak = 0xffff;
+  uint8_t * pBuffer = w_buf;
   SD_Error rvalue = SD_RESPONSE_FAILURE;
   sta = SD_GetStatus();
   if( SD_Type==SD_TYPE_V2HC){
@@ -559,6 +560,7 @@ SD_Error SD_WriteBlock(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize)
   }
 
   do{
+      pBuffer = w_buf;
       /*!< SD chip select low */
       SD_CS_LOW();
       /*!< Send CMD24 (SD_CMD_WRITE_SINGLE_BLOCK) to write multiple block */
@@ -576,6 +578,7 @@ SD_Error SD_WriteBlock(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize)
           /*!< Write the block data to SD : write count data by block */
           for (i = 0; i < BlockSize; i++)
           {
+              //lprintf("%d:%b\n", i, (uint8_t)*pBuffer);
               /*!< Send the pointed byte */
               SD_WriteByte(*pBuffer);
               /*!< Point to the next location where the byte read will be saved */
