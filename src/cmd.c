@@ -189,7 +189,7 @@ void sd(char *p)
         lprintf("dataaddr %W\n", ((uint64_t)para2)<<9);
         memset(read_buf, para1, 512);
         while(para3--){
-            lprintf("write @%Xsd block ret:%x\n", ((uint64_t)para2)<<9,
+            lprintf("write @%Wsd block ret:%x\n", ((uint64_t)para2)<<9,
                     SD_WriteBlock(read_buf, ((uint64_t)para2)<<9, 512));
             para2++;
         }

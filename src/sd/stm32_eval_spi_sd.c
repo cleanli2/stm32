@@ -139,6 +139,17 @@ void SD_DisSelect(void)
  	SD_SPI_ReadWriteByte(0xff);//Ìá¹©¶îÍâµÄ8¸öÊ±ÖÓ
 }
 
+uint8_t SD_WaitReady(void)
+{
+	uint32_t t=0;
+	do
+	{
+		if(SD_SPI_ReadWriteByte(0XFF)==0XFF)return 0;//OK
+		t++;
+	}while(t<0XFFFFFF);//
+	return 1;
+}
+
 uint8_t SD_GetRes(void)
 {
 	uint8_t Retry=0X1F;
@@ -158,7 +169,7 @@ uint8_t getres_SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc)
 	SD_WriteByte(SD_DUMMY_BYTE);
 	SD_CS_LOW();
   
-	lprintf("cmd %x arg %x crc %x\n", Cmd, Arg, Crc);
+	//lprintf("cmd %x arg %x crc %x\n", Cmd, Arg, Crc);
 	SD_SendCmd(Cmd, Arg, Crc);
 	return SD_GetRes();
 }
@@ -427,7 +438,7 @@ SD_Error SD_ReadBlock(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockSize)
   }
   if(logv){
       lprintf("%x", SD_Type);
-      lprintf("R%x\n", (uint32_t)ReadAddr);
+      lprintf("R%x ", (uint32_t)ReadAddr);
   }
 
   /*!< SD chip select low */
@@ -464,6 +475,14 @@ SD_Error SD_ReadBlock(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockSize)
   /*!< Send dummy byte: 8 Clock pulses of delay */
   SD_WriteByte(SD_DUMMY_BYTE);
   
+  if(rvalue == SD_RESPONSE_NO_ERROR){
+      if(logv){
+          lprintf("BRO\n");
+      }
+  }
+  else{
+      lprintf("BRF\n");
+  }
   /*!< Returns the reponse */
   return rvalue;
 }
@@ -544,11 +563,9 @@ SD_Error SD_ReadMultiBlocks(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockS
   */
 SD_Error SD_WriteBlock(uint8_t* w_buf, uint64_t WriteAddr, uint16_t BlockSize)
 {
-  uint32_t i = 0, sta, rtry = 5;
-  uint16_t spi_sp_bak = 0xffff;
-  uint8_t * pBuffer = w_buf;
+  uint32_t i = 0, rtry = 5;
+  uint8_t * pBuffer = w_buf, r1;
   SD_Error rvalue = SD_RESPONSE_FAILURE;
-  sta = SD_GetStatus();
   if( SD_Type==SD_TYPE_V2HC){
       WriteAddr>>=9;
   }
@@ -556,71 +573,59 @@ SD_Error SD_WriteBlock(uint8_t* w_buf, uint64_t WriteAddr, uint16_t BlockSize)
       if( SD_Type==SD_TYPE_V2HC){
           lprintf(">");
       }
-      lprintf("W%xS%x\n", (uint32_t)WriteAddr, sta);
+      lprintf("W%x ", (uint32_t)WriteAddr);
   }
 
   do{
       pBuffer = w_buf;
       /*!< SD chip select low */
-      SD_CS_LOW();
+      //SD_CS_LOW();
       /*!< Send CMD24 (SD_CMD_WRITE_SINGLE_BLOCK) to write multiple block */
-      SD_SendCmd(SD_CMD_WRITE_SINGLE_BLOCK, WriteAddr, 0xFF);
+      //SD_SendCmd(SD_CMD_WRITE_SINGLE_BLOCK, WriteAddr, 0xFF);
+      r1 = getres_SD_SendCmd(SD_CMD_WRITE_SINGLE_BLOCK, WriteAddr, 0xFF);
 
       /*!< Check if the SD acknowledged the write block command: R1 response (0x00: no errors) */
-      if (!SD_GetResponse(SD_RESPONSE_NO_ERROR))
+      if (r1 == SD_RESPONSE_NO_ERROR)
       {
           /*!< Send a dummy byte */
           SD_WriteByte(SD_DUMMY_BYTE);
 
-          /*!< Send the data token to signify the start of the data */
-          SD_WriteByte(0xFE);
+          if(!SD_WaitReady()){
+              /*!< Send the data token to signify the start of the data */
+              SD_WriteByte(0xFE);
 
-          /*!< Write the block data to SD : write count data by block */
-          for (i = 0; i < BlockSize; i++)
-          {
-              //lprintf("%d:%b\n", i, (uint8_t)*pBuffer);
-              /*!< Send the pointed byte */
-              SD_WriteByte(*pBuffer);
-              /*!< Point to the next location where the byte read will be saved */
-              pBuffer++;
-          }
-          /*!< Put CRC bytes (not really needed by us, but required by SD) */
-          SD_ReadByte();
-          SD_ReadByte();
-
-          /*!< Read data response */
-          if (SD_GetDataResponse() == SD_DATA_OK)
-          {
-              rvalue = SD_RESPONSE_NO_ERROR;
-          }
-          else{
-              if(logv){
-                  lprintf("err2 %x rty %x\n", SD_GetStatus(), rtry);
+              /*!< Write the block data to SD : write count data by block */
+              for (i = 0; i < BlockSize; i++)
+              {
+                  //lprintf("%d:%b\n", i, (uint8_t)*pBuffer);
+                  /*!< Send the pointed byte */
+                  SD_WriteByte(*pBuffer);
+                  /*!< Point to the next location where the byte read will be saved */
+                  pBuffer++;
               }
-              SD_CS_HIGH();
-              delay_us(10);
-              if(spi_sp_bak == 0xffff){
-                  spi_sp_bak = spi_speed(SPI_BaudRatePrescaler_8);
+              /*!< Put CRC bytes (not really needed by us, but required by SD) */
+              SD_ReadByte();
+              SD_ReadByte();
+
+              /*!< Read data response */
+              if (SD_GetDataResponse() == SD_DATA_OK)
+              {
+                  rvalue = SD_RESPONSE_NO_ERROR;
               }
               else{
-                  spi_speed(SPI_BaudRatePrescaler_8);
+                  if(logv){
+                      lprintf("err2 %x rty %x\n", SD_GetStatus(), rtry);
+                  }
               }
-              SD_WriteByte(SD_DUMMY_BYTE);
+          }
+          else{
+              lprintf("wait ready timeout %x\n", rtry);
           }
       }
       else{
           if(logv){
               lprintf("err1 %x rty %x\n", SD_GetStatus(), rtry);
           }
-          SD_CS_HIGH();
-          delay_us(10);
-          if(spi_sp_bak == 0xffff){
-              spi_sp_bak = spi_speed(SPI_BaudRatePrescaler_4);
-          }
-          else{
-              spi_speed(SPI_BaudRatePrescaler_8);
-          }
-          SD_WriteByte(SD_DUMMY_BYTE);
       }
   }
   while(rvalue != SD_RESPONSE_NO_ERROR && rtry--);
@@ -636,9 +641,6 @@ SD_Error SD_WriteBlock(uint8_t* w_buf, uint64_t WriteAddr, uint16_t BlockSize)
   SD_CS_HIGH();
   /*!< Send dummy byte: 8 Clock pulses of delay */
   SD_WriteByte(SD_DUMMY_BYTE);
-  if(spi_speed != 0xffff){
-      spi_speed(spi_sp_bak);
-  }
 
   /*!< Returns the reponse */
   return rvalue;
