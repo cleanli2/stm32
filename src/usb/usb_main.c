@@ -5,7 +5,7 @@
 #include "usb_bot.h"  
 #include "mass_mal.h"
 
-uint32_t usb_writable = 0;
+//uint32_t usb_writable = 0;
 u8 Data_Buffer[BULK_MAX_PACKET_SIZE*2*4];	//为USB数据缓存区申请内存
 extern u8 Bulk_Data_Buff[BULK_MAX_PACKET_SIZE];	//申请内存
 void usb_main_init(uint32_t flag)
@@ -15,7 +15,7 @@ void usb_main_init(uint32_t flag)
 	u8 USB_STA;
 	u8 Divece_STA; 
     SD_Error sd_ret = SD_RESPONSE_FAILURE;
-    usb_writable = flag;
+    //usb_writable = flag;
     if(usb_writable==0){
         lprintf("usb readonly\n");
     }

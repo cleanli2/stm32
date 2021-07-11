@@ -14,6 +14,9 @@
 #include "touch.h"
 #include "sd_lowlevel.h"
 #include "stm32_eval_spi_sd.h"
+
+extern uint32_t logv;
+
 void delay_us(u32 nus);
 void delay_ms(uint16_t nms);
 void led_flash(u32 led_flag, u32 ms_ct);
@@ -28,6 +31,7 @@ uint64_t get_system_us();
 #define LED_Y_1 0x8
 #define LED_R_0 0
 #define LED_Y_0 0
+#define usb_writable (0x80000000&logv)
 void led_raw_set(u32 led_flag);
 void usb_main_init(uint32_t flag);
 

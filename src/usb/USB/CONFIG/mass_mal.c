@@ -40,7 +40,7 @@
 uint64_t Mass_Memory_Size[MAX_LUN+1];//超过4G的SD卡，必须用long long表示其容量！！
 u32 Mass_Block_Size[MAX_LUN+1];
 u32 Mass_Block_Count[MAX_LUN+1];
-extern uint32_t usb_writable;
+//extern uint32_t usb_writable;
 
 #if defined(USE_STM3210E_EVAL) || defined(USE_STM32L152D_EVAL)
 SD_CardInfo mSDCardInfo;
