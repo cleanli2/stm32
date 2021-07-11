@@ -27,6 +27,48 @@ uint8_t cmd_caches[40][40] = {0};
 uint32_t ci=0;
 uint8_t read_buf[512];
 
+void w25f(char *p)
+{
+    uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
+
+    lprintf("p=%s\n", p);
+    tmp = get_howmany_para(p);
+    lprintf("tmp=%d\n", tmp);
+    if(tmp>=1){
+	    p = str_to_hex(p, &cmdindex);
+    }
+    if(tmp == 0 || cmdindex == 0){
+        lprintf("w25 flash ID:%x\n", SPI_Flash_ReadID());
+    }
+    else if(cmdindex == 1){
+        p = str_to_hex(p, &para1);
+        SPI_Flash_Read((uint8_t*)&para3, para1, 4);
+        lprintf("w25 read 4 bytes = %X @%x\n", para3, para1);
+    }
+    else if(cmdindex == 2){//
+    }
+    else if(cmdindex == 3){//
+    }
+    else if(cmdindex == 4){//
+    }
+    else if(cmdindex == 5){//cmd
+    }
+    else if(cmdindex == 6){//cmd
+        p = str_to_hex(p, &para1);
+        p = str_to_hex(p, &para2);
+        p = str_to_hex(p, &para3);
+    }
+    else if(cmdindex == 7){//low init/deinit
+    }
+    else if(cmdindex == 8){//
+    }
+    else if(cmdindex == 0xa){//
+    }
+    con_send('\n');
+
+    return;
+}
+
 #if 1
 void sd(char *p)
 {
@@ -886,6 +928,7 @@ static const struct command cmd_list[]=
     //{"szk",show_ziku},
     {"usb",usb_strg_init},
     {"w",write_mem},
+    {"w25f",w25f},
     {NULL, NULL},
 };
 static uint32_t * mrw_addr;
