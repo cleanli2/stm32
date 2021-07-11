@@ -165,6 +165,11 @@ void sd(char *p)
         lprintf("spi choose %x\n", para1);
         spi_choose_stm32(para1);
     }
+    else if(cmdindex == 0xd){//
+        str_to_hex(p, &para1);
+        lprintf("spi speed %x\n", para1);
+        spi_speed(para1);
+    }
     con_send('\n');
 
     return;
