@@ -235,7 +235,7 @@ SD_Error SD_get_type(void)
                 for(int i=0;i<4;i++)lprintf("buf[%d]=%x\n",i,buf[i]);
                 if(buf[0]&0x40){
                     SD_Type=SD_TYPE_V2HC;    //¼ì²éCCS
-                    lprintf("SD_TYPE_V2HC\n");
+                    lprintf("SD_TYPE_V2HC %b\n", SD_Type);
                 }
                 else{
                     SD_Type=SD_TYPE_V2;   
@@ -296,6 +296,7 @@ SD_Error SD_get_type(void)
 	}
 	SD_DisSelect();//È¡ÏûÆ¬Ñ¡
 	//SD_SPI_SpeedHigh();//¸ßËÙ
+    lprintf("SD_Type = 0x%b\n", SD_Type);
 	if(SD_Type)return SD_RESPONSE_NO_ERROR;
 	else return SD_RESPONSE_FAILURE;//ÆäËû´íÎó
 }
@@ -421,6 +422,7 @@ SD_Error SD_ReadBlock(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockSize)
       ReadAddr>>=9;
   }
   if(logv){
+      lprintf("%x", SD_Type);
       lprintf("R%x\n", (uint32_t)ReadAddr);
   }
 
@@ -545,6 +547,9 @@ SD_Error SD_WriteBlock(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t BlockSize)
       WriteAddr>>=9;
   }
   if(logv){
+      if( SD_Type==SD_TYPE_V2HC){
+          lprintf(">");
+      }
       lprintf("W%x\n", (uint32_t)WriteAddr);
   }
   /*!< SD chip select low */
