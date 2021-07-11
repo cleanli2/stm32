@@ -171,21 +171,28 @@ void sd(char *p)
         spi_speed(para1);
     }
     else if(cmdindex == 0xe){//
-        lprintf("write sd block:sd e filldata blockaddr\n");
+        lprintf("write sd block:sd e filldata blockaddr repeat\n");
         para1=0x55;
         para2=0x200000;
+        para3=1;
         if(tmp>1){
             p = str_to_hex(p, &para1);
         }
         if(tmp>2){
             p = str_to_hex(p, &para2);
         }
+        if(tmp>3){
+            p = str_to_hex(p, &para3);
+        }
         lprintf("fill %x\n", para1);
         lprintf("blockaddr %x\n", para2);
         lprintf("dataaddr %W\n", ((uint64_t)para2)<<9);
         memset(read_buf, para1, 512);
-        lprintf("write @%Xsd block ret:%x\n",
-            SD_WriteBlock(read_buf, ((uint64_t)para2)<<9, 512));
+        while(para3--){
+            lprintf("write @%Xsd block ret:%x\n", ((uint64_t)para2)<<9,
+                    SD_WriteBlock(read_buf, ((uint64_t)para2)<<9, 512));
+            para2++;
+        }
     }
     con_send('\n');
 
