@@ -902,6 +902,18 @@ void history(char *p)
     return;
 }
 
+void keytest(char *p)
+{
+    uint8_t rchar;
+    con_send('\n');
+    while((rchar=con_recv())!=ENTER_CHAR){
+        lprintf("%b\n", rchar);
+    }
+    con_send('\n');
+
+    return;
+
+}
 void gpiotest(char *p)
 {
     con_send('\n');
@@ -961,6 +973,7 @@ static const struct command cmd_list[]=
     {"history",history},
     //{"lcd19264init",lcd19264init},
     //{"lcd19264dc",dispcchar},
+    {"kt",keytest},
     {"led",ledtest},
     {"logf",logflag},
     {"lst",lcdsuebinit},
