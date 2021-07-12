@@ -23,8 +23,10 @@ void con_send(char X)
     }
 }
 */
-uint8_t cmd_caches[40][40] = {0};
 uint32_t ci=0;
+
+uint8_t cmd_caches[CMD_CACHES_SIZE][COM_MAX_LEN] = {0};
+uint32_t cmdcache_index=0;
 uint8_t read_buf[512];
 
 void w25f(char *p)
@@ -879,6 +881,27 @@ void tm(char *p)
     return;
 
 }
+
+void history(char *p)
+{
+    uint32_t n = CMD_CACHES_SIZE, cix = cmdcache_index;
+    con_send('\n');
+    while(n--){
+        if(cix==0){
+            cix = CMD_CACHES_SIZE-1;
+        }
+        else{
+            cix--;
+        }
+        if(cmd_caches[cix][0]!=0){
+            lprintf("%s\n", cmd_caches[cix]);
+        }
+    }
+    con_send('\n');
+
+    return;
+}
+
 void gpiotest(char *p)
 {
     con_send('\n');
@@ -935,6 +958,7 @@ static const struct command cmd_list[]=
     {"go",go},
     {"gpiotest",gpiotest},
     {"help",print_help},
+    {"history",history},
     //{"lcd19264init",lcd19264init},
     //{"lcd19264dc",dispcchar},
     {"led",ledtest},
@@ -1108,6 +1132,11 @@ void handle_cmd()
     lprint("\n");
     if(!cmd_buf[0])
 	return;
+    //record the history cmd
+    strcpy(cmd_caches[cmdcache_index++], cmd_buf);
+    if(cmdcache_index==CMD_CACHES_SIZE){
+        cmdcache_index = 0;
+    }
     while(1){
 	    if(cmd_list[i].cmd_name == NULL)
 		    break;
@@ -1154,8 +1183,9 @@ void run_cmd_interface()
 	while(!quit_cmd){
 		c = con_recv();
 		if(c == ENTER_CHAR || c == 0x1b || c== 0x03){
-			if(c == ENTER_CHAR)
+			if(c == ENTER_CHAR){
 				handle_cmd();
+            }
 			lmemset(cmd_buf, 0, COM_MAX_LEN);
 			cmd_buf_p = 0;
 			lprint("\nCleanCMD>");
