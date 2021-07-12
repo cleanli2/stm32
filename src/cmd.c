@@ -106,7 +106,7 @@ void sd(char *p)
     SD_CardInfo mycard;
 
     lprintf("p=%s\n", p);
-    strcpy(cmd_caches[ci++], p);
+    //strcpy(cmd_caches[ci++], p);
     if(ci > 40)
 	    ci = 0;
     tmp = get_howmany_para(p);
@@ -272,6 +272,7 @@ void sd(char *p)
 error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
+#if 0
 void sd_cmds(char *p)
 {
     uint tmp = get_howmany_para(p);
@@ -313,6 +314,7 @@ void sd_cmds(char *p)
 
     return;
 }
+#endif
 #endif
 
 void lcdsuebinit(char *p)
@@ -986,7 +988,7 @@ static const struct command cmd_list[]=
     {"rebootd",rebootd},
     {"rtc",rtc_cmd},
     {"sd",sd},
-    {"sdcmds",sd_cmds},
+    //{"sdcmds",sd_cmds},
     {"test",test},
     {"taskmask",tm},
     //{"szk",show_ziku},
