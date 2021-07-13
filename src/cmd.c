@@ -27,6 +27,7 @@ uint32_t ci=0;
 
 uint8_t cmd_caches[CMD_CACHES_SIZE][COM_MAX_LEN] = {0};
 uint32_t cmdcache_index=0;
+uint32_t review_cmd_his_index;
 uint8_t read_buf[512];
 
 void w25f(char *p)
@@ -1148,6 +1149,7 @@ void handle_cmd()
     if(!cmd_buf[0])
 	return;
     //record the history cmd
+    review_cmd_his_index = cmdcache_index-1;
     strcpy(cmd_caches[cmdcache_index++], cmd_buf);
     if(cmdcache_index==CMD_CACHES_SIZE){
         cmdcache_index = 0;
@@ -1176,7 +1178,7 @@ void handle_cmd()
 uint time_limit_recv_byte(uint limit, char * c);
 void run_cmd_interface()
 {
-	char c;
+	char c = 0, last_c = 0;
 	int timeout = 3;
 	
 	mrw_addr = (uint32_t*)0x20000000;
@@ -1192,10 +1194,12 @@ void run_cmd_interface()
 		}
 	}
 	lmemset(cmd_buf, 0, COM_MAX_LEN);
+    memset(&cmd_caches[0][0], 0, CMD_CACHES_SIZE*COM_MAX_LEN);;
 	cmd_buf_p = 0;
 	lprint("\nCleanCMD>");
 	
 	while(!quit_cmd){
+        last_c = c;
 		c = con_recv();
 		if(c == ENTER_CHAR || c == 0x1b || c== 0x03){
 			if(c == ENTER_CHAR){
@@ -1217,6 +1221,15 @@ void run_cmd_interface()
             cmd_buf[--cmd_buf_p] = 0;
             con_send(c);
 		}
+        else if(c == 0x5B && last_c == 0x1b){//history cmd
+            strcpy(cmd_buf, cmd_caches[review_cmd_his_index]);
+            cmd_buf_p = strlen(cmd_buf);
+            lprintf("%s", cmd_caches[review_cmd_his_index]);
+            if(review_cmd_his_index==0){
+                review_cmd_his_index=CMD_CACHES_SIZE;
+            }
+            review_cmd_his_index--;
+        }
 		else{
 			if(cmd_buf_p < (COM_MAX_LEN - 1)){
 				cmd_buf[cmd_buf_p++] = c;
