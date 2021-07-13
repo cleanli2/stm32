@@ -1149,7 +1149,7 @@ void handle_cmd()
     if(!cmd_buf[0])
 	return;
     //record the history cmd
-    review_cmd_his_index = cmdcache_index-1;
+    review_cmd_his_index = cmdcache_index;
     strcpy(cmd_caches[cmdcache_index++], cmd_buf);
     if(cmdcache_index==CMD_CACHES_SIZE){
         cmdcache_index = 0;
@@ -1178,49 +1178,56 @@ void handle_cmd()
 uint time_limit_recv_byte(uint limit, char * c);
 void run_cmd_interface()
 {
-	char c = 0, last_c = 0;
-	int timeout = 3;
-	
-	mrw_addr = (uint32_t*)0x20000000;
-	lprintf("Version %s%s\n", VERSION, GIT_SHA1);
-	lprint("\n\nclean_cmd. \n'c' key go cmd...\n");
-	while(timeout--){
-		delay_ms(1000);
-		if(con_is_recved() && (con_recv() == 'c'))break;
-		lprintf("timeout %d\n", timeout);
-		if(timeout == 1){
-			lprintf("Timeout. Quit cmd\n");
-			return;
-		}
-	}
-	lmemset(cmd_buf, 0, COM_MAX_LEN);
+    char c = 0, last_c = 0;
+    int timeout = 3;
+
+    mrw_addr = (uint32_t*)0x20000000;
+    lprintf("Version %s%s\n", VERSION, GIT_SHA1);
+    lprint("\n\nclean_cmd. \n'c' key go cmd...\n");
+    while(timeout--){
+        delay_ms(1000);
+        if(con_is_recved() && (con_recv() == 'c'))break;
+        lprintf("timeout %d\n", timeout);
+        if(timeout == 1){
+            lprintf("Timeout. Quit cmd\n");
+            return;
+        }
+    }
+    lmemset(cmd_buf, 0, COM_MAX_LEN);
     memset(&cmd_caches[0][0], 0, CMD_CACHES_SIZE*COM_MAX_LEN);;
-	cmd_buf_p = 0;
-	lprint("\nCleanCMD>");
-	
-	while(!quit_cmd){
+    cmd_buf_p = 0;
+    lprint("\nCleanCMD>");
+
+    while(!quit_cmd){
         last_c = c;
-		c = con_recv();
-		if(c == ENTER_CHAR || c == 0x1b || c== 0x03){
-			if(c == ENTER_CHAR){
-				handle_cmd();
+        c = con_recv();
+        if(c == ENTER_CHAR || c == 0x1b || c== 0x03){
+            if(c == ENTER_CHAR){
+                handle_cmd();
+                lprintf("\n");
             }
-			lmemset(cmd_buf, 0, COM_MAX_LEN);
-			cmd_buf_p = 0;
-			lprint("\nCleanCMD>");
-		}
-		else if(c == 0x08){
-			if(!cmd_buf_p)
-				continue;
-                        cmd_buf[--cmd_buf_p] = 0;
-                        lprintf("\b \b");
-		}
-		else if(c == 0x7f){
-			if(!cmd_buf_p)
-				continue;
+            if(c == 0x03){
+                lprintf("^C\n");
+            }
+            if(c == 0x1b){
+                lprintf("\n");
+            }
+            lmemset(cmd_buf, 0, COM_MAX_LEN);
+            cmd_buf_p = 0;
+            lprint("CleanCMD>");
+        }
+        else if(c == 0x08){
+            if(!cmd_buf_p)
+                continue;
+            cmd_buf[--cmd_buf_p] = 0;
+            lprintf("\b \b");
+        }
+        else if(c == 0x7f){
+            if(!cmd_buf_p)
+                continue;
             cmd_buf[--cmd_buf_p] = 0;
             con_send(c);
-		}
+        }
         else if(c == 0x5B && last_c == 0x1b){//history cmd
             strcpy(cmd_buf, cmd_caches[review_cmd_his_index]);
             cmd_buf_p = strlen(cmd_buf);
@@ -1230,12 +1237,12 @@ void run_cmd_interface()
             }
             review_cmd_his_index--;
         }
-		else{
-			if(cmd_buf_p < (COM_MAX_LEN - 1)){
-				cmd_buf[cmd_buf_p++] = c;
-				con_send(c);
-			}
-		}
-	}
+        else{
+            if(cmd_buf_p < (COM_MAX_LEN - 1)){
+                cmd_buf[cmd_buf_p++] = c;
+                con_send(c);
+            }
+        }
+    }
     quit_cmd = 0;
 }
