@@ -14,6 +14,7 @@ extern uint32_t logv;
 
 uint get_howmany_para(char *s);
 char * str_to_hex(char *s, uint * result);
+char * str_to_str(char *s, char*result);
 /*
 void con_send(char X)
 {
@@ -917,6 +918,50 @@ void keytest(char *p)
     return;
 
 }
+void envprint(char *p)
+{
+    uint8_t* name, *value;
+    printenv(NULL, 1);
+    con_send('\n');
+
+    return;
+
+}
+void envget(char *p)
+{
+    uint32_t tmp;
+    uint8_t* name, *value;
+    tmp = get_howmany_para(p);
+    lprintf("tmp=%d\n", tmp);
+    if(tmp<1){
+        lprintf("err\n");
+        return;
+    }
+    p = str_to_str(p, name);
+    lprintf("%s=\n", name);
+    con_send('\n');
+
+    return;
+
+}
+void envset(char *p)
+{
+    uint32_t tmp;
+    uint8_t* name, *value;
+    tmp = get_howmany_para(p);
+    lprintf("tmp=%d\n", tmp);
+    if(tmp<2){
+        lprintf("err\n");
+        return;
+    }
+    p = str_to_str(p, name);
+    p = str_to_str(p, value);
+    lprintf("%s=%s\n", name, value);
+    con_send('\n');
+
+    return;
+
+}
 void gpiotest(char *p)
 {
     con_send('\n');
@@ -967,6 +1012,9 @@ static const struct command cmd_list[]=
     {"adc",adc},
     {"bz",buzztest},
     {"exit",cmd_exit},
+    {"envset",envset},
+    {"envget",envget},
+    {"envprint",envprint},
     {"fmerase",fmerase},
     {"fmrtest",fmrtest},
     {"fmwtest",fmwtest},
@@ -1043,6 +1091,22 @@ uint get_howmany_para(char *s)
 		if(!*s)
 			return tmp;
 	}
+}
+
+char * str_to_str(char *s, char*result)
+{
+    char*ret;
+    uint  i = 0;
+
+    while(*s == ' ')s++;
+    result=s;
+    while(*s != ' ' && *s != 0)s++;
+    if(*s==0){
+        return NULL;
+    }
+    *s++=0;
+    while(*s == ' ')s++;
+    return s;
 }
 
 char * str_to_hex(char *s, uint * result)
