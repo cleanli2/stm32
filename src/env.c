@@ -47,7 +47,7 @@ int envmatch (uint8_t *s1, int i2)
 
 /*
  * the env store is like this:
- * FF FF FF ... FF 00 XX XX XX '= YY YY YY 00 XX XX ...
+ * XX XX '= YY .. YY 00 FF FF FF ... FF 00 XX XX XX '= YY YY YY 00 XX XX ...
  * */
 uint32_t get_env(const uint8_t* name, uint8_t*value)
 {
@@ -79,8 +79,24 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
 {
     int i = 0, n;
 
-    while(env_get_char(i++) == 0xff);
-    if(env_get_char(--i) != 0){
+    //go through not 0xff
+    if(env_get_char(i++) != 0xff){
+        while(env_get_char(i++) != 0xff);
+        if(env_get_char(i-2) != 0){
+            lprintf("s env flash error\n");
+            return ENV_FAIL;
+        }
+    }
+    //go through 0xff
+    while(env_get_char(i) == 0xff){
+        i++;
+        if(i == ENV_STORE_SIZE){//new ENV BLOCK, all 0xff
+            i--;
+            env_set_char(i, '\0');
+            break;
+        }
+    }
+    if(env_get_char(i) != 0){
         lprintf("s env flash error\n");
         return ENV_FAIL;
     }
