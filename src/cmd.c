@@ -14,7 +14,7 @@ extern uint32_t logv;
 
 uint get_howmany_para(char *s);
 char * str_to_hex(char *s, uint * result);
-char * str_to_str(char *s, char*result);
+char * str_to_str(char *s, char**result);
 /*
 void con_send(char X)
 {
@@ -937,7 +937,7 @@ void envget(char *p)
         lprintf("err\n");
         return;
     }
-    p = str_to_str(p, name);
+    str_to_str(p, &name);
     lprintf("%s=\n", name);
     con_send('\n');
 
@@ -954,8 +954,8 @@ void envset(char *p)
         lprintf("err\n");
         return;
     }
-    p = str_to_str(p, name);
-    p = str_to_str(p, value);
+    p = str_to_str(p, &name);
+    p = str_to_str(p, &value);
     lprintf("%s=%s\n", name, value);
     con_send('\n');
 
@@ -1093,13 +1093,13 @@ uint get_howmany_para(char *s)
 	}
 }
 
-char * str_to_str(char *s, char*result)
+char * str_to_str(char *s, char**result)
 {
     char*ret;
     uint  i = 0;
 
     while(*s == ' ')s++;
-    result=s;
+    *result=s;
     while(*s != ' ' && *s != 0)s++;
     if(*s==0){
         return NULL;

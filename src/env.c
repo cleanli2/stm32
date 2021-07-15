@@ -79,6 +79,11 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
 {
     int i = 0, n;
 
+    if(strchr(name, '=')!=NULL || strchr(value, '=')){
+        lprintf("'=' can't be in name or value\n");
+        return ENV_FAIL;
+    }
+
     //go through not 0xff
     if(env_get_char(i++) != 0xff){
         while(env_get_char(i++) != 0xff);
