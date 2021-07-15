@@ -55,9 +55,29 @@ uint32_t get_env(const uint8_t* name, uint8_t*value)
 {
     int i = 0, nxt;
 
-    while(env_get_char(i++) == 0xff);
-    if(env_get_char(i-1) != 0){
-        lprintf("env flash error\n");
+    if(strchr(name, '=')!=NULL){
+        lprintf("'=' can't be in name\n");
+        return ENV_FAIL;
+    }
+
+    //go through not 0xff
+    if(env_get_char(i++) != 0xff){
+        while(env_get_char(i++) != 0xff);
+        if(env_get_char(i-2) != 0){
+            lprintf("00FF g env flash error\n");
+            return ENV_FAIL;
+        }
+    }
+    //go through 0xff
+    while(env_get_char(i) == 0xff){
+        i++;
+        if(i == ENV_STORE_SIZE){//new ENV BLOCK, all 0xff
+            lprintf("empty env block\n");
+            return ENV_FAIL;
+        }
+    }
+    if(env_get_char(i) != 0){
+        lprintf("FF00 env flash error\n");
         return ENV_FAIL;
     }
     for (; env_get_char(i) != '\0'; i=nxt+1) {
@@ -90,7 +110,7 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
     if(env_get_char(i++) != 0xff){
         while(env_get_char(i++) != 0xff);
         if(env_get_char(i-2) != 0){
-            lprintf("s env flash error\n");
+            lprintf("00FF s env flash error\n");
             return ENV_FAIL;
         }
     }
@@ -104,7 +124,7 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
         }
     }
     if(env_get_char(i) != 0){
-        lprintf("s env flash error\n");
+        lprintf("FF00 s env flash error\n");
         return ENV_FAIL;
     }
     n = strlen(name)+strlen(value)+2;
