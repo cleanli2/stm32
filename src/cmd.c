@@ -922,7 +922,7 @@ void keytest(char *p)
 void envprint(char *p)
 {
     uint8_t* name, *value;
-    printenv(NULL, 1);
+    printenv();
     con_send('\n');
 
     return;

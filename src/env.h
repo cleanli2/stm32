@@ -15,7 +15,7 @@
 #define ENV_FAIL 1
 uint32_t get_env(const uint8_t* name, uint8_t*value);
 uint32_t set_env(const uint8_t* name, const uint8_t*value);
-int printenv(char *name, int state);
+int printenv();
 
 #endif
 

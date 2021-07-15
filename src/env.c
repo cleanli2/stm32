@@ -80,7 +80,7 @@ uint32_t get_env(const uint8_t* name, uint8_t*value)
         lprintf("FF00 env flash error\n");
         return ENV_FAIL;
     }
-    for (; env_get_char(i) != '\0'; i=nxt+1) {
+    for (i++; env_get_char(i) != '\0'; i=nxt+1) {
         int val;
 
         for (nxt=i; env_get_char(nxt) != '\0'; ++nxt) {
@@ -138,48 +138,46 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
     env_set_char(i++, '=');
     i = strcpy2env(i, value);
 
-    return ENV_FAIL;
+    return ENV_OK;
 }
 
 /************************************************************************
  * Command interface: print one or all environment variables
  */
-
-/*
- * state 0: finish printing this string and return (matched!)
- * state 1: no matching to be done; print everything
- * state 2: continue searching for matched name
- */
-int printenv(char *name, int state)
+int printenv()
 {
     int i, j;
     char c, buf[17];
 
     i = 0;
     buf[16] = '\0';
-
-    while (state && env_get_char(i) != '\0') {
-        if (state == 2 && envmatch((uint8_t* )name, i) >= 0)
-            state = 0;
-
-        j = 0;
-        do {
-            buf[j++] = c = env_get_char(i++);
-            if (j == sizeof(buf) - 1) {
-                if (state <= 1)
-                    lprintf(buf);
-                j = 0;
-            }
-        } while (c != '\0');
-
-        if (state <= 1) {
-            if (j)
-                lprintf(buf);
-            lprintf("\n");
+    //go through not 0xff
+    if(env_get_char(i++) != 0xff){
+        while(env_get_char(i++) != 0xff);
+        if(env_get_char(i-2) != 0){
+            lprintf("00FF g env flash error\n");
+            return ENV_FAIL;
         }
     }
-
-    if (state == 0)
-        i = 0;
-    return i;
+    //go through 0xff
+    while(env_get_char(i) == 0xff){
+        i++;
+        if(i == ENV_STORE_SIZE){//new ENV BLOCK, all 0xff
+            lprintf("empty env block\n");
+            return ENV_FAIL;
+        }
+    }
+    if(env_get_char(i) != 0){
+        lprintf("FF00 env flash error\n");
+        return ENV_FAIL;
+    }
+    i++;
+    while(env_get_char(i) != '\0'){
+        i+=strcpy2mem(buf, i);
+        i++;
+        lprintf("%s\n", buf);
+        if(i>ENV_STORE_SIZE){
+            return;
+        }
+    }
 }
