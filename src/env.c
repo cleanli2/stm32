@@ -1,4 +1,6 @@
 #include "env.h"
+#include <string.h>
+#include <stdint.h>
 
 uint8_t env_get_char(uint32_t offset)
 {

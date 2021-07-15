@@ -1,7 +1,6 @@
 #ifndef __ENV_H
 #define __ENV_H
-
-#include "common.h"
+#include <stdint.h>
 
 #define TOTAL_SPI_FLASH_SIZE 0x200000
 #define SPI_FLASH_SECTOR_SIZE 0x1000

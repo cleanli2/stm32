@@ -3,6 +3,7 @@
 #include "lprintf.h"
 #include "sd/stm32_eval_spi_sd.h"
 #include <stdint.h>
+#include <string.h>
 #define uint uint32_t
 #define lprint lprintf
 
@@ -930,7 +931,7 @@ void envprint(char *p)
 void envget(char *p)
 {
     uint32_t tmp;
-    uint8_t* name, *value;
+    uint8_t* name, value[16];
     tmp = get_howmany_para(p);
     lprintf("tmp=%d\n", tmp);
     if(tmp<1){
@@ -938,7 +939,14 @@ void envget(char *p)
         return;
     }
     str_to_str(p, &name);
-    lprintf("%s=\n", name);
+    if(ENV_FAIL == get_env(name, value)){
+        lprintf("get_env fail\n");
+        return;
+    }
+    else{
+        lprintf("get_env OK\n");
+    }
+    lprintf("%s=%s\n", name, value);
     con_send('\n');
 
     return;
@@ -956,7 +964,14 @@ void envset(char *p)
     }
     p = str_to_str(p, &name);
     p = str_to_str(p, &value);
-    lprintf("%s=%s\n", name, value);
+    lprintf("todo: %s=%s\n", name, value);
+    if(ENV_FAIL == set_env(name, value)){
+        lprintf("set_env fail\n");
+        return;
+    }
+    else{
+        lprintf("set_env OK\n");
+    }
     con_send('\n');
 
     return;
