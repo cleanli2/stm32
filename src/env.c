@@ -6,11 +6,13 @@ uint8_t env_get_char(uint32_t offset)
 {
     uint8_t ret;
     SPI_Flash_Read(&ret, ENV_STORE_START_ADDR+offset, 1);
+    //lprintf("sf_read %x@%x\n", ret, ENV_STORE_START_ADDR+offset);
     return ret;
 }
 
 void env_set_char(uint32_t offset, uint8_t d)
 {
+    lprintf("sf_write %x@%x\n", d, ENV_STORE_START_ADDR+offset);
     SPI_Flash_Write(&d, ENV_STORE_START_ADDR+offset, 1);
 }
 
@@ -64,7 +66,8 @@ uint32_t get_env(const uint8_t* name, uint8_t*value)
     if(env_get_char(i++) != 0xff){
         while(env_get_char(i++) != 0xff);
         if(env_get_char(i-2) != 0){
-            lprintf("00FF g env flash error\n");
+            lprintf("00FF g env flash error %x\n", i-2);
+            lprintf("env_store_start %x size %x\n", ENV_STORE_START_ADDR, ENV_STORE_SIZE);
             return ENV_FAIL;
         }
     }
@@ -77,7 +80,7 @@ uint32_t get_env(const uint8_t* name, uint8_t*value)
         }
     }
     if(env_get_char(i) != 0){
-        lprintf("FF00 env flash error\n");
+        lprintf("FF00 env flash error %x\n", i);
         return ENV_FAIL;
     }
     for (i++; env_get_char(i) != '\0'; i=nxt+1) {
@@ -110,7 +113,7 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
     if(env_get_char(i++) != 0xff){
         while(env_get_char(i++) != 0xff);
         if(env_get_char(i-2) != 0){
-            lprintf("00FF s env flash error\n");
+            lprintf("00FF s env flash error %x\n", i-2);
             return ENV_FAIL;
         }
     }
@@ -124,7 +127,7 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
         }
     }
     if(env_get_char(i) != 0){
-        lprintf("FF00 s env flash error\n");
+        lprintf("FF00 s env flash error %x\n", i);
         return ENV_FAIL;
     }
     n = strlen(name)+strlen(value)+2;
@@ -134,9 +137,9 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
     }
     i -= n;
     env_set_char(i++, '\0');
-    i = strcpy2env(i, name);
+    i += strcpy2env(i, name);
     env_set_char(i++, '=');
-    i = strcpy2env(i, value);
+    strcpy2env(i, value);
 
     return ENV_OK;
 }
@@ -175,7 +178,7 @@ int printenv()
     while(env_get_char(i) != '\0'){
         i+=strcpy2mem(buf, i);
         i++;
-        lprintf("%s\n", buf);
+        lprintf("%x:%s\n", i, buf);
         if(i>ENV_STORE_SIZE){
             return;
         }
