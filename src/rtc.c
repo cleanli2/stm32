@@ -452,3 +452,17 @@ uint8_t check_rtc_alert_and_clear()
     }
     return ret;
 }
+
+uint adjust_1min(uint faster_1min)
+{
+    uint8_t min = rtc_read_reg(MINUTE_REG);
+    if(rtc_read_reg(SECOND_REG)>=58){
+        return RTC_FAIL;
+    }
+    if((faster_1min && min == 59) ||
+            (!faster_1min && min == 0)){
+        return RTC_FAIL;
+    }
+    faster_1min?min++:min--;
+    return rtc_write_reg(MINUTE_REG, min);
+}

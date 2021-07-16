@@ -986,6 +986,28 @@ void envset(char *p)
     return;
 
 }
+void rtcs(char *p)
+{
+    con_send('\n');
+    if(RTC_OK==adjust_1min(0)){
+        lprintf("slower 1 min OK\n");
+    }
+    else{
+        lprintf("slower 1 min FAIL\n");
+    }
+    return;
+}
+void rtcf(char *p)
+{
+    con_send('\n');
+    if(RTC_OK==adjust_1min(1)){
+        lprintf("faster 1 min OK\n");
+    }
+    else{
+        lprintf("faster 1 min FAIL\n");
+    }
+    return;
+}
 void gpiotest(char *p)
 {
     con_send('\n');
@@ -1060,6 +1082,8 @@ static const struct command cmd_list[]=
     {"reboot",reboot},
     {"rebootd",rebootd},
     {"rtc",rtc_cmd},
+    {"rtcf",rtcf},
+    {"rtcs",rtcs},
     {"sd",sd},
     //{"sdcmds",sd_cmds},
     {"test",test},

@@ -14,6 +14,12 @@
 #define GET_SDA GPIO_ReadInputDataBit(SDA_GG, SDA_PIN)
 
 #define AUTO_TIME_ALERT_INC_MINS (60*6)
+
+#define MINUTE_REG 3
+#define SECOND_REG 2
+
+#define RTC_FAIL 0
+#define RTC_OK 1
 typedef struct date_info
 {
     char* date_str;
@@ -35,5 +41,6 @@ void auto_time_alert_set(uint32_t time_step_minutes);
 uint32_t time_diff_minutes(date_info_t* dtp_f, date_info_t * dtp);
 uint32_t time_diff_seconds(date_info_t* dtp_f, date_info_t * dtp);
 uint8_t check_rtc_alert_and_clear();
+uint adjust_1min(uint faster_1min);
 
 #endif
