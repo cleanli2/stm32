@@ -418,6 +418,7 @@ void add_time_diff_minutes(date_info_t*dtp, uint32_t tsms)
 {
     add_with_back_limit(&dtp->hour, add_with_back_limit(&dtp->minute, tsms, 60), 24);
 }
+
 void auto_time_alert_set(uint32_t time_step_minutes)
 {
     date_info_t dt, dt_alt;
@@ -440,6 +441,7 @@ void auto_time_alert_set(uint32_t time_step_minutes)
     }
     lcd_lprintf(190, 150, "Next auto power on: %b:%b", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
 }
+
 uint8_t check_rtc_alert_and_clear()
 {
     uint8_t ret = 0, reg;
@@ -465,4 +467,9 @@ uint adjust_1min(uint faster_1min)
     }
     faster_1min?min++:min--;
     return rtc_write_reg(MINUTE_REG, min);
+}
+
+void clear_second()
+{
+    rtc_write_reg(SECOND_REG, 0);
 }
