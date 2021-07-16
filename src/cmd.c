@@ -955,16 +955,25 @@ void envget(char *p)
 void envset(char *p)
 {
     uint32_t tmp;
-    uint8_t* name, *value;
+    uint8_t* name, *value=0;
     tmp = get_howmany_para(p);
     lprintf("tmp=%d\n", tmp);
-    if(tmp<2){
+    if(tmp<1){
         lprintf("err\n");
         return;
     }
-    p = str_to_str(p, &name);
-    p = str_to_str(p, &value);
-    lprintf("todo: %s=%s\n", name, value);
+    if(tmp>=1){
+        p = str_to_str(p, &name);
+    }
+    if(tmp>=2){
+        p = str_to_str(p, &value);
+    }
+    if(value){
+        lprintf("todo: %s=%s\n", name, value);
+    }
+    else{
+        lprintf("todo: del %s\n", name);
+    }
     if(ENV_FAIL == set_env(name, value)){
         lprintf("set_env fail\n");
         return;

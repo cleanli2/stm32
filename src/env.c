@@ -99,6 +99,10 @@ uint32_t get_env(const uint8_t* name, uint8_t*value)
 {
     int i = 0, nxt;
 
+    if(!name){
+        lprintf("name=NULL\n");
+        return ENV_FAIL;
+    }
     if(strchr(name, '=')!=NULL){
         lprintf("'=' can't be in name\n");
         return ENV_FAIL;
@@ -119,6 +123,9 @@ uint32_t get_env(const uint8_t* name, uint8_t*value)
         if ((val=envmatch((uint8_t *)name, i)) < 0)
             continue;
         strcpy2mem(value, val);
+        if(*value==0){//null str
+            return ENV_FAIL;
+        }
         return ENV_OK;
     }
 
@@ -128,7 +135,15 @@ uint32_t get_env(const uint8_t* name, uint8_t*value)
 uint32_t set_env(const uint8_t* name, const uint8_t*value)
 {
     int i = 0, n;
+    uint8_t zero_str = 0;
 
+    if(!name){
+        lprintf("name=NULL\n");
+        return ENV_FAIL;
+    }
+    if(!value){
+        value = &zero_str;
+    }
     if(strchr(name, '=')!=NULL || strchr(value, '=')){
         lprintf("'=' can't be in name or value\n");
         return ENV_FAIL;
