@@ -13,6 +13,10 @@
 
 #define ENV_OK 0
 #define ENV_FAIL 1
+#define ENV_INVALID 0xFFFFFFFF
+#define ENV_EMPTY_DATA 0xFFFFFFFE
+#define ENV_ABNORMAL 0xFFFFFFFD
+
 uint32_t get_env(const uint8_t* name, uint8_t*value);
 uint32_t set_env(const uint8_t* name, const uint8_t*value);
 int printenv();

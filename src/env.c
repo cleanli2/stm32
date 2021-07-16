@@ -54,6 +54,47 @@ int envmatch (uint8_t *s1, int i2)
  * the env store is like this:
  * XX XX '= YY .. YY 00 FF FF FF ... FF 00 XX XX XX '= YY YY YY 00 XX XX ...
  * */
+uint32_t find_env_data_start()
+{
+    uint32_t i = 0, ff_i = 0;
+    //go through not 0xff
+    if(env_get_char(i) != 0xff){
+        while(env_get_char(i) != 0xff){
+            i++;
+            if(i == ENV_STORE_SIZE){
+                lprintf("env data is full\n");
+                return ENV_INVALID;
+            }
+        }
+        if(env_get_char(i-1) != 0){
+            lprintf("00FF g env flash error %x\n", i-2);
+            lprintf("env_store_start %x size %x\n", ENV_STORE_START_ADDR, ENV_STORE_SIZE);
+            return ENV_FAIL;
+        }
+    }
+
+    //go through 0xff
+    while(env_get_char(i) == 0xff){
+        i++;
+        ff_i++;
+        if(i == ENV_STORE_SIZE){//new ENV BLOCK, all 0xff
+            lprintf("end of env store is 0xff\n");
+            if(i == ENV_STORE_SIZE){
+                lprintf("empty env block\n");
+                return ENV_EMPTY_DATA;
+            }
+            else{
+                return ENV_INVALID;
+            }
+        }
+    }
+    if(env_get_char(i) != 0){
+        lprintf("FF00 env flash error %x\n", i);
+        return ENV_INVALID;
+    }
+    return i;
+}
+
 uint32_t get_env(const uint8_t* name, uint8_t*value)
 {
     int i = 0, nxt;
@@ -63,25 +104,8 @@ uint32_t get_env(const uint8_t* name, uint8_t*value)
         return ENV_FAIL;
     }
 
-    //go through not 0xff
-    if(env_get_char(i++) != 0xff){
-        while(env_get_char(i++) != 0xff);
-        if(env_get_char(i-1) != 0){
-            lprintf("00FF g env flash error %x\n", i-2);
-            lprintf("env_store_start %x size %x\n", ENV_STORE_START_ADDR, ENV_STORE_SIZE);
-            return ENV_FAIL;
-        }
-    }
-    //go through 0xff
-    while(env_get_char(i) == 0xff){
-        i++;
-        if(i == ENV_STORE_SIZE){//new ENV BLOCK, all 0xff
-            lprintf("empty env block\n");
-            return ENV_FAIL;
-        }
-    }
-    if(env_get_char(i) != 0){
-        lprintf("FF00 env flash error %x\n", i);
+    i = find_env_data_start();
+    if(i > ENV_ABNORMAL){
         return ENV_FAIL;
     }
     for (i++; env_get_char(i) != '\0'; i=nxt+1) {
@@ -110,25 +134,12 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
         return ENV_FAIL;
     }
 
-    //go through not 0xff
-    if(env_get_char(i++) != 0xff){
-        while(env_get_char(i++) != 0xff);
-        if(env_get_char(i-2) != 0){
-            lprintf("00FF s env flash error %x\n", i-2);
-            return ENV_FAIL;
-        }
+    i = find_env_data_start();
+    if(i == ENV_EMPTY_DATA){
+        i = ENV_STORE_SIZE - 1;
+        env_set_char(i, '\0');
     }
-    //go through 0xff
-    while(env_get_char(i) == 0xff){
-        i++;
-        if(i == ENV_STORE_SIZE){//new ENV BLOCK, all 0xff
-            i--;
-            env_set_char(i, '\0');
-            break;
-        }
-    }
-    if(env_get_char(i) != 0){
-        lprintf("FF00 s env flash error %x\n", i);
+    else if(i > ENV_ABNORMAL){
         return ENV_FAIL;
     }
     n = strlen(name)+strlen(value)+2;
@@ -156,24 +167,9 @@ int printenv()
     i = 0;
     buf[16] = '\0';
     lprintf("env_store_start %x size %x\n", ENV_STORE_START_ADDR, ENV_STORE_SIZE);
-    //go through not 0xff
-    if(env_get_char(i++) != 0xff){
-        while(env_get_char(i++) != 0xff);
-        if(env_get_char(i-2) != 0){
-            lprintf("00FF g env flash error\n");
-            return ENV_FAIL;
-        }
-    }
-    //go through 0xff
-    while(env_get_char(i) == 0xff){
-        i++;
-        if(i == ENV_STORE_SIZE){//new ENV BLOCK, all 0xff
-            lprintf("empty env block\n");
-            return ENV_FAIL;
-        }
-    }
-    if(env_get_char(i) != 0){
-        lprintf("FF00 env flash error\n");
+
+    i = find_env_data_start();
+    if(i > ENV_ABNORMAL){
         return ENV_FAIL;
     }
     i++;
