@@ -35,6 +35,7 @@ uint32_t strcpy2mem(uint8_t *s, uint32_t env_offset)
         *s++ = c;
         env_offset++;
     }
+    *s = 0;
     return len;
 }
 
@@ -65,7 +66,7 @@ uint32_t get_env(const uint8_t* name, uint8_t*value)
     //go through not 0xff
     if(env_get_char(i++) != 0xff){
         while(env_get_char(i++) != 0xff);
-        if(env_get_char(i-2) != 0){
+        if(env_get_char(i-1) != 0){
             lprintf("00FF g env flash error %x\n", i-2);
             lprintf("env_store_start %x size %x\n", ENV_STORE_START_ADDR, ENV_STORE_SIZE);
             return ENV_FAIL;
@@ -154,6 +155,7 @@ int printenv()
 
     i = 0;
     buf[16] = '\0';
+    lprintf("env_store_start %x size %x\n", ENV_STORE_START_ADDR, ENV_STORE_SIZE);
     //go through not 0xff
     if(env_get_char(i++) != 0xff){
         while(env_get_char(i++) != 0xff);
@@ -176,10 +178,11 @@ int printenv()
     }
     i++;
     while(env_get_char(i) != '\0'){
+        lprintf("%x:", i);
         i+=strcpy2mem(buf, i);
         i++;
-        lprintf("%x:%s\n", i, buf);
-        if(i>ENV_STORE_SIZE){
+        lprintf("%s\n", buf);
+        if(i>=ENV_STORE_SIZE){
             return;
         }
     }
