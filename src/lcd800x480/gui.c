@@ -720,17 +720,22 @@ void Show_Str(u16 x, u16 y, u16 fc, u16 bc, u8 *str,u8 size,u8 mode)
     { 
         if(!bHz)
         {
-			if(x>(lcddev.width-(size*LCD_Char_scale)/2)||y>(lcddev.height-size*LCD_Char_scale)) 
-			return; 
-	        if(*str>0x80)bHz=1;//中文 
-	        else              //字符
-	        {          
-		        if(*str==0x0D)//换行符号
-		        {         
-		            y+=(size*LCD_Char_scale);
-					x=x0;
-		            str++; 
-		        }  
+            if(x>(lcddev.width-(size*LCD_Char_scale)/2)){
+                y+=(size*LCD_Char_scale);
+                x=x0;
+            }
+            if(y>(lcddev.height-size*LCD_Char_scale)){
+                return;
+            }
+            if(*str>0x80)bHz=1;//chinese char
+            else
+            {
+                if(*str==0x0D)//enter char
+                {
+                    y+=(size*LCD_Char_scale);
+                    x=x0;
+                    str++;
+                }
 		        else
 				{
 					if(size>16)//字库中没有集成12X24 16X32的英文字体,用8X16代替

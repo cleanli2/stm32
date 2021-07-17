@@ -250,7 +250,10 @@ void date_ui_init(void*vp)
     ui_t* uif =(ui_t*)vp;
     lprintf("data ui\n");
     common_ui_init(vp);
-    lcd_lprintf(10, 100, "Version:%s%s", VERSION, GIT_SHA1);
+    lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
+    if(check_rtc_alert_and_clear()){
+        often_used_timer();
+    }
 }
 void date_ui_process_event(void*vp)
 {
@@ -263,7 +266,7 @@ void adjust_enable()
 }
 
 button_t date_button[]={
-    {60, 60, 80,  40, adjust_enable, -1, 0, "time adjust"},
+    {60, 700, 100,  40, adjust_enable, -1, 0, "time adjust", 0},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
 /*UI DATE END*/
