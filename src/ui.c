@@ -255,7 +255,7 @@ void date_ui_init(void*vp)
     if(check_rtc_alert_and_clear()){
         often_used_timer();
     }
-    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 300, 50);
+    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 260, 45);
 }
 void date_ui_process_event(void*vp)
 {
@@ -272,8 +272,18 @@ void date_ui_process_event(void*vp)
 
 void adjust_enable()
 {
-    date_button[1].disable = 0;
-    date_button[2].disable = 0;
+    if(date_button[1].disable &&
+            date_button[2].disable &&
+            date_button[3].disable){
+        date_button[1].disable = 0;
+        date_button[2].disable = 0;
+        date_button[3].disable = 0;
+    }
+    else{
+        date_button[1].disable = 1;
+        date_button[2].disable = 1;
+        date_button[3].disable = 1;
+    }
     draw_button(&date_button[1]);
 }
 
@@ -293,10 +303,18 @@ void fast_1()
     }
 }
 
+void clr_s()
+{
+    clear_second();
+    date_button[3].disable = 1;
+    draw_button(&date_button[3]);
+}
+
 button_t date_button[]={
-    {60, 660, 100,  40, adjust_enable, -1, 0, "time adjust", 0},
-    {200, 660, 100,  40, fast_1, -1, 0, "faster 1min", 1},
-    {340, 660, 100,  40, slow_1, -1, 0, "slower 1min", 1},
+    {15, 660, 100,  40, adjust_enable, -1, 0, "time adjust", 0},
+    {135, 660, 100,  40, fast_1, -1, 0, "faster 1min", 1},
+    {255, 660, 100,  40, slow_1, -1, 0, "slower 1min", 1},
+    {375, 660, 100,  40, clr_s, -1, 0, "clear second", 1},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
 /*UI DATE END*/
