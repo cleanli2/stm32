@@ -231,6 +231,8 @@ void slprintf(char*buf, const char *fmt, ...)
     vslprintf(buf,fmt,ap);
     va_end(ap);
 }
+uint16_t LCD_PRINT_BACK_COLOR = WHITE;
+uint16_t LCD_PRINT_FRONT_COLOR = BLACK;
 void lcd_lprintf(uint32_t x, uint32_t y, const char *fmt, ...)
 {
     va_list ap;
@@ -238,5 +240,5 @@ void lcd_lprintf(uint32_t x, uint32_t y, const char *fmt, ...)
     va_start(ap,fmt);
     vslprintf(lprintf_buf,fmt,ap);
     va_end(ap);
-    Show_Str(x, y,0,0xffff,(uint8_t*)lprintf_buf,24,0);
+    Show_Str(x, y,LCD_PRINT_BACK_COLOR,LCD_PRINT_FRONT_COLOR,(uint8_t*)lprintf_buf,24,0);
 }

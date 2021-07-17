@@ -255,7 +255,7 @@ void date_ui_init(void*vp)
     if(check_rtc_alert_and_clear()){
         often_used_timer();
     }
-    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 380, 70);
+    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 300, 50);
 }
 void date_ui_process_event(void*vp)
 {
@@ -296,7 +296,7 @@ void fast_1()
 button_t date_button[]={
     {60, 660, 100,  40, adjust_enable, -1, 0, "time adjust", 0},
     {200, 660, 100,  40, fast_1, -1, 0, "faster 1min", 1},
-    {200, 660, 100,  40, slow_1, -1, 0, "slower 1min", 1},
+    {340, 660, 100,  40, slow_1, -1, 0, "slower 1min", 1},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
 /*UI DATE END*/
@@ -465,14 +465,16 @@ void draw_prgb(prgb_t*pip)
 
 void draw_button(button_t*pbt)
 {
-    uint16_t color;
+    uint16_t color, color_bak = LCD_PRINT_FRONT_COLOR;
     if(!pbt)return;
     while(pbt->x >=0){
         if(pbt->disable){
             color = WHITE;
+            LCD_PRINT_FRONT_COLOR = WHITE;
         }
         else{
             color = BLACK;
+            LCD_PRINT_FRONT_COLOR = BLACK;
         }
         draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, color);
         if(pbt->text){
@@ -482,6 +484,7 @@ void draw_button(button_t*pbt)
         }
         pbt++;
     }
+    LCD_PRINT_FRONT_COLOR = color_bak;
 }
 
 void update_prgb(ui_t* uif, prgb_t*pip)
