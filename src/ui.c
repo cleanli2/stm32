@@ -256,6 +256,7 @@ void date_ui_init(void*vp)
         often_used_timer();
     }
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 260, 45);
+    gui_circle(240, 400, BLACK, 230, 0);
 }
 void date_ui_process_event(void*vp)
 {
@@ -292,6 +293,7 @@ void slow_1()
     if(RTC_OK==adjust_1min(0)){
         date_button[2].disable = 1;
         draw_button(&date_button[2]);
+        set_env("LastTimeAdj", get_rtc_time(NULL));
     }
 }
 
@@ -300,6 +302,7 @@ void fast_1()
     if(RTC_OK==adjust_1min(1)){
         date_button[1].disable = 1;
         draw_button(&date_button[1]);
+        set_env("LastTimeAdj", get_rtc_time(NULL));
     }
 }
 
@@ -308,6 +311,7 @@ void clr_s()
     clear_second();
     date_button[3].disable = 1;
     draw_button(&date_button[3]);
+    set_env("LastTimeAdj", get_rtc_time(NULL));
 }
 
 button_t date_button[]={
