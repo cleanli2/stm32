@@ -48,7 +48,7 @@ void poff_ctd_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     common_ui_init(vp);
-    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
+    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 20, 140);
     lcd_lprintf(20, 100, "Version:%s%s", VERSION, GIT_SHA1);
 }
 void poff_ctd_ui_process_event(void*vp)
@@ -245,6 +245,7 @@ button_t timer_set_button[]={
 };
 
 /*UI DATE*/
+button_t date_button[];
 void date_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -254,19 +255,48 @@ void date_ui_init(void*vp)
     if(check_rtc_alert_and_clear()){
         often_used_timer();
     }
+    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 380, 70);
 }
 void date_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+
+    if(g_flag_1s){
+        set_LCD_Char_scale(2);
+        lcd_lprintf(10, 100, "%s  ", get_rtc_time(NULL));
+        set_LCD_Char_scale(1);
+        lprintf("task timect %x\r\n", cur_task_timeout_ct);
+    }
     common_process_event(vp);
 }
 
 void adjust_enable()
 {
+    date_button[1].disable = 0;
+    date_button[2].disable = 0;
+    draw_button(&date_button[1]);
+}
+
+void slow_1()
+{
+    if(RTC_OK==adjust_1min(0)){
+        date_button[2].disable = 1;
+        draw_button(&date_button[2]);
+    }
+}
+
+void fast_1()
+{
+    if(RTC_OK==adjust_1min(1)){
+        date_button[1].disable = 1;
+        draw_button(&date_button[1]);
+    }
 }
 
 button_t date_button[]={
-    {60, 700, 100,  40, adjust_enable, -1, 0, "time adjust", 0},
+    {60, 660, 100,  40, adjust_enable, -1, 0, "time adjust", 0},
+    {200, 660, 100,  40, fast_1, -1, 0, "faster 1min", 1},
+    {200, 660, 100,  40, slow_1, -1, 0, "slower 1min", 1},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
 /*UI DATE END*/
@@ -435,9 +465,16 @@ void draw_prgb(prgb_t*pip)
 
 void draw_button(button_t*pbt)
 {
+    uint16_t color;
     if(!pbt)return;
     while(pbt->x >=0){
-        draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, BLACK);
+        if(pbt->disable){
+            color = WHITE;
+        }
+        else{
+            color = BLACK;
+        }
+        draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, color);
         if(pbt->text){
             int lx = MIN(pbt->x, pbt->x+pbt->w);
             int ly = MIN(pbt->y, pbt->y+pbt->h);
@@ -469,7 +506,11 @@ void update_prgb(ui_t* uif, prgb_t*pip)
 void process_button(ui_t* uif, button_t*pbt)
 {
     uint16_t x = cached_touch_x, y = cached_touch_y;
-    while(pbt->x >=0){
+    while(pbt->x >=0 ){
+        if(pbt->disable){
+            pbt++;
+            continue;
+        }
         if(IN_RANGE(x, pbt->x, pbt->x+pbt->w) &&
                 IN_RANGE(y, pbt->y, pbt->y+pbt->h)){
             lprintf("in botton %s\n", pbt->text);

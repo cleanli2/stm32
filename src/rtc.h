@@ -37,7 +37,7 @@ void rtc_write(uint8_t*);
 char* get_rtc_time(date_info_t*);
 uint8_t rtc_read_reg(uint8_t addr);
 uint8_t rtc_write_reg(uint8_t addr, uint8_t data);
-void auto_time_alert_set(uint32_t time_step_minutes);
+void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y);
 uint32_t time_diff_minutes(date_info_t* dtp_f, date_info_t * dtp);
 uint32_t time_diff_seconds(date_info_t* dtp_f, date_info_t * dtp);
 uint8_t check_rtc_alert_and_clear();
