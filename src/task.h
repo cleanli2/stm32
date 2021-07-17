@@ -9,7 +9,7 @@ extern uint no_touch_down_ct;
 extern uint g_flag_1s ;
 extern uint g_flag_10ms ;
 #define NO_KEY_DOWN_CT_MAX 100
-#define NO_KEY_DOWN_PWSAVE_MAX 20
+#define NO_KEY_DOWN_PWSAVE_MAX 40
 #define LCD_POWER_SAVE_CYCLE 60
 #define LCD_POWER_SAVE_RATIO 15
 enum EVENT_TYPE{

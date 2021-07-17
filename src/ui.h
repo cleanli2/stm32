@@ -23,6 +23,7 @@ enum UI_NAME_INDEX {
     UI_POFF_CTD,
     UI_TIMER,
     UI_TIMER_SET,
+    UI_DATE,
     UI_LAST,
     UI_MAX
 };
@@ -52,6 +53,7 @@ typedef struct button {
     int ui_goto;
     int need_re_init_ui;
     const char* text;
+    int disable;
 } button_t;
 
 typedef struct ui_info {

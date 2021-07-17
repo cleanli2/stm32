@@ -160,6 +160,7 @@ button_t main_menu_button[]={
     {130,390,200, 60, music_test, -1, 0, "MusicTest"},
     {130,460,200, 60, f3mins_timer, -1, 0, "3x1mins TIMER"},
     {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer"},
+    {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time"},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
 
@@ -243,6 +244,30 @@ button_t timer_set_button[]={
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
 
+/*UI DATE*/
+void date_ui_init(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    lprintf("data ui\n");
+    common_ui_init(vp);
+    lcd_lprintf(10, 100, "Version:%s%s", VERSION, GIT_SHA1);
+}
+void date_ui_process_event(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    common_process_event(vp);
+}
+
+void adjust_enable()
+{
+}
+
+button_t date_button[]={
+    {60, 60, 80,  40, adjust_enable, -1, 0, "time adjust"},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL},
+};
+/*UI DATE END*/
+
 ui_t ui_list[]={
     {
         main_ui_init,
@@ -289,14 +314,26 @@ ui_t ui_list[]={
         NULL,
     },
     {
+        date_ui_init,
+        date_ui_process_event,
         NULL,
-        NULL,
-        NULL,
-        NULL,
-        UI_MAX,
-        0, //timeout
-        0,
+        date_button,
+        UI_DATE,
+        220, //timeout
+        TIME_OUT_EN,
         NULL,//char*timeout_music;
+        NULL,
+    },
+    {
+        NULL,//uiinit
+        NULL,//uiprocess
+        NULL,//uiuninit
+        NULL,//button
+        UI_MAX,//ui index
+        0, //timeout
+        0, //time disp mode
+        NULL,//char*timeout_music;
+        NULL,//prgb_t*
     },
 };
 
