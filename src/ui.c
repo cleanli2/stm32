@@ -252,7 +252,8 @@ struct point
     uint16_t py;
 };
 
-struct point clock_point[7]={
+struct point clock_point[8]={
+    {0,0},
     {24,1},
     {48,5},
     {71,11},
@@ -261,6 +262,31 @@ struct point clock_point[7]={
     {135,44},
     {154,59},
 };
+#define CLOCK_R 230
+void draw_clock_face(int xc, int yc)
+{
+    int ll;
+    gui_circle(xc, yc, BLACK, CLOCK_R, 0);
+    for(int i = 0;i < 8; i++){
+        if(i==0){
+            ll = 3;
+        }
+        else if(i==5){
+            ll = 2;
+        }
+        else{
+            ll = 1;
+        }
+        LCD_DrawLine_direction(xc, yc, xc+clock_point[i].px, yc-CLOCK_R+clock_point[i].py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
+        LCD_DrawLine_direction(xc, yc, xc-clock_point[i].px, yc-CLOCK_R+clock_point[i].py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
+        LCD_DrawLine_direction(xc, yc, xc+clock_point[i].px, yc+CLOCK_R-clock_point[i].py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
+        LCD_DrawLine_direction(xc, yc, xc-clock_point[i].px, yc+CLOCK_R-clock_point[i].py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
+        LCD_DrawLine_direction(xc, yc, xc-CLOCK_R+clock_point[i].py, yc+clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
+        LCD_DrawLine_direction(xc, yc, xc-CLOCK_R+clock_point[i].py, yc-clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
+        LCD_DrawLine_direction(xc, yc, xc+CLOCK_R-clock_point[i].py, yc+clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
+        LCD_DrawLine_direction(xc, yc, xc+CLOCK_R-clock_point[i].py, yc-clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
+    }
+}
 void date_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -271,10 +297,7 @@ void date_ui_init(void*vp)
         often_used_timer();
     }
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 260, 45);
-    gui_circle(240, 400, BLACK, 230, 0);
-    for(int i = 0;i < 7; i++){
-        LCD_DrawLine_direction(240, 400, 240+clock_point[i].px, 400-230+clock_point[i].py, 10, RATIO_BASE_OF_LENGTH);
-    }
+    draw_clock_face(240, 400);
 }
 void date_ui_process_event(void*vp)
 {
