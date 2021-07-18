@@ -263,10 +263,60 @@ struct point clock_point[8]={
     {154,59},
 };
 #define CLOCK_R 230
+struct point* get_clock_point(int pinx)
+{
+    pinx %= 15;
+    if(pinx<8){
+        return &clock_point[pinx];
+    }
+    else{
+        return &clock_point[15-pinx];
+    }
+}
+
+void get_real_clock_point(u16 pinx, struct point*rslt)
+{
+    u16 xc = rslt->px, yc = rslt->py;
+    pinx%=60;
+    if(pinx<8){
+        rslt->px=xc+get_clock_point(pinx)->px;
+        rslt->py=yc-CLOCK_R+get_clock_point(pinx)->py;
+    }
+    else if(pinx>7&&pinx<15){
+        rslt->px=xc+CLOCK_R-get_clock_point(pinx)->py;
+        rslt->py=yc-get_clock_point(pinx)->px;
+    }
+    else if(pinx>14&&pinx<23){
+        rslt->px=xc+CLOCK_R-get_clock_point(pinx)->py;
+        rslt->py=yc+get_clock_point(pinx)->px;
+    }
+    else if(pinx>22&&pinx<30){
+        rslt->px=xc+get_clock_point(pinx)->px;
+        rslt->py=yc+CLOCK_R-get_clock_point(pinx)->py;
+    }
+    else if(pinx>29&&pinx<38){
+        rslt->px=xc-get_clock_point(pinx)->px;
+        rslt->py=yc+CLOCK_R-get_clock_point(pinx)->py;
+    }
+    else if(pinx>37&&pinx<46){
+        rslt->px=xc-CLOCK_R+get_clock_point(pinx)->py;
+        rslt->py=yc-get_clock_point(pinx)->px;
+    }
+    else if(pinx>45&&pinx<53){
+        rslt->px=xc-CLOCK_R+get_clock_point(pinx)->py;
+        rslt->py=yc+get_clock_point(pinx)->px;
+    }
+    else{
+        rslt->px=xc-get_clock_point(pinx)->px;
+        rslt->py=yc-CLOCK_R+get_clock_point(pinx)->py;
+    }
+}
+
 void draw_clock_face(int xc, int yc)
 {
     int ll;
     gui_circle(xc, yc, BLACK, CLOCK_R, 0);
+    /*
     for(int i = 0;i < 8; i++){
         if(i==0){
             ll = 3;
@@ -285,6 +335,20 @@ void draw_clock_face(int xc, int yc)
         LCD_DrawLine_direction(xc, yc, xc-CLOCK_R+clock_point[i].py, yc-clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
         LCD_DrawLine_direction(xc, yc, xc+CLOCK_R-clock_point[i].py, yc+clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
         LCD_DrawLine_direction(xc, yc, xc+CLOCK_R-clock_point[i].py, yc-clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
+    }
+    */
+    for(int i = 0;i < 60; i++){
+        struct point tmp_point;
+        tmp_point.px=xc;
+        tmp_point.py=yc;
+        get_real_clock_point(i, &tmp_point);
+        if(i%5==0){
+            ll = 2;
+        }
+        else{
+            ll = 1;
+        }
+        LCD_DrawLine_direction(xc, yc, tmp_point.px, tmp_point.py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
     }
 }
 void date_ui_init(void*vp)
