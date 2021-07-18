@@ -321,7 +321,6 @@ void draw_clock_face(int xc, int yc)
 {
     int ll;
     gui_circle(xc, yc, BLACK, CLOCK_R, 0);
-    /*
     for(int i = 0;i < 8; i++){
         if(i==0){
             ll = 3;
@@ -341,7 +340,7 @@ void draw_clock_face(int xc, int yc)
         LCD_DrawLine_direction(xc, yc, xc+CLOCK_R-clock_point[i].py, yc+clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
         LCD_DrawLine_direction(xc, yc, xc+CLOCK_R-clock_point[i].py, yc-clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
     }
-    */
+#if 0
     for(int i = 0;i < 60; i++){
         struct point tmp_point;
         tmp_point.px=xc;
@@ -355,6 +354,7 @@ void draw_clock_face(int xc, int yc)
         }
         LCD_DrawLine_direction(xc, yc, tmp_point.px, tmp_point.py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
     }
+#endif
 }
 
 void draw_clock_pointer(int xc, int yc, int pt_inx, int len)
