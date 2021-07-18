@@ -425,6 +425,7 @@ void date_ui_process_event(void*vp)
         ui_buf[LAST_SEC_INDX]=t_cur_date.second;
         ui_buf[LAST_MIN_INDX]=t_cur_date.minute;
         ui_buf[LAST_HOR_INDX]=h_ix;
+        gui_circle(CLOCK_CX, CLOCK_CY, BLACK, 15, 1);
     }
     common_process_event(vp);
 }
