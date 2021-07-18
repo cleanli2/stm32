@@ -246,6 +246,21 @@ button_t timer_set_button[]={
 
 /*UI DATE*/
 button_t date_button[];
+struct point
+{
+    uint16_t px;
+    uint16_t py;
+};
+
+struct point clock_point[7]={
+    {24,1},
+    {48,5},
+    {71,11},
+    {94,20},
+    {115,31},
+    {135,44},
+    {154,59},
+};
 void date_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -257,6 +272,9 @@ void date_ui_init(void*vp)
     }
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 260, 45);
     gui_circle(240, 400, BLACK, 230, 0);
+    for(int i = 0;i < 7; i++){
+        LCD_DrawLine_direction(240, 400, 240+clock_point[i].px, 400-230+clock_point[i].py, 10, RATIO_BASE_OF_LENGTH);
+    }
 }
 void date_ui_process_event(void*vp)
 {

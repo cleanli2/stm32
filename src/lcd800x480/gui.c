@@ -145,6 +145,30 @@ void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
 	}  
 } 
 
+/*******************************************************************
+ * @name       :void LCD_DrawLine_direction(u16 x1, u16 y1, u16 x2, u16 y2, int start, int end)
+ * @date       :2018-08-09
+ * @function   :Draw a line between two points
+ * @parameters :x1:the bebinning x coordinate of the line
+                y1:the bebinning y coordinate of the line
+                x2:the ending x coordinate of the line
+                y2:the ending y coordinate of the line
+                start: * length_1_2 / RATIO_BASE_OF_LENGTH
+                end: * length_1_2 / RATIO_BASE_OF_LENGTH
+ * @retvalue   :None
+********************************************************************/
+void LCD_DrawLine_direction(u16 x1, u16 y1, u16 x2, u16 y2, int start, int end)
+{
+    u16 nx1, nx2, ny1, ny2;
+    nx1=x1+(x2-x1)*start/RATIO_BASE_OF_LENGTH;
+    nx2=x1+(x2-x1)*end/RATIO_BASE_OF_LENGTH;
+    ny1=y1+(y2-y1)*start/RATIO_BASE_OF_LENGTH;
+    ny2=y1+(y2-y1)*end/RATIO_BASE_OF_LENGTH;
+    lprintf("old %d %d %d %d\n", x1, y1, x2, y2);
+    lprintf("new %d %d %d %d\n", nx1, ny1, nx2, ny2);
+    LCD_DrawLine(nx1, ny1, nx2, ny2);
+}
+
 /*****************************************************************************
  * @name       :void LCD_DrawRectangle(u16 x1, u16 y1, u16 x2, u16 y2)
  * @date       :2018-08-09 

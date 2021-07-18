@@ -832,11 +832,23 @@ void logflag(char *p)
 }
 void test(char *p)
 {
-    uint32_t n, p1, p2;
-    p = str_to_hex(p, &p1);
-    lprintf("para:%x\n", p1);
-    set_LCD_Char_scale(p1);
+    uint32_t n, px1, py1, s,e;
+    static int txc=0;
+    p = str_to_hex(p, &px1);
+    p = str_to_hex(p, &py1);
+    p = str_to_hex(p, &s);
+    p = str_to_hex(p, &e);
+    lprintf("para:%x %x %x %x\n", px1,py1,s,e);
 
+    LCD_Clear(WHITE);
+    if(txc++&0x1){
+        lprintf("old\n");
+        LCD_DrawLine(240, 400, px1, py1);
+    }
+    else{
+        lprintf("new\n");
+        LCD_DrawLine_direction(240, 400, px1, py1, s, e);
+    }
 #if 0
     uint32_t n, p1, p2;
     uint64_t t1, t2, t3,t4,t5,t6,t7;

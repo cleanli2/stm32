@@ -56,10 +56,12 @@
 #ifndef __GUI_H__
 #define __GUI_H__
 
+#define RATIO_BASE_OF_LENGTH 20
 void GUI_DrawPoint(u16 x,u16 y,u16 color);
 void LCD_Fill(u16 sx,u16 sy,u16 ex,u16 ey,u16 color);
 void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2);
 void LCD_DrawRectangle(u16 x1, u16 y1, u16 x2, u16 y2);
+void LCD_DrawLine_direction(u16 x1, u16 y1, u16 x2, u16 y2, int start, int end);
 void Draw_Circle(u16 x0,u16 y0,u16 fc,u8 r);
 void Draw_Triangel(u16 x0,u16 y0,u16 x1,u16 y1,u16 x2,u16 y2);
 void Fill_Triangel(u16 x0,u16 y0,u16 x1,u16 y1,u16 x2,u16 y2);
