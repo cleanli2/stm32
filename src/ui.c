@@ -368,10 +368,14 @@ void draw_clock_pointer(int xc, int yc, int pt_inx, int len)
 
 void date_ui_init(void*vp)
 {
+    uint8_t t[32];
     ui_t* uif =(ui_t*)vp;
     lprintf("data ui\n");
     common_ui_init(vp);
     lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
+    if(ENV_OK == get_env("LastTimeAdj", t)){
+        lcd_lprintf(15, 630, "last adj date:%s", t);
+    }
     if(check_rtc_alert_and_clear()){
         often_used_timer();
     }
