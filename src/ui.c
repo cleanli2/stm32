@@ -363,7 +363,7 @@ void draw_clock_pointer(int xc, int yc, int pt_inx, int len)
     tmp_point.px=xc;
     tmp_point.py=yc;
     get_real_clock_point(pt_inx, &tmp_point);
-    LCD_DrawLine_direction(xc, yc, tmp_point.px, tmp_point.py, -1, len);
+    LCD_DrawLine_direction(xc, yc, tmp_point.px, tmp_point.py, -4, len);
 }
 
 void date_ui_init(void*vp)
@@ -381,9 +381,9 @@ void date_ui_init(void*vp)
     ui_buf[LAST_MIN_INDX]=0;
     ui_buf[LAST_HOR_INDX]=0;
 }
-#define SEC_PTER_LEN 18
-#define MIN_PTER_LEN 17
-#define HOR_PTER_LEN 16
+#define SEC_PTER_LEN 17
+#define MIN_PTER_LEN 13
+#define HOR_PTER_LEN 9
 void date_ui_process_event(void*vp)
 {
     int h_ix;
@@ -395,28 +395,33 @@ void date_ui_process_event(void*vp)
         lcd_lprintf(10, 100, "%s  ", get_rtc_time(&t_cur_date));
         set_LCD_Char_scale(1);
         lprintf("task timect %x\r\n", cur_task_timeout_ct);
+
+
         if(t_cur_date.second != ui_buf[LAST_SEC_INDX]){
             POINT_COLOR=WHITE;//clear old one
             draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_SEC_INDX],SEC_PTER_LEN);
             POINT_COLOR=BLACK;
             draw_clock_pointer(CLOCK_CX, CLOCK_CY,t_cur_date.second,SEC_PTER_LEN);
-            ui_buf[LAST_SEC_INDX]=t_cur_date.second;
         }
-        if(t_cur_date.minute != ui_buf[LAST_MIN_INDX]){
+        if(t_cur_date.minute != ui_buf[LAST_MIN_INDX] ||
+                t_cur_date.minute==ui_buf[LAST_SEC_INDX]){//cleared by second pointer
             POINT_COLOR=WHITE;//clear old one
             draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_MIN_INDX],MIN_PTER_LEN);
             POINT_COLOR=BLACK;
             draw_clock_pointer(CLOCK_CX, CLOCK_CY,t_cur_date.minute,MIN_PTER_LEN);
-            ui_buf[LAST_MIN_INDX]=t_cur_date.minute;
         }
         h_ix = (t_cur_date.hour%12)*5+t_cur_date.minute/12;
-        if(h_ix != ui_buf[LAST_HOR_INDX]){
+        if(h_ix != ui_buf[LAST_HOR_INDX] ||
+                h_ix==ui_buf[LAST_MIN_INDX] ||
+                h_ix==ui_buf[LAST_SEC_INDX]){//cleared by second pointer
             POINT_COLOR=WHITE;//clear old one
             draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_HOR_INDX],MIN_PTER_LEN);
             POINT_COLOR=BLACK;
             draw_clock_pointer(CLOCK_CX, CLOCK_CY,h_ix,MIN_PTER_LEN);
-            ui_buf[LAST_HOR_INDX]=h_ix;
         }
+        ui_buf[LAST_SEC_INDX]=t_cur_date.second;
+        ui_buf[LAST_MIN_INDX]=t_cur_date.minute;
+        ui_buf[LAST_HOR_INDX]=h_ix;
     }
     common_process_event(vp);
 }
