@@ -377,13 +377,13 @@ void date_ui_init(void*vp)
     }
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 260, 45);
     draw_clock_face(CLOCK_CX, CLOCK_CY);
-    ui_buf[LAST_SEC_INDX]=0;
-    ui_buf[LAST_MIN_INDX]=0;
-    ui_buf[LAST_HOR_INDX]=0;
+    ui_buf[LAST_SEC_INDX]=60;
+    ui_buf[LAST_MIN_INDX]=60;
+    ui_buf[LAST_HOR_INDX]=60;
 }
 #define SEC_PTER_LEN 17
 #define MIN_PTER_LEN 13
-#define HOR_PTER_LEN 9
+#define HOR_PTER_LEN 10
 void date_ui_process_event(void*vp)
 {
     int h_ix;
@@ -418,9 +418,9 @@ void date_ui_process_event(void*vp)
                 (60+h_ix-ui_buf[LAST_SEC_INDX])%30==0 ||
                 h_ix==ui_buf[LAST_SEC_INDX]){//cleared by second pointer
             POINT_COLOR=WHITE;//clear old one
-            draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_HOR_INDX],MIN_PTER_LEN);
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_HOR_INDX],HOR_PTER_LEN);
             POINT_COLOR=BLACK;
-            draw_clock_pointer(CLOCK_CX, CLOCK_CY,h_ix,MIN_PTER_LEN);
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,h_ix,HOR_PTER_LEN);
         }
         ui_buf[LAST_SEC_INDX]=t_cur_date.second;
         ui_buf[LAST_MIN_INDX]=t_cur_date.minute;
