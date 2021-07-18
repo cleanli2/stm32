@@ -177,10 +177,10 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
 int printenv()
 {
     int i, j;
-    char c, buf[17];
+    char c, buf[64];
 
     i = 0;
-    buf[16] = '\0';
+    buf[64] = '\0';
     lprintf("env_store_start %x size %x\n", ENV_STORE_START_ADDR, ENV_STORE_SIZE);
 
     i = find_env_data_start();
