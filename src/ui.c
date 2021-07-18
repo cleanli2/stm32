@@ -305,11 +305,11 @@ void get_real_clock_point(u16 pinx, struct point*rslt)
     }
     else if(pinx>37&&pinx<46){
         rslt->px=xc-CLOCK_R+get_clock_point(pinx)->py;
-        rslt->py=yc-get_clock_point(pinx)->px;
+        rslt->py=yc+get_clock_point(pinx)->px;
     }
     else if(pinx>45&&pinx<53){
         rslt->px=xc-CLOCK_R+get_clock_point(pinx)->py;
-        rslt->py=yc+get_clock_point(pinx)->px;
+        rslt->py=yc-get_clock_point(pinx)->px;
     }
     else{
         rslt->px=xc-get_clock_point(pinx)->px;
@@ -404,6 +404,7 @@ void date_ui_process_event(void*vp)
             draw_clock_pointer(CLOCK_CX, CLOCK_CY,t_cur_date.second,SEC_PTER_LEN);
         }
         if(t_cur_date.minute != ui_buf[LAST_MIN_INDX] ||
+                (60+t_cur_date.minute-ui_buf[LAST_SEC_INDX])%30==0 ||
                 t_cur_date.minute==ui_buf[LAST_SEC_INDX]){//cleared by second pointer
             POINT_COLOR=WHITE;//clear old one
             draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_MIN_INDX],MIN_PTER_LEN);
@@ -413,6 +414,8 @@ void date_ui_process_event(void*vp)
         h_ix = (t_cur_date.hour%12)*5+t_cur_date.minute/12;
         if(h_ix != ui_buf[LAST_HOR_INDX] ||
                 h_ix==ui_buf[LAST_MIN_INDX] ||
+                (60+h_ix-ui_buf[LAST_MIN_INDX])%30==0 ||
+                (60+h_ix-ui_buf[LAST_SEC_INDX])%30==0 ||
                 h_ix==ui_buf[LAST_SEC_INDX]){//cleared by second pointer
             POINT_COLOR=WHITE;//clear old one
             draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_HOR_INDX],MIN_PTER_LEN);
