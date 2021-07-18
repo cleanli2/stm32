@@ -245,6 +245,11 @@ button_t timer_set_button[]={
 };
 
 /*UI DATE*/
+#define LAST_SEC_INDX 0
+#define LAST_MIN_INDX 1
+#define LAST_HOR_INDX 2
+#define CLOCK_CX 240
+#define CLOCK_CY 400
 button_t date_button[];
 struct point
 {
@@ -351,6 +356,16 @@ void draw_clock_face(int xc, int yc)
         LCD_DrawLine_direction(xc, yc, tmp_point.px, tmp_point.py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
     }
 }
+
+void draw_clock_pointer(int xc, int yc, int pt_inx, int len)
+{
+    struct point tmp_point;
+    tmp_point.px=xc;
+    tmp_point.py=yc;
+    get_real_clock_point(pt_inx, &tmp_point);
+    LCD_DrawLine_direction(xc, yc, tmp_point.px, tmp_point.py, -1, len);
+}
+
 void date_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -361,17 +376,47 @@ void date_ui_init(void*vp)
         often_used_timer();
     }
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 260, 45);
-    draw_clock_face(240, 400);
+    draw_clock_face(CLOCK_CX, CLOCK_CY);
+    ui_buf[LAST_SEC_INDX]=0;
+    ui_buf[LAST_MIN_INDX]=0;
+    ui_buf[LAST_HOR_INDX]=0;
 }
+#define SEC_PTER_LEN 18
+#define MIN_PTER_LEN 17
+#define HOR_PTER_LEN 16
 void date_ui_process_event(void*vp)
 {
+    int h_ix;
+    date_info_t t_cur_date = {0};
     ui_t* uif =(ui_t*)vp;
 
     if(g_flag_1s){
         set_LCD_Char_scale(2);
-        lcd_lprintf(10, 100, "%s  ", get_rtc_time(NULL));
+        lcd_lprintf(10, 100, "%s  ", get_rtc_time(&t_cur_date));
         set_LCD_Char_scale(1);
         lprintf("task timect %x\r\n", cur_task_timeout_ct);
+        if(t_cur_date.second != ui_buf[LAST_SEC_INDX]){
+            POINT_COLOR=WHITE;//clear old one
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_SEC_INDX],SEC_PTER_LEN);
+            POINT_COLOR=BLACK;
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,t_cur_date.second,SEC_PTER_LEN);
+            ui_buf[LAST_SEC_INDX]=t_cur_date.second;
+        }
+        if(t_cur_date.minute != ui_buf[LAST_MIN_INDX]){
+            POINT_COLOR=WHITE;//clear old one
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_MIN_INDX],MIN_PTER_LEN);
+            POINT_COLOR=BLACK;
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,t_cur_date.minute,MIN_PTER_LEN);
+            ui_buf[LAST_MIN_INDX]=t_cur_date.minute;
+        }
+        h_ix = (t_cur_date.hour%12)*5+t_cur_date.minute/12;
+        if(h_ix != ui_buf[LAST_HOR_INDX]){
+            POINT_COLOR=WHITE;//clear old one
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_HOR_INDX],MIN_PTER_LEN);
+            POINT_COLOR=BLACK;
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,h_ix,MIN_PTER_LEN);
+            ui_buf[LAST_HOR_INDX]=h_ix;
+        }
     }
     common_process_event(vp);
 }
