@@ -54,6 +54,13 @@ void poff_ctd_ui_init(void*vp)
 void poff_ctd_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    if(cur_task_event_flag & (1<<EVENT_BATT_LOW)){
+        LCD_PRINT_FRONT_COLOR = RED;
+        set_LCD_Char_scale(3);
+        lcd_lprintf(90, 600, "LOW POWER");
+        LCD_PRINT_FRONT_COLOR = BLACK;
+        set_LCD_Char_scale(1);
+    }
     if(cur_task_event_flag & (1<<EVENT_MUSIC_PLAY_END)){
         power_off();
     }

@@ -22,6 +22,7 @@ enum EVENT_TYPE{
     EVENT_UI_TIMEOUT,
     EVENT_MUSIC_PLAY_END,
     EVENT_NOKEYCT_MAXREACHED,
+    EVENT_BATT_LOW,
     EVENT_MAX
 };
 typedef void (*func_p)(void*);

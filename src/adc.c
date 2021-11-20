@@ -2,8 +2,10 @@
 #include "adc.h"
 
 #define ADC_INITED 0x11d0
-void adc_test()
+#define BATT_LOW_LIMIT 3500
+int adc_test()
 {
+    int ret = 0;
     static int adc_inited = 0;
     GPIO_InitTypeDef GPIO_InitStructure;
     ADC_InitTypeDef ADC_InitStructure;
@@ -103,4 +105,9 @@ void adc_test()
     //lprintf("real I = %dmA\n", v_currt);
     lprintf("----%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
     lcd_lprintf(240, 0, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
+    if(v_bat > BATT_LOW_LIMIT){
+        lprintf("battery is low\n");
+        ret = 1;
+    }
+    return ret;
 }
