@@ -816,7 +816,7 @@ void common_process_event(void*vp)
     }
 #endif
     for(int8 i = 0; i < EVENT_MAX; i++){
-        uint8 evt_flag=1<<i;
+        uint32_t evt_flag=1<<i;
         //if(dg) lprintf("ev flag %x %x i %x\r\n", cur_task_event_flag, evt_flag, i);
         if(cur_task_event_flag & evt_flag){
 #if 0
@@ -851,6 +851,12 @@ void common_process_event(void*vp)
                 button_t* p_bt = current_ui->button_info;
                 process_button(uif, p_bt);
                 process_button(uif, common_button);
+            }
+            if(evt_flag == (1<<EVENT_BATT_LOW)){
+                if(UI_POFF_CTD != cur_ui_index){
+                    ui_transfer(UI_POFF_CTD);
+                    return;
+                }
             }
         }
     }
