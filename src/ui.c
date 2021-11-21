@@ -383,6 +383,8 @@ void date_ui_init(void*vp)
     if(ENV_OK == get_env("LastTimeAdj", t)){
         lcd_lprintf(15, 630, "last adj date:%s", t);
     }
+    //temply fix touch issue after env op
+    set_touch_need_reinit();
     if(check_rtc_alert_and_clear()){
         often_used_timer();
     }

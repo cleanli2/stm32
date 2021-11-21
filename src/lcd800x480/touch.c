@@ -60,6 +60,7 @@
 #include "gui.h"	    
 #include "common.h"	    
 
+static int tp_inited = 0;
 _m_tp_dev tp_dev=
 {
 	TP_Init,
@@ -598,7 +599,6 @@ void TP_Adjust(void)
 ******************************************************************************/  
 u8 TP_Init(void)
 {			    		   
-	static int tp_inited = 0;
 	if(tp_inited){
 		//lprintf("Touch inited already\n");
 		return 1;
@@ -648,4 +648,9 @@ u8 get_TP_point(uint16_t * x, uint16_t * y)
         return 1;
     }
     return 0;
+}
+
+void set_touch_need_reinit()
+{
+    tp_inited = 0;
 }
