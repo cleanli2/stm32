@@ -97,56 +97,65 @@ uint32_t find_env_data_start()
 
 uint32_t get_env(const uint8_t* name, uint8_t*value)
 {
-    int i = 0, nxt;
+    int i = 0, nxt, ret = ENV_OK;
 
     if(!name){
         lprintf("name=NULL\n");
-        return ENV_FAIL;
+        ret = ENV_FAIL;
+        goto end;
     }
     if(strchr(name, '=')!=NULL){
         lprintf("'=' can't be in name\n");
-        return ENV_FAIL;
+        ret = ENV_FAIL;
+        goto end;
     }
 
     i = find_env_data_start();
     if(i > ENV_ABNORMAL){
-        return ENV_FAIL;
+        ret = ENV_FAIL;
+        goto end;
     }
     for (i++; env_get_char(i) != '\0'; i=nxt+1) {
         int val;
 
         for (nxt=i; env_get_char(nxt) != '\0'; ++nxt) {
             if (nxt >= ENV_STORE_SIZE) {
-                return ENV_FAIL;
+                ret = ENV_FAIL;
+                goto end;
             }
         }
         if ((val=envmatch((uint8_t *)name, i)) < 0)
             continue;
         strcpy2mem(value, val);
         if(*value==0){//null str
-            return ENV_FAIL;
+            ret = ENV_FAIL;
+            goto end;
         }
-        return ENV_OK;
+        ret = ENV_OK;
+        goto end;
     }
-
-    return ENV_FAIL;
+end:
+    set_touch_need_reinit();
+    return ret;
 }
 
 uint32_t set_env(const uint8_t* name, const uint8_t*value)
 {
-    int i = 0, n;
+    int i = 0, n, ret = ENV_OK;
     uint8_t zero_str = 0;
 
     if(!name){
         lprintf("name=NULL\n");
-        return ENV_FAIL;
+        ret = ENV_FAIL;
+        goto end;
     }
     if(!value){
         value = &zero_str;
     }
     if(strchr(name, '=')!=NULL || strchr(value, '=')){
         lprintf("'=' can't be in name or value\n");
-        return ENV_FAIL;
+        ret = ENV_FAIL;
+        goto end;
     }
 
     i = find_env_data_start();
@@ -155,12 +164,14 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
         env_set_char(i, '\0');
     }
     else if(i > ENV_ABNORMAL){
-        return ENV_FAIL;
+        ret = ENV_FAIL;
+        goto end;
     }
     n = strlen(name)+strlen(value)+2;
     if(i<n){
         lprintf("env full -- tobe fix\n");
-        return ENV_FAIL;
+        ret = ENV_FAIL;
+        goto end;
     }
     i -= n;
     env_set_char(i++, '\0');
@@ -168,7 +179,9 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
     env_set_char(i++, '=');
     strcpy2env(i, value);
 
-    return ENV_OK;
+end:
+    set_touch_need_reinit();
+    return ret;
 }
 
 /************************************************************************
@@ -176,7 +189,7 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
  */
 int printenv()
 {
-    int i, j;
+    int i, j, ret=ENV_OK;
     char c, buf[64];
 
     i = 0;
@@ -185,7 +198,8 @@ int printenv()
 
     i = find_env_data_start();
     if(i > ENV_ABNORMAL){
-        return ENV_FAIL;
+        ret = ENV_FAIL;
+        goto end;
     }
     i++;
     while(env_get_char(i) != '\0'){
@@ -194,7 +208,10 @@ int printenv()
         i++;
         lprintf("%s\n", buf);
         if(i>=ENV_STORE_SIZE){
-            return;
+            goto end;
         }
     }
+end:
+    set_touch_need_reinit();
+    return ret;
 }
