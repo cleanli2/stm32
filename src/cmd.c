@@ -80,6 +80,17 @@ void w25f(char *p)
         lprintf("\n");
     }
     else if(cmdindex == 4){//
+        lprintf("erase all chip.\n");
+        if(tmp<2){
+            goto err;
+        }
+        p = str_to_hex(p, &para1);
+        if(para1 != 0xe4a5ea11){
+            lprintf("erase fail!");
+        }
+        else{
+            SPI_Flash_Erase_Chip();
+        }
     }
     else if(cmdindex == 5){//cmd
     }

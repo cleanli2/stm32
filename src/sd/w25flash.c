@@ -250,12 +250,18 @@ void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 //等待时间超长...
 void SPI_Flash_Erase_Chip(void)   
 {                                             
+    lprintf("erase all chip\nwrite enable\n");
     SPI_FLASH_Write_Enable();                  //SET WEL 
+    lprintf("waite busy...\n");
     SPI_Flash_Wait_Busy();   
+    lprintf("done.\n");
+    lprintf("sending erase cmd...\n");
   	SPI_FLASH_CS=0;                            //使能器件   
     SPI1_ReadWriteByte(W25X_ChipErase);        //发送片擦除命令  
 	SPI_FLASH_CS=1;                            //取消片选     	      
+    lprintf("done.\nWaiting...\n");
 	SPI_Flash_Wait_Busy();   				   //等待芯片擦除结束
+    lprintf("done.\n");
 }   
 //擦除一个扇区
 //Dst_Addr:扇区地址 0~2047 for W25Q64
