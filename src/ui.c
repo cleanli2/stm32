@@ -7,6 +7,14 @@ int cur_ui_index = 0;
 int last_ui_index = 0;
 ui_t*current_ui;
 uint32_t ui_buf[8];
+int prgb_color = BLACK;
+
+uint32_t power_max_display = BATT_MAX - BATT_LOW_LIMIT;
+uint32_t power_display = 0;
+prgb_t power_prgb[]={
+    {185, 2, 40, 13, NULL, NULL, NULL, 0},
+    {-1, -1,  -1,  -1, NULL, NULL, NULL, 0},
+};
 
 void often_used_timer();
 void f3mins_timer();
@@ -102,7 +110,6 @@ void timer_ui_init(void*vp)
     timer_prgb[1].data = &ui_buf[TMR_REPETCT_INDX];
     timer_prgb[1].last_data = ui_buf[TMR_REPETCT_INDX]+2;
     common_ui_init(vp);
-    draw_prgb(timer_prgb);
     update_prgb(uif, uif->prgb_info);
 }
 void timer_ui_process_event(void*vp)
@@ -643,7 +650,7 @@ void draw_prgb_raw(prgb_t*pip)
 {
     if(!pip)return;
     lcd_clr_window(WHITE, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
-    draw_sq(pip->x, pip->y, pip->x+pip->w, pip->y+pip->h, BLACK);
+    draw_sq(pip->x, pip->y, pip->x+pip->w, pip->y+pip->h, prgb_color);
 }
 
 void draw_prgb(prgb_t*pip)
@@ -679,6 +686,11 @@ void draw_button(button_t*pbt)
     LCD_PRINT_FRONT_COLOR = color_bak;
 }
 
+void set_prgb_color(int color)
+{
+    prgb_color = color;
+}
+
 void update_prgb(ui_t* uif, prgb_t*pip)
 {
     uint32_t t;
@@ -689,13 +701,17 @@ void update_prgb(ui_t* uif, prgb_t*pip)
             pip->last_data = *pip->data;
             t = pip->w*(*pip->data)/(*pip->max);
             if(t>=0 && t<pip->w){
-                lcd_clr_window(BLACK, pip->x, pip->y, pip->x+pip->w-t, pip->y+pip->h);
+                draw_prgb_raw(pip);
+                lcd_clr_window(prgb_color, pip->x, pip->y, pip->x+pip->w-t, pip->y+pip->h);
             }
-            lcd_lprintf(pip->x, pip->y - 30,
+            if(pip->des){
+                lcd_lprintf(pip->x, pip->y - 30,
                     "%s:%d/%d  ", pip->des, (*pip->data), (*pip->max));
+            }
         }
         pip++;
     }
+    prgb_color = BLACK;//restore color if changed
 }
 
 void process_button(ui_t* uif, button_t*pbt)
@@ -744,6 +760,12 @@ void common_ui_init(void*vp)
     draw_button(p_bt);
     draw_button(common_button);
     draw_prgb(uif->prgb_info);
+    //power bar
+    power_prgb[0].max = &power_max_display;
+    power_prgb[0].data = &power_display;
+    power_prgb[0].last_data = 0;
+    draw_prgb(&power_prgb[0]);
+
 #if 0
     if(uif->time_disp_mode & TIMER_TRIGGER_START){
         cur_task_timer_started = false;
@@ -859,6 +881,14 @@ void common_process_event(void*vp)
                 }
             }
         }
+    }
+    //power_display = v_bat - BATT_LOW_LIMIT;
+    if(g_flag_1s){
+        power_display = BATT_MAX - v_bat;
+        if(v_bat<BATT_LOW_ALERT){
+            set_prgb_color(RED);
+        }
+        update_prgb(uif, &power_prgb);
     }
     cur_task_event_flag = 0;
 }

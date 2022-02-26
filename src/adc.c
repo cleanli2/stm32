@@ -2,14 +2,14 @@
 #include "adc.h"
 
 #define ADC_INITED 0x11d0
-#define BATT_LOW_LIMIT 3500
+uint32_t v_bat = 0;
 int adc_test()
 {
     int ret = 0;
     static int adc_inited = 0;
     GPIO_InitTypeDef GPIO_InitStructure;
     ADC_InitTypeDef ADC_InitStructure;
-    uint32_t v_core, v_bat, v_ref, v_currt;
+    uint32_t v_core, v_ref, v_currt;
     char in_charge;
 
     if(ADC_INITED!=adc_inited){
