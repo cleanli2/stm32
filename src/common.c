@@ -389,6 +389,7 @@ void power_off()
     Show_Str(20, 630,RED,0xffff,(uint8_t*)"Power off in 3 seconds",24,0);
     beep(600, 100);
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, -1, -1);
+    auto_time_correct();
     GPIO_SetBits(GPIOB,GPIO_Pin_0);	
     delay_ms(200);
 }

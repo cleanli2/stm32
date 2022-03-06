@@ -1,5 +1,6 @@
 #ifndef _RTC_H
 #define _RTC_H
+#include "date.h"
 
 #define SDA_GG GPIOB
 #define SCL_GG GPIOB
@@ -20,17 +21,6 @@
 
 #define RTC_FAIL 0
 #define RTC_OK 1
-typedef struct date_info
-{
-    char* date_str;
-    uint16_t year;
-    uint8_t month;
-    uint8_t day;
-    uint8_t hour;
-    uint8_t minute;
-    uint8_t second;
-    uint8_t weekday;
-} date_info_t;
 
 void rtc_read(uint8_t*);
 void rtc_write(uint8_t*);
@@ -38,8 +28,7 @@ char* get_rtc_time(date_info_t*);
 uint8_t rtc_read_reg(uint8_t addr);
 uint8_t rtc_write_reg(uint8_t addr, uint8_t data);
 void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y);
-uint32_t time_diff_minutes(date_info_t* dtp_f, date_info_t * dtp);
-uint32_t time_diff_seconds(date_info_t* dtp_f, date_info_t * dtp);
+void auto_time_correct();
 uint8_t check_rtc_alert_and_clear();
 uint adjust_1min(uint faster_1min);
 

@@ -306,6 +306,16 @@ uint8_t hex2bcd(uint8_t ipt)
 {
     return (ipt/10)*0x10 + (ipt%10);
 }
+uint32_t bcd2hex_32(uint32_t ipt)
+{
+    uint32_t bv=1, ret=0;
+    for(int i = 0;i<8;i++){
+        ret+=bv*(ipt&0xf);
+        ipt>>=4;
+        bv*=10;
+    }
+    return ret;
+}
 uint8_t bcd2hex(uint8_t ipt)
 {
     return ((ipt&0xf0)>>4)*10 + (ipt&0xf);
@@ -329,10 +339,9 @@ char* get_rtc_time(date_info_t*dit)
             dit->year = 2000 + bcd2hex(time_date[6]);
         }
     }
-    slprintf(&t_d[2], "%b.%b.%b W%x %b:%b:%b",
+    slprintf(&t_d[2], "%b.%b.%b %b:%b:%b W%x",
             time_date[6], time_date[5]&0x1f, time_date[3],
-            time_date[4], time_date[2],
-            time_date[1], time_date[0]);
+            time_date[2], time_date[1], time_date[0], time_date[4]);
     if(dit!=0){
         dit->month = bcd2hex(time_date[5]&0x1f);
         dit->day = bcd2hex(time_date[3]);
@@ -366,58 +375,6 @@ uint8_t rtc_write_reg(uint8_t addr, uint8_t data)
     return ret;
 }
 
-uint32_t diff_with_inc_step(uint32_t f, uint32_t b, uint32_t inc_step)
-{
-    return (f>=b)?f-b:f+inc_step-b;
-}
-uint8_t add_with_back_limit(uint8_t * iptp, uint32_t diff, uint8_t limit)
-{
-    uint8_t ret = 0;
-    //lprintf("&&in %d %d %d\n", *iptp, diff, limit);
-    uint32_t t = *iptp + diff;
-    while(t>=limit){
-        ret++;
-        t-=limit;
-    }
-    *iptp = t;
-    //lprintf("&&out %d %d\n", *iptp, ret);
-    return ret;
-}
-uint32_t time_diff_seconds(date_info_t* dtp_f, date_info_t * dtp)
-{
-    uint32_t ret, h = dtp_f->hour, m  = dtp_f->minute;
-    //lprintf("%d %d - %d %d\n", dtp_f->hour, dtp_f->minute,
-    //        dtp->hour, dtp->minute);
-    ret = diff_with_inc_step(dtp_f->second, dtp->second, 60);
-    if(dtp_f->second < dtp->second){
-        m = diff_with_inc_step(m, 1, 60);
-    }
-    ret += diff_with_inc_step(m, dtp->minute, 60)*60;
-    if(dtp_f->minute < dtp->minute){
-        h = diff_with_inc_step(h, 1, 24);
-    }
-    ret += diff_with_inc_step(h, dtp->hour, 24)*3600;
-    //lprintf("ret %d\n", ret);
-    return ret;
-}
-uint32_t time_diff_minutes(date_info_t* dtp_f, date_info_t * dtp)
-{
-    uint32_t ret, h = dtp_f->hour;
-    //lprintf("%d %d - %d %d\n", dtp_f->hour, dtp_f->minute,
-    //        dtp->hour, dtp->minute);
-    ret = diff_with_inc_step(dtp_f->minute, dtp->minute, 60);
-    if(dtp_f->minute < dtp->minute){
-        h = diff_with_inc_step(h, 1, 24);
-    }
-    ret += diff_with_inc_step(h, dtp->hour, 24)*60;
-    //lprintf("ret %d\n", ret);
-    return ret;
-}
-
-void add_time_diff_minutes(date_info_t*dtp, uint32_t tsms)
-{
-    add_with_back_limit(&dtp->hour, add_with_back_limit(&dtp->minute, tsms, 60), 24);
-}
 
 void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y)
 {
@@ -441,6 +398,85 @@ void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y)
     }
     if(show_x>0 && show_y>0){
         lcd_lprintf(show_x, show_y, "Next auto power on: %b:%b", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
+    }
+}
+
+void auto_time_correct()
+{
+    uint8_t ch_t[32], *p=&ch_t[0];
+    date_info_t dt, dt_lastadj;
+    uint32_t hours_adj_1min, diff_hours;
+    lprintf("auto_time_correct +\n");
+    if(ENV_OK != get_env("LastTimeAdj", ch_t)){
+        lprintf("skip ATC 1\n");
+        return;
+    }
+    //replace '.' & ':' with space
+    for(int i=0;i<32;i++){
+        if(ch_t[i]=='.' || ch_t[i]==':'){
+            ch_t[i]=' ';
+        }
+    }
+    p=&ch_t[0];
+    p = str_to_hex(p, &dt_lastadj.year);
+    p = str_to_hex(p, &dt_lastadj.month);
+    p = str_to_hex(p, &dt_lastadj.day);
+    p = str_to_hex(p, &dt_lastadj.hour);
+    p = str_to_hex(p, &dt_lastadj.minute);
+    p = str_to_hex(p, &dt_lastadj.second);
+    p = str_to_hex(p, &dt_lastadj.weekday);
+
+    if(ENV_OK != get_env("HsAdj1Min", ch_t) ||
+            (ch_t[0]!='+' && ch_t[0]!='-') ){
+        lprintf("skip ATC 2\n");
+        return;
+    }
+    //'-169' means slower 1 min or '+169' faster
+    p=&ch_t[1];
+    p = (uint8_t*)str_to_hex((char*)p, &hours_adj_1min);
+
+    //convert
+    dt_lastadj.year = bcd2hex_32(dt_lastadj.year);
+    dt_lastadj.month= bcd2hex(dt_lastadj.month);
+    dt_lastadj.day    = bcd2hex(dt_lastadj.day    );
+    dt_lastadj.hour   = bcd2hex(dt_lastadj.hour   );
+    dt_lastadj.minute = bcd2hex(dt_lastadj.minute );
+    dt_lastadj.second = bcd2hex(dt_lastadj.second );
+    dt_lastadj.weekday= bcd2hex(dt_lastadj.weekday);
+    lprintf("get last adj:%d %d %d %d %d %d %d\n",
+        dt_lastadj.year,
+        dt_lastadj.month,
+        dt_lastadj.day  ,
+        dt_lastadj.hour ,
+        dt_lastadj.minute,
+        dt_lastadj.second,
+        dt_lastadj.weekday);
+    hours_adj_1min = bcd2hex_32(hours_adj_1min);
+    lprintf("hours adj %c%d\n", ch_t[0], hours_adj_1min);
+
+    lprintf("curtime:%s\n",get_rtc_time(&dt));
+    if(!is_later_than(&dt, &dt_lastadj)){
+        lprintf("skip ATC 3\n");
+        return;
+    }
+    diff_hours = time_diff_hours(&dt, &dt_lastadj);
+    lprintf("diff hours %d\n", diff_hours);
+    lcd_lprintf(340, 610, "HoursPass:%d", diff_hours);
+
+    if(diff_hours>hours_adj_1min){
+        if(ch_t[0]=='+'){
+            lprintf("try faster 1min\n");
+        }
+        else{
+            lprintf("try slower 1min\n");
+        }
+        if(RTC_OK==adjust_1min(ch_t[0]=='+')){
+            set_env("LastTimeAdj", get_rtc_time(NULL));
+            lprintf("adj OK\n");
+        }
+        else{
+            lprintf("adj fail\n");
+        }
     }
 }
 

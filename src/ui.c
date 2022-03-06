@@ -2,6 +2,7 @@
 #include "music.h"
 #include "ui.h"
 
+#define POWER_INDICATOR_CYCLE 30
 ui_t working_ui_t;
 int cur_ui_index = 0;
 int last_ui_index = 0;
@@ -59,6 +60,7 @@ void poff_ctd_ui_init(void*vp)
     common_ui_init(vp);
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 20, 140);
     lcd_lprintf(20, 100, "Version:%s%s", VERSION, GIT_SHA1);
+    auto_time_correct();
 }
 void poff_ctd_ui_process_event(void*vp)
 {
@@ -391,6 +393,9 @@ void date_ui_init(void*vp)
     if(ENV_OK == get_env("LastTimeAdj", t)){
         lcd_lprintf(15, 630, "last adj date:%s", t);
     }
+    if(ENV_OK == get_env("HsAdj1Min", t)){
+        lcd_lprintf(320, 630, "AutoCorrect:%s", t);
+    }
     if(check_rtc_alert_and_clear()){
         often_used_timer();
     }
@@ -399,6 +404,7 @@ void date_ui_init(void*vp)
     ui_buf[LAST_SEC_INDX]=60;
     ui_buf[LAST_MIN_INDX]=60;
     ui_buf[LAST_HOR_INDX]=60;
+    auto_time_correct();
 }
 #define SEC_PTER_LEN 17
 #define MIN_PTER_LEN 13
@@ -885,7 +891,6 @@ void common_process_event(void*vp)
         }
     }
     //power_display = v_bat - BATT_LOW_LIMIT;
-#define POWER_INDICATOR_CYCLE 30
     if(g_flag_1s){
         power_indicator_counter++;
         if(power_indicator_counter > POWER_INDICATOR_CYCLE){
