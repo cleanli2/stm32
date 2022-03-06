@@ -9,6 +9,7 @@ ui_t*current_ui;
 uint32_t ui_buf[8];
 int prgb_color = BLACK;
 
+static uint32_t power_indicator_counter = 0;
 uint32_t power_max_display = BATT_MAX - BATT_LOW_LIMIT;
 uint32_t power_display = 0;
 prgb_t power_prgb[]={
@@ -782,6 +783,7 @@ void common_ui_init(void*vp)
     lprintf("cur task timect---init %x\r\n", cur_task_timeout_ct);
     cur_task_event_flag = 0;
     no_touch_down_ct = 0;
+    power_indicator_counter = POWER_INDICATOR_CYCLE;
 }
 
 void ui_transfer(uint8 ui_id)
@@ -819,7 +821,6 @@ void ui_transfer(uint8 ui_id)
 
 void common_process_event(void*vp)
 {
-    static uint32_t power_indicator_counter = 0;
     //bool dg = g_flag_1s;
     ui_t* uif =(ui_t*)vp;
 #if 0
