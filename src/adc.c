@@ -103,7 +103,7 @@ int adc_test()
     //lprintf("real v_currt = %dmv\n", v_currt);
     v_currt = v_currt * CURRENT_MEASUREMENT_CALIBRATION;
     //lprintf("real I = %dmA\n", v_currt);
-    lprintf("----%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
+    lprintf("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, v_currt);
     lcd_lprintf(240, 0, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
     if(v_bat < BATT_LOW_LIMIT){
         lprintf("battery is low\n");

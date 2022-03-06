@@ -819,6 +819,7 @@ void ui_transfer(uint8 ui_id)
 
 void common_process_event(void*vp)
 {
+    static uint32_t power_indicator_counter = 0;
     //bool dg = g_flag_1s;
     ui_t* uif =(ui_t*)vp;
 #if 0
@@ -883,12 +884,17 @@ void common_process_event(void*vp)
         }
     }
     //power_display = v_bat - BATT_LOW_LIMIT;
+#define POWER_INDICATOR_CYCLE 30
     if(g_flag_1s){
-        power_display = BATT_MAX - v_bat;
-        if(v_bat<BATT_LOW_ALERT){
-            set_prgb_color(RED);
+        power_indicator_counter++;
+        if(power_indicator_counter > POWER_INDICATOR_CYCLE){
+            power_indicator_counter = 0;
+            power_display = BATT_MAX - v_bat;
+            if(v_bat<BATT_LOW_ALERT){
+                set_prgb_color(RED);
+            }
+            update_prgb(uif, &power_prgb);
         }
-        update_prgb(uif, &power_prgb);
     }
     cur_task_event_flag = 0;
 }
