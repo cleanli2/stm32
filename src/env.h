@@ -6,6 +6,10 @@
 /*
  * 0x000000
  * None
+ * 0x0C0000
+ * ziku12
+ * 0x0EFEB0
+ * None
  * 0x0FA000
  * ENV Help
  * 0x0FD000
