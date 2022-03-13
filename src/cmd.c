@@ -41,7 +41,7 @@ void w25f(char *p)
     uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
 #ifdef WRITE_W25F
     uint8_t*datawritebuf=ziku12;
-    uint32_t datalen = get_ziku12_size()*0x20;
+    uint32_t datalen = get_ziku12_size();
 #endif
 
     lprintf("p=%s\n", p);
