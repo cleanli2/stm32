@@ -121,12 +121,15 @@ void w25f(char *p)
     }
     else if(cmdindex == 7){//w w25f
 #ifdef WRITE_W25F
-        if(tmp>1){
+        if(tmp>2){
             p = str_to_hex(p, &para1);
-            SPI_Flash_Write((uint8_t*)para1, datawritebuf, datalen);
+            p = str_to_hex(p, &para2);
+            lprintf("para1=%x, wbuf=0x%x, para2=%d\n", para1,
+                    datawritebuf, datalen);
+            SPI_Flash_Write(datawritebuf, (uint8_t*)para1, para2);
         }
         else{
-            lprintf("error para:w25f 5 70000//write to 0x70000");
+            lprintf("error para:w25f 5 70000 18000//write to 0x70000, len 0x18000");
         }
 #endif
     }

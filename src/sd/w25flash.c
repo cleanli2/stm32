@@ -209,19 +209,23 @@ void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 	secremain=4096-secoff;//扇区剩余空间大小    
 	if(NumByteToWrite<=secremain)secremain=NumByteToWrite;//不大于4096个字节
 	while(1) 
-	{	
+	{
+        lprintf("pos %x\n", secpos);
 		SPI_Flash_Read(SPI_FLASH_BUF,secpos*4096,4096);//读出整个扇区的内容
+        lprintf("read done\n");
 		for(i=0;i<secremain;i++)//校验数据
 		{
 			if(SPI_FLASH_BUF[secoff+i]!=0XFF)break;//需要擦除  	  
 		}
 		if(i<secremain)//需要擦除
 		{
+            lprintf("need erase sector\n");
 			SPI_Flash_Erase_Sector(secpos);//擦除这个扇区
 			for(i=0;i<secremain;i++)	   //复制
 			{
 				SPI_FLASH_BUF[i+secoff]=pBuffer[i];	  
 			}
+            lprintf("write sector\n");
 			SPI_Flash_Write_NoCheck(SPI_FLASH_BUF,secpos*4096,4096);//写入整个扇区  
 
 		}else SPI_Flash_Write_NoCheck(pBuffer,WriteAddr,secremain);//写已经擦除了的,直接写入扇区剩余区间. 				   
