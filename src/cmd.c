@@ -32,9 +32,17 @@ uint32_t cmdcache_index=0;
 uint32_t review_cmd_his_index;
 uint8_t read_buf[512];
 
+extern const uint8_t ziku12[];
+extern const uint8_t ziku[];
+uint32_t get_ziku12_size();
+uint32_t get_ziku_size();
 void w25f(char *p)
 {
     uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
+#ifdef WRITE_W25F
+    uint8_t*datawritebuf=ziku12;
+    uint32_t datalen = get_ziku12_size()*0x20;
+#endif
 
     lprintf("p=%s\n", p);
     tmp = get_howmany_para(p);
@@ -43,6 +51,7 @@ void w25f(char *p)
 	    p = str_to_hex(p, &cmdindex);
     }
     if(tmp == 0 || cmdindex == 0){
+        SD_LowLevel_Init();
         lprintf("w25 flash ID:%x\n", SPI_Flash_ReadID());
     }
     else if(cmdindex == 1){
@@ -92,14 +101,34 @@ void w25f(char *p)
             SPI_Flash_Erase_Chip();
         }
     }
-    else if(cmdindex == 5){//cmd
+    else if(cmdindex == 5){//fake w w25f
+#ifdef WRITE_W25F
+        if(tmp>1){
+            p = str_to_hex(p, &para1);
+            lprintf("para1=%x, wbuf=0x%x, datalen=%d\n", para1,
+                    datawritebuf, datalen);
+            //SPI_Flash_Write((uint8_t*)para1, datawritebuf, datalen);
+        }
+        else{
+            lprintf("error para:w25f 5 70000//write to 0x70000");
+        }
+#endif
     }
     else if(cmdindex == 6){//cmd
         p = str_to_hex(p, &para1);
         p = str_to_hex(p, &para2);
         p = str_to_hex(p, &para3);
     }
-    else if(cmdindex == 7){//low init/deinit
+    else if(cmdindex == 7){//w w25f
+#ifdef WRITE_W25F
+        if(tmp>1){
+            p = str_to_hex(p, &para1);
+            SPI_Flash_Write((uint8_t*)para1, datawritebuf, datalen);
+        }
+        else{
+            lprintf("error para:w25f 5 70000//write to 0x70000");
+        }
+#endif
     }
     else if(cmdindex == 8){//
     }
@@ -1084,13 +1113,16 @@ static const struct command cmd_list[]=
     {"envset",envset},
     {"envget",envget},
     {"envprint",envprint},
+#ifndef WRITE_W25F
     {"fmerase",fmerase},
     {"fmrtest",fmrtest},
     {"fmwtest",fmwtest},
     {"go",go},
     {"gpiotest",gpiotest},
+#endif
     {"help",print_help},
     {"history",history},
+#ifndef WRITE_W25F
     //{"lcd19264init",lcd19264init},
     //{"lcd19264dc",dispcchar},
     {"kt",keytest},
@@ -1099,6 +1131,7 @@ static const struct command cmd_list[]=
     {"lst",lcdsuebinit},
     {"lstep",lcdsuebstep},
     {"lstest",lcdsuebtest},
+#endif
     {"pm",print_mem},
     {"poff",poweroff},
     {"r",read_mem},
@@ -1108,11 +1141,13 @@ static const struct command cmd_list[]=
     {"rtcf",rtcf},
     {"rtcs",rtcs},
     {"sd",sd},
+#ifndef WRITE_W25F
     //{"sdcmds",sd_cmds},
     {"test",test},
     {"taskmask",tm},
     //{"szk",show_ziku},
     {"usb",usb_strg_init},
+#endif
     {"w",write_mem},
     {"w25f",w25f},
     {NULL, NULL},

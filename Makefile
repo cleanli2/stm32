@@ -26,7 +26,11 @@ CFLAGS =  -W -Wall -g -mcpu=cortex-m3 -mthumb -D STM32F10X_MD -D USE_STDPERIPH_D
 CFLAGS+=-DGIT_SHA1=\"$(GIT_SHA1)$(DIRTY)$(CLEAN)\"
 LDFLAGS =  -mthumb -mcpu=cortex-m3 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=Project.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80
 C_SRC=$(shell find src/ -name '*.c')  
-C_OBJ=$(C_SRC:%.c=%.o)          
+C_OBJ=$(C_SRC:%.c=%.o)
+ifeq ($(type),write_w25f)
+CFLAGS+=-DWRITE_W25F
+C_OBJ+=unused/ziku16.o
+endif
 
 .PHONY: all clean
 

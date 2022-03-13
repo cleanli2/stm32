@@ -33,6 +33,10 @@ uint32_t task_mask = 0;
 void main()
 {
     main_init();
+#ifdef WRITE_W25F
+    while(1)
+        run_cmd_interface();
+#else
     ui_start();
     while(1){
         for(int i = 0; i<sizeof(all_tasks)/sizeof(struct task); i++){
@@ -41,4 +45,5 @@ void main()
             }
         }
     }
+#endif
 }
