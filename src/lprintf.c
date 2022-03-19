@@ -236,7 +236,7 @@ uint16_t LCD_PRINT_FRONT_COLOR = BLACK;
 void lcd_lprintf(uint32_t x, uint32_t y, const char *fmt, ...)
 {
     va_list ap;
-    memset(lprintf_buf, 0, 32);
+    memset(lprintf_buf, 0, sizeof(lprintf_buf));
     va_start(ap,fmt);
     vslprintf(lprintf_buf,fmt,ap);
     va_end(ap);

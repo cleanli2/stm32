@@ -646,7 +646,6 @@ void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
     }
     if(k==HZnum){
         k=0;
-        lprintf("%b %b\n", s[0], s[1]);
         tfont16[k].Index[0]==*(s);
         tfont16[k].Index[1]==*(s+1);
         //get the offset in ziku16
