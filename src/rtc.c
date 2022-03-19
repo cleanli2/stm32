@@ -403,7 +403,7 @@ void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y)
 
 void auto_time_correct()
 {
-    uint8_t ch_t[32], *p=&ch_t[0];
+    uint8_t ch_t[ENV_MAX_VALUE_LEN], *p=&ch_t[0];
     date_info_t dt, dt_lastadj;
     uint32_t hours_adj_1min, diff_hours;
     lprintf("auto_time_correct +\n");

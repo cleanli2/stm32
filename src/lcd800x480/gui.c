@@ -164,8 +164,8 @@ void LCD_DrawLine_direction(u16 x1, u16 y1, u16 x2, u16 y2, int start, int end)
     nx2=x1+(x2-x1)*end/RATIO_BASE_OF_LENGTH;
     ny1=y1+(y2-y1)*start/RATIO_BASE_OF_LENGTH;
     ny2=y1+(y2-y1)*end/RATIO_BASE_OF_LENGTH;
-    lprintf("old %d %d %d %d\n", x1, y1, x2, y2);
-    lprintf("new %d %d %d %d\n", nx1, ny1, nx2, ny2);
+    //lprintf("old %d %d %d %d\n", x1, y1, x2, y2);
+    //lprintf("new %d %d %d %d\n", nx1, ny1, nx2, ny2);
     LCD_DrawLine(nx1, ny1, nx2, ny2);
 }
 

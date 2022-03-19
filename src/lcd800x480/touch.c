@@ -270,12 +270,12 @@ u8 TP_Scan(u8 tp)
 	if(PEN==0 && (ret=TP_Read_XY2(&tp_dev.x,&tp_dev.y)))//有按键按下
 	{
 		lprintf("touch pressed\n");
-		lprintf("line%d:x %x y %x ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
+		//lprintf("line%d:x %x y %x ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
 		if(!tp)
 		{
 	 		tp_dev.x=tp_dev.xfac*tp_dev.x+tp_dev.xoff;//将结果转换为屏幕坐标
 			tp_dev.y=tp_dev.yfac*tp_dev.y+tp_dev.yoff;  
-			lprintf("line%d:x %d y %d ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
+			//lprintf("line%d:x %d y %d ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
 	 	} 
 		if((tp_dev.sta&TP_PRES_DOWN)==0)//之前没有被按下
 		{		 

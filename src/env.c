@@ -157,6 +157,13 @@ uint32_t set_env(const uint8_t* name, const uint8_t*value)
         ret = ENV_FAIL;
         goto end;
     }
+    uint8_t ev[ENV_MAX_VALUE_LEN];
+    if(ENV_OK==get_env(name, ev)){
+        if(!strcmp(ev, value)){
+            lprintf("env already set\n");
+            return ret;
+        }
+    }
 
     i = find_env_data_start();
     if(i == ENV_EMPTY_DATA){

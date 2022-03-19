@@ -54,6 +54,7 @@ typedef struct button {
     int need_re_init_ui;
     const char* text;
     int disable;
+    const char* ch_text;
 } button_t;
 
 typedef struct ui_info {

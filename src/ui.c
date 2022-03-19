@@ -158,8 +158,8 @@ void timer_ui_uninit(void*vp)
     lprintf("clr TMR_MAGIC_INDX\n");
 }
 button_t common_button[]={
-    {10,730,200, 60, NULL, UI_LAST, 0, "RETURN"},
-    {270,730,200, 60, NULL, 0, 0, "HOME"},
+    {10,730,200, 60, NULL, UI_LAST, 0, "RETURN", 0, return_cch_str},
+    {270,730,200, 60, NULL, 0, 0, "HOME", 0, home_cch_str},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
 
@@ -169,15 +169,15 @@ void music_test()
 }
 
 button_t main_menu_button[]={
-    {130,40,200, 60, often_used_timer, -1, 0, often_used_timer_cch_str},
-    {130,110,200, 60, NULL, UI_POFF_CTD, 0, "PowerOffCountDown"},
-    {130,180,200, 60, soft_reset_system, -1, 0, "Reboot"},
-    {130,250,200, 60, reboot_download, -1, 0, "RebootDownload"},
-    {130,320,200, 60, power_off, -1, 0, "PowerOff"},
-    {130,390,200, 60, music_test, -1, 0, "MusicTest"},
-    {130,460,200, 60, f3mins_timer, -1, 0, "3x1mins TIMER"},
-    {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer"},
-    {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time"},
+    {130,40,200, 60, often_used_timer, -1, 0, "OftenTimer", 0, often_used_timer_cch_str},
+    {130,110,200, 60, NULL, UI_POFF_CTD, 0, "PowerOffCountDown", 0, poff_countdown_cch_str},
+    {130,180,200, 60, soft_reset_system, -1, 0, "Reboot", 0, reboot_cch_str},
+    {130,250,200, 60, reboot_download, -1, 0, "RebootDownload", 0, rebootd_cch_str},
+    {130,320,200, 60, power_off, -1, 0, "PowerOff", 0, poff_cch_str},
+    {130,390,200, 60, music_test, -1, 0, "MusicTest", 0, music_test_cch_str},
+    {130,460,200, 60, f3mins_timer, -1, 0, "3x1mins TIMER", 0, _3x1mins_timer_cch_str},
+    {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
+    {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
 
@@ -246,18 +246,18 @@ void rp_1()
 }
 
 button_t timer_set_button[]={
-    { 60, 60, 80,  40, mins_2, -1, 0, "2 mins"},
-    {160, 60, 80,  40, mins_3, -1, 0, "3 mins"},
-    {260, 60, 80,  40, mins_5, -1, 0, "5 mins"},
-    {360, 60, 80,  40, mins_10, -1, 0, "10 mins"},
-    { 60,120, 80,  40, mins_20, -1, 0, "20 mins"},
-    {160,120, 80,  40, mins_30, -1, 0, "30 mins"},
-    {260,120, 80,  40, mins_45, -1, 0, "45 mins"},
-    {360,120, 80,  40, mins_1h, -1, 0, "1h+3 mins"},
-    { 60,200, 80,  40, rp_2, -1, 0, "repeat 2"},
-    {160,200, 80,  40, rp_3, -1, 0, "repeat 3"},
-    {260,200, 80,  40, rp_4, -1, 0, "repeat 4"},
-    {360,200, 80,  40, rp_1, -1, 0, "repeat 1"},
+    { 60, 60, 80,  40, mins_2, -1, 0, "2 mins",     0, mins_2_cch_str},
+    {160, 60, 80,  40, mins_3, -1, 0, "3 mins",     0, mins_3_cch_str},
+    {260, 60, 80,  40, mins_5, -1, 0, "5 mins",     0, mins_5_cch_str},
+    {360, 60, 80,  40, mins_10, -1, 0, "10 mins",   0, mins_10_cch_str},
+    { 60,120, 80,  40, mins_20, -1, 0, "20 mins",   0, mins_20_cch_str},
+    {160,120, 80,  40, mins_30, -1, 0, "30 mins",   0, mins_30_cch_str},
+    {260,120, 80,  40, mins_45, -1, 0, "45 mins",   0, mins_45_cch_str},
+    {360,120, 80,  40, mins_1h, -1, 0, "1h+3 mins", 0, mins_1h_cch_str},
+    { 60,200, 80,  40, rp_2, -1, 0, "repeat 2",     0, rp_2_cch_str},
+    {160,200, 80,  40, rp_3, -1, 0, "repeat 3",     0, rp_3_cch_str},
+    {260,200, 80,  40, rp_4, -1, 0, "repeat 4",     0, rp_4_cch_str},
+    {360,200, 80,  40, rp_1, -1, 0, "repeat 1",     0, rp_1_cch_str},
     {-1,-1,-1, -1,NULL, -1, 0, NULL},
 };
 
@@ -385,7 +385,7 @@ void draw_clock_pointer(int xc, int yc, int pt_inx, int len)
 
 void date_ui_init(void*vp)
 {
-    uint8_t t[32];
+    uint8_t t[ENV_MAX_VALUE_LEN];
     ui_t* uif =(ui_t*)vp;
     lprintf("data ui\n");
     common_ui_init(vp);
@@ -455,20 +455,34 @@ void date_ui_process_event(void*vp)
     common_process_event(vp);
 }
 
-void language_set()
+int is_english()
 {
-    uint8_t t[32];
+    uint8_t t[ENV_MAX_VALUE_LEN];
     if(ENV_OK == get_env("language", t)){
+        lprintf("getenv laguage %s\n", t);
         if(t[0] == 'E'){
-            set_env("language", "C");
+            return 1;
         }
         else{
-            set_env("language", "E");
+            return 0;
         }
     }
     else{
+            return 1;
+    }
+}
+
+void language_set()
+{
+    if(is_english()){
+        lprintf("iseng=1, set to C\n");
+        set_env("language", "C");
+    }
+    else{
+        lprintf("iseng=0, set to E\n");
         set_env("language", "E");
     }
+    draw_button(&date_button[0]);
 }
 
 void adjust_enable()
@@ -515,8 +529,8 @@ void clr_s()
 }
 
 button_t date_button[]={
-    {15, 150, 100,  40, language_set, -1, 0, "Language", 0},
-    {15, 660, 100,  40, adjust_enable, -1, 0, "time adjust", 0},
+    {15, 150, 100,  40, language_set, -1, 0, language_cch_str, 0, "English"},
+    {15, 660, 100,  40, adjust_enable, -1, 0, "time adjust", 0, time_adjust_cch_str},
     {135, 660, 100,  40, fast_1, -1, 0, "faster 1min", 1},
     {255, 660, 100,  40, slow_1, -1, 0, "slower 1min", 1},
     {375, 660, 100,  40, clr_s, -1, 0, "clear second", 1},
@@ -690,6 +704,8 @@ void draw_button(button_t*pbt)
 {
     uint16_t color, color_bak = LCD_PRINT_FRONT_COLOR;
     if(!pbt)return;
+    int is_eng = is_english();
+
     while(pbt->x >=0){
         if(pbt->disable){
             color = WHITE;
@@ -699,10 +715,13 @@ void draw_button(button_t*pbt)
             color = BLACK;
             LCD_PRINT_FRONT_COLOR = BLACK;
         }
+        int lx = MIN(pbt->x, pbt->x+pbt->w);
+        int ly = MIN(pbt->y, pbt->y+pbt->h);
         draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, color);
-        if(pbt->text){
-            int lx = MIN(pbt->x, pbt->x+pbt->w);
-            int ly = MIN(pbt->y, pbt->y+pbt->h);
+        if(pbt->ch_text && !is_eng){
+            lcd_lprintf(lx+5,ly+5,pbt->ch_text);
+        }
+        else{
             lcd_lprintf(lx+5,ly+5,pbt->text);
         }
         pbt++;

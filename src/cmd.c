@@ -986,7 +986,7 @@ void envprint(char *p)
 void envget(char *p)
 {
     uint32_t tmp;
-    uint8_t* name, value[16];
+    uint8_t* name, value[ENV_MAX_VALUE_LEN];
     tmp = get_howmany_para(p);
     lprintf("tmp=%d\n", tmp);
     if(tmp<1){
