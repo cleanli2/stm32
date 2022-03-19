@@ -631,6 +631,8 @@ void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
     u16 HZnum;
     u16 x0=x;
     u32 ziku_offset;
+    u16 local_scale_x=LCD_Char_scale;
+    u16 local_scale_y=LCD_Char_scale;
     HZnum=sizeof(tfont16)/sizeof(typFNT_GB16);
 
 
@@ -653,26 +655,44 @@ void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
                 SPI_FLASH_ZIKU16_START+ziku_offset, 32);
     }
     //show the cch
-    LCD_SetWindows(x,y,x+16-1,y+16-1);
+    LCD_SetWindows(x,y,x+16*LCD_Char_scale-1,y*LCD_Char_scale+16-1);
     for(i=0;i<16*2;i++)
     {
-        for(j=0;j<8;j++)
-        {
-            if(!mode) //not overlay
+        local_scale_y = LCD_Char_scale;
+        while(local_scale_y--){
+            for(j=0;j<8;j++)
             {
-                if(tfont16[k].Msk[i]&(0x80>>j))	Lcd_WriteData_16Bit(fc);
-                else Lcd_WriteData_16Bit(bc);
-            }
-            else
-            {
-                POINT_COLOR=fc;
-                if(tfont16[k].Msk[i]&(0x80>>j))	LCD_DrawPoint(x,y);
-                x++;
-                if((x-x0)==16)
+                if(!mode) //not overlay
                 {
-                    x=x0;
-                    y++;
-                    break;
+                    if(tfont16[k].Msk[i]&(0x80>>j)){
+                        local_scale_x = LCD_Char_scale;
+                        while(local_scale_x--){
+                            Lcd_WriteData_16Bit(fc);
+                        }
+                    }
+                    else{
+                        local_scale_x = LCD_Char_scale;
+                        while(local_scale_x--){
+                            Lcd_WriteData_16Bit(bc);
+                        }
+                    }
+                }
+                else
+                {
+                    POINT_COLOR=fc;
+                    if(tfont16[k].Msk[i]&(0x80>>j)){
+                        local_scale_x = LCD_Char_scale;
+                        while(local_scale_x--){
+                            LCD_DrawPoint(x,y);
+                        }
+                    }
+                    x++;
+                    if((x-x0)==16)
+                    {
+                        x=x0;
+                        y++;
+                        break;
+                    }
                 }
             }
         }
