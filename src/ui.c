@@ -455,6 +455,22 @@ void date_ui_process_event(void*vp)
     common_process_event(vp);
 }
 
+void language_set()
+{
+    uint8_t t[32];
+    if(ENV_OK == get_env("language", t)){
+        if(t[0] == 'E'){
+            set_env("language", "C");
+        }
+        else{
+            set_env("language", "E");
+        }
+    }
+    else{
+        set_env("language", "E");
+    }
+}
+
 void adjust_enable()
 {
     if(date_button[1].disable &&
@@ -499,6 +515,7 @@ void clr_s()
 }
 
 button_t date_button[]={
+    {15, 150, 100,  40, language_set, -1, 0, "Language", 0},
     {15, 660, 100,  40, adjust_enable, -1, 0, "time adjust", 0},
     {135, 660, 100,  40, fast_1, -1, 0, "faster 1min", 1},
     {255, 660, 100,  40, slow_1, -1, 0, "slower 1min", 1},
