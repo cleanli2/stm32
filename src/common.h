@@ -15,6 +15,7 @@
 #include "sd_lowlevel.h"
 #include "stm32_eval_spi_sd.h"
 #include "env.h"
+#include "cch_str.h"
 
 extern uint32_t logv;
 

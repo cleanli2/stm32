@@ -169,7 +169,7 @@ void music_test()
 }
 
 button_t main_menu_button[]={
-    {130,40,200, 60, often_used_timer, -1, 0, "OftenTimer"},
+    {130,40,200, 60, often_used_timer, -1, 0, often_used_timer_cch_str},
     {130,110,200, 60, NULL, UI_POFF_CTD, 0, "PowerOffCountDown"},
     {130,180,200, 60, soft_reset_system, -1, 0, "Reboot"},
     {130,250,200, 60, reboot_download, -1, 0, "RebootDownload"},

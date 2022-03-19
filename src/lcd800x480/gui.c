@@ -552,7 +552,7 @@ void LCD_ShowNum(u16 x,u16 y,u32 num,u8 len,u8 size)
 	 	LCD_ShowChar(x+(size/2)*t,y,POINT_COLOR,BACK_COLOR,temp+'0',size,0); 
 	}
 } 
-
+#if 0
 /*****************************************************************************
  * @name       :void GUI_DrawFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
  * @date       :2018-08-09 
@@ -611,6 +611,75 @@ void GUI_DrawFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
 
 	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//恢复窗口为全屏  
 } 
+#endif
+/*****************************************************************************
+ * @name       :void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
+ * @date       :2022-03-19
+ * @function   :Display a single 16x16 Chinese character from ziku16
+ * @parameters :x:the bebinning x coordinate of the Chinese character
+                y:the bebinning y coordinate of the Chinese character
+                fc:the color value of Chinese character
+                bc:the background color of Chinese character
+                s:the start address of the Chinese character
+                mode:0-no overlying,1-overlying
+ * @retvalue   :None
+ ******************************************************************************/
+void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
+{
+    u8 i,j;
+    u16 k;
+    u16 HZnum;
+    u16 x0=x;
+    u32 ziku_offset;
+    HZnum=sizeof(tfont16)/sizeof(typFNT_GB16);
+
+
+    for (k=0;k<HZnum;k++)
+    {
+        if ((tfont16[k].Index[0]==*(s))&&(tfont16[k].Index[1]==*(s+1)))
+        {
+            break;
+        }
+        continue;
+    }
+    if(k==HZnum){
+        k=0;
+        lprintf("%b %b\n", s[0], s[1]);
+        tfont16[k].Index[0]==*(s);
+        tfont16[k].Index[1]==*(s+1);
+        //get the offset in ziku16
+        ziku_offset = ((s[0]-0xa1)*94+s[1]-0xa1)*32;
+        SPI_Flash_Read((uint8_t*)(&tfont16[k].Msk[0]),
+                SPI_FLASH_ZIKU16_START+ziku_offset, 32);
+    }
+    //show the cch
+    LCD_SetWindows(x,y,x+16-1,y+16-1);
+    for(i=0;i<16*2;i++)
+    {
+        for(j=0;j<8;j++)
+        {
+            if(!mode) //not overlay
+            {
+                if(tfont16[k].Msk[i]&(0x80>>j))	Lcd_WriteData_16Bit(fc);
+                else Lcd_WriteData_16Bit(bc);
+            }
+            else
+            {
+                POINT_COLOR=fc;
+                if(tfont16[k].Msk[i]&(0x80>>j))	LCD_DrawPoint(x,y);
+                x++;
+                if((x-x0)==16)
+                {
+                    x=x0;
+                    y++;
+                    break;
+                }
+            }
+        }
+    }
+
+    LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//恢复窗口为全屏
+}
 
 /*****************************************************************************
  * @name       :void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
@@ -786,7 +855,7 @@ void Show_Str(u16 x, u16 y, u16 fc, u16 bc, u8 *str,u8 size,u8 mode)
 			else if(size==24)
 			GUI_DrawFont24(x,y,fc,bc,str,mode);	
 			else
-			GUI_DrawFont16(x,y,fc,bc,str,mode);
+			GUI_DrawZikuFont16(x,y,fc,bc,str,mode);
 				
 	        str+=2; 
 	        x+=size;//下一个汉字偏移	    
