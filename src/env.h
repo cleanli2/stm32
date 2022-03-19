@@ -6,6 +6,8 @@
 /*
  * 0x000000
  * None
+ * 0x07E000
+ * ziku16
  * 0x0C0000
  * ziku12
  * 0x0EFEB0
@@ -20,6 +22,10 @@
  */
 //spi flash damaged now 2022/3/6
 //ENV offset changed to OK flash addr
+//
+#define SPI_FLASH_ZIKU16_START 0x7E000
+#define SPI_FLASH_ZIKU12_START 0xC0000
+
 #define SPI_FLASH_DAMAGED
 
 #define TOTAL_SPI_FLASH_SIZE 0x200000
