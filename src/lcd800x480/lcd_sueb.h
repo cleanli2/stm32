@@ -175,6 +175,7 @@ u16  LCD_ReadPoint(u16 x,u16 y); //读点
 void lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye);
 void LCD_SetWindows(u16 xStar, u16 yStar,u16 xEnd,u16 yEnd);
 u16 LCD_RD_DATA(void);//读取LCD数据								    
+u16 LCD_RD_REG(void);
 void LCD_WriteReg(u16 LCD_Reg, u16 LCD_RegValue);
 void LCD_WR_REG(u16 data);
 void LCD_WR_DATA(u16 data);
@@ -189,6 +190,8 @@ u16 LCD_Read_ID(void);
 void set_BL_value(uint16_t v);
 uint16_t get_BL_value();
 void LCD_RESET();
+void lcd_sueb_test();
+void lcd_sueb_basicinit();
 
 //如果仍然觉得速度不够快，可以使用下面的宏定义,提高速度.
 //注意要去掉lcd.c中void LCD_WR_DATA(u16 data)函数定义哦

@@ -315,8 +315,8 @@ void sd(char *p)
 
     return;
 
-error:
-    lprint("Err!\ndispcchar [x] [y]\n");
+//error:
+//    lprint("Err!\ndispcchar [x] [y]\n");
 }
 #if 0
 void sd_cmds(char *p)
@@ -377,19 +377,20 @@ void lcdsuebinit(char *p)
 
     return;
 
-error:
-    lprint("Err!\ndispcchar [x] [y]\n");
+//error:
+//    lprint("Err!\ndispcchar [x] [y]\n");
 }
 
 void lcdsuebtest(char *p)
 {
+    (void)p;
     lcd_sueb_test();
     con_send('\n');
 
     return;
 
-error:
-    lprint("Err!\ndispcchar [x] [y]\n");
+//error:
+//    lprint("Err!\ndispcchar [x] [y]\n");
 }
 
 #if 0
@@ -443,13 +444,15 @@ void buzztest(char *p)
 
     while(!con_is_recved()){
 	    /* Set*/
-        if(para > 200)
+        if(para > 200){
             lprintf("Set PB5\n");
+        }
 	    GPIO_ResetBits(GPIOB,GPIO_Pin_5);	
 	    delay_ms(para);
 	    /* ReSet */
-        if(para > 200)
+        if(para > 200){
             lprintf("Reset PB5\n");
+        }
 	    GPIO_SetBits(GPIOB,GPIO_Pin_5);	
 	    delay_ms(para);
     }
@@ -457,8 +460,8 @@ void buzztest(char *p)
 
     return;
 
-error:
-    lprint("Err!\ndispcchar [x] [y]\n");
+//error:
+//    lprint("Err!\ndispcchar [x] [y]\n");
 }
 void ledtest(char *p)
 {
@@ -484,8 +487,8 @@ void ledtest(char *p)
 
     return;
 
-error:
-    lprint("Err!\ndispcchar [x] [y]\n");
+//error:
+//    lprint("Err!\ndispcchar [x] [y]\n");
 }
 #if 0
 void dispcchar(char *p)
@@ -579,7 +582,7 @@ void show_ziku(char *p)
 void lcdsuebstep(char *p)
 {
     uint32_t para1 = 0, para2=0, para3 = 0, para4 = 0, color = 0,tmp, cmdindex;
-    uint32_t para5 = 0, para6=0, para7 = 0, para8 = 0;
+    uint32_t para5 = 0, para6=0, para7 = 0;
 
     lprintf("p=%s\n", p);
     tmp = get_howmany_para(p);
@@ -636,7 +639,7 @@ void lcdsuebstep(char *p)
         p=str_to_hex(p, &para5);
         p=str_to_hex(p, &para6);
         p=str_to_hex(p, &para7);
-	Show_Str(para1,para2,para3,para4,&para5,para6,para7);
+	Show_Str(para1,para2,para3,para4,(u8*)&para5,para6,para7);
     }
     else if(cmdindex == 8){//
 	    main_test(); 		//测试主界面
@@ -700,6 +703,7 @@ error:
 }
 void poweroff(char *p)
 {
+    (void)p;
     lprintf("Power OFF!\n");
     power_off();
     con_send('\n');
@@ -709,6 +713,7 @@ void poweroff(char *p)
 }
 void adc(char *p)
 {
+    (void)p;
     con_send('\n');
     adc_test();
 
@@ -717,7 +722,8 @@ void adc(char *p)
 }
 void cmd_exit(char *p)
 {
-    con_send('Quit CMD!\n');
+    (void)p;
+    lprintf("Quit CMD!\n");
     quit_cmd = 1;
 
     return;
@@ -725,6 +731,7 @@ void cmd_exit(char *p)
 }
 void rebootd(char *p)
 {
+    (void)p;
 
     reboot_download();
 
@@ -733,6 +740,7 @@ void rebootd(char *p)
 }
 void reboot(char *p)
 {
+    (void)p;
     soft_reset_system();
 
     return;
@@ -741,8 +749,9 @@ void reboot(char *p)
 #define BLOCK_SIZE 0x400
 void fmerase(char *p)
 {
-    uint32_t len = 0xffff, er_ct = 1, data = 0, addr;
-    uint32_t dp = (uint32_t*)0x08010000;
+    uint32_t er_ct = 1, addr;
+    //uint32_t len = 0xffff, data = 0;
+    //uint32_t dp = (uint32_t*)0x08010000;
     FLASH_Status fret;
 
     lprintf("\n");
@@ -783,8 +792,9 @@ err:
 }
 void fmwtest(char *p)
 {
-    uint32_t len = 1, ne_ct = 0, data = 0, addr;
-    uint32_t dp = (uint32_t*)0x08010000;
+    uint32_t len = 1, data = 0, addr;
+    //uint32_t ne_ct = 0;
+    //uint32_t dp = (uint32_t*)0x08010000;
     FLASH_Status fret;
 
     lprintf("\n");
@@ -875,7 +885,7 @@ void logflag(char *p)
 }
 void test(char *p)
 {
-    uint32_t n, px1, py1, s,e;
+    uint32_t px1, py1, s,e;
     static int txc=0;
     p = str_to_hex(p, &px1);
     p = str_to_hex(p, &py1);
@@ -944,6 +954,7 @@ void tm(char *p)
 
 void history(char *p)
 {
+    (void)p;
     uint32_t n = CMD_CACHES_SIZE, cix = cmdcache_index;
     con_send('\n');
     while(n--){
@@ -964,6 +975,7 @@ void history(char *p)
 
 void keytest(char *p)
 {
+    (void)p;
     uint8_t rchar;
     con_send('\n');
     while((rchar=con_recv())!=ENTER_CHAR){
@@ -976,7 +988,7 @@ void keytest(char *p)
 }
 void envprint(char *p)
 {
-    uint8_t* name, *value;
+    (void)p;
     printenv();
     con_send('\n');
 
@@ -986,7 +998,7 @@ void envprint(char *p)
 void envget(char *p)
 {
     uint32_t tmp;
-    uint8_t* name, value[ENV_MAX_VALUE_LEN];
+    char* name, value[ENV_MAX_VALUE_LEN];
     tmp = get_howmany_para(p);
     lprintf("tmp=%d\n", tmp);
     if(tmp<1){
@@ -1010,7 +1022,7 @@ void envget(char *p)
 void envset(char *p)
 {
     uint32_t tmp;
-    uint8_t* name, *value=0;
+    char* name, *value=0;
     tmp = get_howmany_para(p);
     lprintf("tmp=%d\n", tmp);
     if(tmp<1){
@@ -1043,6 +1055,7 @@ void envset(char *p)
 }
 void rtcs(char *p)
 {
+    (void)p;
     con_send('\n');
     if(RTC_OK==adjust_1min(0)){
         lprintf("slower 1 min OK\n");
@@ -1054,6 +1067,7 @@ void rtcs(char *p)
 }
 void rtcf(char *p)
 {
+    (void)p;
     con_send('\n');
     if(RTC_OK==adjust_1min(1)){
         lprintf("faster 1 min OK\n");
@@ -1065,6 +1079,7 @@ void rtcf(char *p)
 }
 void gpiotest(char *p)
 {
+    (void)p;
     con_send('\n');
     gpio_test();
 
@@ -1073,29 +1088,29 @@ void gpiotest(char *p)
 }
 void rtc_cmd(char *p)
 {
-    uint8_t d[6], tmp, *ip=0;
+    uint8_t d[6], tmp;
 
     tmp = get_howmany_para(p);
     lprintf("tmp=%d\n", tmp);
     if(tmp==6){
-        p = str_to_hex(p, &d[0]);
-        p = str_to_hex(p, &d[1]);
-        p = str_to_hex(p, &d[2]);
-        p = str_to_hex(p, &d[3]);
-        p = str_to_hex(p, &d[4]);
-        p = str_to_hex(p, &d[5]);
+        p = str_to_hex(p, (uint*)&d[0]);
+        p = str_to_hex(p, (uint*)&d[1]);
+        p = str_to_hex(p, (uint*)&d[2]);
+        p = str_to_hex(p, (uint*)&d[3]);
+        p = str_to_hex(p, (uint*)&d[4]);
+        p = str_to_hex(p, (uint*)&d[5]);
         rtc_write(d);
     }
     else if(tmp==0){
         lprintf("%s\n", get_rtc_time(0));
     }
     else if(tmp==1){
-        p = str_to_hex(p, &d[0]);
+        p = str_to_hex(p, (uint*)&d[0]);
         lprintf("read reg %b=%b\n", d[0], rtc_read_reg(d[0]));
     }
     else if(tmp==2){
-        p = str_to_hex(p, &d[0]);
-        p = str_to_hex(p, &d[1]);
+        p = str_to_hex(p, (uint*)&d[0]);
+        p = str_to_hex(p, (uint*)&d[1]);
         lprintf("write reg %b->%b\n", d[0], d[1]);
         rtc_write_reg(d[0], d[1]);
     }
@@ -1204,9 +1219,6 @@ uint get_howmany_para(char *s)
 
 char * str_to_str(char *s, char**result)
 {
-    char*ret;
-    uint  i = 0;
-
     while(*s == ' ')s++;
     *result=s;
     while(*s != ' ' && *s != 0)s++;
@@ -1323,7 +1335,7 @@ void handle_cmd()
 	return;
     //record the history cmd
     review_cmd_his_index = cmdcache_index;
-    strcpy(cmd_caches[cmdcache_index++], cmd_buf);
+    strcpy((char*)cmd_caches[cmdcache_index++], cmd_buf);
     if(cmdcache_index==CMD_CACHES_SIZE){
         cmdcache_index = 0;
     }
@@ -1402,7 +1414,7 @@ void run_cmd_interface()
             con_send(c);
         }
         else if(c == 0x5B && last_c == 0x1b){//history cmd
-            strcpy(cmd_buf, cmd_caches[review_cmd_his_index]);
+            strcpy(cmd_buf, (char*)cmd_caches[review_cmd_his_index]);
             cmd_buf_p = strlen(cmd_buf);
             lprintf("%s", cmd_caches[review_cmd_his_index]);
             if(review_cmd_his_index==0){
