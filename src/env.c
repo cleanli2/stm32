@@ -1,4 +1,5 @@
 #include "env.h"
+#include "common.h"
 #include <string.h>
 #include <stdint.h>
 
@@ -16,7 +17,7 @@ void env_set_char(uint32_t offset, uint8_t d)
     SPI_Flash_Write(&d, ENV_STORE_START_ADDR+offset, 1);
 }
 
-uint32_t strcpy2env(uint32_t env_offset, uint8_t *s)
+uint32_t strcpy2env(uint32_t env_offset, const uint8_t *s)
 {
     uint32_t len = 0;
     while(*s){
@@ -30,7 +31,7 @@ uint32_t strcpy2mem(uint8_t *s, uint32_t env_offset)
 {
     uint32_t len = 0;
     uint8_t c;
-    while(c=env_get_char(env_offset)){
+    while((c = env_get_char(env_offset))){
         len++;
         *s++ = c;
         env_offset++;
@@ -97,7 +98,7 @@ uint32_t find_env_data_start()
 
 uint32_t get_env(const char* name, char*value)
 {
-    int i = 0, nxt, ret = ENV_OK;
+    uint32_t i = 0, nxt, ret = ENV_OK;
 
     if(!name){
         lprintf("name=NULL\n");
@@ -126,7 +127,7 @@ uint32_t get_env(const char* name, char*value)
         }
         if ((val=envmatch((uint8_t *)name, i)) < 0)
             continue;
-        strcpy2mem(value, val);
+        strcpy2mem((uint8_t*)value, val);
         if(*value==0){//null str
             ret = ENV_FAIL;
             goto end;
@@ -141,7 +142,7 @@ end:
 
 uint32_t set_env(const char* name, const char*value)
 {
-    int i = 0, n, ret = ENV_OK;
+    uint32_t i = 0, n, ret = ENV_OK;
     uint8_t zero_str = 0;
 
     if(!name){
@@ -150,14 +151,14 @@ uint32_t set_env(const char* name, const char*value)
         goto end;
     }
     if(!value){
-        value = &zero_str;
+        value = (const char*)&zero_str;
     }
     if(strchr(name, '=')!=NULL || strchr(value, '=')){
         lprintf("'=' can't be in name or value\n");
         ret = ENV_FAIL;
         goto end;
     }
-    uint8_t ev[ENV_MAX_VALUE_LEN];
+    char ev[ENV_MAX_VALUE_LEN];
     if(ENV_OK==get_env(name, ev)){
         if(!strcmp(ev, value)){
             lprintf("env already set\n");
@@ -182,9 +183,9 @@ uint32_t set_env(const char* name, const char*value)
     }
     i -= n;
     env_set_char(i++, '\0');
-    i += strcpy2env(i, name);
+    i += strcpy2env(i, (uint8_t*)name);
     env_set_char(i++, '=');
-    strcpy2env(i, value);
+    strcpy2env(i, (const uint8_t*)value);
 
 end:
     set_touch_need_reinit();
@@ -196,8 +197,8 @@ end:
  */
 int printenv()
 {
-    int i, j, ret=ENV_OK;
-    char c, buf[64];
+    uint32_t i, ret=ENV_OK;
+    char buf[64];
 
     i = 0;
     buf[64] = '\0';
@@ -211,7 +212,7 @@ int printenv()
     i++;
     while(env_get_char(i) != '\0'){
         lprintf("%x:", i);
-        i+=strcpy2mem(buf, i);
+        i+=strcpy2mem((uint8_t*)buf, i);
         i++;
         lprintf("%s\n", buf);
         if(i>=ENV_STORE_SIZE){
