@@ -20,7 +20,7 @@ enum MUSIC_STATUS {
 #define NO_DIVERT 0xffff
 #define DEFAULT_MUSIC_NOTE_PERIOD 312
 struct music_play_info{
-    signed char*pu;
+    const signed char*pu;
     uint pu_index;
     uint8 music_status;
     uint divert_index;

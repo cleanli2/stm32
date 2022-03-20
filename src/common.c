@@ -386,7 +386,7 @@ void mytimer(uint32_t w_seconds)
 void power_off()
 {
     check_rtc_alert_and_clear();
-    Show_Str(20, 630,RED,0xffff,(uint8_t*)"Power off in 3 seconds",24,0);
+    Show_Str(20, 630,RED,0xffff,"Power off in 3 seconds",24,0);
     beep(600, 100);
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, -1, -1);
     auto_time_correct();
@@ -476,7 +476,7 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
     beep(800, 3000);
 }
 #define AUTO_POWER_OFF_COUNT 100000
-static uint32_t single_timer_len = 16;
+//static uint32_t single_timer_len = 16;
 /**
   * @brief  Main program.
   * @param  None
@@ -491,7 +491,7 @@ void main_init(void)
        system_stm32f10x.c file
      */     
   int looptimes = 3;
-  uint32_t ict;
+  //uint32_t ict;
   RCC_ClocksTypeDef RCC_ClocksStatus;
 
   delay_init();

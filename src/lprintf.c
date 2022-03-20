@@ -240,5 +240,5 @@ void lcd_lprintf(uint32_t x, uint32_t y, const char *fmt, ...)
     va_start(ap,fmt);
     vslprintf(lprintf_buf,fmt,ap);
     va_end(ap);
-    Show_Str(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,(uint8_t*)lprintf_buf,16,0);
+    Show_Str(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lprintf_buf,16,0);
 }

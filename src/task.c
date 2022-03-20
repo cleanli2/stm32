@@ -245,7 +245,7 @@ void play_music( const signed char* pu, uint note_period)
         }
         return;
     }
-    music_task_play_info.pu = pu;
+    music_task_play_info.pu = (const signed char*)pu;
     music_task_play_info.pu_index = 0;
     music_task_play_info.music_status = MUSIC_PLAYING;
     music_task_play_info.divert_index = NO_DIVERT;
