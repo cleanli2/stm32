@@ -646,8 +646,9 @@ void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
     }
     if(k==HZnum){
         k=0;
-        tfont16[k].Index[0]==*(s);
-        tfont16[k].Index[1]==*(s+1);
+        tfont16[0].Index[0]=s[0];
+        tfont16[0].Index[1]=*(s+1);
+
         //get the offset in ziku16
         ziku_offset = ((s[0]-0xa1)*94+s[1]-0xa1)*32;
         SPI_Flash_Read((uint8_t*)(&tfont16[k].Msk[0]),
@@ -897,6 +898,7 @@ void Show_Str(u16 x, u16 y, u16 fc, u16 bc, u8 *str,u8 size,u8 mode)
 ******************************************************************************/ 
 void Gui_StrCenter(u16 x, u16 y, u16 fc, u16 bc, u8 *str,u8 size,u8 mode)
 {
+    (void)x;
 	u16 len=strlen((const char *)str);
 	u16 x1=(lcddev.width-len*8)/2;
 	Show_Str(x1,y,fc,bc,str,size,mode);
