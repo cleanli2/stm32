@@ -31,5 +31,6 @@ void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y);
 void auto_time_correct();
 uint8_t check_rtc_alert_and_clear();
 uint adjust_1min(uint faster_1min);
+void clear_second();
 
 #endif

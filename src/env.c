@@ -95,7 +95,7 @@ uint32_t find_env_data_start()
     return i;
 }
 
-uint32_t get_env(const uint8_t* name, uint8_t*value)
+uint32_t get_env(const char* name, char*value)
 {
     int i = 0, nxt, ret = ENV_OK;
 
@@ -139,7 +139,7 @@ end:
     return ret;
 }
 
-uint32_t set_env(const uint8_t* name, const uint8_t*value)
+uint32_t set_env(const char* name, const char*value)
 {
     int i = 0, n, ret = ENV_OK;
     uint8_t zero_str = 0;

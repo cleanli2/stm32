@@ -48,8 +48,8 @@
 #define ENV_ABNORMAL 0xFFFFFFFD
 #define ENV_MAX_VALUE_LEN 0x20
 
-uint32_t get_env(const uint8_t* name, uint8_t*value);
-uint32_t set_env(const uint8_t* name, const uint8_t*value);
+uint32_t get_env(const char* name, char*value);
+uint32_t set_env(const char* name, const char*value);
 int printenv();
 
 #endif

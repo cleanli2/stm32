@@ -24,10 +24,16 @@ void common_process_event(void*vp);
 void ui_transfer(uint8 ui_id);
 void common_ui_init(void*vp);
 void draw_prgb(prgb_t*pip);
+void update_prgb(ui_t* uif, prgb_t*pip);
+void draw_prgb_raw(prgb_t*pip);
+void timer_ui_transfer_with_para(uint32_t timeout,
+        uint32_t repeat, const int8_t* music);
+void draw_button(button_t*pbt);
 
 void timer_set_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    (void)uif;
     common_ui_init(vp);
     ui_buf[8] = 1;
     lcd_lprintf(60, 280, "Repeat %d times   ", ui_buf[8]);
@@ -35,11 +41,13 @@ void timer_set_ui_init(void*vp)
 void timer_set_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    (void)uif;
     common_process_event(vp);
 }
 void main_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    (void)uif;
     lprintf("mainmenu\n");
     if(check_rtc_alert_and_clear()){
         often_used_timer();
@@ -49,6 +57,7 @@ void main_ui_init(void*vp)
 void main_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    (void)uif;
     if(cur_task_event_flag & (1<<EVENT_NOKEYCT_MAXREACHED)){
         ui_transfer(UI_POFF_CTD);
     }
@@ -57,6 +66,7 @@ void main_ui_process_event(void*vp)
 void poff_ctd_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    (void)uif;
     common_ui_init(vp);
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 20, 140);
     lcd_lprintf(20, 100, "Version:%s%s", VERSION, GIT_SHA1);
@@ -65,6 +75,7 @@ void poff_ctd_ui_init(void*vp)
 void poff_ctd_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    (void)uif;
     if(cur_task_event_flag & (1<<EVENT_BATT_LOW)){
         LCD_PRINT_FRONT_COLOR = RED;
         set_LCD_Char_scale(3);
@@ -96,6 +107,7 @@ prgb_t timer_prgb[]={
 void timer_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    (void)uif;
     play_music(notice_music, 0);
     if(ui_buf[TMR_MAGIC_INDX] != TMR_MAGIC){
         ui_buf[TMR_TMOUT_INDX] = uif->timeout;
@@ -154,13 +166,14 @@ void timer_ui_process_event(void*vp)
 void timer_ui_uninit(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    (void)uif;
     ui_buf[TMR_MAGIC_INDX] = 0;
     lprintf("clr TMR_MAGIC_INDX\n");
 }
 button_t common_button[]={
     {10,730,200, 60, NULL, UI_LAST, 0, "RETURN", 0, return_cch_str},
     {270,730,200, 60, NULL, 0, 0, "HOME", 0, home_cch_str},
-    {-1,-1,-1, -1,NULL, -1, 0, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
 
 void music_test()
@@ -178,7 +191,7 @@ button_t main_menu_button[]={
     {130,460,200, 60, f3mins_timer, -1, 0, "3x1mins TIMER", 0, _3x1mins_timer_cch_str},
     {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
-    {-1,-1,-1, -1,NULL, -1, 0, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
 
 void mins_2()
@@ -258,7 +271,7 @@ button_t timer_set_button[]={
     {160,200, 80,  40, rp_3, -1, 0, "repeat 3",     0, rp_3_cch_str},
     {260,200, 80,  40, rp_4, -1, 0, "repeat 4",     0, rp_4_cch_str},
     {360,200, 80,  40, rp_1, -1, 0, "repeat 1",     0, rp_1_cch_str},
-    {-1,-1,-1, -1,NULL, -1, 0, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
 
 /*UI DATE*/
@@ -385,8 +398,9 @@ void draw_clock_pointer(int xc, int yc, int pt_inx, int len)
 
 void date_ui_init(void*vp)
 {
-    uint8_t t[ENV_MAX_VALUE_LEN];
+    char t[ENV_MAX_VALUE_LEN];
     ui_t* uif =(ui_t*)vp;
+    (void)uif;
     lprintf("data ui\n");
     common_ui_init(vp);
     lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
@@ -411,9 +425,10 @@ void date_ui_init(void*vp)
 #define HOR_PTER_LEN 10
 void date_ui_process_event(void*vp)
 {
-    int h_ix;
+    uint32_t h_ix;
     date_info_t t_cur_date = {0};
     ui_t* uif =(ui_t*)vp;
+    (void)uif;
 
     if(g_flag_1s){
         set_LCD_Char_scale(2);
@@ -457,7 +472,7 @@ void date_ui_process_event(void*vp)
 
 int is_english()
 {
-    uint8_t t[ENV_MAX_VALUE_LEN];
+    char t[ENV_MAX_VALUE_LEN];
     if(ENV_OK == get_env("language", t)){
         lprintf("getenv laguage %s\n", t);
         if(t[0] == 'E'){
@@ -531,10 +546,10 @@ void clr_s()
 button_t date_button[]={
     {15, 150, 100,  40, language_set, -1, 0, language_cch_str, 0, "English"},
     {15, 660, 100,  40, adjust_enable, -1, 0, "time adjust", 0, time_adjust_cch_str},
-    {135, 660, 100,  40, fast_1, -1, 0, "faster 1min", 1},
-    {255, 660, 100,  40, slow_1, -1, 0, "slower 1min", 1},
-    {375, 660, 100,  40, clr_s, -1, 0, "clear second", 1},
-    {-1,-1,-1, -1,NULL, -1, 0, NULL},
+    {135, 660, 100,  40, fast_1, -1, 0, "faster 1min", 1, NULL},
+    {255, 660, 100,  40, slow_1, -1, 0, "slower 1min", 1, NULL},
+    {375, 660, 100,  40, clr_s, -1, 0, "clear second", 1, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
 /*UI DATE END*/
 
@@ -610,6 +625,7 @@ ui_t ui_list[]={
 void common_ui_uninit(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
+    (void)uif;
     cur_task_event_flag = 0;
     if(is_playing_music()){
         pause_music();
@@ -736,7 +752,8 @@ void set_prgb_color(int color)
 
 void update_prgb(ui_t* uif, prgb_t*pip)
 {
-    uint32_t t;
+    (void)uif;
+    int t;
     if(!pip)return;
     //lcd_clr_window(pip->b_color, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
     while(pip->x >=0){
@@ -935,7 +952,7 @@ void common_process_event(void*vp)
             if(v_bat<BATT_LOW_ALERT){
                 set_prgb_color(RED);
             }
-            update_prgb(uif, &power_prgb);
+            update_prgb(uif, &power_prgb[0]);
         }
     }
     cur_task_event_flag = 0;
@@ -955,7 +972,7 @@ void ui_start()
 
 void task_ui(struct task*vp)
 {
-    vp;//fix unused variable warning
+    (void)vp;//fix unused variable warning
     if(current_ui->ui_process_event){
         current_ui->ui_process_event(current_ui);
     }

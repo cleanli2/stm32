@@ -16,6 +16,7 @@
 #include "stm32_eval_spi_sd.h"
 #include "env.h"
 #include "cch_str.h"
+#include "w25flash.h"
 
 extern uint32_t logv;
 

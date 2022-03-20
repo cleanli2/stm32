@@ -42,8 +42,8 @@ extern uint8 cur_task_timer_started;
 extern uint cur_task_timeout_ct;
 extern uint32_t cur_task_event_flag;
 extern uint8 cursor_cmd ;
-extern stop_feed_wtd;
-extern disp_mem_update ;
+//extern stop_feed_wtd;
+//extern disp_mem_update ;
 
 void task_ui(struct task*v);
 void task_key_status(struct task*v);
@@ -63,5 +63,5 @@ void continue_music();
 uint8 is_playing_music();
 void play_music(const signed char* pu, uint note_period);
 void time_hms(char*buf, uint t);
-void local_float_sprintf(struct s_lfs_data* lfsd);
+//void local_float_sprintf(struct s_lfs_data* lfsd);
 #endif
