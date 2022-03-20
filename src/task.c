@@ -85,12 +85,12 @@ void time_hms(char*buf, uint t)
 
 void task_key_status(struct task*vp)
 {
-    vp;//fix unused variable warning
+    (void)vp;//fix unused variable warning
 }
 
 void task_lcd_bklight(struct task*vp)
 {
-    vp;//fix unused variable warning
+    (void)vp;//fix unused variable warning
     if(save_power_mode){
         //lprintf("lcdps:%d %d\n", no_key_down_ct_lcd, get_BL_value());
         if(get_BL_value() > DEFAULT_IDLE_BL){
@@ -124,7 +124,7 @@ void flash_led(uint8 led_cmd, uint mss)
 
 void task_power(struct task*vp)
 {
-    vp;
+    (void)vp;
     if(g_flag_1s){
         if(adc_test()){
             cur_task_event_flag |= 1<<EVENT_BATT_LOW;
@@ -135,7 +135,7 @@ void task_power(struct task*vp)
 
 void task_timer(struct task*vp)
 {
-    vp;//fix unused variable warning
+    (void)vp;//fix unused variable warning
     g_flag_1s = false;
     g_flag_10ms = false;
     uint64_t systime = get_system_us();
@@ -183,7 +183,7 @@ void task_timer(struct task*vp)
 
 void task_disp(struct task*vp)
 {
-    vp;//fix unused variable warning
+    (void)vp;//fix unused variable warning
 }
 void reset_music_note()
 {
@@ -271,7 +271,7 @@ void set_delayed_work(uint tct, func_p f, void*pa)
 
 void task_music(struct task*vp)
 {
-    vp;//fix unused variable warning
+    (void)vp;//fix unused variable warning
     int8 music_note;
     uint music_register_value;
     uint32_t timer_ct;
@@ -357,7 +357,7 @@ void enable_power_save(bool en)
 
 void task_misc(struct task*vp)
 {
-    vp;//fix unused variable warning
+    (void)vp;//fix unused variable warning
     if(con_is_recved() && (con_recv() == 'c')){
         LCD_Clear(BLACK);	//fill all screen with some color
         lcd_lprintf(0,0,"CMD mode");

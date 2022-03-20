@@ -14,7 +14,6 @@ extern uint32_t task_mask;
 extern uint32_t logv;
 
 uint get_howmany_para(char *s);
-char * str_to_hex(char *s, uint * result);
 char * str_to_str(char *s, char**result);
 /*
 void con_send(char X)
@@ -1230,7 +1229,7 @@ char * str_to_str(char *s, char**result)
     return s;
 }
 
-char * str_to_hex(char *s, uint * result)
+char * str_to_hex(char *s, uint32_t * result)
 {
 	uint  i = 0;
 

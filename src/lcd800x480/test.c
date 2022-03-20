@@ -64,7 +64,7 @@
 
 //========================variable==========================//
 u16 ColorTab[5]={RED,GREEN,BLUE,YELLOW,BRED};//定义颜色数组
-u16 ColornTab[8]={RED,MAGENTA,GREEN,DARKBLUE,BLUE,BLACK,LIGHTGREEN};
+u16 ColornTab[]={RED,MAGENTA,GREEN,DARKBLUE,BLUE,BLACK,LIGHTGREEN};
 //=====================end of variable======================//
 
 /*****************************************************************************
@@ -74,7 +74,7 @@ u16 ColornTab[8]={RED,MAGENTA,GREEN,DARKBLUE,BLUE,BLACK,LIGHTGREEN};
  * @parameters :str:the start address of the Chinese and English strings
  * @retvalue   :None
 ******************************************************************************/ 
-void DrawTestPage(u8 *str)
+void DrawTestPage(char *str)
 {
 //绘制固定栏up
 LCD_Clear(WHITE);
@@ -276,7 +276,7 @@ void Pic_test(void)
 void Rotate_Test(void)
 {
 	u8 i=0;
-	u8 *Direction[4]={"Rotation:0","Rotation:90","Rotation:180","Rotation:270"};
+	char *Direction[4]={"Rotation:0","Rotation:90","Rotation:180","Rotation:270"};
 	
 	for(i=0;i<4;i++)
 	{
@@ -378,14 +378,15 @@ void Touch_Test(void)
 void Test_Read(void)
 {
 	u16 lcd_id,color;
-	u8 buf[10] = {0},i;
-	u8 cbuf[20] = {0};
+    uint i;
+	char buf[10] = {0};
+	char cbuf[20] = {0};
 	DrawTestPage("测试2:读ID和颜色值测试");
 	LCD_Fill(0,20,lcddev.width,lcddev.height-20,WHITE);
 	lcd_id = LCD_Read_ID();
 	sprintf((char *)buf,"ID:0x%x",lcd_id);
 	Show_Str(50,25,BLUE,YELLOW,buf,16,1);
-	for (i=0; i<7; i++) 
+	for (i=0; i<sizeof(ColornTab); i++) 
 	{
 		POINT_COLOR=ColornTab[i];
 		LCD_DrawFillRectangle(40-10,55+i*25-10,40+10,55+i*25+10);

@@ -73,7 +73,7 @@ int days_diff(date_info_t* dtp_f, date_info_t * dtp)
 }
 uint32_t time_diff_hours(date_info_t* dtp_f, date_info_t * dtp)
 {
-    uint32_t ret, h = dtp_f->hour, d_diff;
+    uint32_t ret, d_diff;
 
     d_diff = days_diff(dtp_f, dtp);
     ret = diff_with_inc_step(dtp_f->hour, dtp->hour, 24);

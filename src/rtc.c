@@ -403,9 +403,9 @@ void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y)
 
 void auto_time_correct()
 {
-    uint8_t ch_t[ENV_MAX_VALUE_LEN], *p=&ch_t[0];
+    char ch_t[ENV_MAX_VALUE_LEN], *p=&ch_t[0];
     date_info_t dt, dt_lastadj;
-    uint32_t hours_adj_1min, diff_hours;
+    uint32_t hours_adj_1min, diff_hours, v_tmp;
     lprintf("auto_time_correct +\n");
     if(ENV_OK != get_env("LastTimeAdj", ch_t)){
         lprintf("skip ATC 1\n");
@@ -418,13 +418,20 @@ void auto_time_correct()
         }
     }
     p=&ch_t[0];
-    p = str_to_hex(p, &dt_lastadj.year);
-    p = str_to_hex(p, &dt_lastadj.month);
-    p = str_to_hex(p, &dt_lastadj.day);
-    p = str_to_hex(p, &dt_lastadj.hour);
-    p = str_to_hex(p, &dt_lastadj.minute);
-    p = str_to_hex(p, &dt_lastadj.second);
-    p = str_to_hex(p, &dt_lastadj.weekday);
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.year = v_tmp;
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.month = v_tmp;
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.day = v_tmp;
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.hour = v_tmp;
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.minute = v_tmp;
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.second = v_tmp;
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.weekday = v_tmp;
 
     if(ENV_OK != get_env("HsAdj1Min", ch_t) ||
             (ch_t[0]!='+' && ch_t[0]!='-') ){
@@ -433,7 +440,7 @@ void auto_time_correct()
     }
     //'-169' means slower 1 min or '+169' faster
     p=&ch_t[1];
-    p = (uint8_t*)str_to_hex((char*)p, &hours_adj_1min);
+    p = str_to_hex((char*)p, &hours_adj_1min);
 
     //convert
     dt_lastadj.year = bcd2hex_32(dt_lastadj.year);

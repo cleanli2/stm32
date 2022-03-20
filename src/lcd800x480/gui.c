@@ -495,7 +495,7 @@ void LCD_ShowChar(u16 x,u16 y,u16 fc, u16 bc, u8 num,u8 size,u8 mode)
 								mode:0-no overlying,1-overlying
  * @retvalue   :None
 ******************************************************************************/   	  
-void LCD_ShowString(u16 x,u16 y,u8 size,u8 *p,u8 mode)
+void LCD_ShowString(u16 x,u16 y,u8 size,const char*p,u8 mode)
 {         
     while((*p<='~')&&(*p>=' '))//判断是不是非法字符!
     {   
@@ -624,7 +624,7 @@ void GUI_DrawFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
                 mode:0-no overlying,1-overlying
  * @retvalue   :None
  ******************************************************************************/
-void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
+void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
 {
     u8 i,j;
     u16 k;
@@ -713,7 +713,7 @@ void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
 								mode:0-no overlying,1-overlying
  * @retvalue   :None
 ******************************************************************************/ 
-void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
+void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
 {
 	u8 i,j;
 	u16 k;
@@ -769,7 +769,7 @@ void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
 								mode:0-no overlying,1-overlying
  * @retvalue   :None
 ******************************************************************************/ 
-void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
+void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
 {
 	u8 i,j;
 	u16 k;
@@ -825,7 +825,7 @@ void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
 								mode:0-no overlying,1-overlying
  * @retvalue   :None
 ******************************************************************************/	   		   
-void Show_Str(u16 x, u16 y, u16 fc, u16 bc, u8 *str,u8 size,u8 mode)
+void Show_Str(u16 x, u16 y, u16 fc, u16 bc, char *str,u8 size,u8 mode)
 {					
 	u16 x0=x;							  	  
   	u8 bHz=0;     //字符或者中文 
@@ -896,7 +896,7 @@ void Show_Str(u16 x, u16 y, u16 fc, u16 bc, u8 *str,u8 size,u8 mode)
 								mode:0-no overlying,1-overlying
  * @retvalue   :None
 ******************************************************************************/ 
-void Gui_StrCenter(u16 x, u16 y, u16 fc, u16 bc, u8 *str,u8 size,u8 mode)
+void Gui_StrCenter(u16 x, u16 y, u16 fc, u16 bc, char *str,u8 size,u8 mode)
 {
     (void)x;
 	u16 len=strlen((const char *)str);

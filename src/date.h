@@ -20,4 +20,5 @@ uint32_t time_diff_minutes(date_info_t* dtp_f, date_info_t * dtp);
 uint32_t time_diff_seconds(date_info_t* dtp_f, date_info_t * dtp);
 uint32_t time_diff_hours(date_info_t* dtp_f, date_info_t * dtp);
 int days_diff(date_info_t* dtp_f, date_info_t * dtp);
+void add_time_diff_minutes(date_info_t*dtp, uint32_t tsms);
 #endif

@@ -118,7 +118,7 @@ void Suspend(void)
 {
 	uint32_t i =0;
 	uint16_t wCNTR;
-	__IO uint32_t savePWR_CR=0;
+	//__IO uint32_t savePWR_CR=0;
 	/* suspend preparation */
 	/* ... */
 	

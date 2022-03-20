@@ -92,7 +92,7 @@ void Read_Memory(uint8_t lun, uint32_t Memory_Offset, uint32_t Transfer_Length)
 	{
 		if (!Block_Read_count)
 		{
-			STA=MAL_Read(lun ,Offset,Data_Buffer,Mass_Block_Size[lun]);
+			STA=MAL_Read(lun ,Offset,(uint32_t*)Data_Buffer,Mass_Block_Size[lun]);
 			if(STA)USB_STATUS_REG|=0X08;//SD¿¨¶Á´íÎó!
 
 
@@ -162,7 +162,7 @@ void Write_Memory (uint8_t lun, uint32_t Memory_Offset, uint32_t Transfer_Length
 		if (!(W_Length % Mass_Block_Size[lun]))
 		{
 			Counter = 0;
-			STA=MAL_Write(lun,W_Offset - Mass_Block_Size[lun],Data_Buffer,Mass_Block_Size[lun]);
+			STA=MAL_Write(lun,W_Offset - Mass_Block_Size[lun],(uint32_t*)Data_Buffer,Mass_Block_Size[lun]);
 			if(STA)USB_STATUS_REG|=0X04;//SD¿¨Ð´´íÎó!
 
 		} 

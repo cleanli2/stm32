@@ -17,6 +17,7 @@
  */
  
 
+#include "common.h"
 /*----------Stack Configuration-----------------------------------------------*/  
 #define STACK_SIZE       0x00000100      /*!< The Stack size suggest using even number     */
 __attribute__ ((section(".co_stack")))

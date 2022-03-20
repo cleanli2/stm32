@@ -4,6 +4,7 @@
 #include "usb_pwr.h"
 #include "usb_lib.h"
 #include "usb_istr.h"
+#include "common.h"
 #define LED0 PAout(14)	// PA8
 #define LED1 PAout(15)	// PD2	
 //////////////////////////////////////////////////////////////////////////////////	 

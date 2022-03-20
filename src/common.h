@@ -28,6 +28,8 @@ void soft_reset_system();
 void power_off();
 void reboot_download();
 uint64_t get_system_us();
+void beep_by_timer_100(uint32_t hz_100);
+char * str_to_hex(char *s, uint32_t * result);
 
 #define LED_R_C 0x1
 #define LED_Y_C 0x2

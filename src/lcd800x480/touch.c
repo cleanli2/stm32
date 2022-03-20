@@ -102,7 +102,6 @@ void TP_Write_Byte(u8 num)
 ******************************************************************************/    
 u16 TP_Read_AD(u8 CMD)	  
 {
-	u8 count=0; 	  
 	u16 Num=0; 
 	TCS(0); 		//选中触摸屏IC
 	TP_Write_Byte(CMD);//发送命令字
@@ -363,7 +362,7 @@ u8 TP_Get_Adjdata(void)
 		tp_dev.yfac=(float)tempfac/100000000;//得到y校准参数
 	    //得到x偏移量
 		//tp_dev.xoff=AT24CXX_ReadLenByte(SAVE_ADDR_BASE+8,2);			   	  
-		tp_dev.xoff=0xFFFFFFEB;
+		tp_dev.xoff=0xFFEB;
  	    //得到y偏移量
 		//tp_dev.yoff=AT24CXX_ReadLenByte(SAVE_ADDR_BASE+10,2);				 	  
 		tp_dev.yoff=0x32B;
@@ -385,7 +384,7 @@ u8 TP_Get_Adjdata(void)
 }	
  
 //提示字符串
-const u8* TP_REMIND_MSG_TBL="Please use the stylus click the cross on the screen.The cross will always move until the screen adjustment is completed.";
+const char* TP_REMIND_MSG_TBL="Please use the stylus click the cross on the screen.The cross will always move until the screen adjustment is completed.";
 
 /*****************************************************************************
  * @name       :void TP_Adj_Info_Show(u16 x0,u16 y0,u16 x1,u16 y1,u16 x2,u16 y2,u16 x3,u16 y3,u16 fac)
@@ -552,7 +551,7 @@ void TP_Adjust(void)
 						  
 					tp_dev.yfac=(float)(lcddev.height-40)/(pos_temp[2][1]-pos_temp[0][1]);//得到yfac
 					tp_dev.yoff=(lcddev.height-tp_dev.yfac*(pos_temp[2][1]+pos_temp[0][1]))/2;//得到yoff  
-					if(abs(tp_dev.xfac)>2||abs(tp_dev.yfac)>2)//触屏和预设的相反了.
+					if(abs((int)tp_dev.xfac)>2||abs((int)tp_dev.yfac)>2)//触屏和预设的相反了.
 					{
 						cnt=0;
  				    	TP_Drow_Touch_Point(lcddev.width-20,lcddev.height-20,WHITE);	//清除点4

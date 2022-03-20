@@ -35,6 +35,7 @@
 #include "memory.h"
 #include "mass_mal.h"
 #include "usb_prop.h"
+#include "common.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
