@@ -706,7 +706,7 @@ void soft_reset_system()
 void reboot_download()
 {
     GPIO_SetBits(GPIOA,GPIO_Pin_13);
-    beep(100, 1000);
+    beep(100, 500);
     soft_reset_system();
 }
 
