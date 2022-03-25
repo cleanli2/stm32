@@ -544,11 +544,11 @@ void clr_s()
 }
 
 button_t date_button[]={
-    {15, 150, 100,  40, language_set, -1, 0, language_cch_str, 0, "English"},
     {15, 660, 100,  40, adjust_enable, -1, 0, "time adjust", 0, time_adjust_cch_str},
     {135, 660, 100,  40, fast_1, -1, 0, "faster 1min", 1, NULL},
     {255, 660, 100,  40, slow_1, -1, 0, "slower 1min", 1, NULL},
     {375, 660, 100,  40, clr_s, -1, 0, "clear second", 1, NULL},
+    {15, 150, 100,  40, language_set, -1, 0, language_cch_str, 0, "English"},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
 /*UI DATE END*/
