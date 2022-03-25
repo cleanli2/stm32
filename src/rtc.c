@@ -502,15 +502,30 @@ uint8_t check_rtc_alert_and_clear()
 
 uint adjust_1min(uint faster_1min)
 {
-    uint8_t min = rtc_read_reg(MINUTE_REG);
-    if(rtc_read_reg(SECOND_REG)>=58){
+    lprintf("ad1min %d\n", faster_1min);
+    uint8_t scd = bcd2hex(rtc_read_reg(SECOND_REG));
+    if(scd != bcd2hex(rtc_read_reg(SECOND_REG))){
+        lprintf("read rtc reg 'second' fail\n");
         return RTC_FAIL;
     }
+    lprintf("second=%d\n", scd);
+    if(scd>=58){
+        lprintf(">=58 fail\n");
+        return RTC_FAIL;
+    }
+    uint8_t min = bcd2hex(rtc_read_reg(MINUTE_REG));
+    if(min != bcd2hex(rtc_read_reg(MINUTE_REG)) || min>59){
+        lprintf("read rtc reg 'min' fail\n");
+        return RTC_FAIL;
+    }
+    lprintf("min=%d\n", min);
     if((faster_1min && min == 59) ||
             (!faster_1min && min == 0)){
+        lprintf("=59 or =0 fail\n");
         return RTC_FAIL;
     }
     faster_1min?min++:min--;
+    lprintf("W:min=%d\n", min);
     return rtc_write_reg(MINUTE_REG, min);
 }
 
