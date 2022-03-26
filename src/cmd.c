@@ -133,6 +133,18 @@ void w25f(char *p)
 #endif
     }
     else if(cmdindex == 8){//
+        lprintf("erase one sector.\n");
+        if(tmp<2){
+            goto err;
+        }
+        p = str_to_hex(p, &para1);
+        p = str_to_hex(p, &para2);
+        if(para2 != 0xe4a5e07e){
+            lprintf("erase %X fail", para1);
+        }
+        else{
+            SPI_Flash_Erase_Sector(GET_SECTOR_ADDR(para1));
+        }
     }
     else if(cmdindex == 0xa){//
     }
