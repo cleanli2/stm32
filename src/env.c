@@ -28,6 +28,7 @@ uint32_t get_env_start_addr()
 int erase_env_area()
 {
     int ct = SECTORS_PER_ENV_BLOCK;
+    uint32_t i=0;
     uint32_t sector_addr = GET_SECTOR_ADDR(get_env_start_addr());
     while(ct--){
         lprintf("env_erase:sector %d\n", sector_addr);
@@ -35,11 +36,12 @@ int erase_env_area()
     }
     ct = ENV_STORE_SIZE;
     while(ct--){
-        if(env_get_char(ct-1)!=0xff){
-            lprintf("%x@flash=%b!=0xff, erase fail\n", ct-1,
-                    env_get_char(ct-1));
+        if(env_get_char(i)!=0xff){
+            lprintf("%x@flash=%b!=0xff, erase fail\n", i,
+                    env_get_char(i));
             return ENV_FAIL;
         }
+        i++;
     }
     return ENV_OK;
 }
@@ -51,12 +53,42 @@ void set_cur_env_area(int env_area)
         env_start_addr=ENV_STORE_START_ADDR;
     }
     else if(env_area == USE_HELP_ENV){
-        lprintf("env set to help %X\n", ENV_STORE_START_ADDR);
+        lprintf("env set to help %X\n", ENV_HELP_STORE_START_ADDR);
         env_start_addr=ENV_HELP_STORE_START_ADDR;
     }
     else{
         lprintf("set_cur_env_area:fault para. Doing nothing\n");
     }
+}
+
+int get_idle_env_area()
+{
+    if( get_env_start_addr()==ENV_STORE_START_ADDR){
+        lprintf("curenv is main %X\n", ENV_STORE_START_ADDR);
+        return USE_HELP_ENV;
+    }
+    else if(get_env_start_addr()==ENV_HELP_STORE_START_ADDR){
+        lprintf("curenv is help %X\n", ENV_HELP_STORE_START_ADDR);
+        return USE_MAIN_ENV;
+    }
+    return ENV_INVALID;
+}
+int get_cur_env_area()
+{
+    if(get_env_start_addr()==ENV_STORE_START_ADDR){
+        lprintf("cur env is main %X\n", ENV_STORE_START_ADDR);
+        return USE_MAIN_ENV;
+    }
+    else if(get_env_start_addr()==ENV_HELP_STORE_START_ADDR){
+        lprintf("cur env is help %X\n", ENV_HELP_STORE_START_ADDR);
+        return USE_HELP_ENV;
+    }
+    return ENV_INVALID;
+}
+
+void switch_env_area()
+{
+    set_cur_env_area(get_idle_env_area());
 }
 
 uint8_t env_get_char(uint32_t offset)
@@ -275,7 +307,7 @@ end:
 int go_through_env(int operation)
 {
     uint32_t i, ret=ENV_OK, posi_name, posi;
-    char buf[64], *name, *value, *posi_eq;
+    char buf[128], *name, *value, *posi_eq;
 
     i = 0;
     buf[64] = '\0';
@@ -308,6 +340,16 @@ int go_through_env(int operation)
                         *posi_eq='=';
                         lprintf("%s\n", buf);
                     }
+                    else if(COPY_DATA_ENV==operation){
+                        switch_env_area();
+                        lprintf("copy env:%s=%s\n", name, value);
+                        ret = set_env(name, value);
+                        switch_env_area();
+                        if(ret == ENV_FAIL){
+                            lprintf("set env fail in idle env\n");
+                            return ret;
+                        }
+                    }
                 }
             }
         }
@@ -328,4 +370,15 @@ int printenv()
 int printrawenv()
 {
     return go_through_env(PRINT_RAW_ENV);
+}
+
+void switch_env_area_with_data()
+{
+    //int cur_area = get_cur_env_area();
+    //int idle_area = get_idle_env_area();
+    if(ENV_OK == go_through_env(COPY_DATA_ENV)){
+        lprintf("copy env to idle OK, erase cur env\n");
+        erase_env_area();
+        switch_env_area();
+    }
 }

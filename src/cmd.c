@@ -146,7 +146,23 @@ void w25f(char *p)
             SPI_Flash_Erase_Sector(GET_SECTOR_ADDR(para1));
         }
     }
+    else if(cmdindex == 0x9){//
+        lprintf("switch env area\n");
+        switch_env_area();
+    }
     else if(cmdindex == 0xa){//
+        lprintf("switch env area with data\n");
+        switch_env_area_with_data();
+    }
+    else if(cmdindex == 0xb){//
+        lprintf("erase cur env area\n");
+        p = str_to_hex(p, &para1);
+        if(para1 != 0xe4a5ee7c){
+            lprintf("erase env fail", para1);
+        }
+        else{
+            erase_env_area();
+        }
     }
     con_send('\n');
 

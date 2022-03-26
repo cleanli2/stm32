@@ -54,11 +54,15 @@
 
 #define PRINT_ACTIVE_ENV 0
 #define PRINT_RAW_ENV 1
+#define COPY_DATA_ENV 2
 
 uint32_t get_env(const char* name, char*value);
 uint32_t set_env(const char* name, const char*value);
 int printenv();
 int printrawenv();
+void switch_env_area();
+void switch_env_area_with_data();
+int erase_env_area();
 
 #endif
 
