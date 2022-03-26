@@ -30,6 +30,7 @@
 
 #define TOTAL_SPI_FLASH_SIZE 0x200000
 #define SPI_FLASH_SECTOR_SIZE 0x1000
+#define GET_SECTOR_ADDR(addr) ((addr)>>12)
 #define SECTORS_PER_ENV_BLOCK 3
 #define ENV_STORE_SIZE (SPI_FLASH_SECTOR_SIZE*SECTORS_PER_ENV_BLOCK)
 
@@ -51,9 +52,13 @@
 #define USE_MAIN_ENV 0
 #define USE_HELP_ENV 1
 
+#define PRINT_ACTIVE_ENV 0
+#define PRINT_RAW_ENV 1
+
 uint32_t get_env(const char* name, char*value);
 uint32_t set_env(const char* name, const char*value);
 int printenv();
+int printrawenv();
 
 #endif
 

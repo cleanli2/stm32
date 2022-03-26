@@ -987,8 +987,15 @@ void keytest(char *p)
 }
 void envprint(char *p)
 {
-    (void)p;
-    printenv();
+    int tmp = get_howmany_para(p);
+    lprintf("number of para %d\n", tmp);
+    if(tmp>0){
+        lprintf("raw env:\n");
+        printrawenv();
+    }
+    else{
+        printenv();
+    }
     con_send('\n');
 
     return;

@@ -25,6 +25,25 @@ uint32_t get_env_start_addr()
     return env_start_addr;
 }
 
+int erase_env_area()
+{
+    int ct = SECTORS_PER_ENV_BLOCK;
+    uint32_t sector_addr = GET_SECTOR_ADDR(get_env_start_addr());
+    while(ct--){
+        lprintf("env_erase:sector %d\n", sector_addr);
+        SPI_Flash_Erase_Sector(sector_addr++);
+    }
+    ct = ENV_STORE_SIZE;
+    while(ct--){
+        if(env_get_char(ct-1)!=0xff){
+            lprintf("%x@flash=%b!=0xff, erase fail\n", ct-1,
+                    env_get_char(ct-1));
+            return ENV_FAIL;
+        }
+    }
+    return ENV_OK;
+}
+
 void set_cur_env_area(int env_area)
 {
     if(env_area == USE_MAIN_ENV){
@@ -133,9 +152,12 @@ uint32_t find_env_data_start()
     return i;
 }
 
-uint32_t get_env(const char* name, char*value)
+uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
 {
     uint32_t i = 0, nxt, ret = ENV_OK;
+    if(p_position!=NULL){
+        *p_position=ENV_INVALID;
+    }
 
     if(!name){
         lprintf("name=NULL\n");
@@ -164,16 +186,34 @@ uint32_t get_env(const char* name, char*value)
         }
         if ((val=envmatch((uint8_t *)name, i)) < 0)
             continue;
-        strcpy2mem((uint8_t*)value, val);
-        if(*value==0){//null str
-            ret = ENV_FAIL;
+        if(p_position!=NULL){
+            *p_position = i;
             goto end;
+        }
+        if(value!=NULL){
+            strcpy2mem((uint8_t*)value, val);
+            if(*value==0){//null str
+                ret = ENV_FAIL;
+                goto end;
+            }
         }
         ret = ENV_OK;
         goto end;
     }
 end:
     set_touch_need_reinit();
+    return ret;
+}
+
+uint32_t get_env(const char* name, char*value)
+{
+    return get_env_raw(name, value, NULL);
+}
+
+uint32_t get_name_position(const char* name)
+{
+    uint32_t ret;
+    get_env_raw(name, NULL, &ret);
     return ret;
 }
 
@@ -232,10 +272,10 @@ end:
 /************************************************************************
  * Command interface: print one or all environment variables
  */
-int printenv()
+int go_through_env(int operation)
 {
-    uint32_t i, ret=ENV_OK;
-    char buf[64];
+    uint32_t i, ret=ENV_OK, posi_name, posi;
+    char buf[64], *name, *value, *posi_eq;
 
     i = 0;
     buf[64] = '\0';
@@ -248,10 +288,29 @@ int printenv()
     }
     i++;
     while(env_get_char(i) != '\0'){
-        lprintf("%x:", i);
+        posi = i;
         i+=strcpy2mem((uint8_t*)buf, i);
         i++;
-        lprintf("%s\n", buf);
+        if(PRINT_RAW_ENV==operation){
+            lprintf("%x:", posi);
+            lprintf("%s\n", buf);
+        }
+        else{
+            posi_eq=strchr(buf, '=');
+            if(posi_eq){
+                name = buf;
+                *posi_eq=0;
+                value= posi_eq+1;
+                posi_name = get_name_position(name);
+                if(posi_name == ENV_INVALID ||
+                        posi_name == posi){
+                    if(PRINT_ACTIVE_ENV==operation){
+                        *posi_eq='=';
+                        lprintf("%s\n", buf);
+                    }
+                }
+            }
+        }
         if(i>=ENV_STORE_SIZE){
             goto end;
         }
@@ -259,4 +318,14 @@ int printenv()
 end:
     set_touch_need_reinit();
     return ret;
+}
+
+int printenv()
+{
+    return go_through_env(PRINT_ACTIVE_ENV);
+}
+
+int printrawenv()
+{
+    return go_through_env(PRINT_RAW_ENV);
 }
