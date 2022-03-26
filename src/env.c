@@ -336,18 +336,20 @@ int go_through_env(int operation)
                 posi_name = get_name_position(name);
                 if(posi_name == ENV_INVALID ||
                         posi_name == posi){
-                    if(PRINT_ACTIVE_ENV==operation){
-                        *posi_eq='=';
-                        lprintf("%s\n", buf);
-                    }
-                    else if(COPY_DATA_ENV==operation){
-                        switch_env_area();
-                        lprintf("copy env:%s=%s\n", name, value);
-                        ret = set_env(name, value);
-                        switch_env_area();
-                        if(ret == ENV_FAIL){
-                            lprintf("set env fail in idle env\n");
-                            return ret;
+                    if(*value){//value is not null
+                        if(PRINT_ACTIVE_ENV==operation){
+                            *posi_eq='=';
+                            lprintf("%s\n", buf);
+                        }
+                        else if(COPY_DATA_ENV==operation){
+                            lprintf("copy env:%s=%s\n", name, value);
+                            switch_env_area();
+                            ret = set_env(name, value);
+                            switch_env_area();
+                            if(ret == ENV_FAIL){
+                                lprintf("set env fail in idle env\n");
+                                return ret;
+                            }
                         }
                     }
                 }
