@@ -358,7 +358,7 @@ int go_through_env(int operation)
                         else if(COPY_DATA_ENV==operation){
                             lprintf("copy env:%s=%s\n", name, value);
                             switch_env_area();
-                            ret = set_env(name, value);
+                            ret = set_env_raw(name, value);
                             switch_env_area();
                             if(ret == ENV_FAIL){
                                 lprintf("set env fail in idle env\n");
