@@ -48,6 +48,9 @@
 #define ENV_ABNORMAL 0xFFFFFFFD
 #define ENV_MAX_VALUE_LEN 0x20
 
+#define USE_MAIN_ENV 0
+#define USE_HELP_ENV 1
+
 uint32_t get_env(const char* name, char*value);
 uint32_t set_env(const char* name, const char*value);
 int printenv();

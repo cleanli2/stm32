@@ -3,18 +3,55 @@
 #include <string.h>
 #include <stdint.h>
 
+static uint32_t env_start_addr = 0xffffffff;
+uint8_t env_get_char(uint32_t offset);
+void set_cur_env_area(int env_area);
+uint32_t get_env_start_addr()
+{
+    uint8_t tmpc;
+
+    if(env_start_addr == 0xffffffff){
+        //last byte will not be 0xff if main env has data
+        set_cur_env_area(USE_MAIN_ENV);
+        tmpc = env_get_char(ENV_STORE_SIZE-1);
+        lprintf("last byte=0x%b\n", tmpc);
+        if(tmpc==0xff){
+            //will use help env
+            lprintf("env:set hlep env %X\n", ENV_STORE_START_ADDR);
+            set_cur_env_area(USE_HELP_ENV);
+        }
+        lprintf("env use %X\n", env_start_addr);
+    }
+    return env_start_addr;
+}
+
+void set_cur_env_area(int env_area)
+{
+    if(env_area == USE_MAIN_ENV){
+        lprintf("env set to main %X\n", ENV_STORE_START_ADDR);
+        env_start_addr=ENV_STORE_START_ADDR;
+    }
+    else if(env_area == USE_HELP_ENV){
+        lprintf("env set to help %X\n", ENV_STORE_START_ADDR);
+        env_start_addr=ENV_HELP_STORE_START_ADDR;
+    }
+    else{
+        lprintf("set_cur_env_area:fault para. Doing nothing\n");
+    }
+}
+
 uint8_t env_get_char(uint32_t offset)
 {
     uint8_t ret;
-    SPI_Flash_Read(&ret, ENV_STORE_START_ADDR+offset, 1);
-    //lprintf("sf_read %x@%x\n", ret, ENV_STORE_START_ADDR+offset);
+    SPI_Flash_Read(&ret, get_env_start_addr()+offset, 1);
+    //lprintf("sf_read %x@%x\n", ret, get_env_start_addr()+offset);
     return ret;
 }
 
 void env_set_char(uint32_t offset, uint8_t d)
 {
-    lprintf("sf_write %x@%x\n", d, ENV_STORE_START_ADDR+offset);
-    SPI_Flash_Write(&d, ENV_STORE_START_ADDR+offset, 1);
+    lprintf("sf_write %x@%x\n", d, get_env_start_addr()+offset);
+    SPI_Flash_Write(&d, get_env_start_addr()+offset, 1);
 }
 
 uint32_t strcpy2env(uint32_t env_offset, const uint8_t *s)
@@ -69,7 +106,7 @@ uint32_t find_env_data_start()
         }
         if(env_get_char(i-1) != 0){
             lprintf("00FF g env flash error %x\n", i-2);
-            lprintf("env_store_start %x size %x\n", ENV_STORE_START_ADDR, ENV_STORE_SIZE);
+            lprintf("env_store_start %x size %x\n", get_env_start_addr(), ENV_STORE_SIZE);
             return ENV_FAIL;
         }
     }
@@ -202,7 +239,7 @@ int printenv()
 
     i = 0;
     buf[64] = '\0';
-    lprintf("env_store_start %x size %x\n", ENV_STORE_START_ADDR, ENV_STORE_SIZE);
+    lprintf("env_store_start %x size %x\n", get_env_start_addr(), ENV_STORE_SIZE);
 
     i = find_env_data_start();
     if(i > ENV_ABNORMAL){
