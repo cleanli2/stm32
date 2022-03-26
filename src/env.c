@@ -249,7 +249,7 @@ uint32_t get_name_position(const char* name)
     return ret;
 }
 
-uint32_t set_env(const char* name, const char*value)
+uint32_t set_env_raw(const char* name, const char*value)
 {
     uint32_t i = 0, n, ret = ENV_OK;
     uint8_t zero_str = 0;
@@ -286,8 +286,8 @@ uint32_t set_env(const char* name, const char*value)
     }
     n = strlen(name)+strlen(value)+2;
     if(i<n){
-        lprintf("env full -- tobe fix\n");
-        ret = ENV_FAIL;
+        lprintf("env full\n");
+        ret = ENV_FULL;
         goto end;
     }
     i -= n;
@@ -298,6 +298,18 @@ uint32_t set_env(const char* name, const char*value)
 
 end:
     set_touch_need_reinit();
+    return ret;
+}
+
+uint32_t set_env(const char* name, const char*value)
+{
+    uint32_t ret = set_env_raw(name, value);
+    if(ret==ENV_FULL){
+        lprintf("env full. Try switching env area...\n");
+        switch_env_area_with_data();
+        lprintf("set env again\n");
+        ret = set_env_raw(name, value);
+    }
     return ret;
 }
 
