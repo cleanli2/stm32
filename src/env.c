@@ -303,7 +303,8 @@ end:
 
 uint32_t set_env(const char* name, const char*value)
 {
-    uint32_t ret = set_env_raw(name, value);
+    uint32_t ret;
+    ret = set_env_raw(name, value);
     if(ret==ENV_FULL){
         lprintf("env full. Try switching env area...\n");
         switch_env_area_with_data();
@@ -323,7 +324,8 @@ int go_through_env(int operation)
 
     i = 0;
     buf[64] = '\0';
-    lprintf("env_store_start %x size %x\n", get_env_start_addr(), ENV_STORE_SIZE);
+    get_cur_env_area();
+    lprintf("env_store_start %x size %x\n\n", get_env_start_addr(), ENV_STORE_SIZE);
 
     i = find_env_data_start();
     if(i > ENV_ABNORMAL){

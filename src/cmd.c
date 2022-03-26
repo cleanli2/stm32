@@ -152,6 +152,11 @@ void w25f(char *p)
     }
     else if(cmdindex == 0xa){//
         lprintf("switch env area with data\n");
+        p = str_to_hex(p, &para1);
+        if(para1 != 0x5e14c6e7){
+            lprintf("switch env fail", para1);
+            goto err;
+        }
         switch_env_area_with_data();
     }
     else if(cmdindex == 0xb){//
