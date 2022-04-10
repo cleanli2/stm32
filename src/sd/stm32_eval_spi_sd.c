@@ -152,7 +152,7 @@ uint8_t SD_WaitReady(void)
 
 uint8_t SD_GetRes(void)
 {
-	uint8_t Retry=0X1F;
+	uint16_t Retry=0X1fff;
 	uint8_t r1;
 	do
 	{
@@ -1094,10 +1094,12 @@ SD_Error SD_GoIdleState(void)
   /*!< Send CMD0 (SD_CMD_GO_IDLE_STATE) with CS low to put SD in SPI mode */
   SD_SendCmd(SD_CMD_GO_IDLE_STATE, 0, 0x95);
   r1 = SD_GetRes();
+  lprintf("get res %b\n", r1);
   if (r1 != (SD_IN_IDLE_STATE))
   {
     /*!< No Idle State Response: return response failue */
     lprintf("%s:%d\n", __func__, __LINE__);
+    SD_CS_HIGH();
     return SD_RESPONSE_FAILURE;
   }
   
