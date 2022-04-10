@@ -191,6 +191,7 @@ button_t main_menu_button[]={
     {130,460,200, 60, f3mins_timer, -1, 0, "3x1mins TIMER", 0, _3x1mins_timer_cch_str},
     {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
+    {350,600,80, 60, NULL, UI_SD, 0, "SDCard", 0, sd_card_cch_str},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
 
@@ -553,6 +554,28 @@ button_t date_button[]={
 };
 /*UI DATE END*/
 
+/*UI SD*/
+void sd_ui_init(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    (void)uif;
+    lprintf("sd ui\n");
+    common_ui_init(vp);
+    lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
+}
+void sd_ui_process_event(void*vp)
+{
+    common_process_event(vp);
+}
+
+void sd_detect(){
+}
+
+button_t sd_button[]={
+    {15, 660, 100,  40, sd_detect, -1, 0, "SD detect", 0, sd_detect_cch_str},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+};
+
 ui_t ui_list[]={
     {
         main_ui_init,
@@ -604,6 +627,17 @@ ui_t ui_list[]={
         NULL,
         date_button,
         UI_DATE,
+        220, //timeout
+        TIME_OUT_EN,
+        NULL,//char*timeout_music;
+        NULL,
+    },
+    {
+        sd_ui_init,
+        sd_ui_process_event,
+        NULL,
+        sd_button,
+        UI_SD,
         220, //timeout
         TIME_OUT_EN,
         NULL,//char*timeout_music;
