@@ -719,8 +719,21 @@ void lcdsuebstep(char *p)
         set_BL_value(para1);
     }
     else if(cmdindex == 0x13){//
+        set_touch_need_reinit();
     }
     else if(cmdindex == 0x14){//
+        para1 = 100;
+        if(tmp>0){
+            p=str_to_hex(p, &para1);
+        }
+        while(para1--){
+            uint16_t touch_x, touch_y;
+            lprintf("ct%d\n", para1);
+            if(get_TP_point(&touch_x, &touch_y)){
+                lprintf("txy=%d,%d\n", (uint32_t)touch_x, (uint32_t)touch_y);
+            }
+            delay_ms(100);
+        }
     }
     else if(cmdindex == 0x15){//
     }

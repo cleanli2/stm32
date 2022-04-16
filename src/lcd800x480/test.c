@@ -304,9 +304,11 @@ void Touch_Test(void)
 	u16 i=0;
 	u16 j=0;
 	u16 colorTemp=0;
-	TP_Init();
+	uint16_t touch_x;
+	uint16_t touch_y;
 	lprintf("touch test start: 'x' key quit\n");
-	DrawTestPage("测试10:Touch测试(按'1'键校准，or draw point)   ");
+	LCD_Clear(WHITE);//清屏
+	//DrawTestPage("测试10:Touch测试(按'1'键校准，or draw point)   ");
 	LCD_ShowString(lcddev.width-24,0,16,"RST",1);//显示清屏区域
 	POINT_COLOR=RED;
 	LCD_Fill(lcddev.width-50,2,lcddev.width-50+22,18,RED); 
@@ -314,19 +316,19 @@ void Touch_Test(void)
 	{
 		if(con_is_recved())
 			key=con_recv();
-		tp_dev.scan(0); 		 
-		if(tp_dev.sta&TP_PRES_DOWN)			//触摸屏被按下
+        if(get_TP_point(&touch_x, &touch_y))//触摸屏被按下
 		{	
-		 	if(tp_dev.x<lcddev.width&&tp_dev.y<lcddev.height)
+            lprintf("txy=%d,%d\n", (uint32_t)touch_x, (uint32_t)touch_y);
+			if(touch_x<lcddev.width&&touch_y<lcddev.height)
 			{	
-				if(tp_dev.x>(lcddev.width-24)&&tp_dev.y<16)
+				if(touch_x>(lcddev.width-24)&&touch_y<16)
 				{
 					DrawTestPage("测试10:Touch测试(按'1'键校准)   ");//清除
 					LCD_ShowString(lcddev.width-24,0,16,"RST",1);//显示清屏区域
 					POINT_COLOR=colorTemp;
 					LCD_Fill(lcddev.width-50,2,lcddev.width-50+22,18,POINT_COLOR); 
 				}
-				else if((tp_dev.x>(lcddev.width-50)&&tp_dev.x<(lcddev.width-50+22))&&tp_dev.y<20)
+				else if((touch_x>(lcddev.width-50)&&touch_x<(lcddev.width-50+22))&&touch_y<20)
 				{
 				LCD_Fill(lcddev.width-50,2,lcddev.width-50+22,18,ColorTab[j%5]); 
 				POINT_COLOR=ColorTab[(j++)%5];
@@ -335,8 +337,8 @@ void Touch_Test(void)
 				}
 
 				else {
-					TP_Draw_Big_Point(tp_dev.x,tp_dev.y,POINT_COLOR);		//画图	  			   
-					if(tp_dev.x<100 && tp_dev.y < 100){
+					TP_Draw_Big_Point(touch_x,touch_y,POINT_COLOR);		//画图	  			   
+					if(touch_x<100 && touch_y < 100){
 						lprintf("quit\n");
 						LCD_ShowString(20,86,0,"Quit",1);
 						break;
