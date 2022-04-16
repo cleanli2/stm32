@@ -570,17 +570,17 @@ void sd_ui_process_event(void*vp)
 
 void sd_detect(){
     SD_CardInfo mycard;
-    SD_Error Status = SD_OK;
     lcd_lprintf(0, 40, "Detecting sd card...");
-    if((Status = SD_Init()) != SD_OK)
+    if(SD_Init() != SD_OK && SD_Init() != SD_OK)
     {
+        //retry once
         lprintf("Fail\n");
         lcd_lprintf(0, 60, "Failed.");
     }
     else{
         lprintf("OK\n");
         lcd_lprintf(0, 60, "OK.    ");
-        if((Status = SD_GetCardInfo(&mycard)) != SD_OK)
+        if(SD_GetCardInfo(&mycard) != SD_OK)
         {
             lprintf("get card info Fail\n");
             lcd_lprintf(0, 80, "Get card info Fail            ");
@@ -593,6 +593,7 @@ void sd_detect(){
             lcd_lprintf(0, 100, "block capacity %d", mycard.CardCapacity);
         }
     }
+    set_touch_need_reinit();
 }
 
 button_t sd_button[]={
