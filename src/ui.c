@@ -588,9 +588,9 @@ void sd_detect(){
         }
         else{
             lprintf("block size %d\n", mycard.CardBlockSize);
-            lcd_lprintf(0, 80, "block size %d\n", mycard.CardBlockSize);
+            lcd_lprintf(0, 80, "block size %d", mycard.CardBlockSize);
             lprintf("block capacity %d\n", mycard.CardCapacity);
-            lcd_lprintf(0, 100, "block capacity %d\n", mycard.CardCapacity);
+            lcd_lprintf(0, 100, "block capacity %d", mycard.CardCapacity);
         }
     }
 }
