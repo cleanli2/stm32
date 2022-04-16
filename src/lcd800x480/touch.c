@@ -176,7 +176,10 @@ u8 TP_Read_XY(u16 *x,u16 *y)
 	xtemp=TP_Read_XOY(CMD_RDX);
 	ytemp=TP_Read_XOY(CMD_RDY);	  												   
     spi_speed(spi_sp);
-	if(xtemp==0||ytemp==0||xtemp==0xfff||ytemp==0xfff)return 0;//读数失败
+	if(xtemp==0||ytemp==0||xtemp==0xfff||ytemp==0xfff){
+        lprintf("tprxy fail\n");
+        return 0;//读数失败
+    }
 	*x=xtemp;
 	*y=ytemp;
 	return 1;//读数成功
@@ -201,16 +204,23 @@ u8 TP_Read_XY2(u16 *x,u16 *y)
  	u16 x2,y2;
  	u8 flag;    
     flag=TP_Read_XY(&x1,&y1);   
-    if(flag==0)return(0);
+    if(flag==0)goto fail;
     flag=TP_Read_XY(&x2,&y2);	   
-    if(flag==0)return(0);   
+    if(flag==0)goto fail;
     if(((x2<=x1&&x1<x2+ERR_RANGE)||(x1<=x2&&x2<x1+ERR_RANGE))//前后两次采样在+-50内
     &&((y2<=y1&&y1<y2+ERR_RANGE)||(y1<=y2&&y2<y1+ERR_RANGE)))
     {
         *x=(x1+x2)/2;
         *y=(y1+y2)/2;
         return 1;
-    }else return 0;	  
+    }else{
+        lprintf("out of err range\n");
+        goto fail;
+    }
+fail:
+    lprintf("tp err, reinit tp\n");
+    set_touch_need_reinit();
+    return 0;
 } 
 
 /*****************************************************************************
@@ -268,7 +278,6 @@ u8 TP_Scan(u8 tp)
 	u8 ret;
 	if(PEN==0 && (ret=TP_Read_XY2(&tp_dev.x,&tp_dev.y)))//有按键按下
 	{
-		lprintf("touch pressed\n");
 		//lprintf("line%d:x %x y %x ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
 		if(!tp)
 		{
@@ -276,12 +285,19 @@ u8 TP_Scan(u8 tp)
 			tp_dev.y=tp_dev.yfac*tp_dev.y+tp_dev.yoff;  
 			//lprintf("line%d:x %d y %d ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
 	 	} 
-		if((tp_dev.sta&TP_PRES_DOWN)==0)//之前没有被按下
-		{		 
-			tp_dev.sta=TP_PRES_DOWN|TP_CATH_PRES;//按键按下  
-			tp_dev.x0=tp_dev.x;//记录第一次按下时的坐标
-			tp_dev.y0=tp_dev.y;  	   			 
-		}			   
+        if(tp_dev.x<480 && tp_dev.y < 800){
+            lprintf("touch pressed\n");
+            if((tp_dev.sta&TP_PRES_DOWN)==0)//之前没有被按下
+            {
+                tp_dev.sta=TP_PRES_DOWN|TP_CATH_PRES;//按键按下  
+                tp_dev.x0=tp_dev.x;//记录第一次按下时的坐标
+                tp_dev.y0=tp_dev.y;
+            }
+        }
+        else{
+            lprintf("tp x&y invalid, reinit tp\n");
+            set_touch_need_reinit();
+        }
 	}else
 	{
 		if(tp_dev.sta&TP_PRES_DOWN)//之前是被按下的
