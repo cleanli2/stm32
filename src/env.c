@@ -143,7 +143,7 @@ int envmatch (uint8_t *s1, int i2)
  * the env store is like this:
  * XX XX '= YY .. YY 00 FF FF FF ... FF 00 XX XX XX '= YY YY YY 00 XX XX ...
  * */
-uint32_t find_env_data_start()
+uint32_t find_env_data_start_raw()
 {
     uint32_t i = 0, ff_i = 0;
     //go through not 0xff
@@ -182,6 +182,18 @@ uint32_t find_env_data_start()
         return ENV_INVALID;
     }
     return i;
+}
+
+uint32_t find_env_data_start()
+{
+    uint32_t ret = find_env_data_start_raw();
+    if(ret > ENV_ABNORMAL){
+        lprintf("w25f read fail, reinit SD lowlevel\n");
+        SD_LowLevel_Init();
+        //retry
+        ret = find_env_data_start_raw();
+    }
+    return ret;
 }
 
 uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)

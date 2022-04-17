@@ -574,6 +574,7 @@ void sd_ui_process_event(void*vp)
 static char sd_disp_buf[SDDISP_BUF_SIZE];
 void sd_detect(){
     uint32_t file_offset = 0;
+    int ret;
     SD_CardInfo mycard;
     lcd_lprintf(0, 40, "Detecting sd card...");
     if(SD_Init() != SD_OK && SD_Init() != SD_OK)
@@ -597,7 +598,8 @@ void sd_detect(){
             lprintf("block capacity %d\n", mycard.CardCapacity);
             lcd_lprintf(0, 100, "block capacity %d", mycard.CardCapacity);
         }
-        get_file_content(sd_disp_buf, SHOW_FILE_NAME, file_offset, 100, SD_ReadBlock);
+        ret = get_file_content(sd_disp_buf, SHOW_FILE_NAME, file_offset, 100, SD_ReadBlock);
+        lprintf("ret %d\n", ret);
         lcd_lprintf(0, 140, sd_disp_buf);
     }
     set_touch_need_reinit();
