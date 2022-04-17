@@ -188,9 +188,6 @@ void SPI_Flash_Write_NoCheck(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 //pBuffer:数据存储区
 //WriteAddr:开始写入的地址(24bit)
 //NumByteToWrite:要写入的字节数(最大65535)  		   
-#ifndef MEM_ALLOC_TABLE_SIZE
-u8 SPI_FLASH_BUFFER[4096];
-#endif 
 void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)   
 { 
 	u32 secpos;
@@ -202,6 +199,7 @@ void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 	SPI_FLASH_BUF=mymalloc(4096);	//使用内存管理 
 	if(SPI_FLASH_BUF==NULL)return;	//申请失败
 #else
+	u8 SPI_FLASH_BUFFER[4096];
 	SPI_FLASH_BUF=SPI_FLASH_BUFFER;	//不使用内存管理
 #endif	 
 	secpos=WriteAddr/4096;//扇区地址 0~511 for w25x16
