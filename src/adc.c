@@ -62,7 +62,7 @@ int adc_test()
         //lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     v_ref=ADC_GetConversionValue(ADC1);
-    lprintf("vref = %x\n", v_ref);
+    //lprintf("vref = %x\n", v_ref);
     v_core = 2500 * 4096 / v_ref;
     //lprintf("real vcore = %dmv\n", v_core);
 
@@ -88,7 +88,7 @@ int adc_test()
         //lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     v_currt=ADC_GetConversionValue(ADC1);
-    lprintf("vcur = %x\n", v_currt);
+    //lprintf("vcur = %x\n", v_currt);
     if(v_currt>v_ref){
         in_charge = '+';
         v_currt = v_currt - v_ref;
@@ -103,7 +103,7 @@ int adc_test()
     //lprintf("real v_currt = %dmv\n", v_currt);
     v_currt = v_currt * CURRENT_MEASUREMENT_CALIBRATION;
     //lprintf("real I = %dmA\n", v_currt);
-    lprintf("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, v_currt);
+    //lprintf("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, v_currt);
     lcd_lprintf(240, 0, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
     if(v_bat < BATT_LOW_LIMIT){
         lprintf("battery is low\n");

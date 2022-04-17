@@ -525,8 +525,8 @@ uint adjust_1min(uint faster_1min)
         return RTC_FAIL;
     }
     faster_1min?min++:min--;
-    lprintf("W:min=%d\n", min);
-    return rtc_write_reg(MINUTE_REG, min);
+    lprintf("W:min=%d 0x%b\n", min, hex2bcd(min));
+    return rtc_write_reg(MINUTE_REG, hex2bcd(min));
 }
 
 void clear_second()
