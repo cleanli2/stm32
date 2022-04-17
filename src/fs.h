@@ -12,6 +12,7 @@ typedef uint32_t DWORD;
 #define FS_PART_ERR (-3)
 #define FS_NOT_FAT32 (-4)
 #define FS_NO_FILESYSTEM (-5)
+#define FS_FILE_NOT_FOUND (-6)
 
 /* Name status flags */
 #define NSFLAG		11		/* Index of name status byte in fn[] */

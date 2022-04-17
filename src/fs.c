@@ -125,6 +125,41 @@ int get_file_content(char* buf, const char*filename, uint32_t file_offset, uint3
                 g_fp->fs->fatbase,
                 g_fp->fs->database,
                 g_fp->fs->dirbase);
+        //find root dir sec
+        bsect = g_fp->fs->database + (g_fp->fs->dirbase - 2) * g_fp->fs->csize;
+        if(SD_RESPONSE_NO_ERROR != rd_block((u8*)fs_buf, bsect, FS_BUF_SIZE)){
+            lprintf("read disk err\n");
+            return FS_DISK_ERR;
+        }
+        //find filename
+        {
+            DWORD items = 0;
+            while(1){
+                if(fs_buf[items*SZ_DIRE] == 0 || items>0xf){
+                    lprintf("end of root, not found file!\n");
+                    return FS_FILE_NOT_FOUND;
+                }
+                if(!strncmp(fs_buf+items*SZ_DIRE, "BOOK", 4) &&
+                    !strncmp(fs_buf+items*SZ_DIRE+4, "    ", 4) &&
+                    !strncmp(fs_buf+items*SZ_DIRE+8, "TXT", 3)){
+                    lprintf("found book.txt\n");
+                    g_fp->fsize = get_uint_offset(fs_buf+items*SZ_DIRE, DIR_FileSize, 4);
+                    lprintf("filesize %d\n", (DWORD)g_fp->fsize);
+                    g_fp->sclust = get_uint_offset(fs_buf+items*SZ_DIRE, DIR_FstClusHI, 2);
+                    g_fp->sclust <<= 16;
+                    g_fp->sclust += get_uint_offset(fs_buf+items*SZ_DIRE, DIR_FstClusLO, 2);
+                    lprintf("start clust 0x%x\n", (DWORD)g_fp->sclust);
+                    bsect = g_fp->fs->database + (g_fp->sclust - 2) * g_fp->fs->csize;
+                    lprintf("start sect 0x%x\n", (DWORD)bsect);
+                    if(SD_RESPONSE_NO_ERROR != rd_block((u8*)buf, bsect, FS_BUF_SIZE)){
+                        lprintf("read disk err\n");
+                        return FS_DISK_ERR;
+                    }
+                    break;
+                }
+                items++;
+            }
+        }
     }
     return FS_OK;
 }
