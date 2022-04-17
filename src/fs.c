@@ -31,7 +31,8 @@ int get_file_content(char* buf, const char*filename, uint32_t file_offset, uint3
         lprintf("read disk err\n");
         return FS_DISK_ERR;
     }
-    if(g_fp == NULL){
+    //if(g_fp == NULL){
+    {
         g_fp = &g_file;
         g_fp->fs = &g_fat32;
         g_fp->fs->rd_block = rd_block;
@@ -135,6 +136,7 @@ int get_file_content(char* buf, const char*filename, uint32_t file_offset, uint3
         {
             DWORD items = 0;
             while(1){
+                lprintf("dir items 0x%x\n", items);
                 if(fs_buf[items*SZ_DIRE] == 0 || items>0xf){
                     lprintf("end of root, not found file!\n");
                     return FS_FILE_NOT_FOUND;
