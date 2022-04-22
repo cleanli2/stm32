@@ -101,8 +101,15 @@ uint8_t env_get_char(uint32_t offset)
 
 void env_set_char(uint32_t offset, uint8_t d)
 {
-    lprintf("sf_write %x@%x\n", d, get_env_start_addr()+offset);
-    SPI_Flash_Write(&d, get_env_start_addr()+offset, 1);
+    uint8_t rd;
+    SPI_Flash_Write_Byte(d, get_env_start_addr()+offset);
+    rd = SPI_Flash_Read_Byte(get_env_start_addr()+offset);
+    if(d == rd){
+        lprintf("sf_write %x@%x OK\n", d, get_env_start_addr()+offset);
+    }
+    else{
+        lprintf("sf_write %x@%x#%x\n", (uint32_t)d, get_env_start_addr()+offset, (uint32_t)rd);
+    }
 }
 
 uint32_t strcpy2env(uint32_t env_offset, const uint8_t *s)

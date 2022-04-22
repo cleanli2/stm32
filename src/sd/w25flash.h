@@ -59,6 +59,8 @@ void SPI_Flash_Erase_Sector(u32 Dst_Addr);//扇区擦除
 void SPI_Flash_Wait_Busy(void);           //等待空闲
 void SPI_Flash_PowerDown(void);           //进入掉电模式
 void SPI_Flash_WAKEUP(void);			  //唤醒
+void SPI_Flash_Write_Byte(u8 data,u32 WriteAddr);//写入byte
+u8 SPI_Flash_Read_Byte(u32 WriteAddr);//read byte
 #endif
 
 

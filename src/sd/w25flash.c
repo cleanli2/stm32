@@ -303,6 +303,17 @@ void SPI_Flash_WAKEUP(void)
 	SPI_FLASH_CS=1;                            //取消片选     	      
     delay_us(3);                               //等待TRES1
 }   
+u8 SPI_Flash_Read_Byte(u32 ReadAddr)
+{
+    u8 ret;
+    SPI_Flash_Read(&ret,ReadAddr,1);
+    return ret;
+}
+
+void SPI_Flash_Write_Byte(u8 data,u32 WriteAddr)
+{
+    SPI_Flash_Write_Page(&data,WriteAddr,1);
+}
 
 
 
