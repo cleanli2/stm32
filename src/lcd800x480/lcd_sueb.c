@@ -81,29 +81,21 @@ void Enable_BL(int en)//点亮背光
 
 void LCD_BUS_To_write(int write)
 {
-	GPIO_InitTypeDef  GPIO_InitStructure;
-	      
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	if(write){
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2| GPIO_Pin_3;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-		GPIO_Init(GPIOA, &GPIO_InitStructure);	
-		GPIO_SetBits(GPIOA,GPIO_Pin_2|GPIO_Pin_3);
+    GPIO_InitTypeDef  GPIO_InitStructure;
 
-		GPIO_InitStructure.GPIO_Pin = LCD_PORT_GPIO_Pins;	//  
-		GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
-		GPIO_SetBits(GPIOB,LCD_PORT_GPIO_Pins);	
-	}
-	else{
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2| GPIO_Pin_3;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-		GPIO_Init(GPIOA, &GPIO_InitStructure);	
-		GPIO_SetBits(GPIOA,GPIO_Pin_2|GPIO_Pin_3);
-
-		GPIO_InitStructure.GPIO_Pin = LCD_PORT_GPIO_Pins;	//  
-		GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
-		GPIO_SetBits(GPIOB,LCD_PORT_GPIO_Pins);	
-	}
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    if(write){
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+        GPIO_InitStructure.GPIO_Pin = LCD_PORT_GPIO_Pins;
+        GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
+        GPIO_SetBits(GPIOB,LCD_PORT_GPIO_Pins);
+    }
+    else{
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+        GPIO_InitStructure.GPIO_Pin = LCD_PORT_GPIO_Pins;
+        GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
+        GPIO_SetBits(GPIOB,LCD_PORT_GPIO_Pins);
+    }
 }
 
 void LCD_write(u16 VAL)
@@ -415,13 +407,13 @@ void LCD_GPIOInit(void)
 	      
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO,ENABLE);
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 |GPIO_Pin_14| GPIO_Pin_15; //GPIOC14,15
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 |GPIO_Pin_14| GPIO_Pin_15; //GPIOC14,15,13
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;   //推挽输出
 	GPIO_Init(GPIOC, &GPIO_InitStructure);	
 	GPIO_SetBits(GPIOC,GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15);
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_1| GPIO_Pin_0; //GPIOA8, 11,12
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_1| GPIO_Pin_0; //GPIOA8, 0, 1
 	GPIO_Init(GPIOA, &GPIO_InitStructure); //GPIOA
 	GPIO_SetBits(GPIOA,GPIO_Pin_8|GPIO_Pin_1| GPIO_Pin_8);	
 
