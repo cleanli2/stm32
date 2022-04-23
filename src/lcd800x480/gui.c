@@ -612,6 +612,7 @@ void GUI_DrawFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
 	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//»Ö¸´´°¿ÚÎªÈ«ÆÁ  
 } 
 #endif
+extern void puthexch(char c);
 /*****************************************************************************
  * @name       :void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
  * @date       :2022-03-19
@@ -653,6 +654,27 @@ void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
         ziku_offset = ((s[0]-0xa1)*94+s[1]-0xa1)*32;
         SPI_Flash_Read((uint8_t*)(&tfont16[k].Msk[0]),
                 SPI_FLASH_ZIKU16_START+ziku_offset, 32);
+#if 0
+        __io_putchar('\n');
+        __io_putchar('\n');
+        puthexch(ziku_offset>>16);
+        __io_putchar('_');
+        puthexch(ziku_offset>>8);
+        __io_putchar('_');
+        puthexch(ziku_offset);
+        __io_putchar('\n');
+        puthexch(s[0]);
+        __io_putchar('\n');
+        puthexch(s[1]);
+        int i=0,j=32;
+        __io_putchar('\n');
+        while(j--){
+            //lprintf("\n%b ",tfont16[k].Msk[i++]);
+            puthexch(tfont16[k].Msk[i++]);
+            __io_putchar('_');
+        }
+        __io_putchar('\n');
+#endif
     }
     //show the cch
     LCD_SetWindows(x,y,x+16*LCD_Char_scale-1,y*LCD_Char_scale+16-1);
