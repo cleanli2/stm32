@@ -243,3 +243,38 @@ void lcd_lprintf(uint32_t x, uint32_t y, const char *fmt, ...)
     va_end(ap);
     Show_Str(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lcdprintf_buf,16,0);
 }
+
+void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
+{
+    const char*line_stt = buf;
+    uint32_t left=len, line_len;
+    lprintf("\nMemShow Start:");
+    while(left){
+        int j, li;
+        line_len = left>16?16:left;
+        li=line_len;
+        lprintf("\n%X: ", ct_start);
+        j=0;
+        while(li--){
+            puthexch(line_stt[j]);
+            __io_putchar(j == 7 ? '-':' ');
+            j++;
+        }
+        li=line_len;
+        j=0;
+        __io_putchar(' ');
+        while(li--){
+            if(line_stt[j]>=0x20 && line_stt[j]<0x7f){
+                __io_putchar(line_stt[j]);
+            }
+            else{
+                __io_putchar('_');
+            }
+            j++;
+        }
+        left-=line_len;
+        line_stt+=line_len;
+        ct_start+=line_len;
+    }
+    lprintf("\nMemShow End:\n");
+}

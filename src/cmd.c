@@ -292,17 +292,7 @@ void sd(char *p)
         lprintf("repeat %x\n", para2);
         while(para2--){
             SD_ReadBlock(read_buf, para1, 512);
-            char*cp = (char *)read_buf;
-            int length=512;
-            while(length){
-                lprint("\n%x: ", (uint32_t)cp-(uint32_t)read_buf+para1);
-                for(int i=0;i<16;i++){
-                    length--;
-                    lprintf("%b", *cp++);
-                    con_send(i == 7 ? '-':' ');
-                }
-            }
-            lprintf("\n");
+            mem_print((const char*)read_buf, para1, 512);
             para1 += 0x200;
         }
     }
@@ -1299,7 +1289,7 @@ char * str_to_hex(char *s, uint32_t * result)
 
 void print_mem(char *p)
 {
-    uint length = 0x80, tmp, i;
+    uint length = 0x80, tmp;
     char *cp;
 
     tmp = get_howmany_para(p);
@@ -1310,15 +1300,7 @@ void print_mem(char *p)
     str_to_hex(p, &length);
 print:
     cp = (char *)mrw_addr;
-    while(length){
-	lprint("\n%x: ", (int)cp);
-	for(i=0;i<16;i++){
-		length--;
-		lprintf("%b", *cp++);
-		con_send(i == 7 ? '-':' ');
-	}
-    }
-    con_send('\n');
+    mem_print(cp, (uint32_t)mrw_addr, length);
 
     return;
 
