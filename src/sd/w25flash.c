@@ -141,7 +141,7 @@ void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u16 NumByteToRead)
 //pBuffer:数据存储区
 //WriteAddr:开始写入的地址(24bit)
 //NumByteToWrite:要写入的字节数(最大256),该数不应该超过该页的剩余字节数!!!	 
-void SPI_Flash_Write_Page(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
+void SPI_Flash_Write_Page(const u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 {
  	u16 i;  
     SPI_FLASH_Write_Enable();                  //SET WEL 
@@ -162,7 +162,7 @@ void SPI_Flash_Write_Page(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 //WriteAddr:开始写入的地址(24bit)
 //NumByteToWrite:要写入的字节数(最大65535)
 //CHECK OK
-void SPI_Flash_Write_NoCheck(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)   
+void SPI_Flash_Write_NoCheck(const u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)   
 { 			 		 
 	u16 pageremain;	   
 	pageremain=256-WriteAddr%256; //单页剩余的字节数		 	    
@@ -182,13 +182,16 @@ void SPI_Flash_Write_NoCheck(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 		}
 	};	    
 } 
+#ifdef WRITE_W25F
+u8 SPI_FLASH_BUFFER[4096];
+#endif
 //写SPI FLASH  
 //在指定地址开始写入指定长度的数据
 //该函数带擦除操作!
 //pBuffer:数据存储区
 //WriteAddr:开始写入的地址(24bit)
 //NumByteToWrite:要写入的字节数(最大65535)  		   
-void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)   
+void SPI_Flash_Write(const u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)   
 { 
 	u32 secpos;
 	u16 secoff;
@@ -199,8 +202,12 @@ void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 	SPI_FLASH_BUF=mymalloc(4096);	//使用内存管理 
 	if(SPI_FLASH_BUF==NULL)return;	//申请失败
 #else
-	u8 SPI_FLASH_BUFFER[4096];
+#ifdef WRITE_W25F
 	SPI_FLASH_BUF=SPI_FLASH_BUFFER;	//不使用内存管理
+#else
+    lprintf("SPI_Flash_Write:You can't use this func for lack of buffer\n");
+    return;
+#endif
 #endif	 
 	secpos=WriteAddr/4096;//扇区地址 0~511 for w25x16
 	secoff=WriteAddr%4096;//在扇区内的偏移

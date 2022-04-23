@@ -39,7 +39,7 @@ void w25f(char *p)
 {
     uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
 #ifdef WRITE_W25F
-    uint8_t*datawritebuf=ziku;
+    const uint8_t*datawritebuf=ziku;
     uint32_t datalen = get_ziku_size();
 #endif
 
@@ -125,7 +125,7 @@ void w25f(char *p)
             p = str_to_hex(p, &para2);
             lprintf("para1=%x, wbuf=0x%x, para2=%d\n", para1,
                     datawritebuf, datalen);
-            SPI_Flash_Write(datawritebuf, (uint8_t*)para1, para2);
+            SPI_Flash_Write(datawritebuf, para1, para2);
         }
         else{
             lprintf("error para:w25f 5 70000 18000//write to 0x70000, len 0x18000");
