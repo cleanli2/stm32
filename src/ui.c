@@ -573,36 +573,48 @@ void sd_ui_process_event(void*vp)
 #define SHOW_FILE_NAME "book.txt"
 static char sd_disp_buf[SDDISP_BUF_SIZE];
 void sd_detect(){
+    static int sd_already_OK = 0;
     uint32_t file_offset = 0;
     int ret;
     SD_CardInfo mycard;
     lcd_lprintf(0, 40, "Detecting sd card...");
-    if(SD_Init() != SD_OK && SD_Init() != SD_OK)
-    {
-        //retry once
-        lprintf("Fail\n");
-        lcd_lprintf(0, 60, "Failed.");
-    }
-    else{
-        lprintf("OK\n");
-        lcd_lprintf(0, 60, "OK.    ");
-        if(SD_GetCardInfo(&mycard) != SD_OK)
+    if(!sd_already_OK){
+        if(SD_Init() != SD_OK && SD_Init() != SD_OK)
         {
-            lprintf("get card info Fail\n");
-            lcd_lprintf(0, 80, "Get card info Fail            ");
-            lcd_lprintf(0, 100, "                              ");
+            //retry once
+            lprintf("Fail\n");
+            lcd_lprintf(0, 60, "Failed.");
+            return;
         }
         else{
-            lprintf("block size %d\n", mycard.CardBlockSize);
-            lcd_lprintf(0, 80, "block size %d", mycard.CardBlockSize);
-            lprintf("block capacity %d\n", mycard.CardCapacity);
-            lcd_lprintf(0, 100, "block capacity %d", mycard.CardCapacity);
+            sd_already_OK = 1;
+            lprintf("OK\n");
         }
-        ret = get_file_content(sd_disp_buf, SHOW_FILE_NAME, file_offset, 100, SD_ReadBlock);
-        lprintf("ret %d\n", ret);
+    }
+    lcd_lprintf(0, 60, "OK.    ");
+    if(SD_GetCardInfo(&mycard) != SD_OK)
+    {
+        sd_already_OK = 0;
+        lprintf("get card info Fail\n");
+        lcd_lprintf(0, 80, "Get card info Fail            ");
+        lcd_lprintf(0, 100, "                              ");
+        return;
+    }
+    else{
+        lprintf("block size %d\n", mycard.CardBlockSize);
+        lcd_lprintf(0, 80, "block size %d", mycard.CardBlockSize);
+        lprintf("block capacity %d\n", mycard.CardCapacity);
+        lcd_lprintf(0, 100, "block capacity %d", mycard.CardCapacity);
+    }
+    ret = get_file_content(sd_disp_buf, SHOW_FILE_NAME, file_offset, 100, SD_ReadBlock);
+    lprintf("get file ret %d\n", ret);
+    if(ret == FS_OK){
         lcd_lprintf(0, 140, sd_disp_buf);
     }
-    set_touch_need_reinit();
+    else{
+        sd_already_OK = 0;
+    }
+    //set_touch_need_reinit();
 }
 
 button_t sd_button[]={

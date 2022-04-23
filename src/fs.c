@@ -27,11 +27,13 @@ int get_file_content(char* buf, const char*filename, uint32_t file_offset, uint3
         fs_buf = (char*)mem_sd_buf;
     }
     slprintf(buf, "fn:%s off:%d len:%d under developing", filename, file_offset, len);
+    lprintf("read sd %x sectors\n", bsect);
     if(SD_RESPONSE_NO_ERROR != rd_block((u8*)fs_buf, bsect, FS_BUF_SIZE)){
         lprintf("read disk err\n");
         return FS_DISK_ERR;
     }
-    //if(g_fp == NULL){
+    mem_print(fs_buf, bsect*g_fp->fs->ssize, 512);
+    if(g_fp == NULL)
     {
         g_fp = &g_file;
         g_fp->fs = &g_fat32;
@@ -126,12 +128,16 @@ int get_file_content(char* buf, const char*filename, uint32_t file_offset, uint3
                 g_fp->fs->fatbase,
                 g_fp->fs->database,
                 g_fp->fs->dirbase);
+    }
+    if(g_fp->sclust==0){
         //find root dir sec
         bsect = g_fp->fs->database + (g_fp->fs->dirbase - 2) * g_fp->fs->csize;
+        lprintf("read sd %x sectors\n", bsect);
         if(SD_RESPONSE_NO_ERROR != rd_block((u8*)fs_buf, bsect, FS_BUF_SIZE)){
             lprintf("read disk err\n");
             return FS_DISK_ERR;
         }
+        mem_print(fs_buf, bsect*g_fp->fs->ssize, 512);
         //find filename
         {
             DWORD items = 0;
@@ -150,17 +156,20 @@ int get_file_content(char* buf, const char*filename, uint32_t file_offset, uint3
                     g_fp->sclust = get_uint_offset(fs_buf+items*SZ_DIRE, DIR_FstClusHI, 2);
                     g_fp->sclust <<= 16;
                     g_fp->sclust += get_uint_offset(fs_buf+items*SZ_DIRE, DIR_FstClusLO, 2);
-                    lprintf("start clust 0x%x\n", (DWORD)g_fp->sclust);
-                    bsect = g_fp->fs->database + (g_fp->sclust - 2) * g_fp->fs->csize;
-                    lprintf("start sect 0x%x\n", (DWORD)bsect);
-                    if(SD_RESPONSE_NO_ERROR != rd_block((u8*)buf, bsect, FS_BUF_SIZE)){
-                        lprintf("read disk err\n");
-                        return FS_DISK_ERR;
-                    }
                     break;
                 }
                 items++;
             }
+        }
+    }
+    if(g_fp->sclust!=0){
+        //find root dir sec
+        lprintf("file start clust 0x%x\n", (DWORD)g_fp->sclust);
+        bsect = g_fp->fs->database + (g_fp->sclust - 2) * g_fp->fs->csize;
+        lprintf("start sect 0x%x\n", (DWORD)bsect);
+        if(SD_RESPONSE_NO_ERROR != rd_block((u8*)buf, bsect, FS_BUF_SIZE)){
+            lprintf("read disk err\n");
+            return FS_DISK_ERR;
         }
     }
     return FS_OK;

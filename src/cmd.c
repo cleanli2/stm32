@@ -292,8 +292,8 @@ void sd(char *p)
         lprintf("repeat %x\n", para2);
         while(para2--){
             SD_ReadBlock(read_buf, para1, 512);
-            mem_print((const char*)read_buf, para1, 512);
-            para1 += 0x200;
+            mem_print((const char*)read_buf, para1*512, 512);
+            para1 += 1;
         }
     }
     else if(cmdindex == 0xb){//
