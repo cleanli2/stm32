@@ -5,6 +5,7 @@
 #include "common.h"
 
 char lprintf_buf[256];
+char lcdprintf_buf[256];
 char halfbyte2char(char c)
 {
         return ((c & 0x0f) < 0x0a)?(0x30 + c):('A' + c - 0x0a);
@@ -236,9 +237,9 @@ uint16_t LCD_PRINT_FRONT_COLOR = BLACK;
 void lcd_lprintf(uint32_t x, uint32_t y, const char *fmt, ...)
 {
     va_list ap;
-    memset(lprintf_buf, 0, sizeof(lprintf_buf));
+    memset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
     va_start(ap,fmt);
-    vslprintf(lprintf_buf,fmt,ap);
+    vslprintf(lcdprintf_buf,fmt,ap);
     va_end(ap);
-    Show_Str(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lprintf_buf,16,0);
+    Show_Str(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lcdprintf_buf,16,0);
 }
