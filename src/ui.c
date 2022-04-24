@@ -575,6 +575,7 @@ void sd_ui_process_event(void*vp)
 static char sd_disp_buf[SDDISP_BUF_SIZE];
 void sd_detect(){
     static int sd_already_OK = 0;
+    static int text_scale = 1;
     uint32_t file_offset = 0;
     int ret;
     SD_CardInfo mycard;
@@ -610,8 +611,12 @@ void sd_detect(){
     ret = get_file_content(sd_disp_buf, SHOW_FILE_NAME, file_offset, 100, SD_ReadBlock);
     lprintf("get file ret %d\n", ret);
     if(ret == FS_OK){
-        draw_sq(20, 140, 460, 500, BLACK);
-        lcd_lprintf_win(20, 140, 460, 500, sd_disp_buf);
+        lcd_lprintf(20, 120, "book.txt");
+        draw_sq(20-5, 140-5, 460+5, 600+5, BLACK);
+        set_LCD_Char_scale(text_scale);
+        lcd_lprintf_win(20, 140, 440, 460, sd_disp_buf);
+        set_LCD_Char_scale(1);
+        text_scale = 3 - text_scale;
     }
     else{
         sd_already_OK = 0;
