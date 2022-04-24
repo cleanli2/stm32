@@ -11,6 +11,7 @@ extern uint16_t LCD_PRINT_FRONT_COLOR;
 void lprintf(const char *fmt, ...);
 void slprintf(char*buf, const char *fmt, ...);
 void lcd_lprintf(uint32_t x, uint32_t y, const char *fmt, ...);
+void lcd_lprintf_win(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const char *fmt, ...);
 void mem_print(const char*buf, uint32_t ct_start, uint32_t len);
 
 #endif

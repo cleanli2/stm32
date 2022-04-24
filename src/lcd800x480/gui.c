@@ -834,6 +834,75 @@ void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
 	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//恢复窗口为全屏  
 } 
 
+void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, char *str, u32 size, u32 mode, u32 win_width, u32 win_height)
+{
+    u32 x0=x, bHz=0, y0=y, xmax=x0+win_width, ymax=y0+win_height;
+    while(*str!=0)
+    {
+        if(!bHz)
+        {
+            if(*str>0x80){
+                bHz=1;//chinese char
+            }
+            else
+            {
+                if(*str==0x0A)//enter char
+                {
+                    str++;
+                    continue;
+                }
+                if(*str==0x0D)//enter char
+                {
+                    y+=(size*LCD_Char_scale);
+                    x=x0;
+                    str++;
+                }
+                else
+                {
+                    if(x>(xmax-(size*LCD_Char_scale)/2)){
+                        y+=(size*LCD_Char_scale);
+                        x=x0;
+                    }
+                    if(y>(ymax-size*LCD_Char_scale)){
+                        return;
+                    }
+                    if(size>16)//no12X24 16X32 english font, use 8X16
+                    {
+                        LCD_ShowChar(x,y,fc,bc,*str,16,mode);
+                        x+=8*LCD_Char_scale;
+                    }
+                    else
+                    {
+                        LCD_ShowChar(x,y,fc,bc,*str,size,mode);
+                        x+=(size*LCD_Char_scale)/2;
+                    }
+                }
+                str++;
+
+            }
+        }else
+        {
+            if(x>(xmax-(size*LCD_Char_scale))){
+                y+=(size*LCD_Char_scale);
+                x=x0;
+            }
+            if(y>(ymax-size*LCD_Char_scale)){
+                return;
+            }
+            bHz=0;
+            if(size==32)
+                GUI_DrawFont32(x,y,fc,bc,str,mode);
+            else if(size==24)
+                GUI_DrawFont24(x,y,fc,bc,str,mode);
+            else
+                GUI_DrawZikuFont16(x,y,fc,bc,str,mode);
+
+            str+=2;
+            x+=size*LCD_Char_scale;
+        }
+    }
+}
+
 /*****************************************************************************
  * @name       :void Show_Str(u16 x, u16 y, u16 fc, u16 bc, u8 *str,u8 size,u8 mode)
  * @date       :2018-08-09 
@@ -849,6 +918,8 @@ void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
 ******************************************************************************/	   		   
 void Show_Str(u16 x, u16 y, u16 fc, u16 bc, char *str,u8 size,u8 mode)
 {					
+    Show_Str_win(x, y, fc, bc, str, size, mode, lcddev.width-x, lcddev.height-y);
+#if 0
 	u16 x0=x;							  	  
   	u8 bHz=0;     //字符或者中文 
     while(*str!=0)//数据未结束
@@ -900,9 +971,10 @@ void Show_Str(u16 x, u16 y, u16 fc, u16 bc, char *str,u8 size,u8 mode)
 			GUI_DrawZikuFont16(x,y,fc,bc,str,mode);
 				
 	        str+=2; 
-	        x+=size;//下一个汉字偏移	    
+	        x+=size*LCD_Char_scale;//下一个汉字偏移	    
         }						 
     }   
+#endif
 }
 
 /*****************************************************************************

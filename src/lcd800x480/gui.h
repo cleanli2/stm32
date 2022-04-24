@@ -74,6 +74,7 @@ void GUI_DrawFont16(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode);
 void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode);
 void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode);
 void Show_Str(u16 x, u16 y, u16 fc, u16 bc, char *str,u8 size,u8 mode);
+void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, char *str, u32 size, u32 mode, u32 win_width, u32 win_height);
 void Gui_Drawbmp16(u16 x,u16 y,u16 w,u16 h,const unsigned char *p); //œ‘ æ40*40 QQÕº∆¨
 void gui_circle(int xc, int yc,u16 c,int r, int fill);
 void Gui_StrCenter(u16 x, u16 y, u16 fc, u16 bc, char *str,u8 size,u8 mode);

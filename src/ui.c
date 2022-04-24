@@ -30,6 +30,7 @@ void draw_prgb_raw(prgb_t*pip);
 void timer_ui_transfer_with_para(uint32_t timeout,
         uint32_t repeat, const int8_t* music);
 void draw_button(button_t*pbt);
+void draw_sq(int x1, int y1, int x2, int y2, int color);
 
 void timer_set_ui_init(void*vp)
 {
@@ -609,7 +610,8 @@ void sd_detect(){
     ret = get_file_content(sd_disp_buf, SHOW_FILE_NAME, file_offset, 100, SD_ReadBlock);
     lprintf("get file ret %d\n", ret);
     if(ret == FS_OK){
-        lcd_lprintf(0, 140, sd_disp_buf);
+        draw_sq(20, 140, 460, 500, BLACK);
+        lcd_lprintf_win(20, 140, 460, 500, sd_disp_buf);
     }
     else{
         sd_already_OK = 0;
