@@ -612,6 +612,7 @@ void sd_detect(){
     lprintf("get file ret %d\n", ret);
     if(ret == FS_OK){
         lcd_lprintf(20, 120, "book.txt");
+        lcd_clr_window(WHITE, 20-5, 140-5, 460+5, 600+5);
         draw_sq(20-5, 140-5, 460+5, 600+5, BLACK);
         set_LCD_Char_scale(text_scale);
         lcd_lprintf_win(20, 140, 440, 460, sd_disp_buf);
