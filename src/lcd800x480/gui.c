@@ -627,7 +627,7 @@ extern void puthexch(char c);
  ******************************************************************************/
 void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
 {
-    u8 i,j;
+    u8 i,j,n;
     u16 k;
     u16 HZnum;
     u16 x0=x;
@@ -677,16 +677,17 @@ void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
 #endif
     }
     //show the cch
-    LCD_SetWindows(x,y,x+16*LCD_Char_scale-1,y*LCD_Char_scale+16-1);
-    for(i=0;i<16*2;i++)
+    LCD_SetWindows(x,y,x+16*LCD_Char_scale-1,y+LCD_Char_scale*16-1);
+    for(i=0;i<16;i++)
     {
         local_scale_y = LCD_Char_scale;
         while(local_scale_y--){
+          for(n=0;n<2;n++){
             for(j=0;j<8;j++)
             {
                 if(!mode) //not overlay
                 {
-                    if(tfont16[k].Msk[i]&(0x80>>j)){
+                    if(tfont16[k].Msk[i*2+n]&(0x80>>j)){
                         local_scale_x = LCD_Char_scale;
                         while(local_scale_x--){
                             Lcd_WriteData_16Bit(fc);
@@ -702,7 +703,7 @@ void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
                 else
                 {
                     POINT_COLOR=fc;
-                    if(tfont16[k].Msk[i]&(0x80>>j)){
+                    if(tfont16[k].Msk[i*2+n]&(0x80>>j)){
                         local_scale_x = LCD_Char_scale;
                         while(local_scale_x--){
                             LCD_DrawPoint(x,y);
@@ -717,6 +718,7 @@ void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
                     }
                 }
             }
+          }
         }
     }
 
