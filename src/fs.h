@@ -14,6 +14,8 @@ typedef uint32_t DWORD;
 #define FS_NO_FILESYSTEM (5)
 #define FS_FILE_NOT_FOUND (6)
 
+#define INVALID_CLUSTER 0xffffffff
+
 /* Name status flags */
 #define NSFLAG		11		/* Index of name status byte in fn[] */
 #define NS_LOSS		0x01	/* Out of 8.3 format */
@@ -89,6 +91,7 @@ typedef uint32_t DWORD;
 #define	LDIR_Chksum			13		/* Sum of corresponding SFN entry */
 #define	LDIR_FstClusLO		26		/* Must be zero (0) */
 #define	SZ_DIRE				32		/* Size of a directory entry */
+#define	SZ_FAT_CLUSTER		4		/* Size of a fat cluster */
 #define	LLEF				0x40	/* Last long entry flag in LDIR_Ord */
 #define	DDEM				0xE5	/* Deleted directory entry mark at DIR_Name[0] */
 #define	RDDEM				0x05	/* Replacement of the character collides with DDEM */
@@ -96,6 +99,7 @@ typedef uint32_t DWORD;
 #define FS_FAT12	1
 #define FS_FAT16	2
 #define FS_FAT32	3
+#define MIN_EOF	0x0FFFFFF8
 typedef SD_Error (*block_read_func)(uint8_t* pBuffer, uint64_t block_n, uint16_t BlockSize);
 
 typedef struct {

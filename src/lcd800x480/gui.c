@@ -625,7 +625,7 @@ extern void puthexch(char c);
                 mode:0-no overlying,1-overlying
  * @retvalue   :None
  ******************************************************************************/
-void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
+void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 {
     u8 i,j,n;
     u16 k;
@@ -737,7 +737,7 @@ void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
 								mode:0-no overlying,1-overlying
  * @retvalue   :None
 ******************************************************************************/ 
-void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
+void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 {
 	u8 i,j;
 	u16 k;
@@ -793,7 +793,7 @@ void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
 								mode:0-no overlying,1-overlying
  * @retvalue   :None
 ******************************************************************************/ 
-void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
+void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 {
 	u8 i,j;
 	u16 k;
@@ -834,11 +834,12 @@ void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode)
 			}
 	
 	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//»Ö¸´´°¿ÚÎªÈ«ÆÁ  
-} 
+}
 
-void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, char *str, u32 size, u32 mode, u32 win_width, u32 win_height)
+const char* Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, u32 size, u32 mode, win_pt wd, int is_dummy)
 {
-    u32 x0=x, bHz=0, y0=y, xmax=x0+win_width, ymax=y0+win_height;
+    u32 bHz=0, xmax=wd->x+wd->w, ymax=wd->y+wd->h;
+    u32 x=*xp, y=*yp;
     while(*str!=0)
     {
         if(!bHz)
@@ -856,26 +857,26 @@ void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, char *str, u32 size, u32 mode, u
                 if(*str==0x0D)//enter char
                 {
                     y+=(size*LCD_Char_scale);
-                    x=x0;
+                    x=wd->x;
                     str++;
                 }
                 else
                 {
                     if(x>(xmax-(size*LCD_Char_scale)/2)){
                         y+=(size*LCD_Char_scale);
-                        x=x0;
+                        x=wd->x;
                     }
                     if(y>(ymax-size*LCD_Char_scale)){
-                        return;
+                        goto end;
                     }
                     if(size>16)//no12X24 16X32 english font, use 8X16
                     {
-                        LCD_ShowChar(x,y,fc,bc,*str,16,mode);
+                        if(!is_dummy)LCD_ShowChar(x,y,fc,bc,*str,16,mode);
                         x+=8*LCD_Char_scale;
                     }
                     else
                     {
-                        LCD_ShowChar(x,y,fc,bc,*str,size,mode);
+                        if(!is_dummy)LCD_ShowChar(x,y,fc,bc,*str,size,mode);
                         x+=(size*LCD_Char_scale)/2;
                     }
                 }
@@ -886,23 +887,52 @@ void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, char *str, u32 size, u32 mode, u
         {
             if(x>(xmax-(size*LCD_Char_scale))){
                 y+=(size*LCD_Char_scale);
-                x=x0;
+                x=wd->x;
             }
             if(y>(ymax-size*LCD_Char_scale)){
-                return;
+                goto end;
+            }
+            if(*(str+1)==0){
+                //chinese char departed
+                goto end;
             }
             bHz=0;
+            if(!is_dummy){
             if(size==32)
                 GUI_DrawFont32(x,y,fc,bc,str,mode);
             else if(size==24)
                 GUI_DrawFont24(x,y,fc,bc,str,mode);
             else
                 GUI_DrawZikuFont16(x,y,fc,bc,str,mode);
+            }
 
             str+=2;
             x+=size*LCD_Char_scale;
         }
     }
+end:
+    *xp=x;
+    *yp=y;
+    return str;
+}
+
+void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, const char *str, u32 size, u32 mode, u32 win_width, u32 win_height)
+{
+    win wd;
+    wd.x=x;
+    wd.y=y;
+    wd.w=win_width;
+    wd.h=win_height;
+    Show_Str_win_raw(&x, &y, fc, bc, str, size, mode, &wd, 0);
+}
+
+const char* area_show_str(win_pt wdp, u32 *xp, u32 *yp, const char*string, int is_dummy)
+{
+    const char* ret;
+    //lprintf("ass>x %d y %d\n", *xp, *yp);
+    ret = Show_Str_win_raw(xp, yp, BLACK, WHITE, string, 16, 0, wdp, is_dummy);
+    //lprintf("ass<x %d y %d\n", *xp, *yp);
+    return ret;
 }
 
 /*****************************************************************************
@@ -918,7 +948,7 @@ void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, char *str, u32 size, u32 mode, u
 								mode:0-no overlying,1-overlying
  * @retvalue   :None
 ******************************************************************************/	   		   
-void Show_Str(u16 x, u16 y, u16 fc, u16 bc, char *str,u8 size,u8 mode)
+void Show_Str(u16 x, u16 y, u16 fc, u16 bc, const char *str,u8 size,u8 mode)
 {					
     Show_Str_win(x, y, fc, bc, str, size, mode, lcddev.width-x, lcddev.height-y);
 #if 0

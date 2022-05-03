@@ -572,61 +572,174 @@ void sd_ui_process_event(void*vp)
 
 #define SDDISP_BUF_SIZE 512
 #define SHOW_FILE_NAME "book.txt"
-static char sd_disp_buf[SDDISP_BUF_SIZE];
-void sd_detect(){
-    static int sd_already_OK = 0;
-    static int text_scale = 1;
-    uint32_t file_offset = 0;
-    int ret;
+#define BOOK_SHOW_WIN_X 5
+#define BOOK_SHOW_WIN_Y 60
+#define BOOK_SHOW_WIN_W 469
+#define BOOK_SHOW_WIN_H 598
+static char book_buf[SDDISP_BUF_SIZE];
+static uint32_t book_file_offset= 0;
+static uint32_t page_start_offset= 0;
+static uint32_t last_page_start_offset= 0;
+static uint32_t page_end_offset= ~0;
+static const char*next_show_char=0;
+static int text_scale = 2;
+
+int show_book(int is_dummy)
+{
+    int ret, showed_chars;
     SD_CardInfo mycard;
-    lcd_lprintf(0, 40, "Detecting sd card...");
-    if(!sd_already_OK){
+    memset(book_buf, 0, 512);
+    ret = get_file_content(book_buf, SHOW_FILE_NAME, book_file_offset, 511, SD_ReadBlock);
+    lprintf("----get file ret %d dummy %d bfo %d\n", ret, is_dummy, book_file_offset);
+    if(ret != FS_OK){
+        if(!is_dummy)lcd_lprintf(0, 40, "Detecting sd card...");
         if(SD_Init() != SD_OK && SD_Init() != SD_OK)
         {
             //retry once
             lprintf("Fail\n");
-            lcd_lprintf(0, 60, "Failed.");
-            return;
+            if(!is_dummy)lcd_lprintf(0, 60, "Failed.");
+            return -1;
         }
         else{
-            sd_already_OK = 1;
             lprintf("OK\n");
         }
+        if(!is_dummy)lcd_lprintf(0, 60, "OK.    ");
+        if(SD_GetCardInfo(&mycard) != SD_OK)
+        {
+            lprintf("get card info Fail\n");
+            if(!is_dummy)lcd_lprintf(0, 80, "Get card info Fail            ");
+            if(!is_dummy)lcd_lprintf(0, 100, "                              ");
+            return -1;
+        }
+        else{
+            lprintf("block size %d\n", mycard.CardBlockSize);
+            if(!is_dummy)lcd_lprintf(0, 80, "block size %d", mycard.CardBlockSize);
+            lprintf("block capacity %d\n", mycard.CardCapacity);
+            if(!is_dummy)lcd_lprintf(0, 100, "block capacity %d", mycard.CardCapacity);
+        }
+        ret = get_file_content(book_buf, SHOW_FILE_NAME, book_file_offset, 511, SD_ReadBlock);
+        lprintf("retry after init sd:get file ret %d\n", ret);
     }
-    lcd_lprintf(0, 60, "OK.    ");
-    if(SD_GetCardInfo(&mycard) != SD_OK)
-    {
-        sd_already_OK = 0;
-        lprintf("get card info Fail\n");
-        lcd_lprintf(0, 80, "Get card info Fail            ");
-        lcd_lprintf(0, 100, "                              ");
-        return;
-    }
-    else{
-        lprintf("block size %d\n", mycard.CardBlockSize);
-        lcd_lprintf(0, 80, "block size %d", mycard.CardBlockSize);
-        lprintf("block capacity %d\n", mycard.CardCapacity);
-        lcd_lprintf(0, 100, "block capacity %d", mycard.CardCapacity);
-    }
-    ret = get_file_content(sd_disp_buf, SHOW_FILE_NAME, file_offset, 100, SD_ReadBlock);
-    lprintf("get file ret %d\n", ret);
     if(ret == FS_OK){
-        lcd_lprintf(20, 120, "book.txt");
-        lcd_clr_window(WHITE, 20-5, 140-5, 460+5, 600+5);
-        draw_sq(20-5, 140-5, 460+5, 600+5, BLACK);
+        u32 show_x=BOOK_SHOW_WIN_X, show_y=BOOK_SHOW_WIN_Y;
+        win bookw={BOOK_SHOW_WIN_X, BOOK_SHOW_WIN_Y, BOOK_SHOW_WIN_W, BOOK_SHOW_WIN_H};
+        if(!is_dummy)lcd_lprintf(BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-20, " book.txt               ");
+        if(!is_dummy)lcd_clr_window(WHITE, BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5,
+                BOOK_SHOW_WIN_X+BOOK_SHOW_WIN_W+5, BOOK_SHOW_WIN_Y+BOOK_SHOW_WIN_H+5);
+        draw_sq(BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5,
+                BOOK_SHOW_WIN_X+BOOK_SHOW_WIN_W+5, BOOK_SHOW_WIN_Y+BOOK_SHOW_WIN_H+5, BLACK);
         set_LCD_Char_scale(text_scale);
-        lcd_lprintf_win(20, 140, 440, 460, sd_disp_buf);
+        while(1){
+            next_show_char=area_show_str(&bookw, &show_x, &show_y, next_show_char, is_dummy);
+            showed_chars = next_show_char - book_buf;
+            lprintf("%d xy %d %d\n", showed_chars, show_x, show_y);
+            if(showed_chars <510) break;
+            book_file_offset += showed_chars;
+            memset(book_buf, 0, 512);
+            ret = get_file_content(book_buf, SHOW_FILE_NAME, book_file_offset, 511, SD_ReadBlock);
+            if(ret != FS_OK){
+                lprintf("sd read fail\n");
+                return -1;
+            }
+            next_show_char=book_buf;
+        }
         set_LCD_Char_scale(1);
-        text_scale = 3 - text_scale;
     }
     else{
-        sd_already_OK = 0;
+        lprintf("sd read fail\n");
     }
-    //set_touch_need_reinit();
+    lprintf("----ret %d dummy %d bfo %d\n", ret, is_dummy, book_file_offset);
+    return 0;
+}
+
+void font_size(){
+    text_scale = 3 - text_scale;
+    book_file_offset=page_start_offset;
+    next_show_char=book_buf;
+    show_book(0);
+    page_end_offset = book_file_offset+next_show_char-book_buf-1;
+}
+
+void sd_detect(){
+    last_page_start_offset = page_start_offset;
+    page_start_offset = page_end_offset + 1;
+    book_file_offset=page_start_offset;
+    next_show_char=book_buf;
+    lprintf("NEXT:start %d\n", page_start_offset);
+    show_book(0);
+    page_end_offset = book_file_offset+next_show_char-book_buf-1;
+    lprintf("NEXT:end %d\n", page_end_offset);
+
+#if 0
+    book_file_offset=page_start_offset;
+    next_show_char=book_buf;
+    show_book(1);
+    page_end_offset = book_file_offset+next_show_char-book_buf-1;
+#endif
+}
+
+uint32_t get_full_disp_size()
+{
+    return (BOOK_SHOW_WIN_W*BOOK_SHOW_WIN_H/16/8/text_scale/text_scale);
+}
+
+void last_page(){
+#if 0
+    uint32_t test_last_start = last_page_start_offset;
+    next_show_char=book_buf;
+    while(1){
+        lprintf("LAST:try laststart %d\n", test_last_start);
+        book_file_offset=test_last_start;
+        show_book(1);
+        uint32_t test_page_end_offset = book_file_offset+next_show_char-book_buf-1;
+        uint32_t diff = page_start_offset - test_page_end_offset - 1;
+        lprintf("LAST:test end %d, target %d diff %d\n",
+                test_page_end_offset, page_start_offset, diff);
+        if(page_start_offset<=test_page_end_offset+1){
+            break;
+        }
+        test_last_start+=diff;
+        next_show_char=book_buf;
+    }
+#endif
+    if(last_page_start_offset<page_start_offset){
+        page_start_offset = last_page_start_offset ;
+    }
+    else if(page_start_offset<get_full_disp_size()+1){
+        page_start_offset = 0;
+    }
+    else{
+        //try find last page start
+        uint32_t test_last_start = page_start_offset-get_full_disp_size()-1;
+        next_show_char=book_buf;
+        while(1){
+            lprintf("LAST:try laststart %d\n", test_last_start);
+            book_file_offset=test_last_start;
+            show_book(1);
+            uint32_t test_page_end_offset = book_file_offset+next_show_char-book_buf-1;
+            uint32_t diff = page_start_offset - test_page_end_offset - 1;
+            lprintf("LAST:test end %d, target %d diff %d\n",
+                    test_page_end_offset, page_start_offset, diff);
+            if(page_start_offset<=test_page_end_offset+1){
+                break;
+            }
+            test_last_start+=diff;
+            next_show_char=book_buf;
+        }
+        page_start_offset = test_last_start;
+    }
+    book_file_offset=page_start_offset;
+    next_show_char=book_buf;
+    lprintf("LAST:start %d\n", page_start_offset);
+    show_book(0);
+    page_end_offset = book_file_offset+next_show_char-book_buf-1;
+    lprintf("LAST:end %d\n", page_end_offset);
 }
 
 button_t sd_button[]={
-    {15, 660, 100,  40, sd_detect, -1, 0, "SD detect", 0, sd_detect_cch_str},
+    {235, 680, 100,  40, sd_detect, -1, 0, "Next", 0, sd_detect_cch_str},
+    {125, 680, 100,  40, font_size, -1, 0, "Font Size", 0, font_size_cch_str},
+    {15, 680, 100,  40, last_page, -1, 0, "Last", 0, last_page_cch_str},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
 

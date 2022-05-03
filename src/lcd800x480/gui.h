@@ -56,6 +56,13 @@
 #ifndef __GUI_H__
 #define __GUI_H__
 
+typedef struct window{
+    uint32_t x;
+    uint32_t y;
+    uint32_t w;
+    uint32_t h;
+} *win_pt, win;
+
 #define RATIO_BASE_OF_LENGTH 20
 void GUI_DrawPoint(u16 x,u16 y,u16 color);
 void LCD_Fill(u16 sx,u16 sy,u16 ex,u16 ey,u16 color);
@@ -70,14 +77,16 @@ void set_LCD_Char_scale(u16 scale);
 void LCD_ShowNum(u16 x,u16 y,u32 num,u8 len,u8 size);
 void LCD_Show2Num(u16 x,u16 y,u16 num,u8 len,u8 size,u8 mode);
 void LCD_ShowString(u16 x,u16 y,u8 size,const char *p,u8 mode);
-void GUI_DrawFont16(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode);
-void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode);
-void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, char *s,u8 mode);
-void Show_Str(u16 x, u16 y, u16 fc, u16 bc, char *str,u8 size,u8 mode);
-void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, char *str, u32 size, u32 mode, u32 win_width, u32 win_height);
+void GUI_DrawFont16(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode);
+void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode);
+void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode);
+void Show_Str(u16 x, u16 y, u16 fc, u16 bc, const char *str,u8 size,u8 mode);
+const char* Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, u32 size, u32 mode, win_pt wd, int);
+void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, const char *str, u32 size, u32 mode, u32 win_width, u32 win_height);
 void Gui_Drawbmp16(u16 x,u16 y,u16 w,u16 h,const unsigned char *p); //œ‘ æ40*40 QQÕº∆¨
 void gui_circle(int xc, int yc,u16 c,int r, int fill);
 void Gui_StrCenter(u16 x, u16 y, u16 fc, u16 bc, char *str,u8 size,u8 mode);
 void LCD_DrawFillRectangle(u16 x1, u16 y1, u16 x2, u16 y2);
+const char* area_show_str(win_pt wdp, u32 *xp, u32 *yp, const char*string, int);
 #endif
 
