@@ -29,6 +29,7 @@ extern const char sd_card_cch_str[];
 extern const char sd_detect_cch_str[];
 extern const char font_size_cch_str[];
 extern const char last_page_cch_str[];
+extern const char fix_show_cch_str[];
 extern const char return_cch_str[];
 extern const char home_cch_str[];
 

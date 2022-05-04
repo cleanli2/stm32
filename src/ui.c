@@ -796,12 +796,22 @@ void percentage_page()
     lprintf("PERC:end %d\n", page_end_offset);
 }
 
+void show_correct()
+{
+    page_start_offset+=1;
+    book_file_offset=page_start_offset;
+    next_show_char=book_buf;
+    show_book(0);
+    page_end_offset = book_file_offset+next_show_char-book_buf-1;
+}
+
 button_t sd_button[]={
     //{235, 680, 100,  40, sd_detect, -1, 0, "", 0, sd_detect_cch_str},
     {BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5, BOOK_SHOW_WIN_W,  BOOK_SHOW_WIN_H, sd_detect, -1, 0, NULL, 0, NULL},
     {125, 680, 100,  40, font_size, -1, 0, "Font Size", 0, font_size_cch_str},
-    {235, 680, 100,  40, last_page, -1, 0, "Last", 0, last_page_cch_str},
+    {345, 680, 100,  40, last_page, -1, 0, "Last", 0, last_page_cch_str},
     {15, 680, 100,  40, percentage_page, -1, 0, NULL, 0, NULL},
+    {235, 680, 100,  40, show_correct, -1, 0, "fix show", 0, fix_show_cch_str},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
 

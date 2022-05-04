@@ -28,5 +28,6 @@ const char sd_card_cch_str[]="SD卡";
 const char sd_detect_cch_str[]="SD卡/下页";
 const char font_size_cch_str[]="字体大小";
 const char last_page_cch_str[]="上一页";
+const char fix_show_cch_str[]="乱码纠正";
 const char return_cch_str[]="返回";
 const char home_cch_str[]="主菜单";
