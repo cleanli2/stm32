@@ -557,6 +557,7 @@ button_t date_button[]={
 /*UI DATE END*/
 
 /*UI SD*/
+void sd_detect();
 void sd_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -575,6 +576,8 @@ void sd_ui_process_event(void*vp)
 #define SHOW_FILE_NAME "book.txt"
 #define BOOK_SHOW_WIN_X 5
 #define BOOK_SHOW_WIN_Y 60
+#define BOOK_SHOW_WIN_DX 1
+#define BOOK_SHOW_WIN_DY 8
 #define BOOK_SHOW_WIN_W 469
 #define BOOK_SHOW_WIN_H 598
 #define LCD_SHOW_DUMMY 0x1
@@ -641,7 +644,7 @@ int show_book(int flag)
     if(ret == FS_OK){
         u32 show_x=BOOK_SHOW_WIN_X, show_y=BOOK_SHOW_WIN_Y;
         win bookw={BOOK_SHOW_WIN_X, BOOK_SHOW_WIN_Y, BOOK_SHOW_WIN_W, BOOK_SHOW_WIN_H,
-                1, 8};
+                BOOK_SHOW_WIN_DX, BOOK_SHOW_WIN_DY};
         if(!is_dummy)lcd_lprintf(BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-20, " book.txt               ");
         if(!is_dummy)lcd_clr_window(WHITE, BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5,
                 BOOK_SHOW_WIN_X+BOOK_SHOW_WIN_W+5, BOOK_SHOW_WIN_Y+BOOK_SHOW_WIN_H+5);
@@ -705,7 +708,7 @@ void sd_detect(){
 
 uint32_t get_full_disp_size()
 {
-    return (BOOK_SHOW_WIN_W*BOOK_SHOW_WIN_H/16/8/text_scale/text_scale);
+    return (BOOK_SHOW_WIN_W*BOOK_SHOW_WIN_H/(16+BOOK_SHOW_WIN_DY)/(8+BOOK_SHOW_WIN_DY)/text_scale/text_scale);
 }
 
 void last_page(){
@@ -764,7 +767,8 @@ void last_page(){
 }
 
 button_t sd_button[]={
-    {235, 680, 100,  40, sd_detect, -1, 0, "Next", 0, sd_detect_cch_str},
+    //{235, 680, 100,  40, sd_detect, -1, 0, "", 0, sd_detect_cch_str},
+    {BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5, BOOK_SHOW_WIN_W,  BOOK_SHOW_WIN_H, sd_detect, -1, 0, NULL, 0, NULL},
     {125, 680, 100,  40, font_size, -1, 0, "Font Size", 0, font_size_cch_str},
     {15, 680, 100,  40, last_page, -1, 0, "Last", 0, last_page_cch_str},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
@@ -833,7 +837,7 @@ ui_t ui_list[]={
         sd_button,
         UI_SD,
         220, //timeout
-        TIME_OUT_EN,
+        0,
         NULL,//char*timeout_music;
         NULL,
     },
