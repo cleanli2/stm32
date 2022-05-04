@@ -615,9 +615,45 @@ int chs_need_adjust(const char*s)
     }
 }
 
+int init_sd(int is_dummy)
+{
+    SD_CardInfo mycard;
+    if(!is_dummy)lcd_lprintf(0, 40, "Detecting sd card...");
+    if(SD_Init() != SD_OK && SD_Init() != SD_OK)
+    {
+        //retry once
+        lprintf("Fail\n");
+        if(!is_dummy)lcd_lprintf(0, 60, "Failed.");
+        return -1;
+    }
+    else{
+        lprintf("OK\n");
+    }
+    if(!is_dummy)lcd_lprintf(0, 60, "OK.    ");
+    if(SD_GetCardInfo(&mycard) != SD_OK)
+    {
+        lprintf("get card info Fail\n");
+        if(!is_dummy)lcd_lprintf(0, 80, "Get card info Fail            ");
+        if(!is_dummy)lcd_lprintf(0, 100, "                              ");
+        return -1;
+    }
+    else{
+        lprintf("block size %d\n", mycard.CardBlockSize);
+        if(!is_dummy)lcd_lprintf(0, 80, "block size %d", mycard.CardBlockSize);
+        lprintf("block capacity %d\n", mycard.CardCapacity);
+        if(!is_dummy)lcd_lprintf(0, 100, "block capacity %d", mycard.CardCapacity);
+        return 0;
+    }
+}
+
 int get_percentage()
 {
-    uint64_t filesize = get_file_size(SD_ReadBlock);
+    int filesize = get_file_size(SD_ReadBlock);
+    if(filesize == -1){
+        init_sd(0);
+        filesize = get_file_size(SD_ReadBlock);
+        if(filesize == -1)return 0;
+    }
     uint32_t ptg = (page_start_offset+5)*1000 / filesize / 10;
     return ptg;
 }
@@ -626,36 +662,14 @@ int show_book(int flag)
 {
     int ret, showed_chars;
     int is_dummy = flag & LCD_SHOW_DUMMY;
-    SD_CardInfo mycard;
     memset(book_buf, 0, 512);
     update_percentage();
     ret = get_file_content(book_buf, SHOW_FILE_NAME, book_file_offset, 511, SD_ReadBlock);
     lprintf("----get file ret %d dummy %x bfo %d\n", ret, is_dummy, book_file_offset);
     if(ret != FS_OK){
-        if(!is_dummy)lcd_lprintf(0, 40, "Detecting sd card...");
-        if(SD_Init() != SD_OK && SD_Init() != SD_OK)
+        if(-1==init_sd(is_dummy))
         {
-            //retry once
-            lprintf("Fail\n");
-            if(!is_dummy)lcd_lprintf(0, 60, "Failed.");
             return -1;
-        }
-        else{
-            lprintf("OK\n");
-        }
-        if(!is_dummy)lcd_lprintf(0, 60, "OK.    ");
-        if(SD_GetCardInfo(&mycard) != SD_OK)
-        {
-            lprintf("get card info Fail\n");
-            if(!is_dummy)lcd_lprintf(0, 80, "Get card info Fail            ");
-            if(!is_dummy)lcd_lprintf(0, 100, "                              ");
-            return -1;
-        }
-        else{
-            lprintf("block size %d\n", mycard.CardBlockSize);
-            if(!is_dummy)lcd_lprintf(0, 80, "block size %d", mycard.CardBlockSize);
-            lprintf("block capacity %d\n", mycard.CardCapacity);
-            if(!is_dummy)lcd_lprintf(0, 100, "block capacity %d", mycard.CardCapacity);
         }
         ret = get_file_content(book_buf, SHOW_FILE_NAME, book_file_offset, 511, SD_ReadBlock);
         lprintf("retry after init sd:get file ret %d\n", ret);
@@ -827,9 +841,12 @@ button_t sd_button[]={
 
 void update_percentage()
 {
+    uint32_t pct;
     button_t*pbt = &sd_button[3];
+    pct=get_percentage();
+    lprintf("updateperc %d\n", pct);
     set_LCD_Char_scale(2);
-    lcd_lprintf(pbt->x+5, pbt->y+5, "%d%  ", get_percentage());
+    lcd_lprintf(pbt->x+5, pbt->y+5, "%d%  ", pct);
     set_LCD_Char_scale(1);
 }
 
