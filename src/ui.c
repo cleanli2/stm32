@@ -31,6 +31,7 @@ void timer_ui_transfer_with_para(uint32_t timeout,
         uint32_t repeat, const int8_t* music);
 void draw_button(button_t*pbt);
 void draw_sq(int x1, int y1, int x2, int y2, int color);
+void common_ui_uninit(void*vp);
 
 void timer_set_ui_init(void*vp)
 {
@@ -557,21 +558,6 @@ button_t date_button[]={
 /*UI DATE END*/
 
 /*UI SD*/
-void sd_detect();
-void sd_ui_init(void*vp)
-{
-    ui_t* uif =(ui_t*)vp;
-    (void)uif;
-    lprintf("sd ui\n");
-    common_ui_init(vp);
-    lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
-    sd_detect();
-}
-void sd_ui_process_event(void*vp)
-{
-    common_process_event(vp);
-}
-
 #define SDDISP_BUF_SIZE 512
 #define SHOW_FILE_NAME "book.txt"
 #define BOOK_SHOW_WIN_X 5
@@ -590,6 +576,30 @@ static uint32_t page_end_offset= ~0;
 static const char*next_show_char=0;
 static int text_scale = 2;
 void update_percentage();
+
+void sd_detect();
+void sd_ui_init(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    (void)uif;
+    lprintf("sd ui\n");
+    common_ui_init(vp);
+    lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
+    page_start_offset = get_env_uint("book_posi", 0);
+    lprintf("getenv page_start_offset %d\n", page_start_offset);
+    page_end_offset = page_start_offset - 1;
+    sd_detect();
+}
+void sd_ui_uninit(void*vp)
+{
+    common_ui_uninit(vp);
+    lprintf("setenv page_start_offset %d\n", page_start_offset);
+    set_env_uint("book_posi", page_start_offset);
+}
+void sd_ui_process_event(void*vp)
+{
+    common_process_event(vp);
+}
 
 int chs_need_adjust(const char*s)
 {
@@ -884,7 +894,7 @@ ui_t ui_list[]={
     {
         sd_ui_init,
         sd_ui_process_event,
-        NULL,
+        sd_ui_uninit,
         sd_button,
         UI_SD,
         220, //timeout
@@ -1067,7 +1077,7 @@ void process_button(ui_t* uif, button_t*pbt)
         }
         if(IN_RANGE(x, pbt->x, pbt->x+pbt->w) &&
                 IN_RANGE(y, pbt->y, pbt->y+pbt->h)){
-            lprintf("in botton %s\n", pbt->text);
+            if(pbt->text) lprintf("in botton %s\n", pbt->text);
 #if 0
             draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, 0x0f0f);
             lprintf("in button\n");

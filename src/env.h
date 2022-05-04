@@ -64,6 +64,8 @@ int printrawenv();
 void switch_env_area();
 void switch_env_area_with_data();
 int erase_env_area();
+uint32_t get_env_uint(const char*name, uint32_t def_value);
+uint32_t set_env_uint(const char*name, uint32_t value);
 
 #endif
 

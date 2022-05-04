@@ -417,3 +417,32 @@ void switch_env_area_with_data()
         switch_env_area();
     }
 }
+
+uint32_t get_env_uint(const char*name, uint32_t def_value)
+{
+    char t[ENV_MAX_VALUE_LEN], *p=&t[0];
+    uint32_t ret;
+    if(ENV_OK == get_env(name, t)){
+        str_to_hex(p, &ret);
+        lprintf("envgetint %s=%x\n", name, ret);
+        return ret;
+    }
+    else{
+        lprintf("envgetint %s fail, use default\n", name);
+        return def_value;
+    }
+}
+
+uint32_t set_env_uint(const char*name, uint32_t value)
+{
+    char t[ENV_MAX_VALUE_LEN];
+    memset(t, 0, ENV_MAX_VALUE_LEN);
+    slprintf(t, "%x", value);
+    if(ENV_OK == set_env(name, t)){
+        return ENV_OK;
+    }
+    else{
+        lprintf("envsetint %s fail\n", name);
+        return ENV_FAIL;
+    }
+}
