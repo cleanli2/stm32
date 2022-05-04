@@ -589,6 +589,7 @@ static uint32_t last_page_start_offset= 0;
 static uint32_t page_end_offset= ~0;
 static const char*next_show_char=0;
 static int text_scale = 2;
+void update_percentage();
 
 int chs_need_adjust(const char*s)
 {
@@ -604,12 +605,20 @@ int chs_need_adjust(const char*s)
     }
 }
 
+int get_percentage()
+{
+    uint64_t filesize = get_file_size(SD_ReadBlock);
+    uint32_t ptg = (page_start_offset+5)*1000 / filesize / 10;
+    return ptg;
+}
+
 int show_book(int flag)
 {
     int ret, showed_chars;
     int is_dummy = flag & LCD_SHOW_DUMMY;
     SD_CardInfo mycard;
     memset(book_buf, 0, 512);
+    update_percentage();
     ret = get_file_content(book_buf, SHOW_FILE_NAME, book_file_offset, 511, SD_ReadBlock);
     lprintf("----get file ret %d dummy %x bfo %d\n", ret, is_dummy, book_file_offset);
     if(ret != FS_OK){
@@ -766,13 +775,45 @@ void last_page(){
     lprintf("LAST:end %d\n", page_end_offset);
 }
 
+void percentage_page()
+{
+    uint64_t filesize = get_file_size(SD_ReadBlock);
+    uint32_t ptg = page_start_offset*100 / filesize;
+    ptg = (ptg +5)/10*10;
+    if(ptg == 100){
+        ptg = 0;
+    }
+    else{
+        ptg += 10;
+    }
+    last_page_start_offset = 0xffffffff;
+    page_start_offset = filesize * ptg /100;
+    book_file_offset=page_start_offset;
+    next_show_char=book_buf;
+    lprintf("PERC:start %d\n", page_start_offset);
+    show_book(0);
+    page_end_offset = book_file_offset+next_show_char-book_buf-1;
+    lprintf("PERC:end %d\n", page_end_offset);
+}
+
 button_t sd_button[]={
     //{235, 680, 100,  40, sd_detect, -1, 0, "", 0, sd_detect_cch_str},
     {BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5, BOOK_SHOW_WIN_W,  BOOK_SHOW_WIN_H, sd_detect, -1, 0, NULL, 0, NULL},
     {125, 680, 100,  40, font_size, -1, 0, "Font Size", 0, font_size_cch_str},
-    {15, 680, 100,  40, last_page, -1, 0, "Last", 0, last_page_cch_str},
+    {235, 680, 100,  40, last_page, -1, 0, "Last", 0, last_page_cch_str},
+    {15, 680, 100,  40, percentage_page, -1, 0, NULL, 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
+
+void update_percentage()
+{
+    button_t*pbt = &sd_button[3];
+    set_LCD_Char_scale(2);
+    lcd_lprintf(pbt->x+5, pbt->y+5, "%d%  ", get_percentage());
+    set_LCD_Char_scale(1);
+}
+
+/******end of sd_ui********/
 
 ui_t ui_list[]={
     {

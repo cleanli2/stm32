@@ -412,21 +412,19 @@ int init_fs(block_read_func rd_block)
     return FS_OK;
 }
 
-int get_file_content(char* buf, const char*filename, uint32_t file_offset, uint32_t len, block_read_func rd_block)
+int get_file_size(block_read_func rd_block)
 {
     int ret;
-    lprintf("get_file_content: fileoff %d len %d\n", file_offset, len);
     if(fs_debug_is_enabled()){
         debug_fs = 1;
     }
-    slprintf(buf, "fn:%s off:%d len:%d under developing", filename, file_offset, len);
     if(!fs_buf){
         fs_buf = (char*)disk_buf;
     }
     if(NULL == g_fs || g_fs->fs_type != FS_FAT32){
         ret = init_fs(rd_block);
         if(FS_OK != ret){
-            return ret;
+            return -1;
         }
     }
     if(g_fp == NULL)
@@ -441,12 +439,26 @@ int get_file_content(char* buf, const char*filename, uint32_t file_offset, uint3
     if(g_fp->sclust!=INVALID_CLUSTER){
         //find root dir sec
         lprintf("file start clust 0x%x size %d\n", (DWORD)g_fp->sclust, g_fp->fsize);
+        return g_fp->fsize;
+    }
+    else{
+        return -1;
+    }
+}
+
+int get_file_content(char* buf, const char*filename, uint32_t file_offset, uint32_t len, block_read_func rd_block)
+{
+    lprintf("get_file_content: fileoff %d len %d\n", file_offset, len);
+    slprintf(buf, "fn:%s off:%d len:%d under developing", filename, file_offset, len);
+    if(-1 != get_file_size(rd_block)){
         if(NULL == get_file_offset_buf(g_fp->sclust, file_offset, buf, len)){
             return FS_DISK_ERR;
+        }
+        else{
+            return FS_OK;
         }
     }
     else{
         return FS_FAIL;
     }
-    return FS_OK;
 }
