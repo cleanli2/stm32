@@ -564,6 +564,7 @@ void sd_ui_init(void*vp)
     lprintf("sd ui\n");
     common_ui_init(vp);
     lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
+    sd_detect();
 }
 void sd_ui_process_event(void*vp)
 {
