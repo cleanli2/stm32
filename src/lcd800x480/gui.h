@@ -61,6 +61,8 @@ typedef struct window{
     uint32_t y;
     uint32_t w;
     uint32_t h;
+    uint32_t dx;
+    uint32_t dy;
 } *win_pt, win;
 
 #define RATIO_BASE_OF_LENGTH 20

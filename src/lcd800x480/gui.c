@@ -839,7 +839,7 @@ void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 const char* Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, u32 size, u32 mode, win_pt wd, int is_dummy)
 {
     u32 bHz=0, xmax=wd->x+wd->w, ymax=wd->y+wd->h;
-    u32 x=*xp, y=*yp;
+    u32 x=*xp, y=*yp, dx=wd->dx, dy=wd->dy;
     while(*str!=0)
     {
         if(!bHz)
@@ -856,15 +856,15 @@ const char* Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, 
                 }
                 if(*str==0x0D)//enter char
                 {
-                    y+=(size*LCD_Char_scale);
-                    x=wd->x;
+                    y+=((size+dy)*LCD_Char_scale);
+                    x=wd->x+dx;
                     str++;
                 }
                 else
                 {
                     if(x>(xmax-(size*LCD_Char_scale)/2)){
-                        y+=(size*LCD_Char_scale);
-                        x=wd->x;
+                        y+=((size+dy)*LCD_Char_scale);
+                        x=wd->x+dx;
                     }
                     if(y>(ymax-size*LCD_Char_scale)){
                         goto end;
@@ -872,12 +872,12 @@ const char* Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, 
                     if(size>16)//no12X24 16X32 english font, use 8X16
                     {
                         if(!is_dummy)LCD_ShowChar(x,y,fc,bc,*str,16,mode);
-                        x+=8*LCD_Char_scale;
+                        x+=(8+dx)*LCD_Char_scale;
                     }
                     else
                     {
                         if(!is_dummy)LCD_ShowChar(x,y,fc,bc,*str,size,mode);
-                        x+=(size*LCD_Char_scale)/2;
+                        x+=((size+dx*2)*LCD_Char_scale)/2;
                     }
                 }
                 str++;
@@ -886,8 +886,8 @@ const char* Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, 
         }else
         {
             if(x>(xmax-(size*LCD_Char_scale))){
-                y+=(size*LCD_Char_scale);
-                x=wd->x;
+                y+=((size+dy)*LCD_Char_scale);
+                x=wd->x+dx;
             }
             if(y>(ymax-size*LCD_Char_scale)){
                 goto end;
@@ -907,7 +907,7 @@ const char* Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, 
             }
 
             str+=2;
-            x+=size*LCD_Char_scale;
+            x+=(size+dx*2)*LCD_Char_scale;
         }
     }
 end:
@@ -923,6 +923,8 @@ void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, const char *str, u32 size, u32 m
     wd.y=y;
     wd.w=win_width;
     wd.h=win_height;
+    wd.dx=0;
+    wd.dy=0;
     Show_Str_win_raw(&x, &y, fc, bc, str, size, mode, &wd, 0);
 }
 

@@ -576,6 +576,8 @@ void sd_ui_process_event(void*vp)
 #define BOOK_SHOW_WIN_Y 60
 #define BOOK_SHOW_WIN_W 469
 #define BOOK_SHOW_WIN_H 598
+#define LCD_SHOW_DUMMY 0x1
+#define CHECK_CHINESE 0x2
 static char book_buf[SDDISP_BUF_SIZE];
 static uint32_t book_file_offset= 0;
 static uint32_t page_start_offset= 0;
@@ -584,13 +586,28 @@ static uint32_t page_end_offset= ~0;
 static const char*next_show_char=0;
 static int text_scale = 2;
 
-int show_book(int is_dummy)
+int chs_need_adjust(const char*s)
+{
+    int ct = 0;
+    while(1){
+        if(*s == 0 || (*s & 0x80) == 0){
+            if(ct & 0x1){
+                return 1;
+            }
+        }
+        s++;
+        ct++;
+    }
+}
+
+int show_book(int flag)
 {
     int ret, showed_chars;
+    int is_dummy = flag & LCD_SHOW_DUMMY;
     SD_CardInfo mycard;
     memset(book_buf, 0, 512);
     ret = get_file_content(book_buf, SHOW_FILE_NAME, book_file_offset, 511, SD_ReadBlock);
-    lprintf("----get file ret %d dummy %d bfo %d\n", ret, is_dummy, book_file_offset);
+    lprintf("----get file ret %d dummy %x bfo %d\n", ret, is_dummy, book_file_offset);
     if(ret != FS_OK){
         if(!is_dummy)lcd_lprintf(0, 40, "Detecting sd card...");
         if(SD_Init() != SD_OK && SD_Init() != SD_OK)
@@ -622,7 +639,8 @@ int show_book(int is_dummy)
     }
     if(ret == FS_OK){
         u32 show_x=BOOK_SHOW_WIN_X, show_y=BOOK_SHOW_WIN_Y;
-        win bookw={BOOK_SHOW_WIN_X, BOOK_SHOW_WIN_Y, BOOK_SHOW_WIN_W, BOOK_SHOW_WIN_H};
+        win bookw={BOOK_SHOW_WIN_X, BOOK_SHOW_WIN_Y, BOOK_SHOW_WIN_W, BOOK_SHOW_WIN_H,
+                1, 8};
         if(!is_dummy)lcd_lprintf(BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-20, " book.txt               ");
         if(!is_dummy)lcd_clr_window(WHITE, BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5,
                 BOOK_SHOW_WIN_X+BOOK_SHOW_WIN_W+5, BOOK_SHOW_WIN_Y+BOOK_SHOW_WIN_H+5);
@@ -630,6 +648,12 @@ int show_book(int is_dummy)
                 BOOK_SHOW_WIN_X+BOOK_SHOW_WIN_W+5, BOOK_SHOW_WIN_Y+BOOK_SHOW_WIN_H+5, BLACK);
         set_LCD_Char_scale(text_scale);
         while(1){
+#if 0
+            mem_print(book_buf, 0, 512);
+            if((flag & CHECK_CHINESE) && chs_need_adjust(next_show_char)){
+                next_show_char++;
+            }
+#endif
             next_show_char=area_show_str(&bookw, &show_x, &show_y, next_show_char, is_dummy);
             showed_chars = next_show_char - book_buf;
             lprintf("%d xy %d %d\n", showed_chars, show_x, show_y);
@@ -684,6 +708,7 @@ uint32_t get_full_disp_size()
 }
 
 void last_page(){
+    int flag = 0;
 #if 0
     uint32_t test_last_start = last_page_start_offset;
     next_show_char=book_buf;
@@ -715,7 +740,7 @@ void last_page(){
         while(1){
             lprintf("LAST:try laststart %d\n", test_last_start);
             book_file_offset=test_last_start;
-            show_book(1);
+            show_book(LCD_SHOW_DUMMY);
             uint32_t test_page_end_offset = book_file_offset+next_show_char-book_buf-1;
             uint32_t diff = page_start_offset - test_page_end_offset - 1;
             lprintf("LAST:test end %d, target %d diff %d\n",
@@ -727,11 +752,12 @@ void last_page(){
             next_show_char=book_buf;
         }
         page_start_offset = test_last_start;
+        flag = CHECK_CHINESE;
     }
     book_file_offset=page_start_offset;
     next_show_char=book_buf;
     lprintf("LAST:start %d\n", page_start_offset);
-    show_book(0);
+    show_book(flag);
     page_end_offset = book_file_offset+next_show_char-book_buf-1;
     lprintf("LAST:end %d\n", page_end_offset);
 }
