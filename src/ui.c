@@ -969,7 +969,7 @@ void draw_button(button_t*pbt)
         if(pbt->ch_text && !is_eng){
             lcd_lprintf(lx+5,ly+5,pbt->ch_text);
         }
-        else{
+        else if(pbt->text){
             lcd_lprintf(lx+5,ly+5,pbt->text);
         }
         pbt++;
