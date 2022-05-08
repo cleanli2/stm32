@@ -349,22 +349,22 @@ void beep(uint32_t hz, uint32_t t_ms)
 
     pd = 1000000/hz/2;
     ct = hz*t_ms/1000;
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
 
     GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+    GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-    GPIO_ResetBits(GPIOB,GPIO_Pin_5);	
+    GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
+    GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
     while(ct--){
-	    GPIO_ResetBits(GPIOB,GPIO_Pin_5);	
+	    GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
 	    delay_us(pd);
-	    GPIO_SetBits(GPIOB,GPIO_Pin_5);	
+	    GPIO_SetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
 	    delay_us(pd);
     }
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
 }
 
 void mytimer(uint32_t w_seconds)
