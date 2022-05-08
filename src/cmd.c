@@ -454,14 +454,14 @@ void buzztest(char *p)
 	    p = str_to_hex(p, &para);
     }
     lprintf("para %x %d\n", para, para);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
 
     GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+    GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-    GPIO_ResetBits(GPIOB,GPIO_Pin_5);	
+    GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
+    GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
   //led end
 
     while(!con_is_recved()){
@@ -469,13 +469,13 @@ void buzztest(char *p)
         if(para > 200){
             lprintf("Set PB5\n");
         }
-	    GPIO_ResetBits(GPIOB,GPIO_Pin_5);	
+	    GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
 	    delay_ms(para);
 	    /* ReSet */
         if(para > 200){
             lprintf("Reset PB5\n");
         }
-	    GPIO_SetBits(GPIOB,GPIO_Pin_5);	
+	    GPIO_SetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
 	    delay_ms(para);
     }
     con_send('\n');
@@ -1409,7 +1409,9 @@ void run_cmd_interface()
         lprintf("timeout %d\n", timeout);
         if(timeout == 1){
             lprintf("Timeout. Quit cmd\n");
+#ifndef ALIENTEK_MINI
             return;
+#endif
         }
     }
     lmemset(cmd_buf, 0, COM_MAX_LEN);

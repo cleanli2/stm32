@@ -135,18 +135,18 @@ void led_raw_set(u32 led_flag)
 {
     if(led_flag & 0x2){
         if(led_flag & 0x8){
-            GPIO_ResetBits(GPIOA,GPIO_Pin_14);	
+            GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
         }
         else{
-            GPIO_SetBits(GPIOA,GPIO_Pin_14);	
+            GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
         }
     }
     if(led_flag & 0x1){
         if(led_flag & 0x4){
-            GPIO_ResetBits(GPIOA,GPIO_Pin_15);	
+            GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
         }
         else{
-            GPIO_SetBits(GPIOA,GPIO_Pin_15);	
+            GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
         }
     }
 }
@@ -515,7 +515,38 @@ void main_init(void)
   //Touch_Test();
   timer_init(10000, 72);
 
+  GPIO_InitTypeDef GPIO_InitStructure;
   //led
+#ifdef ALIENTEK_MINI
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  GPIO_ResetBits(GPIOA,GPIO_Pin_8);
+  GPIO_ResetBits(GPIOA,GPIO_Pin_13);
+
+  RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
+
+  GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
+  GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
+
+  RCC_APB2PeriphClockCmd(LED0_GPIO_PERIPH, ENABLE);
+
+  GPIO_InitStructure.GPIO_Pin = LED0_GPIO_PIN;
+  GPIO_Init(LED0_GPIO_GROUP, &GPIO_InitStructure);
+  GPIO_ResetBits(LED0_GPIO_GROUP, LED0_GPIO_PIN);
+
+  RCC_APB2PeriphClockCmd(LED1_GPIO_PERIPH, ENABLE);
+
+  GPIO_InitStructure.GPIO_Pin = LED1_GPIO_PIN;
+  GPIO_Init(LED1_GPIO_GROUP, &GPIO_InitStructure);
+  GPIO_ResetBits(LED1_GPIO_GROUP, LED1_GPIO_PIN);
+#else
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
   /* Configure PD0 and PD2 in output pushpull mode */
@@ -534,28 +565,36 @@ void main_init(void)
   GPIO_Init(GPIOB, &GPIO_InitStructure);
   GPIO_ResetBits(GPIOB,GPIO_Pin_0);	
   GPIO_SetBits(GPIOB,GPIO_Pin_4);//spi flash cs =1
+#endif
   //led end
 
   RCC_GetClocksFreq(&RCC_ClocksStatus);
   lprintf("Version %s%s\n", VERSION, GIT_SHA1);
+#ifndef ALIENTEK_MINI
   get_rtc_time(0);
   lprintf("%s\n", get_rtc_time(0));
+#endif
   lprintf("clk %d %d %d %d %d Hz\n\r",
 		  RCC_ClocksStatus.SYSCLK_Frequency,
 		  RCC_ClocksStatus.HCLK_Frequency,
 		  RCC_ClocksStatus.PCLK1_Frequency,
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
+#ifndef ALIENTEK_MINI
   lcd_sueb_init(0);
   SD_LowLevel_Init();
+#endif
 
   /*1us/timer_count, 10ms/timer_intrpt*/
   while (looptimes--)
   {
       led_flash(0x3, 100);
   }
+#ifndef ALIENTEK_MINI
   beep_by_timer_100(0);
-  //run_cmd_interface();
+#else
+  while(1) run_cmd_interface();
+#endif
 #if 0
   ict=0;
   lcd_clr_window(0xf00f, 0, 0, 100, 100);

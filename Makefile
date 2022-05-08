@@ -32,6 +32,10 @@ CFLAGS+=-DWRITE_W25F
 C_OBJ+=unused/ziku16.o
 endif
 
+ifeq ($(type),alientek_mini)
+CFLAGS+=-DALIENTEK_MINI
+endif
+
 .PHONY: all clean
 
 all:$(C_OBJ)

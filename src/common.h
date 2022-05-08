@@ -1,5 +1,6 @@
 #ifndef __COMMON_H
 #define __COMMON_H
+#include"board_config.h"
 #include"stm32f10x.h"
 #include"type.h"
 #include"version.h"
