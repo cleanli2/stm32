@@ -191,13 +191,14 @@ u8 SPI_FLASH_BUFFER[4096];
 //pBuffer:数据存储区
 //WriteAddr:开始写入的地址(24bit)
 //NumByteToWrite:要写入的字节数(最大65535)  		   
-void SPI_Flash_Write(const u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)   
+void SPI_Flash_Write(const u8* pBuffer,u32 WriteAddr,u32 NumByteToWrite)   
 { 
 	u32 secpos;
 	u16 secoff;
 	u16 secremain;	   
  	u16 i; 
 	u8 * SPI_FLASH_BUF;	  
+    lprintf("sfw:%X  %X %x", pBuffer, WriteAddr, NumByteToWrite);
 #ifdef MEM_ALLOC_TABLE_SIZE			
 	SPI_FLASH_BUF=mymalloc(4096);	//使用内存管理 
 	if(SPI_FLASH_BUF==NULL)return;	//申请失败
@@ -233,7 +234,10 @@ void SPI_Flash_Write(const u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
             lprintf("write sector\n");
 			SPI_Flash_Write_NoCheck(SPI_FLASH_BUF,secpos*4096,4096);//写入整个扇区  
 
-		}else SPI_Flash_Write_NoCheck(pBuffer,WriteAddr,secremain);//写已经擦除了的,直接写入扇区剩余区间. 				   
+		}else{
+            lprintf("write %x %x\n", WriteAddr, secremain);
+            SPI_Flash_Write_NoCheck(pBuffer,WriteAddr,secremain);//写已经擦除了的,直接写入扇区剩余区间. 				   
+        }
 		if(NumByteToWrite==secremain)break;//写入结束了
 		else//写入未结束
 		{
@@ -250,6 +254,7 @@ void SPI_Flash_Write(const u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 #ifdef MEM_ALLOC_TABLE_SIZE			
 	myfree(SPI_FLASH_BUF);		//释放内存	 	 
 #endif
+    lprintf("write end\n");
 }
 //擦除整个芯片
 //整片擦除时间:
