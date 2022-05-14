@@ -108,7 +108,7 @@
   */ 
 
 uint32_t logv = 0;
-uint8_t  SD_Type=0;//no card
+uint8_t  SD_Type = 0;//no card
 
 uint8_t SD_SPI_ReadWriteByte(uint8_t data)
 {
