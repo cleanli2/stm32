@@ -1,6 +1,6 @@
 #ifndef __FLASH_H
 #define __FLASH_H			    
-#include "sys.h" 
+#include "sys.h"
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //Mini STM32开发板
@@ -21,7 +21,6 @@
 
 extern u16 SPI_FLASH_TYPE;		//定义我们使用的flash芯片型号		
 
-#define	SPI_FLASH_CS PBout(4)  //选中FLASH					 
 #define SPI1_ReadWriteByte SD_WriteByte
 ////////////////////////////////////////////////////////////////////////////
 

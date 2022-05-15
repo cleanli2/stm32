@@ -115,7 +115,7 @@ void SD_DisSelect(void);
 uint8_t SD_SPI_ReadWriteByte(uint8_t data)
 {
 	return SD_WriteByte(data);
-}	  
+}
 //选择sd卡,并且等待卡准备OK
 //返回值:0,成功;1,失败;
 u8 SD_Select(void)
@@ -136,18 +136,18 @@ void SD_DisSelect(void)
 
 uint8_t SD_WaitReady(void)
 {
-    u32 retrys = 0xFFF;
-	uint32_t t=0;
-	do
-	{
-		if(SD_SPI_ReadWriteByte(0XFF)==0XFF){
+    u32 retrys = 0x2FF;
+    uint32_t t=0;
+    do
+    {
+        if(SD_SPI_ReadWriteByte(0XFF)==0XFF){
             lprintf("rdy@%x\n", t);
             return 0;//OK
         }
-		t++;
-	}while(t<retrys);//
+        t++;
+    }while(t<retrys);//
     lprintf("sms nord\n");
-	return 0;
+    return 0;
 }
 
 /**
@@ -1017,7 +1017,7 @@ SD_Error SD_GetCSDRegister(SD_CSD* SD_csd)
   SD_Error rvalue = SD_RESPONSE_FAILURE;
   uint8_t CSD_Tab[16];
 
-  if(SD_GetCXD(CSD_Tab, CMD9)!=0) return rvalue;	 
+  if(SD_GetCXD(CSD_Tab, CMD9)!=0) return rvalue;	    
 #if 0
   /*!< SD chip select low */
   SD_CS_LOW();
@@ -1143,7 +1143,7 @@ SD_Error SD_GetCIDRegister(SD_CID* SD_cid)
   SD_Error rvalue = SD_RESPONSE_FAILURE;
   uint8_t CID_Tab[16];
  
-  if(0!=SD_GetCXD(CID_Tab, SD_CMD_SEND_CID)) return rvalue;	
+  if(0!=SD_GetCXD(CID_Tab, SD_CMD_SEND_CID)) return rvalue;	    
 #if 0
   /*!< SD chip select low */
   SD_CS_LOW();

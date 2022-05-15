@@ -108,6 +108,8 @@
 #define SD_CS_GPIO_PORT           GPIOA
 #define SD_CS_GPIO_CLK            RCC_APB2Periph_GPIOA
 
+#define	SPI_FLASH_CS PAout(2)  //选中FLASH					 
+
 #else//default
 /////////////////////////////////////HAMMER//////////////////////////////////////////////
 
@@ -221,6 +223,7 @@ static inline uint16_t DATAIN()
 #define SD_CS_GPIO_PORT           GPIOB
 #define SD_CS_GPIO_CLK            RCC_APB2Periph_GPIOB
 
+#define	SPI_FLASH_CS PBout(4)  //选中FLASH					 
 
 
 
