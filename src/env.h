@@ -2,6 +2,50 @@
 #define __ENV_H
 #include <stdint.h>
 
+#ifdef ALIENTEK_MINI
+//SPI Flash devide
+/*
+ * 0x000000
+ * Dont Know
+ * 0x3A0000
+ * ziku16
+ * 0x3E2000
+ * ziku12
+ * 0x411EB0
+ * None
+ * 0x412000
+ * ENV
+ * 0x413000
+ * ENV Help
+ * 0x414000
+ * Dont Know
+ * 0x800000
+ */
+//spi flash damaged now 2022/3/6
+//ENV offset changed to OK flash addr
+//
+//#define SPI_FLASH_ZIKU16_START 0x7E000
+#define SPI_FLASH_ZIKU16_START 0x3A0000
+#define SPI_FLASH_ZIKU12_START 0x3E2000
+
+#define SPI_FLASH_DAMAGED
+
+#define TOTAL_SPI_FLASH_SIZE 0x200000
+#define SPI_FLASH_SECTOR_SIZE 0x1000
+#define GET_SECTOR_ADDR(addr) ((addr)>>12)
+#define SECTORS_PER_ENV_BLOCK 1
+#define ENV_STORE_SIZE (SPI_FLASH_SECTOR_SIZE*SECTORS_PER_ENV_BLOCK)
+
+#ifdef SPI_FLASH_DAMAGED
+//#define ENV_STORE_START_ADDR (TOTAL_SPI_FLASH_SIZE/2-ENV_STORE_SIZE)
+#define ENV_STORE_START_ADDR (0x412000)
+#else
+//env store at end of flash
+#define ENV_STORE_START_ADDR (0x412000)
+#endif //SPI_FLASH_DAMAGED
+#define ENV_HELP_STORE_START_ADDR (0x413000)
+
+#else//ALIENTEK_MINI
 //SPI Flash devide
 /*
  * 0x000000
@@ -41,6 +85,8 @@
 #define ENV_STORE_START_ADDR (TOTAL_SPI_FLASH_SIZE-ENV_STORE_SIZE)
 #endif //SPI_FLASH_DAMAGED
 #define ENV_HELP_STORE_START_ADDR (ENV_STORE_START_ADDR-ENV_STORE_SIZE)
+
+#endif//ALIENTEK_MINI
 
 #define ENV_OK 0
 #define ENV_FAIL 1

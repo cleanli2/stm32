@@ -19,6 +19,7 @@
 #include "cch_str.h"
 #include "w25flash.h"
 #include "lcd800x480/test.h"
+#include "date.h"
 
 extern uint32_t logv;
 

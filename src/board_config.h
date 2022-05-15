@@ -71,6 +71,7 @@
 //定义LCD的尺寸
 #define LCD_W 240
 #define LCD_H 320
+//#define LARGE_SCREEN
 
 //touch screen
 //与触摸屏芯片连接引脚	   
@@ -185,6 +186,7 @@ static inline uint16_t DATAIN()
 //定义LCD的尺寸
 #define LCD_W 480
 #define LCD_H 800
+#define LARGE_SCREEN 1
 
 
 //touch screen

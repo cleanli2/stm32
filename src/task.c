@@ -399,7 +399,7 @@ void task_misc(struct task*vp)
             TP_Draw_Big_Point(cached_touch_x,cached_touch_y,BLACK);
             draw_x = cached_touch_x;
             draw_y = cached_touch_y;
-            lprintf("tpup:%d,%d\n", (uint32_t)draw_x, (uint32_t)draw_y);
+            lprintf("%X:tpup:%d,%d\n", (uint32_t)(get_system_us()/1000), (uint32_t)draw_x, (uint32_t)draw_y);
         }
         if(g_flag_1s){
             no_key_down_ct++;

@@ -301,7 +301,7 @@ void rtc_read(uint8_t*ip)
     P8563_init();
     P8563_gettime(ip);
 }
-static char t_d[24];
+char t_d[24];
 uint8_t hex2bcd(uint8_t ipt)
 {
     return (ipt/10)*0x10 + (ipt%10);
@@ -320,6 +320,7 @@ uint8_t bcd2hex(uint8_t ipt)
 {
     return ((ipt&0xf0)>>4)*10 + (ipt&0xf);
 }
+#ifndef ALIENTEK_MINI
 char* get_rtc_time(date_info_t*dit)
 {
     uint8_t time_date[7];
@@ -358,6 +359,7 @@ char* get_rtc_time(date_info_t*dit)
     //lprintf("%s\n", t_d);
     return t_d;
 }
+#endif
 uint8_t rtc_read_reg(uint8_t addr)
 {
     uint8_t ret;
@@ -502,6 +504,7 @@ uint8_t check_rtc_alert_and_clear()
 
 uint adjust_1min(uint faster_1min)
 {
+#ifndef ALIENTEK_MINI
     lprintf("ad1min %d\n", faster_1min);
     uint8_t scd = bcd2hex(rtc_read_reg(SECOND_REG));
     if(scd != bcd2hex(rtc_read_reg(SECOND_REG))){
@@ -527,9 +530,24 @@ uint adjust_1min(uint faster_1min)
     faster_1min?min++:min--;
     lprintf("W:min=%d 0x%b\n", min, hex2bcd(min));
     return rtc_write_reg(MINUTE_REG, hex2bcd(min));
+#else
+    adjust_second(faster_1min?60:-60);
+    return RTC_OK;
+#endif
 }
 
 void clear_second()
 {
+#ifndef ALIENTEK_MINI
     rtc_write_reg(SECOND_REG, 0);
+#else
+    //rtc_write_reg(SECOND_REG, 0);
+    date_info_t dt;
+    int s;
+
+    get_rtc_time(&dt);
+    s = 0 - dt.second;
+    adjust_second(s);
+    return RTC_OK;
+#endif
 }

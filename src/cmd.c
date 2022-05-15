@@ -74,18 +74,16 @@ void w25f(char *p)
         if(tmp>1){
             p = str_to_hex(p, &para1);
         }
-        SPI_Flash_Read((uint8_t*)read_buf, para1, 512);
-        para2 = 512;
-        char*cp = (char *)read_buf;
-        while(para2){
-            lprint("\n%X: ", (uint32_t)cp-(uint32_t)read_buf+para1);
-            for(int i=0;i<16;i++){
-                para2--;
-                lprintf("%b", *cp++);
-                con_send(i == 7 ? '-':' ');
-            }
+        para2 = 1;
+        if(tmp>2){
+            p = str_to_hex(p, &para2);
         }
-        lprintf("\n");
+        while(para2--){
+            SPI_Flash_Read((uint8_t*)read_buf, para1, 512);
+            mem_print((const char*)read_buf, para1, 512);
+            para1+=512;
+            lprintf("\n");
+        }
     }
     else if(cmdindex == 4){//
         lprintf("erase all chip.\n");
@@ -176,6 +174,7 @@ err:
     lprintf("ERROR para\n");
 }
 
+//u8 SD_Initialize(void);
 #if 1
 void sd(char *p)
 {
@@ -191,6 +190,7 @@ void sd(char *p)
     lprintf("tmp=%d\n", tmp);
     if(tmp>=1)
 	    p = str_to_hex(p, &cmdindex);
+    lprintf("cmdind=%d\n", cmdindex);
     if(tmp == 0 || cmdindex == 0){
 	    lprintf("sd_init\n");
 	    if((Status = SD_Init()) != SD_OK)
@@ -332,6 +332,9 @@ void sd(char *p)
                     SD_WriteBlock(read_buf, ((uint64_t)para2), 512));
             para2++;
         }
+    }
+    else if(cmdindex == 0xf){//
+        //SD_Initialize();
     }
     con_send('\n');
 
@@ -718,7 +721,7 @@ void lcdsuebstep(char *p)
         }
         while(para1--){
             uint16_t touch_x, touch_y;
-            lprintf("ct%d\n", para1);
+            lprintf("ct%d\r", para1);
             if(get_TP_point(&touch_x, &touch_y)){
                 lprintf("txy=%d,%d\n", (uint32_t)touch_x, (uint32_t)touch_y);
             }
@@ -1206,7 +1209,7 @@ static const struct command cmd_list[]=
     {"test",test},
     {"taskmask",tm},
     //{"szk",show_ziku},
-    {"usb",usb_strg_init},
+    //{"usb",usb_strg_init},
 #endif
     {"w",write_mem},
     {"w25f",w25f},

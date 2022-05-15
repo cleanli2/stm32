@@ -7,6 +7,7 @@ typedef signed char int8;
 typedef unsigned char uint8;
 typedef unsigned long ulong;
 typedef uint32_t u32;
+typedef uint16_t u16;
 typedef uint8_t u8;
 
 #define bool uint8

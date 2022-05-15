@@ -39,7 +39,11 @@ void timer_set_ui_init(void*vp)
     (void)uif;
     common_ui_init(vp);
     ui_buf[8] = 1;
+#ifdef LARGE_SCREEN
     lcd_lprintf(60, 280, "Repeat %d times   ", ui_buf[8]);
+#else
+    lcd_lprintf(60, 180, "Repeat %d times   ", ui_buf[8]);
+#endif
 }
 void timer_set_ui_process_event(void*vp)
 {
@@ -71,9 +75,11 @@ void poff_ctd_ui_init(void*vp)
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     common_ui_init(vp);
-    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 20, 140);
     lcd_lprintf(20, 100, "Version:%s%s", VERSION, GIT_SHA1);
+#ifndef ALIENTEK_MINI
+    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 20, 140);
     auto_time_correct();
+#endif
 }
 void poff_ctd_ui_process_event(void*vp)
 {
@@ -96,8 +102,13 @@ void poff_ctd_ui_process_event(void*vp)
 }
 
 prgb_t timer_prgb[]={
+#ifdef LARGE_SCREEN
     {20, 200, 440, 30, NULL, NULL, "Counter", 0},
     {20, 280, 440, 30, NULL, NULL, "Repeat", 0},
+#else
+    {10, 100, 200, 15, NULL, NULL, "Counter", 0},
+    {10, 140, 200, 15, NULL, NULL, "Repeat", 0},
+#endif
     {-1, -1,  -1,  -1, NULL, NULL, NULL, 0},
 };
 
@@ -139,11 +150,20 @@ void timer_ui_process_event(void*vp)
         ui_transfer(UI_MAIN_MENU);
     }
     if(g_flag_1s){
+#ifdef LARGE_SCREEN
         set_LCD_Char_scale(6);
+#else
+        set_LCD_Char_scale(2);
+#endif
         mins = ui_buf[TMR_TMOUTCT_INDX]/60;
         secs = ui_buf[TMR_TMOUTCT_INDX] -  mins*60;
+#ifdef LARGE_SCREEN
         lcd_lprintf(100, 400, "%d:%d   ", mins, secs);
         lcd_lprintf(100, 520, "RP:%d ", ui_buf[TMR_REPETCT_INDX]);
+#else
+        lcd_lprintf(60, 180, "%d:%d   ", mins, secs);
+        lcd_lprintf(60, 220, "RP:%d ", ui_buf[TMR_REPETCT_INDX]);
+#endif
         set_LCD_Char_scale(1);
         if(ui_buf[TMR_REPETCT_INDX]==0){
             update_prgb(uif, uif->prgb_info);
@@ -174,8 +194,13 @@ void timer_ui_uninit(void*vp)
     lprintf("clr TMR_MAGIC_INDX\n");
 }
 button_t common_button[]={
+#ifdef LARGE_SCREEN
     {10,730,200, 60, NULL, UI_LAST, 0, "RETURN", 0, return_cch_str},
     {270,730,200, 60, NULL, 0, 0, "HOME", 0, home_cch_str},
+#else
+    {10,295,60, 20, NULL, UI_LAST, 0, "RETURN", 0, return_cch_str},
+    {170,295,60, 20, NULL, 0, 0, "HOME", 0, home_cch_str},
+#endif
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
 
@@ -185,6 +210,7 @@ void music_test()
 }
 
 button_t main_menu_button[]={
+#ifdef LARGE_SCREEN
     {130,40,200, 60, often_used_timer, -1, 0, "OftenTimer", 0, often_used_timer_cch_str},
     {130,110,200, 60, NULL, UI_POFF_CTD, 0, "PowerOffCountDown", 0, poff_countdown_cch_str},
     {130,180,200, 60, soft_reset_system, -1, 0, "Reboot", 0, reboot_cch_str},
@@ -195,6 +221,18 @@ button_t main_menu_button[]={
     {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
     {350,600,80, 60, NULL, UI_SD, 0, "SDCard", 0, sd_card_cch_str},
+#else
+    {20,30,120, 20, often_used_timer, -1, 0, "OftenTimer", 0, often_used_timer_cch_str},
+    {20,60,120, 20, NULL, UI_POFF_CTD, 0, "PowerOffCountDown", 0, poff_countdown_cch_str},
+    {20,90,120, 20, soft_reset_system, -1, 0, "Reboot", 0, reboot_cch_str},
+    {20,120,120, 20, reboot_download, -1, 0, "RebootDownload", 0, rebootd_cch_str},
+    {20,150,120, 20, power_off, -1, 0, "PowerOff", 0, poff_cch_str},
+    {20,180,120, 20, music_test, -1, 0, "MusicTest", 0, music_test_cch_str},
+    {20,210,120, 20, f3mins_timer, -1, 0, "3x1mins TIMER", 0, _3x1mins_timer_cch_str},
+    {20,240,120, 20, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
+    {20,270,120, 20, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
+    {150,270,80, 20, NULL, UI_SD, 0, "SDCard", 0, sd_card_cch_str},
+#endif
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
 
@@ -263,6 +301,7 @@ void rp_1()
 }
 
 button_t timer_set_button[]={
+#ifdef LARGE_SCREEN
     { 60, 60, 80,  40, mins_2, -1, 0, "2 mins",     0, mins_2_cch_str},
     {160, 60, 80,  40, mins_3, -1, 0, "3 mins",     0, mins_3_cch_str},
     {260, 60, 80,  40, mins_5, -1, 0, "5 mins",     0, mins_5_cch_str},
@@ -276,21 +315,52 @@ button_t timer_set_button[]={
     {260,200, 80,  40, rp_4, -1, 0, "repeat 4",     0, rp_4_cch_str},
     {360,200, 80,  40, rp_1, -1, 0, "repeat 1",     0, rp_1_cch_str},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+#else
+    { 5, 20, 50,  20, mins_2, -1, 0, "2 mins",     0, mins_2_cch_str},
+    {60, 20, 50,  20, mins_3, -1, 0, "3 mins",     0, mins_3_cch_str},
+    {115, 20, 50,  20, mins_5, -1, 0, "5 mins",     0, mins_5_cch_str},
+    {170, 20, 50,  20, mins_10, -1, 0, "10mins",   0, mins_10_cch_str},
+    { 5, 60, 50,  20, mins_20, -1, 0, "20mins",   0, mins_20_cch_str},
+    {60, 60, 50,  20, mins_30, -1, 0, "30mins",   0, mins_30_cch_str},
+    {115, 60, 50,  20, mins_45, -1, 0, "45mins",   0, mins_45_cch_str},
+    {170, 60, 50,  20, mins_1h, -1, 0, "1h+3ms", 0, mins_1h_cch_str},
+    { 5, 100, 50,  20, rp_2, -1, 0, "rept 2",     0, rp_2_cch_str},
+    {60,100, 50,  20, rp_3, -1, 0, "rept 3",     0, rp_3_cch_str},
+    {115,100, 50,  20, rp_4, -1, 0, "rept 4",     0, rp_4_cch_str},
+    {170,100, 50,  20, rp_1, -1, 0, "rept 1",     0, rp_1_cch_str},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+#endif
 };
 
 /*UI DATE*/
-#define LAST_SEC_INDX 0
-#define LAST_MIN_INDX 1
-#define LAST_HOR_INDX 2
-#define CLOCK_CX 240
-#define CLOCK_CY 400
-button_t date_button[];
 struct point
 {
     uint16_t px;
     uint16_t py;
 };
+button_t date_button[];
 
+#define LAST_SEC_INDX 0
+#define LAST_MIN_INDX 1
+#define LAST_HOR_INDX 2
+
+#ifdef ALIENTEK_MINI
+#define CLOCK_CX 120
+#define CLOCK_CY 160
+struct point clock_point[8]={
+    {0,0},
+    {10,1},
+    {21,2},
+    {31,5},
+    {41,9},
+    {50,13},
+    {59,19},
+    {67,26},
+};
+#define CLOCK_R 100
+#else
+#define CLOCK_CX 240
+#define CLOCK_CY 400
 struct point clock_point[8]={
     {0,0},
     {24,1},
@@ -302,6 +372,8 @@ struct point clock_point[8]={
     {154,59},
 };
 #define CLOCK_R 230
+#endif
+
 struct point* get_clock_point(int pinx)
 {
     pinx %= 15;
@@ -407,6 +479,7 @@ void date_ui_init(void*vp)
     (void)uif;
     lprintf("data ui\n");
     common_ui_init(vp);
+#ifdef LARGE_SCREEN
     lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
     if(ENV_OK == get_env("LastTimeAdj", t)){
         lcd_lprintf(15, 630, "last adj date:%s", t);
@@ -418,11 +491,14 @@ void date_ui_init(void*vp)
         often_used_timer();
     }
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 260, 45);
+#endif
     draw_clock_face(CLOCK_CX, CLOCK_CY);
     ui_buf[LAST_SEC_INDX]=60;
     ui_buf[LAST_MIN_INDX]=60;
     ui_buf[LAST_HOR_INDX]=60;
+#ifndef ALIENTEK_MINI
     auto_time_correct();
+#endif
 }
 #define SEC_PTER_LEN 17
 #define MIN_PTER_LEN 13
@@ -435,9 +511,13 @@ void date_ui_process_event(void*vp)
     (void)uif;
 
     if(g_flag_1s){
+#ifdef LARGE_SCREEN
         set_LCD_Char_scale(2);
         lcd_lprintf(10, 100, "%s  ", get_rtc_time(&t_cur_date));
         set_LCD_Char_scale(1);
+#else
+        get_rtc_time(&t_cur_date);
+#endif
         lprintf("task timect %x\r\n", cur_task_timeout_ct);
 
 
@@ -548,33 +628,53 @@ void clr_s()
 }
 
 button_t date_button[]={
+#ifdef LARGE_SCREEN
     {15, 660, 100,  40, adjust_enable, -1, 0, "time adjust", 0, time_adjust_cch_str},
     {135, 660, 100,  40, fast_1, -1, 0, "faster 1min", 1, NULL},
     {255, 660, 100,  40, slow_1, -1, 0, "slower 1min", 1, NULL},
     {375, 660, 100,  40, clr_s, -1, 0, "clear second", 1, NULL},
     {15, 150, 100,  40, language_set, -1, 0, language_cch_str, 0, "English"},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+#else
+    {10, 270, 60,  20, adjust_enable, -1, 0, "timeadj", 0, time_adjust_cch_str},
+    {85, 270, 40,  20, fast_1, -1, 0, "+1min", 1, NULL},
+    {135, 270, 40,  20, slow_1, -1, 0, "-1min", 1, NULL},
+    {185, 270, 40,  20, clr_s, -1, 0, "sec=0", 1, NULL},
+    {10, 55, 55,  20, language_set, -1, 0, language_cch_str, 0, "English"},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+#endif
 };
 /*UI DATE END*/
 
 /*UI SD*/
-#define SDDISP_BUF_SIZE 512
-#define SHOW_FILE_NAME "book.txt"
+#ifdef LARGE_SCREEN
+static int text_scale = 2;
 #define BOOK_SHOW_WIN_X 5
 #define BOOK_SHOW_WIN_Y 60
 #define BOOK_SHOW_WIN_DX 1
 #define BOOK_SHOW_WIN_DY 8
 #define BOOK_SHOW_WIN_W 469
 #define BOOK_SHOW_WIN_H 598
+#else
+static int text_scale = 1;
+#define BOOK_SHOW_WIN_X 6
+#define BOOK_SHOW_WIN_Y 35
+#define BOOK_SHOW_WIN_DX 1
+#define BOOK_SHOW_WIN_DY 8
+#define BOOK_SHOW_WIN_W 226
+#define BOOK_SHOW_WIN_H 225
+#endif
+
 #define LCD_SHOW_DUMMY 0x1
 #define CHECK_CHINESE 0x2
+#define SDDISP_BUF_SIZE 512
+#define SHOW_FILE_NAME "book.txt"
 static char book_buf[SDDISP_BUF_SIZE];
 static uint32_t book_file_offset= 0;
 static uint32_t page_start_offset= 0;
 static uint32_t last_page_start_offset= 0;
 static uint32_t page_end_offset= ~0;
 static const char*next_show_char=0;
-static int text_scale = 2;
 int update_percentage();
 
 void sd_detect();
@@ -839,10 +939,17 @@ void show_correct()
 button_t sd_button[]={
     //{235, 680, 100,  40, sd_detect, -1, 0, "", 0, sd_detect_cch_str},
     {BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5, BOOK_SHOW_WIN_W,  BOOK_SHOW_WIN_H, sd_detect, -1, 0, NULL, 0, NULL},
+#ifdef LARGE_SCREEN
     {125, 680, 100,  40, font_size, -1, 0, "Font Size", 0, font_size_cch_str},
     {345, 680, 100,  40, last_page, -1, 0, "Last", 0, last_page_cch_str},
     {15, 680, 100,  40, percentage_page, -1, 0, NULL, 0, NULL},
     {235, 680, 100,  40, show_correct, -1, 0, "fix show", 0, fix_show_cch_str},
+#else
+    {50, 270, 40,  20, font_size, -1, 0, "Font", 0, font_size_cch_str},
+    {140, 270, 40,  20, last_page, -1, 0, "Last", 0, last_page_cch_str},
+    {5, 270, 40,  20, percentage_page, -1, 0, NULL, 0, NULL},
+    {95, 270, 40,  20, show_correct, -1, 0, "fix", 0, fix_show_cch_str},
+#endif
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
 
@@ -856,7 +963,9 @@ int update_percentage()
         lprintf("get_percentage fail\n");
         return -1;
     }
+#ifdef LARGE_SCREEN
     set_LCD_Char_scale(2);
+#endif
     lcd_lprintf(pbt->x+5, pbt->y+5, "%d%  ", pct);
     set_LCD_Char_scale(1);
 }
@@ -1037,6 +1146,11 @@ void draw_prgb(prgb_t*pip)
     }
 }
 
+#ifdef LARGE_SCREEN
+#define BUTTON_LINE_SPACE 5
+#else
+#define BUTTON_LINE_SPACE 2
+#endif
 void draw_button(button_t*pbt)
 {
     uint16_t color, color_bak = LCD_PRINT_FRONT_COLOR;
@@ -1056,10 +1170,10 @@ void draw_button(button_t*pbt)
         int ly = MIN(pbt->y, pbt->y+pbt->h);
         draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, color);
         if(pbt->ch_text && !is_eng){
-            lcd_lprintf(lx+5,ly+5,pbt->ch_text);
+            lcd_lprintf(lx+BUTTON_LINE_SPACE,ly+BUTTON_LINE_SPACE,pbt->ch_text);
         }
         else if(pbt->text){
-            lcd_lprintf(lx+5,ly+5,pbt->text);
+            lcd_lprintf(lx+BUTTON_LINE_SPACE,ly+BUTTON_LINE_SPACE,pbt->text);
         }
         pbt++;
     }
@@ -1071,6 +1185,11 @@ void set_prgb_color(int color)
     prgb_color = color;
 }
 
+#ifdef LARGE_SCREEN
+#define PRGB_TEXT_SPACE 30
+#else
+#define PRGB_TEXT_SPACE 20
+#endif
 void update_prgb(ui_t* uif, prgb_t*pip)
 {
     (void)uif;
@@ -1086,7 +1205,7 @@ void update_prgb(ui_t* uif, prgb_t*pip)
                 lcd_clr_window(prgb_color, pip->x, pip->y, pip->x+pip->w-t, pip->y+pip->h);
             }
             if(pip->des){
-                lcd_lprintf(pip->x, pip->y - 30,
+                lcd_lprintf(pip->x, pip->y - PRGB_TEXT_SPACE,
                     "%s:%d/%d  ", pip->des, (*pip->data), (*pip->max));
             }
         }

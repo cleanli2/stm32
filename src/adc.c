@@ -6,6 +6,7 @@ uint32_t v_bat = 0;
 int adc_test()
 {
     int ret = 0;
+#ifndef ALIENTEK_MINI
     static int adc_inited = 0;
     GPIO_InitTypeDef GPIO_InitStructure;
     ADC_InitTypeDef ADC_InitStructure;
@@ -109,5 +110,6 @@ int adc_test()
         lprintf("battery is low\n");
         ret = 1;
     }
+#endif
     return ret;
 }
