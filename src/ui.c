@@ -575,7 +575,7 @@ static uint32_t last_page_start_offset= 0;
 static uint32_t page_end_offset= ~0;
 static const char*next_show_char=0;
 static int text_scale = 2;
-void update_percentage();
+int update_percentage();
 
 void sd_detect();
 void sd_ui_init(void*vp)
@@ -646,13 +646,16 @@ int init_sd(int is_dummy)
     }
 }
 
-int get_percentage()
+uint32_t get_percentage()
 {
     int filesize = get_file_size(SD_ReadBlock);
-    if(filesize == -1){
+    if(filesize == FS_DISK_ERR){
         init_sd(0);
         filesize = get_file_size(SD_ReadBlock);
-        if(filesize == -1)return 0;
+    }
+    if(filesize < 0){
+        lprintf("get file size error %x\n", filesize);
+        return 0xffffffff;
     }
     uint32_t ptg = (page_start_offset+5)*1000 / filesize / 10;
     return ptg;
@@ -663,7 +666,11 @@ int show_book(int flag)
     int ret, showed_chars;
     int is_dummy = flag & LCD_SHOW_DUMMY;
     memset(book_buf, 0, 512);
-    update_percentage();
+    if(-1 == update_percentage())
+    {
+        lprintf("update percentage fail\n");
+        return -1;
+    }
     ret = get_file_content(book_buf, SHOW_FILE_NAME, book_file_offset, 511, SD_ReadBlock);
     lprintf("----get file ret %d dummy %x bfo %d\n", ret, is_dummy, book_file_offset);
     if(ret != FS_OK){
@@ -839,12 +846,16 @@ button_t sd_button[]={
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
 
-void update_percentage()
+int update_percentage()
 {
     uint32_t pct;
     button_t*pbt = &sd_button[3];
     pct=get_percentage();
     lprintf("updateperc %d\n", pct);
+    if(pct == 0xffffffff){
+        lprintf("get_percentage fail\n");
+        return -1;
+    }
     set_LCD_Char_scale(2);
     lcd_lprintf(pbt->x+5, pbt->y+5, "%d%  ", pct);
     set_LCD_Char_scale(1);

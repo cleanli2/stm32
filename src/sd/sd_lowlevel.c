@@ -80,7 +80,6 @@ void stm32_spi_LowLevel_Init(void)
 
   /*!< Configure SD_SPI pins: MISO */
   GPIO_InitStructure.GPIO_Pin = SD_SPI_MISO_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;  
   GPIO_Init(SD_SPI_MISO_GPIO_PORT, &GPIO_InitStructure);
   
   /*!< Configure SD_SPI_CS_PIN pin: SD Card CS pin */

@@ -46,7 +46,7 @@ uint32_t get_uint_offset(char* buf_base, uint32_t off, uint32_t num)
 
 char* disk_read_sector(uint32_t sector_no)
 {
-    static int64_t current_sector_no = -1;
+    static int32_t current_sector_no = -1;
     if(current_sector_no == sector_no){
         return disk_buf;
     }
@@ -315,6 +315,7 @@ int init_fs(block_read_func rd_block)
 {
     BYTE fmt;
     DWORD bsect=0, sysect, nclst, szbfat;
+    lprintf("init fs\n");
     g_fs = &g_fat32;
     g_fs->rd_block = rd_block;
     memset(&FAT_cache[0][0], 0, FAT_cache_N*FAT_cache_SIZE);
@@ -323,11 +324,15 @@ int init_fs(block_read_func rd_block)
         return FS_DISK_ERR;
     }
     /* Check boot record signature (always placed at offset 510 even if the sector size is >512) */
-    if (get_uint_offset(fs_buf, BS_55AA, 2) != 0xAA55)
+    if (get_uint_offset(fs_buf, BS_55AA, 2) != 0xAA55){
+        lprintf("last is not AA55\n");
         return FS_PART_ERR;
+    }
     /* Check boot record signature (always placed at offset 510 even if the sector size is >512) */
-    if (get_uint_offset(fs_buf, BS_FilSysType32, 3) != 0x544146)
+    if (get_uint_offset(fs_buf, BS_FilSysType32, 3) != 0x544146){
+        lprintf("not fat32\n");
         return FS_NOT_FAT32;
+    }
     g_fs->ssize=get_uint_offset(fs_buf, BPB_BytsPerSec, 2);
     lprintf("sector size %x\n", (DWORD)g_fp->fs->ssize);
     g_fs->fsize=get_uint_offset(fs_buf, BPB_FATSz32, 2);
@@ -338,22 +343,35 @@ int init_fs(block_read_func rd_block)
     lprintf("sectors per cluster %x\n", (DWORD)g_fs->csize);
     g_fs->n_rootdir=get_uint_offset(fs_buf, BPB_RootEntCnt, 2);
     if (g_fs->n_rootdir % (g_fs->ssize / SZ_DIRE))		/* (Must be sector aligned) */
+    {
+        lprintf("sector not aligned\n");
         return FS_NO_FILESYSTEM;
+    }
     lprintf("root dir entries %x\n", (DWORD)g_fs->n_rootdir);
     g_fs->tsect=get_uint_offset(fs_buf, BPB_TotSec32, 4);
     lprintf("total sectors %x\n", (DWORD)g_fs->tsect);
     g_fs->nrsv=get_uint_offset(fs_buf, BPB_RsvdSecCnt, 2);
     lprintf("reserved sectors %x\n", (DWORD)g_fs->nrsv);
-    if (!g_fs->nrsv) return FS_NO_FILESYSTEM;					/* (Must not be 0) */
+    if (!g_fs->nrsv){
+        lprintf("nrsv is not 0\n");
+        return FS_NO_FILESYSTEM;					/* (Must not be 0) */
+    }
     sysect = g_fs->nrsv + g_fs->fsize*g_fs->n_fats + g_fs->n_rootdir / (g_fs->ssize / SZ_DIRE);	/* RSV + FAT + DIR */
     lprintf("data sectors %x\n", sysect);
-    if (g_fs->tsect < sysect) return FS_NO_FILESYSTEM;		/* (Invalid volume size) */
+    if (g_fs->tsect < sysect)
+    {
+        lprintf("invalid volume size\n");
+        return FS_NO_FILESYSTEM;		/* (Invalid volume size) */
+    }
     nclst = (g_fs->tsect - sysect) / g_fs->csize;				/* Number of clusters */
     if (!nclst) return FS_NO_FILESYSTEM;				/* (Invalid volume size) */
     fmt = FS_FAT12;
     if (nclst >= MIN_FAT16) fmt = FS_FAT16;
     if (nclst >= MIN_FAT32) fmt = FS_FAT32;
-    if(fmt != FS_FAT32)return FS_NOT_FAT32;
+    if(fmt != FS_FAT32){
+        lprintf("is not fat32\n");
+        return FS_NOT_FAT32;
+    }
 
     /* Boundaries and Limits */
     g_fs->n_fatent = nclst + 2;							/* Number of FAT entries */
@@ -361,14 +379,21 @@ int init_fs(block_read_func rd_block)
     g_fs->fatbase = bsect + g_fs->nrsv; 						/* FAT start sector */
     g_fs->database = bsect + sysect;						/* Data start sector */
     if (fmt == FS_FAT32) {
-        if (g_fs->n_rootdir) return FS_NO_FILESYSTEM;		/* (BPB_RootEntCnt must be 0) */
+        if (g_fs->n_rootdir){
+            lprintf("BPB_RootEntCnt is not 0\n");
+            return FS_NO_FILESYSTEM;		/* (BPB_RootEntCnt must be 0) */
+        }
         g_fs->dirbase = get_uint_offset(fs_buf, BPB_RootClus, 4);	/* Root directory start cluster */
         szbfat = g_fs->n_fatent * 4;						/* (Needed FAT size) */
     } else {
+        lprintf("2:is not fat32\n");
         return FS_NOT_FAT32;
     }
     if (g_fs->fsize < (szbfat + (g_fs->ssize - 1)) / g_fs->ssize)	/* (BPB_FATSz must not be less than the size needed) */
+    {
+        lprintf("BPB_FATSz must not be less than the size needed\n");
         return FS_NO_FILESYSTEM;
+    }
 
 #if _FS_WRITE
     /* Initialize cluster allocation information */
@@ -415,6 +440,7 @@ int init_fs(block_read_func rd_block)
 int get_file_size(block_read_func rd_block)
 {
     int ret;
+    lprintf("get_file_size+\n");
     if(fs_debug_is_enabled()){
         debug_fs = 1;
     }
@@ -424,7 +450,7 @@ int get_file_size(block_read_func rd_block)
     if(NULL == g_fs || g_fs->fs_type != FS_FAT32){
         ret = init_fs(rd_block);
         if(FS_OK != ret){
-            return -1;
+            return ret;
         }
     }
     if(g_fp == NULL)
@@ -442,23 +468,25 @@ int get_file_size(block_read_func rd_block)
         return g_fp->fsize;
     }
     else{
-        return -1;
+        return FS_FILE_NOT_FOUND;
     }
 }
 
 int get_file_content(char* buf, const char*filename, uint32_t file_offset, uint32_t len, block_read_func rd_block)
 {
+    int ret;
     lprintf("get_file_content: fileoff %d len %d\n", file_offset, len);
     slprintf(buf, "fn:%s off:%d len:%d under developing", filename, file_offset, len);
-    if(-1 != get_file_size(rd_block)){
+    ret = get_file_size(rd_block);
+    if(0 < ret){
         if(NULL == get_file_offset_buf(g_fp->sclust, file_offset, buf, len)){
-            return FS_DISK_ERR;
+            return FS_FILE_NOT_FOUND;
         }
         else{
             return FS_OK;
         }
     }
     else{
-        return FS_FAIL;
+        return ret;
     }
 }

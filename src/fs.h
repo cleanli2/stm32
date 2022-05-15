@@ -7,12 +7,12 @@ typedef uint16_t WORD;
 typedef uint32_t DWORD;
 
 #define FS_OK 0
-#define FS_FAIL (1)
-#define FS_DISK_ERR (2)
-#define FS_PART_ERR (3)
-#define FS_NOT_FAT32 (4)
-#define FS_NO_FILESYSTEM (5)
-#define FS_FILE_NOT_FOUND (6)
+#define FS_FAIL (-1)
+#define FS_DISK_ERR (-2)
+#define FS_PART_ERR (-3)
+#define FS_NOT_FAT32 (-4)
+#define FS_NO_FILESYSTEM (-5)
+#define FS_FILE_NOT_FOUND (-6)
 
 #define INVALID_CLUSTER 0xffffffff
 
@@ -100,7 +100,7 @@ typedef uint32_t DWORD;
 #define FS_FAT16	2
 #define FS_FAT32	3
 #define MIN_EOF	0x0FFFFFF8
-typedef SD_Error (*block_read_func)(uint8_t* pBuffer, uint64_t block_n, uint16_t BlockSize);
+typedef SD_Error (*block_read_func)(uint8_t* pBuffer, uint32_t block_n, uint16_t BlockSize);
 
 typedef struct {
 	BYTE	fs_type;		/* FAT sub-type (0:Not mounted) */
