@@ -90,7 +90,11 @@ u8 CMD_RDY=0X90;
 ******************************************************************************/  	 			    					   
 void TP_Write_Byte(u8 num)    
 {  
+#ifdef TS_SPI_USE_COMMON 
 	SD_WriteByte(num);//发送命令字
+#else
+    gpio_spi_WriteByte(num);
+#endif
 }
 
 /*****************************************************************************
@@ -106,8 +110,13 @@ u16 TP_Read_AD(u8 CMD)
 	TCS(0); 		//选中触摸屏IC
 	TP_Write_Byte(CMD);//发送命令字
 	delay_us(6);//ADS7846的转换时间最长为6us
+#ifdef TS_SPI_USE_COMMON 
     Num=SD_ReadByte()<<8;
     Num|=SD_ReadByte();
+#else
+    Num=gpio_spi_ReadByte()<<8;
+    Num|=gpio_spi_ReadByte();
+#endif
     Num>>=3;//first bit is not data
 	TCS(1);		//释放片选	 
 	//lprintf("TPr:%x\n", Num);
@@ -172,10 +181,15 @@ u16 TP_Read_XOY(u8 xy)
 u8 TP_Read_XY(u16 *x,u16 *y)
 {
 	u16 xtemp,ytemp;			 	 		  
+#ifdef TS_SPI_USE_COMMON
     uint16_t spi_sp = spi_speed(SPI_BaudRatePrescaler_128);
+#endif
 	xtemp=TP_Read_XOY(CMD_RDX);
 	ytemp=TP_Read_XOY(CMD_RDY);	  												   
+    lprintf("xt %x yt %x\n", (u32)xtemp, (u32)ytemp);
+#ifdef TS_SPI_USE_COMMON
     spi_speed(spi_sp);
+#endif
 	if(xtemp==0||ytemp==0||xtemp==0xfff||ytemp==0xfff){
         lprintf("tprxy fail\n");
         return 0;//读数失败
@@ -285,7 +299,7 @@ u8 TP_Scan(u8 tp)
 			tp_dev.y=tp_dev.yfac*tp_dev.y+tp_dev.yoff;  
 			//lprintf("line%d:x %d y %d ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
 	 	} 
-        if(tp_dev.x<480 && tp_dev.y < 800){
+        //if(tp_dev.x<480 && tp_dev.y < 800){
             lprintf("touch pressed\n");
             if((tp_dev.sta&TP_PRES_DOWN)==0)//之前没有被按下
             {
@@ -293,11 +307,13 @@ u8 TP_Scan(u8 tp)
                 tp_dev.x0=tp_dev.x;//记录第一次按下时的坐标
                 tp_dev.y0=tp_dev.y;
             }
-        }
+        //}
+        /*
         else{
             lprintf("tp x&y invalid, reinit tp\n");
             set_touch_need_reinit();
         }
+        */
 	}else
 	{
 		if(tp_dev.sta&TP_PRES_DOWN)//之前是被按下的
@@ -371,17 +387,17 @@ u8 TP_Get_Adjdata(void)
 	*/
 	{    												 
 		//tempfac=AT24CXX_ReadLenByte(SAVE_ADDR_BASE,4);		   
-		tempfac=0xC252BF;
+		tempfac=TOUCH_CALI_xFAC;
 		tp_dev.xfac=(float)tempfac/100000000;//得到x校准参数
 		//tempfac=AT24CXX_ReadLenByte(SAVE_ADDR_BASE+4,4);			          
-		tempfac=0xFEC8C368;
+		tempfac=TOUCH_CALI_yFAC;
 		tp_dev.yfac=(float)tempfac/100000000;//得到y校准参数
 	    //得到x偏移量
 		//tp_dev.xoff=AT24CXX_ReadLenByte(SAVE_ADDR_BASE+8,2);			   	  
-		tp_dev.xoff=0xFFEB;
+		tp_dev.xoff=TOUCH_CALI_xOFF;
  	    //得到y偏移量
 		//tp_dev.yoff=AT24CXX_ReadLenByte(SAVE_ADDR_BASE+10,2);				 	  
-		tp_dev.yoff=0x32B;
+		tp_dev.yoff=TOUCH_CALI_yOFF;
  		//tp_dev.touchtype=AT24CXX_ReadOneByte(SAVE_ADDR_BASE+12);//读取触屏类型标记
  		tp_dev.touchtype=0;
 		if(tp_dev.touchtype)//X,Y方向与屏幕相反
@@ -619,14 +635,18 @@ u8 TP_Init(void)
 		return 1;
 	}
 
+#ifdef TS_SPI_USE_COMMON
     SD_LowLevel_Init();
+#else
+    gpio_spi_LowLevel_Init();
+#endif
 	//注意,时钟使能之后,对GPIO的操作才有效
 	//所以上拉之前,必须使能时钟.才能实现真正的上拉输出
 	GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
 		    		   
 	//注意,时钟使能之后,对GPIO的操作才有效
 	//所以上拉之前,必须使能时钟.才能实现真正的上拉输出
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB , ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GG_PEN|RCC_APB2Periph_GG_TCS , ENABLE);
 
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Pin = PEN_PIN;

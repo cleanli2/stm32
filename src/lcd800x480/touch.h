@@ -86,26 +86,7 @@ typedef struct
 
 extern _m_tp_dev tp_dev;	 	//触屏控制器在touch.c里面定义
 
-//与触摸屏芯片连接引脚	   
-//与触摸屏芯片连接引脚	   
-#define PEN_GG GPIOB
-#define DOUT_GG GPIOA
-#define TDIN_GG GPIOA
-#define TCLK_GG GPIOA
-#define TCS_GG GPIOB
 
-#define PEN_PIN GPIO_Pin_3
-#define DOUT_PIN GPIO_Pin_6
-#define TDIN_PIN GPIO_Pin_7
-#define TCLK_PIN GPIO_Pin_5
-#define TCS_PIN GPIO_Pin_2
-
-#define PEN  GPIO_ReadInputDataBit(PEN_GG, PEN_PIN)    //PA1  INT
-#define DOUT GPIO_ReadInputDataBit(DOUT_GG, DOUT_PIN)     //PA6  MISO
-#define TDIN(x) GPIO_WriteBit(TDIN_GG, TDIN_PIN, x)   //PA7  MOSI
-#define TCLK(x) GPIO_WriteBit(TCLK_GG, TCLK_PIN, x)    //PA5  SCLK
-#define TCS(x)  GPIO_WriteBit(TCS_GG, TCS_PIN, x)   //PA0 CS
-     
 
 void TP_Write_Byte(u8 num);						//向控制芯片写入一个数据
 u16 TP_Read_AD(u8 CMD);							//读取AD转换值

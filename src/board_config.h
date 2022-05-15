@@ -72,10 +72,41 @@
 #define LCD_W 240
 #define LCD_H 320
 
+//touch screen
+//与触摸屏芯片连接引脚	   
+#define PEN_GG GPIOC
+#define DOUT_GG GPIOC
+#define TDIN_GG GPIOC
+#define TCLK_GG GPIOC
+#define TCS_GG GPIOC
 
+#define PEN_PIN GPIO_Pin_1
+#define DOUT_PIN GPIO_Pin_2
+#define TDIN_PIN GPIO_Pin_3
+#define TCLK_PIN GPIO_Pin_0
+#define TCS_PIN GPIO_Pin_13
 
+#define RCC_APB2Periph_GG_PEN RCC_APB2Periph_GPIOC
+#define RCC_APB2Periph_GG_TCS RCC_APB2Periph_GPIOC
+#define RCC_APB2Periph_GG_TCLK RCC_APB2Periph_GPIOC
+#define RCC_APB2Periph_GG_DOUT RCC_APB2Periph_GPIOC
+#define RCC_APB2Periph_GG_TDIN RCC_APB2Periph_GPIOC
+//touch screen use spi common with sd/flash
+//#define TS_SPI_USE_COMMON 0
 
+#define TOUCH_CALI_xFAC 0xFF9DE77F
+#define TOUCH_CALI_yFAC 0xFF774800
+#define TOUCH_CALI_xOFF 0xFA
+#define TOUCH_CALI_yOFF 0x15D
 
+//spi flash
+#define SF_CS_PIN                 GPIO_Pin_2
+#define SF_CS_GPIO_PORT           GPIOA
+#define SF_CS_GPIO_CLK            RCC_APB2Periph_GPIOA
+
+#define SD_CS_PIN                 GPIO_Pin_3
+#define SD_CS_GPIO_PORT           GPIOA
+#define SD_CS_GPIO_CLK            RCC_APB2Periph_GPIOA
 
 #else//default
 /////////////////////////////////////HAMMER//////////////////////////////////////////////
@@ -154,9 +185,60 @@ static inline uint16_t DATAIN()
 #define LCD_H 800
 
 
+//touch screen
+//与触摸屏芯片连接引脚	   
+#define PEN_GG GPIOB
+#define DOUT_GG GPIOA
+#define TDIN_GG GPIOA
+#define TCLK_GG GPIOA
+#define TCS_GG GPIOB
+
+#define PEN_PIN GPIO_Pin_3
+#define DOUT_PIN GPIO_Pin_6
+#define TDIN_PIN GPIO_Pin_7
+#define TCLK_PIN GPIO_Pin_5
+#define TCS_PIN GPIO_Pin_2
+
+#define RCC_APB2Periph_GG_PEN RCC_APB2Periph_GPIOB
+#define RCC_APB2Periph_GG_TCS RCC_APB2Periph_GPIOB
+#define RCC_APB2Periph_GG_TCLK RCC_APB2Periph_GPIOA
+#define RCC_APB2Periph_GG_DOUT RCC_APB2Periph_GPIOA
+#define RCC_APB2Periph_GG_TDIN RCC_APB2Periph_GPIOA
+//touch screen use spi common with sd/flash
+#define TS_SPI_USE_COMMON 1
+
+#define TOUCH_CALI_xFAC 0xC252BF
+#define TOUCH_CALI_yFAC 0xFEC8C368
+#define TOUCH_CALI_xOFF 0xFFEB
+#define TOUCH_CALI_yOFF 0x32B
+
+//spi flash
+#define SF_CS_PIN                 GPIO_Pin_4
+#define SF_CS_GPIO_PORT           GPIOB
+#define SF_CS_GPIO_CLK            RCC_APB2Periph_GPIOB
+
+#define SD_CS_PIN                 GPIO_Pin_1
+#define SD_CS_GPIO_PORT           GPIOB
+#define SD_CS_GPIO_CLK            RCC_APB2Periph_GPIOB
+
+
+
+
 #endif
 
 
+
+
+
+//////////////////////////////common//////////////////////////////////
+//touch
+#define PEN  GPIO_ReadInputDataBit(PEN_GG, PEN_PIN)    //PA1  INT
+#define TCS(x)  GPIO_WriteBit(TCS_GG, TCS_PIN, x)   //PA0 CS
+
+//gpio spi
+#define DOUT GPIO_ReadInputDataBit(DOUT_GG, DOUT_PIN)     //PA6  MISO
+#define TDIN(x) GPIO_WriteBit(TDIN_GG, TDIN_PIN, x)   //PA7  MOSI
+#define TCLK(x) GPIO_WriteBit(TCLK_GG, TCLK_PIN, x)    //PA5  SCLK
 
 
 #endif

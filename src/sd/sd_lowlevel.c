@@ -55,14 +55,10 @@ void stm32_spi_LowLevel_Init(void)
   GPIO_InitTypeDef  GPIO_InitStructure;
   SPI_InitTypeDef   SPI_InitStructure;
 
-  lprintf("%s spi_inited %x\n", __func__, spi_inited);
-  if(spi_inited == STM32_SPI_INITED){
-      return;
-  }
   /*!< SD_SPI_CS_GPIO, SD_SPI_MOSI_GPIO, SD_SPI_MISO_GPIO, SD_SPI_DETECT_GPIO 
        and SD_SPI_SCK_GPIO Periph clock enable */
   RCC_APB2PeriphClockCmd(SD_CS_GPIO_CLK | SD_SPI_MOSI_GPIO_CLK | SD_SPI_MISO_GPIO_CLK |
-                         SD_SPI_SCK_GPIO_CLK | SD_DETECT_GPIO_CLK, ENABLE);
+                         SD_SPI_SCK_GPIO_CLK | SF_CS_GPIO_CLK, ENABLE);
 
   /*!< SD_SPI Periph clock enable */
   RCC_APB2PeriphClockCmd(SD_SPI_CLK, ENABLE); 
@@ -111,7 +107,6 @@ void stm32_spi_LowLevel_Init(void)
   SPI_Init(SD_SPI, &SPI_InitStructure);
   
   SPI_Cmd(SD_SPI, ENABLE); /*!< SD_SPI enable */
-  spi_inited = STM32_SPI_INITED;
 }
 
 /**
@@ -175,24 +170,23 @@ void gpio_spi_LowLevel_Init(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
 
-    lprintf("%s spi_inited %x\n", __func__, spi_inited);
-    if(spi_inited == GPIO_SPI_INITED){
-        return;
-    }
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GG_TCLK|
+            RCC_APB2Periph_GG_TDIN|RCC_APB2Periph_GG_DOUT, ENABLE);
 
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7|GPIO_Pin_5;
+    GPIO_InitStructure.GPIO_Pin = TCLK_PIN;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-    GPIO_SetBits(GPIOA,GPIO_Pin_7|GPIO_Pin_5);
+    GPIO_Init(TCLK_GG, &GPIO_InitStructure);
+    GPIO_SetBits(TCLK_GG, TCLK_PIN);
+
+    GPIO_InitStructure.GPIO_Pin = TDIN_PIN ;
+    GPIO_Init(TDIN_GG, &GPIO_InitStructure);
+    GPIO_SetBits(TDIN_GG, TDIN_PIN);
 
     GPIO_InitStructure.GPIO_Pin = DOUT_PIN;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //上拉输入
     GPIO_Init(DOUT_GG, &GPIO_InitStructure);
     GPIO_SetBits(DOUT_GG, DOUT_PIN);	
-    spi_inited = GPIO_SPI_INITED;
 }
 
 uint8_t gpio_spi_WriteByte(uint8_t num)
@@ -235,11 +229,25 @@ void SD_LowLevel_DeInit(void)
 void SD_LowLevel_Init(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
+    lprintf("%s spi_inited %x choose\n", __func__,
+            spi_inited, stm32_spi_choose);
     if(stm32_spi_choose){
+        if(spi_inited == STM32_SPI_INITED){
+            lprintf("already stm32 spi, no need init\n");
+            return;
+        }
+        lprintf("init stm32 spi\n");
         stm32_spi_LowLevel_Init();
+        spi_inited = STM32_SPI_INITED;
     }
     else{
+        if(spi_inited == GPIO_SPI_INITED){
+            lprintf("already gpio spi, no need init\n");
+            return;
+        }
+        lprintf("init gpio spi\n");
         gpio_spi_LowLevel_Init();
+        spi_inited = GPIO_SPI_INITED;
     }
     //cs pins
     RCC_APB2PeriphClockCmd(SD_CS_GPIO_CLK | SF_CS_GPIO_CLK, ENABLE);
