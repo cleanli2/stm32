@@ -22,7 +22,7 @@ INC_FLAGS= \
 		   -I $(TOP)/src/lcd800x480 \
 
 
-CFLAGS =  -W -Wall -g -mcpu=cortex-m3 -mthumb -D STM32F10X_MD -D USE_STDPERIPH_DRIVER $(INC_FLAGS) -O0 -std=gnu11 -ffunction-sections -fdata-sections
+CFLAGS =  -W -Wall -g -mcpu=cortex-m3 -mthumb -DUSE_STDPERIPH_DRIVER $(INC_FLAGS) -O0 -std=gnu11 -ffunction-sections -fdata-sections
 CFLAGS+=-DGIT_SHA1=\"$(GIT_SHA1)$(DIRTY)$(CLEAN)\"
 LDFLAGS =  -mthumb -mcpu=cortex-m3 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=Project.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80
 C_SRC=$(shell find src/ -name '*.c')  
@@ -32,20 +32,25 @@ CFLAGS+=-DWRITE_W25F
 C_OBJ+=unused/ziku16.o
 endif
 
-ifeq ($(type),alientek_mini)
+ifeq ($(board),alientek_mini)
 CFLAGS+=-DALIENTEK_MINI
+CFLAGS+=-DSTM32F10X_HD
+LDFILE=stm32_f103_128k_gcc
+else
+LDFILE=stm32_f103_512k_gcc
+CFLAGS+=-DSTM32F10X_MD
 endif
 
 .PHONY: all clean
 
 all:$(C_OBJ)
 	touch src/version.h
-	$(CC) $(C_OBJ) -T stm32_f103ze_gcc.ld -o $(TARGET).elf $(LDFLAGS)
+	$(CC) $(C_OBJ) -T $(LDFILE).ld -o $(TARGET).elf $(LDFLAGS)
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).bin -Obinary 
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).hex -Oihex
 	cp $(TARGET).hex $(TARGET)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 	rm $(TARGET)_*.hex
-	cp $(TARGET).hex $(TARGET)_$(type)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
+	cp $(TARGET).hex $(TARGET)_$(board)_$(type)_$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 
 $(C_OBJ):%.o:%.c
 	$(CC) -c $(CFLAGS) -o $@ $<
