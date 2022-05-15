@@ -312,7 +312,7 @@ void sd(char *p)
     else if(cmdindex == 0xe){//
         lprintf("write sd block:sd e filldata blockaddr repeat\n");
         para1=0x55;
-        para2=0x200000;
+        para2=0x0;
         para3=1;
         if(tmp>1){
             p = str_to_hex(p, &para1);
@@ -329,7 +329,7 @@ void sd(char *p)
         memset(read_buf, para1, 512);
         while(para3--){
             lprintf("write @%Wsd block ret:%x\n", ((uint64_t)para2)<<9,
-                    SD_WriteBlock(read_buf, ((uint64_t)para2)<<9, 512));
+                    SD_WriteBlock(read_buf, ((uint64_t)para2), 512));
             para2++;
         }
     }
