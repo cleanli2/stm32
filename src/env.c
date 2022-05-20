@@ -105,7 +105,7 @@ void env_set_char(uint32_t offset, uint8_t d)
     SPI_Flash_Write_Byte(d, get_env_start_addr()+offset);
     rd = SPI_Flash_Read_Byte(get_env_start_addr()+offset);
     if(d == rd){
-        lprintf("sf_write %x@%x OK\n", d, get_env_start_addr()+offset);
+        //lprintf("sf_write %x@%x OK\n", d, get_env_start_addr()+offset);
     }
     else{
         lprintf("sf_write %x@%x#%x\n", (uint32_t)d, get_env_start_addr()+offset, (uint32_t)rd);
@@ -194,7 +194,7 @@ uint32_t find_env_data_start_raw()
 uint32_t find_env_data_start()
 {
     uint32_t ret = find_env_data_start_raw();
-    if(ret > ENV_ABNORMAL){
+    if(ret > ENV_ABNORMAL && ret != ENV_EMPTY_DATA){
         lprintf("w25f read fail, reinit SD lowlevel\n");
         SD_LowLevel_Init();
         //retry
@@ -351,6 +351,7 @@ int go_through_env(int operation)
         ret = ENV_FAIL;
         goto end;
     }
+    lprintf("env used %d%\n", (ENV_STORE_SIZE - i)*100/ENV_STORE_SIZE);
     i++;
     while(env_get_char(i) != '\0'){
         posi = i;
