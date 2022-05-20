@@ -303,6 +303,7 @@ uint32_t set_env_raw(const char* name, const char*value)
         ret = ENV_FAIL;
         goto end;
     }
+    lprintf("env used %d%\n", (ENV_STORE_SIZE - i)*100/ENV_STORE_SIZE);
     n = strlen(name)+strlen(value)+2;
     if(i<n){
         lprintf("env full\n");
