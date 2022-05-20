@@ -474,7 +474,9 @@ void draw_clock_pointer(int xc, int yc, int pt_inx, int len)
 
 void date_ui_init(void*vp)
 {
+#ifdef LARGE_SCREEN
     char t[ENV_MAX_VALUE_LEN];
+#endif
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     lprintf("data ui\n");
@@ -968,6 +970,7 @@ int update_percentage()
 #endif
     lcd_lprintf(pbt->x+5, pbt->y+5, "%d%  ", pct);
     set_LCD_Char_scale(1);
+    return 0;
 }
 
 /******end of sd_ui********/

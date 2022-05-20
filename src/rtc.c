@@ -548,6 +548,5 @@ void clear_second()
     get_rtc_time(&dt);
     s = 0 - dt.second;
     adjust_second(s);
-    return RTC_OK;
 #endif
 }

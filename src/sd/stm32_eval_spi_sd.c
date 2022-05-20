@@ -357,7 +357,7 @@ SD_Error SD_Init(void)
 SD_Error SD_get_type(void)
 {
 	uint8_t buf[4], r1;
-	uint32_t argument;
+	//uint32_t argument;
 	int retry, i;
     if(1==SD_SendCmd(SD_CMD_SEND_IF_COND,0x1AA,0x87))
     {
@@ -1013,7 +1013,7 @@ SD_Error SD_WriteMultiBlocks(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t Bloc
   */
 SD_Error SD_GetCSDRegister(SD_CSD* SD_csd)
 {
-  uint32_t i = 0;
+  //uint32_t i = 0;
   SD_Error rvalue = SD_RESPONSE_FAILURE;
   uint8_t CSD_Tab[16];
 
@@ -1138,8 +1138,8 @@ SD_Error SD_GetCSDRegister(SD_CSD* SD_csd)
   */
 SD_Error SD_GetCIDRegister(SD_CID* SD_cid)
 {
-  u8 r1;
-  uint32_t i = 0;
+  //u8 r1;
+  //uint32_t i = 0;
   SD_Error rvalue = SD_RESPONSE_FAILURE;
   uint8_t CID_Tab[16];
  
@@ -1382,7 +1382,7 @@ uint16_t SD_GetStatus(void)
 SD_Error SD_GoIdleState(void)
 {
 	uint8_t r1;
-    SD_Error ret;
+    //SD_Error ret;
 	int retry = 100;
   lprintf("%s:%d\n", __func__, __LINE__);
   
@@ -1392,7 +1392,7 @@ SD_Error SD_GoIdleState(void)
   }while((r1!=0X01) && retry--);
   SD_Type=0;//默认无卡
   if(r1==0x01){
-    ret = SD_get_type();
+    SD_get_type();
   }
   lprintf("sdtype %b\n", SD_Type);
   SD_DisSelect();//取消片选

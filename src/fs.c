@@ -46,7 +46,7 @@ uint32_t get_uint_offset(char* buf_base, uint32_t off, uint32_t num)
 
 char* disk_read_sector(uint32_t sector_no)
 {
-    static int32_t current_sector_no = -1;
+    static uint32_t current_sector_no = 0xffffffff;
     if(current_sector_no == sector_no){
         return disk_buf;
     }

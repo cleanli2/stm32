@@ -51,7 +51,7 @@ all:$(C_OBJ)
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).hex -Oihex
 	cp $(TARGET).hex $(TARGET)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 	rm $(TARGET)_*.hex
-	cp $(TARGET).hex $(TARGET)_$(board)_$(type)_$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
+	cp $(TARGET).hex $(TARGET)_$(board)_$(type)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 
 $(C_OBJ):%.o:%.c
 	$(CC) -c $(CFLAGS) -o $@ $<

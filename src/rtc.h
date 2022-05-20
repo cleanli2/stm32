@@ -32,5 +32,6 @@ void auto_time_correct();
 uint8_t check_rtc_alert_and_clear();
 uint adjust_1min(uint faster_1min);
 void clear_second();
+uint8_t hex2bcd(uint8_t ipt);
 
 #endif

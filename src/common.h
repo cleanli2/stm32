@@ -20,6 +20,7 @@
 #include "w25flash.h"
 #include "lcd800x480/test.h"
 #include "date.h"
+#include "soc_rtc.h"
 
 extern uint32_t logv;
 

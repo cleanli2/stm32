@@ -1656,7 +1656,7 @@ u16 LCD_Read_ID(void)
     delay_ms(50); // delay 50 ms 
 	LCD_WriteReg(0x0000,0x0001);
 	delay_ms(50); // delay 50 ms 
-	LCD_ReadReg(0,&val,1);
+	LCD_ReadReg(0,(u8*)&val,1);
 	return val;
 #else
 	u8 val[4] = {0};
