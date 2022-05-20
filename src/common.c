@@ -583,7 +583,8 @@ void main_init(void)
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
   lcd_sueb_init(0);
-  SD_LowLevel_Init();
+  SD_Init();
+  //SD_LowLevel_Init();
 
   /*1us/timer_count, 10ms/timer_intrpt*/
   while (looptimes--)
