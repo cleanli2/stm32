@@ -206,7 +206,9 @@ button_t common_button[]={
 
 void music_test()
 {
-    play_music(YouJianChuiYan, 0);
+    static int music_index = 0;
+    play_music(music_lst[music_index], 0);
+    music_index = add_with_limit(music_index, 1, get_music_lst_size());
 }
 
 #ifdef LARGE_SCREEN
@@ -220,9 +222,10 @@ void music_test()
 #define SOUND_STA_SMALL 10
 void show_sound_status()
 {
+    int dt = (SOUND_STA_SIZE-SOUND_STA_SMALL)/2;
     lcd_clr_window(WHITE, SOUND_STA_X, SOUND_STA_Y, SOUND_STA_X+SOUND_STA_SIZE, SOUND_STA_Y+SOUND_STA_SIZE);
-    draw_sq(SOUND_STA_X, SOUND_STA_Y+(SOUND_STA_SIZE-SOUND_STA_SMALL)/2,
-            SOUND_STA_X+SOUND_STA_SIZE/2, SOUND_STA_Y+SOUND_STA_SMALL,0);
+    draw_sq(SOUND_STA_X, SOUND_STA_Y+dt,
+            SOUND_STA_X+SOUND_STA_SIZE/2, SOUND_STA_Y+SOUND_STA_SMALL+dt,0);
     draw_sq(SOUND_STA_X+SOUND_STA_SIZE/2, SOUND_STA_Y,
             SOUND_STA_X+SOUND_STA_SIZE, SOUND_STA_Y+SOUND_STA_SIZE,0);
     if(get_sound_sta()==0){

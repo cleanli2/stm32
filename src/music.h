@@ -48,6 +48,8 @@ extern const signed char xiyouji1[];
 extern const signed char pwroff_music[];
 extern const signed char count_down_music[];
 extern const signed char YouJianChuiYan[];
+extern const signed char * music_lst[];
 
 uint8 get_note_index(signed char value);
+int get_music_lst_size();
 #endif

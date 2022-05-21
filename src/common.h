@@ -36,6 +36,7 @@ char * str_to_hex(char *s, uint32_t * result);
 void main_init(void);
 void enable_sound(int en);
 int get_sound_sta();
+uint add_with_limit(uint a, uint b, uint limit);
 
 #define LED_R_C 0x1
 #define LED_Y_C 0x2

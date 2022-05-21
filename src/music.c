@@ -160,3 +160,13 @@ const signed char YouJianChuiYan[] = {
     SCORE_END
 };
 
+const signed char * music_lst[]={
+    YouJianChuiYan,
+    xiyouji1,
+    shaolshi,
+    xianglian
+};
+
+int get_music_lst_size(){
+    return sizeof(music_lst)/sizeof(const signed char*);
+}
