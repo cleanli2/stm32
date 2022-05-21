@@ -741,10 +741,11 @@ u16 LCD_ReadPoint(u16 x,u16 y)
 
 void lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye)
 {
+    //lprintf("clrw:%d %d %d %d\n", xs, ys, xe, ye);
 #ifdef ALIENTEK_MINI
     u16 w, h;
-    w = xe - xs;
-    h = ye - ys;
+    w = xe - xs + 1;
+    h = ye - ys + 1;
 	u32 index=0;      
 	//u32 totalpoint=lcddev.width;
 	u32 totalpoint=w;
@@ -759,7 +760,7 @@ void lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye)
   		lcddev.setxcmd=0X2B;
 		lcddev.setycmd=0X2A;  	 
  	}else LCD_SetCursor(0x00,0x0000);	//设置光标位置 
-LCD_Set_Window(xs,ys,xe-xs, ye-xs);
+LCD_Set_Window(xs,ys,w, h);
 	LCD_WriteRAM_Prepare();     		//开始写入GRAM	  	  
 	for(index=0;index<totalpoint;index++)LCD_WR_DATA(color);	
 #else

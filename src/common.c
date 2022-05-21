@@ -48,9 +48,18 @@ USART_InitTypeDef USART_InitStructure;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
+static int sound_enable=1;
 static u8  fac_us=0;
 static u16 fac_ms=0;
 static uint32_t g_10ms_count = 0;
+int get_sound_sta()
+{
+    return sound_enable;
+}
+void enable_sound(int en)
+{
+    sound_enable = en;
+}
 void timer_init(uint16_t arr, uint16_t psr)
 {
     TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
@@ -331,8 +340,8 @@ void beep_by_timer(uint32_t hz)
 void TIM3_IRQHandler(void)
 {
     //if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
-    {
-        TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+    TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+    if(sound_enable){
         if(beep_st++&0x1){
             GPIO_SetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
         }
@@ -346,6 +355,7 @@ void beep(uint32_t hz, uint32_t t_ms)
 {
     uint32_t pd, ct;
     if(hz > 1000000)return;
+    if(!sound_enable)return;
 
     pd = 1000000/hz/2;
     ct = hz*t_ms/1000;

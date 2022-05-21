@@ -26,6 +26,7 @@ extern const char _3x1mins_timer_cch_str[];
 extern const char more_timer_cch_str[];
 extern const char date_cch_str[];
 extern const char sd_card_cch_str[];
+extern const char sound_cch_str[];
 extern const char sd_detect_cch_str[];
 extern const char font_size_cch_str[];
 extern const char last_page_cch_str[];

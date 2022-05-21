@@ -209,6 +209,33 @@ void music_test()
     play_music(YouJianChuiYan, 0);
 }
 
+#ifdef LARGE_SCREEN
+#define SOUND_STA_X 215
+#define SOUND_STA_Y 730
+#else
+#define SOUND_STA_X 75
+#define SOUND_STA_Y 295
+#endif
+#define SOUND_STA_SIZE 16
+#define SOUND_STA_SMALL 10
+void show_sound_status()
+{
+    lcd_clr_window(WHITE, SOUND_STA_X, SOUND_STA_Y, SOUND_STA_X+SOUND_STA_SIZE, SOUND_STA_Y+SOUND_STA_SIZE);
+    draw_sq(SOUND_STA_X, SOUND_STA_Y+(SOUND_STA_SIZE-SOUND_STA_SMALL)/2,
+            SOUND_STA_X+SOUND_STA_SIZE/2, SOUND_STA_Y+SOUND_STA_SMALL,0);
+    draw_sq(SOUND_STA_X+SOUND_STA_SIZE/2, SOUND_STA_Y,
+            SOUND_STA_X+SOUND_STA_SIZE, SOUND_STA_Y+SOUND_STA_SIZE,0);
+    if(get_sound_sta()==0){
+        LCD_DrawLine(SOUND_STA_X, SOUND_STA_Y, SOUND_STA_X+16, SOUND_STA_Y+16);
+    }
+}
+
+void sound_ctrl()
+{
+    enable_sound(!get_sound_sta());
+    show_sound_status();
+}
+
 button_t main_menu_button[]={
 #ifdef LARGE_SCREEN
     {130,40,200, 60, often_used_timer, -1, 0, "OftenTimer", 0, often_used_timer_cch_str},
@@ -221,6 +248,7 @@ button_t main_menu_button[]={
     {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
     {350,600,80, 60, NULL, UI_SD, 0, "SDCard", 0, sd_card_cch_str},
+    {350,530,80, 60, sound_ctrl, -1, 0, "Sound", 0, sound_cch_str},
 #else
     {20,30,120, 20, often_used_timer, -1, 0, "OftenTimer", 0, often_used_timer_cch_str},
     {20,60,120, 20, NULL, UI_POFF_CTD, 0, "PowerOffCountDown", 0, poff_countdown_cch_str},
@@ -232,6 +260,7 @@ button_t main_menu_button[]={
     {20,240,120, 20, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {20,270,120, 20, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
     {150,270,80, 20, NULL, UI_SD, 0, "SDCard", 0, sd_card_cch_str},
+    {150,240,80, 20, sound_ctrl, -1, 0, "Sound", 0, sound_cch_str},
 #endif
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
@@ -1268,6 +1297,7 @@ void common_ui_init(void*vp)
     power_prgb[0].data = &power_display;
     power_prgb[0].last_data = 0;
     draw_prgb(&power_prgb[0]);
+    show_sound_status();
 
 #if 0
     if(uif->time_disp_mode & TIMER_TRIGGER_START){
