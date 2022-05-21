@@ -359,6 +359,19 @@ char* get_rtc_time(date_info_t*dit)
     //lprintf("%s\n", t_d);
     return t_d;
 }
+void get_date(date_info_t*dit)
+{
+    uint8_t time_date[7];
+    if(dit){
+        rtc_read(time_date);
+        dit->month = bcd2hex(time_date[5]&0x1f);
+        dit->day = bcd2hex(time_date[3]);
+        dit->weekday = time_date[4];
+        dit->hour = bcd2hex(time_date[2]);
+        dit->minute = bcd2hex(time_date[1]);
+        dit->second = bcd2hex(time_date[0]);
+    }
+}
 #endif
 uint8_t rtc_read_reg(uint8_t addr)
 {

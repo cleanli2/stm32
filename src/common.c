@@ -516,6 +516,8 @@ void main_init(void)
   //PB3 PB4 PA15 PA13 PA14 set to gpio instead of SWJ
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
   //Touch_Test();
+
+  //72M/72=1M, 1us/count
   timer_init(10000, 72);
 
   GPIO_InitTypeDef GPIO_InitStructure;

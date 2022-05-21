@@ -6,6 +6,7 @@
 
 char lprintf_buf[256];
 char lcdprintf_buf[256];
+static int print_with_time = 0;
 char halfbyte2char(char c)
 {
         return ((c & 0x0f) < 0x0a)?(0x30 + c):('A' + c - 0x0a);
@@ -124,6 +125,15 @@ int sprint_uint(char*s, uint32_t num)
     return strlen(nc);
 }
 
+void sprint_uint_0n(char*s, uint32_t num, uint32_t num_len)
+{
+    char nc[22];
+    uint32_t raw_len;
+    memset(nc,'0', 22);
+    raw_len = sprint_uint(nc+11, num);
+    strcpy(s, nc+11+raw_len-num_len);
+}
+
 void print_hex(uint32_t num)
 {
         char nc[9];
@@ -145,8 +155,46 @@ void print_binary(uint32_t num)
         num2str(num, nc, 2);
         putchars(nc);
 }
+char sys_hour[14];
+char*get_sys_hour()
+{
+    static u32 date_hour_offset = 0xffffffff;
+    u32 ms_time;
+    u32 t;//tmp variable
+    if(date_hour_offset == 0xffffffff){
+        date_info_t cur_date = {0};
+        get_date(&cur_date);
+        ms_time = (u32)(get_system_us()/1000);
+        date_hour_offset = cur_date.second;
+        date_hour_offset += cur_date.minute*60;
+        date_hour_offset += cur_date.hour*3600;
+        date_hour_offset *= 1000;
+        date_hour_offset -= ms_time;
+    }
+    ms_time = (u32)(get_system_us()/1000);
+    if(date_hour_offset != 0xffffffff){
+        ms_time+=date_hour_offset;
+    }
+    t = ms_time/3600/1000;
+    t %= 24;
+    sprint_uint_0n(&sys_hour[0], t, 2);
+    sys_hour[2]=':';
+    t = ms_time/60/1000;
+    t %= 60;
+    sprint_uint_0n(&sys_hour[3], t, 2);
+    sys_hour[5]=':';
+    t = ms_time/1000;
+    t %= 60;
+    sprint_uint_0n(&sys_hour[6], t, 2);
+    sys_hour[8]='.';
+    t = ms_time%1000;
+    sprint_uint_0n(&sys_hour[9], t, 3);
+    sys_hour[12]=' ';
+    sys_hour[13]=0;//last byte
+    return sys_hour;
+}
 
-void vslprintf(char*s_buf, const char *fmt, va_list args)
+char*vslprintf(char*s_buf, const char *fmt, va_list args)
 {
     const char *s;
     uint32_t d;
@@ -154,6 +202,11 @@ void vslprintf(char*s_buf, const char *fmt, va_list args)
     va_list ap;
     char*sp = s_buf;
 
+    if(print_with_time){
+        s = get_sys_hour();
+        strcpy(sp, s);
+        sp += strlen(s);
+    }
     va_copy(ap, args);
     while (*fmt) {
         if (*fmt != '%') {
@@ -208,6 +261,19 @@ void vslprintf(char*s_buf, const char *fmt, va_list args)
     }
     *sp = 0;
     va_end(ap);
+    return sp;
+}
+
+void lprintf_time(const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap,fmt);
+    print_with_time = 1;
+    vslprintf(lprintf_buf,fmt,ap);
+    print_with_time = 0;
+    putchars(lprintf_buf);
+    va_end(ap);
 }
 
 void lprintf(const char *fmt, ...)
@@ -227,7 +293,6 @@ void lprintf(const char *fmt, ...)
 void slprintf(char*buf, const char *fmt, ...)
 {
     va_list ap;
-
     va_start(ap,fmt);
     vslprintf(buf,fmt,ap);
     va_end(ap);

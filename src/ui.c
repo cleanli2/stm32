@@ -55,7 +55,7 @@ void main_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     (void)uif;
-    lprintf("mainmenu\n");
+    lprintf_time("mainmenu\n");
     if(check_rtc_alert_and_clear()){
         often_used_timer();
     }
@@ -479,7 +479,7 @@ void date_ui_init(void*vp)
 #endif
     ui_t* uif =(ui_t*)vp;
     (void)uif;
-    lprintf("data ui\n");
+    lprintf_time("data ui\n");
     common_ui_init(vp);
 #ifdef LARGE_SCREEN
     lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
@@ -1090,7 +1090,7 @@ void timer_ui_transfer_with_para(uint32_t timeout,
     else{
         common_ui_init(current_ui);
     }
-    lprintf("ui %u->TIMER OFTEN\r\n", last_ui_index);
+    lprintf_time("ui %u->TIMER OFTEN\r\n", last_ui_index);
 }
 
 void f3mins_timer()
@@ -1240,7 +1240,7 @@ void process_button(ui_t* uif, button_t*pbt)
             if(pbt->click_func){
                 pbt->click_func(NULL);
             }
-            lprintf("uigot %x\n", pbt->ui_goto);
+            lprintf_time("uigot %x\n", pbt->ui_goto);
             if(pbt->ui_goto != -1){
                 ui_transfer(pbt->ui_goto);
             }
@@ -1318,7 +1318,7 @@ void ui_transfer(uint8 ui_id)
     else{
         common_ui_init(current_ui);
     }
-    lprintf("ui %u->%u\r\n", last_ui_index, ui_id);
+    lprintf_time("ui %u->%u\r\n", last_ui_index, ui_id);
 }
 
 void common_process_event(void*vp)

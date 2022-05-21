@@ -232,6 +232,18 @@ char* get_rtc_time(date_info_t*dit)
     }
     return t_d;
 }
+void get_date(date_info_t*dit)
+{
+    if(dit){
+        dit->year = calendar.w_year;
+        dit->month = calendar.w_month;
+        dit->day = calendar.w_date;
+        dit->hour = calendar.hour;
+        dit->minute = calendar.min;
+        dit->second = calendar.sec;
+        dit->weekday = calendar.week;
+    }
+}
 #endif
 
 void adjust_second(int sec)
