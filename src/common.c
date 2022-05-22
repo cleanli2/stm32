@@ -567,6 +567,14 @@ void main_init(void)
   GPIO_Init(GPIOB, &GPIO_InitStructure);
   GPIO_ResetBits(GPIOB,GPIO_Pin_0);	
   GPIO_SetBits(GPIOB,GPIO_Pin_4);//spi flash cs =1
+
+  RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
+
+  GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
+  GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
 #endif
   //led end
 
