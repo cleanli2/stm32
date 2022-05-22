@@ -1424,6 +1424,7 @@ void run_cmd_interface()
     lmemset(cmd_buf, 0, COM_MAX_LEN);
     memset(&cmd_caches[0][0], 0, CMD_CACHES_SIZE*COM_MAX_LEN);;
     cmd_buf_p = 0;
+    lprintf_time("Enter CMD\n");
     lprint("\nCleanCMD>");
 
     while(!quit_cmd){
@@ -1473,4 +1474,5 @@ void run_cmd_interface()
         }
     }
     quit_cmd = 0;
+    lprintf_time("Quit CMD\n");
 }
