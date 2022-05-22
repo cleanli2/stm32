@@ -927,6 +927,11 @@ void logflag(char *p)
 }
 void test(char *p)
 {
+    u32 p1,p2;
+    p = str_to_hex(p, &p1);
+    p = str_to_hex(p, &p2);
+    put_sound(p1, p2);
+#if 0
     uint32_t px1, py1, s,e;
     static int txc=0;
     p = str_to_hex(p, &px1);
@@ -944,6 +949,7 @@ void test(char *p)
         lprintf("new\n");
         LCD_DrawLine_direction(240, 400, px1, py1, s, e);
     }
+#endif
 #if 0
     uint32_t n, p1, p2;
     uint64_t t1, t2, t3,t4,t5,t6,t7;

@@ -27,6 +27,11 @@ struct music_play_info{
     uint restart_index;
 };
 
+typedef struct sound_info_t {
+    u32 mrv;
+    u32 stc;
+} sound_info;
+
 struct music_note_play_info{
     int8 music_note;
     uint period_ms_ct;
@@ -52,4 +57,7 @@ extern const signed char * music_lst[];
 
 uint8 get_note_index(signed char value);
 int get_music_lst_size();
+sound_info* get_sound();
+int put_sound();
+void sound_execute();
 #endif

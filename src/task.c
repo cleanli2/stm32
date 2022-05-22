@@ -30,6 +30,7 @@ uint default_music_note_period = DEFAULT_MUSIC_NOTE_PERIOD;
 uint no_key_down_ct_lcd = 0;
 uint no_key_down_ct = 0;
 bool save_power_mode = false;
+int sound_pool_full();
 struct delay_work_info delayed_works[]={
     {
         NULL,
@@ -194,11 +195,12 @@ void reset_music_note()
 
 bool is_music_idle()
 {
-    return (music_note_task_play_info.period_ms_ct == 0);
+    return !sound_pool_full();
 }
 
 bool play_music_note(int8 note, uint period)
 {
+    /*
     if(music_note_task_play_info.period_ms_ct == 0){
         music_note_task_play_info.music_note = note;
         music_note_task_play_info.note_start_timerct = 0;
@@ -206,6 +208,17 @@ bool play_music_note(int8 note, uint period)
         return true;
     }
     return false;
+    */
+    uint music_register_value;
+    if(note == 0){
+        put_sound(0, period/10);
+    }
+    else{
+        music_register_value =
+            musical_scale_freq_100[get_note_index(note)];
+        put_sound(music_register_value, period/10);
+    }
+    return true;
 }
 
 void set_music_note_period(uint p)
@@ -221,7 +234,7 @@ bool is_playing_music()
 void pause_music()
 {
     if(music_task_play_info.music_status == MUSIC_PLAYING){
-        beep_by_timer_100(0);
+        //beep_by_timer_100(0);
         music_task_play_info.music_status = MUSIC_PAUSE;
     }
 }
@@ -238,7 +251,7 @@ void play_music( const signed char* pu, uint note_period)
     if(music_task_play_info.pu == pu){
         if(music_task_play_info.music_status == MUSIC_PLAYING){
             music_task_play_info.music_status = MUSIC_PAUSE;
-            beep_by_timer_100(0);
+            //beep_by_timer_100(0);
         }
         if(music_task_play_info.music_status == MUSIC_PAUSE){
             music_task_play_info.music_status = MUSIC_PLAYING;
@@ -273,8 +286,8 @@ void task_music(struct task*vp)
 {
     (void)vp;//fix unused variable warning
     int8 music_note;
-    uint music_register_value;
-    uint32_t timer_ct;
+    //uint music_register_value;
+    //uint32_t timer_ct;
     if(music_task_play_info.pu != NULL &&
             music_task_play_info.music_status == MUSIC_PLAYING &&
             is_music_idle()){
@@ -289,7 +302,7 @@ void task_music(struct task*vp)
             //set_led1(false);
             //set_led2(false);
             lprintf_time("play end\n");
-            beep_by_timer_100(0);
+            //beep_by_timer_100(0);
             set_music_note_period(DEFAULT_MUSIC_NOTE_PERIOD);//recover default note period
             music_task_play_info.pu = NULL;
         }
@@ -318,6 +331,7 @@ void task_music(struct task*vp)
 
     }
 
+    /*
     if(music_note_task_play_info.period_ms_ct){
         timer_ct = get_system_us()/1000;//ms
         if(music_note_task_play_info.note_start_timerct == 0){
@@ -342,6 +356,67 @@ void task_music(struct task*vp)
     else{
         beep_by_timer_100(0);
     }
+    */
+}
+
+#define SOUND_POOL_SIZE 4
+static sound_info si_pool[SOUND_POOL_SIZE];
+static u32 si_wi = 0;
+static u32 si_ri = 0;
+
+/*
+u32 filled_sound_size()
+{
+    u32 ret;
+    if(si_ri<=si_wi){
+        ret = si_wi - si_ri;
+    }
+    else{
+        ret = SOUND_POOL_SIZE - si_ri + si_wi;
+    }
+    return ret;
+}
+*/
+
+sound_info* get_sound()
+{
+    sound_info*ret;
+    if(si_wi == si_ri){
+        return NULL;
+    }
+    ret = &si_pool[si_ri];
+    si_ri = add_with_limit(si_ri, 1, SOUND_POOL_SIZE);
+    return ret;
+}
+
+int sound_pool_full()
+{
+    return add_with_limit(si_wi, 1, SOUND_POOL_SIZE) == si_ri;
+}
+
+int put_sound(u32 mrv, u32 stc)
+{
+    si_pool[si_wi].mrv = mrv;
+    si_pool[si_wi].stc = stc;
+    si_wi = add_with_limit(si_wi, 1, SOUND_POOL_SIZE);
+    return 0;
+}
+
+void sound_execute()
+{
+    static u32 sound_time_ct = 0;
+    sound_info* si;
+    if(0 != sound_time_ct){
+        sound_time_ct--;
+        return;
+    }
+    si = get_sound();
+    if(NULL == si){
+        beep_by_timer_100(0);
+        return;
+    }
+    beep_by_timer_100(si->mrv);
+    sound_time_ct = si->stc;
 }
 
 void enable_power_save(bool en)

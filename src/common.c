@@ -115,6 +115,7 @@ void TIM2_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
         g_10ms_count++;
 	}
+    sound_execute();
 }
 
 /*low 4 bit: Pin14Value | Pin13Value | ToCtlPin14 | ToCtlPin13*/
@@ -257,15 +258,21 @@ void beep_by_timer_100(uint32_t hz_100)
 {
     TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
     RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
-    GPIO_InitTypeDef GPIO_InitStructure;
+    //GPIO_InitTypeDef GPIO_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
+    if(beep_st == hz_100){
+        return;
+    }
+
     if(hz_100>0){
+        /*
         GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN; //TIM_CH1
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //复用推挽输出
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
         GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
         GPIO_ResetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
+        */
 
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
         TIM_DeInit(TIM3);
@@ -289,6 +296,7 @@ void beep_by_timer_100(uint32_t hz_100)
 
         /* TIM enable counter */
         TIM_Cmd(TIM3, ENABLE);
+        beep_st = hz_100;
     }
     else{
         if(beep_st == 0)return;
@@ -302,11 +310,13 @@ void beep_by_timer_100(uint32_t hz_100)
         TIM_ITConfig(TIM3, TIM_IT_Update, DISABLE);
         TIM_DeInit(TIM3);
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, DISABLE);
+        /*
         GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
         GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
         GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
         GPIO_SetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
+        */
     }
 }
 

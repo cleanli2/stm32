@@ -22,6 +22,7 @@
 #include "date.h"
 #include "soc_rtc.h"
 #include "ui.h"
+#include "music.h"
 
 extern uint32_t logv;
 
