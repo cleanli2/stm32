@@ -95,14 +95,14 @@ void task_lcd_bklight(struct task*vp)
         //lprintf("lcdps:%d %d\n", no_key_down_ct_lcd, get_BL_value());
         if(get_BL_value() > DEFAULT_IDLE_BL){
             if(no_key_down_ct_lcd > (LCD_POWER_SAVE_CYCLE/LCD_POWER_SAVE_RATIO)){
-                lprintf("lcd_\r\n");
+                lprintf_time("lcd_\r\n");
                 no_key_down_ct_lcd = 0;
                 set_BL_value(DEFAULT_IDLE_BL);
             }
         }
         else{
             if(no_key_down_ct_lcd > (LCD_POWER_SAVE_CYCLE)){
-                lprintf("lcd^\r\n");
+                lprintf_time("lcd^\r\n");
                 no_key_down_ct_lcd = 0;
                 set_BL_value(DEFAULT_BL);
             }

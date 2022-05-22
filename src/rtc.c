@@ -411,9 +411,9 @@ void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y)
     if(m != dt_alt.minute){
         rtc_write_reg(0x09, hex2bcd(dt_alt.minute));
     }
-    lprintf_time("Next auto power on: %b:%b", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
+    lprintf_time("Next auto power on: %b:%b\n", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
     if(show_x>0 && show_y>0){
-        lcd_lprintf(show_x, show_y, "Next auto power on: %b:%b\n", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
+        lcd_lprintf(show_x, show_y, "Next auto power on: %b:%b", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
     }
 }
 

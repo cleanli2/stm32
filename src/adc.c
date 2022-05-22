@@ -106,6 +106,9 @@ int adc_test()
     //lprintf("real I = %dmA\n", v_currt);
     //lprintf("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, v_currt);
     lcd_lprintf(240, 0, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
+    if(500000 > (get_system_us()%(1000*1000*200))){//200s
+        lprintf_time("%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
+    }
     if(v_bat < BATT_LOW_LIMIT){
         lprintf("battery is low\n");
         ret = 1;

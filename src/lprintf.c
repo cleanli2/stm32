@@ -304,7 +304,7 @@ void task_log(struct task*vp)
     if(0 == log_size){
         return;
     }
-    if(0 == (get_system_us()%(1000*1000*10))){//10s
+    if(1000000 > (get_system_us()%(1000*1000*10))){//10s
         set_save_log_flag();
     }
     if(log_size < SIZE_OF_START_WRITE_FLASH){
