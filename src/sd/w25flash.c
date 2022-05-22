@@ -185,6 +185,52 @@ void SPI_Flash_Write_NoCheck(const u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 #ifdef WRITE_W25F
 u8 SPI_FLASH_BUFFER[4096];
 #endif
+
+void SPI_Flash_Write_direct_erase(const u8* pBuffer,u32 WriteAddr,u32 NumByteToWrite)
+{
+    u32 secpos;
+    u16 secoff;
+    u16 secremain;
+    lprintf("sfwde:%X  %X %x", pBuffer, WriteAddr, NumByteToWrite);
+    secpos=WriteAddr/4096;//sector addr
+    secoff=WriteAddr%4096;//offset inside sector
+    secremain=4096-secoff;//left in sectore
+    if(NumByteToWrite<=secremain){
+        secremain=NumByteToWrite;
+    }
+    while(1)
+    {
+        lprintf("pos %x\n", secpos);
+        if(0==secoff)//erase
+        {
+            lprintf("erase sector %x\n", WriteAddr);
+            SPI_Flash_Erase_Sector(secpos);//erase sector
+            lprintf("erase sector %x done\n", WriteAddr);
+        }
+        lprintf("write %x %x\n", WriteAddr, secremain);
+        SPI_Flash_Write_NoCheck(pBuffer,WriteAddr,secremain);//
+        lprintf("write %x %x done\n", WriteAddr, secremain);
+        if(NumByteToWrite==secremain){
+            break;//write end
+        }
+        else//not end yet
+        {
+            secpos++;
+            secoff=0;
+            pBuffer+=secremain;
+            WriteAddr+=secremain;
+            NumByteToWrite-=secremain;
+            if(NumByteToWrite>4096){
+                secremain=4096;	//next sector not end
+            }
+            else{
+                secremain=NumByteToWrite;//end in next sector
+            }
+        }
+    };
+    lprintf("write_de end\n");
+}
+
 //写SPI FLASH  
 //在指定地址开始写入指定长度的数据
 //该函数带擦除操作!

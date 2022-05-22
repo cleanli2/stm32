@@ -1,6 +1,7 @@
 #ifndef __ENV_H
 #define __ENV_H
 #include <stdint.h>
+#include"type.h"
 
 #ifdef ALIENTEK_MINI
 //SPI Flash devide
@@ -18,6 +19,10 @@
  * 0x413000
  * ENV Help
  * 0x414000
+ * log
+ * 0x420000
+ * null
+ * 0x4e0000
  * Dont Know
  * 0x800000
  */
@@ -45,6 +50,9 @@
 #endif //SPI_FLASH_DAMAGED
 #define ENV_HELP_STORE_START_ADDR (0x413000)
 
+#define SPI_FLASH_LOG_START 0x414000
+#define SPI_FLASH_LOG_END 0x420000
+
 #else//ALIENTEK_MINI
 //SPI Flash devide
 /*
@@ -56,6 +64,8 @@
  * ziku12
  * 0x0EFEB0
  * None
+ * 0x0F0000
+ * log
  * 0x0FA000
  * ENV Help
  * 0x0FD000
@@ -86,8 +96,11 @@
 #endif //SPI_FLASH_DAMAGED
 #define ENV_HELP_STORE_START_ADDR (ENV_STORE_START_ADDR-ENV_STORE_SIZE)
 
+#define SPI_FLASH_LOG_START 0x0F0000
+#define SPI_FLASH_LOG_END 0x0FA000
 #endif//ALIENTEK_MINI
 
+#define SPI_FLASH_LOG_SIZE (SPI_FLASH_LOG_END-SPI_FLASH_LOG_START)
 #define ENV_OK 0
 #define ENV_FAIL 1
 #define ENV_INVALID 0xFFFFFFFF
@@ -112,6 +125,8 @@ void switch_env_area_with_data();
 int erase_env_area();
 uint32_t get_env_uint(const char*name, uint32_t def_value);
 uint32_t set_env_uint(const char*name, uint32_t value);
+void log_to_flash(const char*, u32 ri, u32 len, u32 buf_size);
+void spi_flash_log_print();
 
 #endif
 

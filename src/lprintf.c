@@ -4,6 +4,10 @@
 #include <string.h>
 #include "common.h"
 
+#define LOG_BUF_SIZE 512
+char log_buf[LOG_BUF_SIZE];
+static u32 write_index = 0;
+static u32 read_index = 0;
 char lprintf_buf[256];
 char lcdprintf_buf[256];
 static int print_with_time = 0;
@@ -264,6 +268,92 @@ char*vslprintf(char*s_buf, const char *fmt, va_list args)
     return sp;
 }
 
+#define SIZE_OF_START_WRITE_FLASH 128
+u32 get_log_size()
+{
+    u32 ret;
+    if(read_index<=write_index){
+        ret = write_index - read_index;
+    }
+    else{
+        ret = LOG_BUF_SIZE - read_index + write_index;
+    }
+    return ret;
+}
+static int force_save_log = 0;
+void set_save_log_flag()
+{
+    force_save_log = 1;
+}
+
+void foce_save_log_func()
+{
+    u32 log_size, wi;
+    log_size = get_log_size();
+    wi = write_index;
+    log_to_flash(log_buf, read_index, log_size, LOG_BUF_SIZE);
+    read_index =  wi;
+}
+
+void task_log(struct task*vp)
+{
+    u32 log_size, wi;
+    (void)vp;
+
+    log_size = get_log_size();
+    if(0 == log_size){
+        return;
+    }
+    if(0 == (get_system_us()%(1000*1000*10))){//10s
+        set_save_log_flag();
+    }
+    if(log_size < SIZE_OF_START_WRITE_FLASH){
+        if(force_save_log){
+            force_save_log = 0;
+        }
+        else{
+            return;
+        }
+    }
+    wi = write_index;
+    log_to_flash(log_buf, read_index, log_size, LOG_BUF_SIZE);
+    read_index =  wi;
+}
+
+void log_to_buf(const char* log)
+{
+    u32 free_log_size, len, log_to_end_size, w_len;
+    len = strlen(log);
+    free_log_size = LOG_BUF_SIZE - get_log_size();;
+    if(free_log_size>len){
+        log_to_end_size = LOG_BUF_SIZE - write_index;
+        while(1){
+            if(log_to_end_size < len){
+                w_len = log_to_end_size;
+            }
+            else{
+                w_len = len;
+            }
+            memcpy(&log_buf[write_index], log, w_len);
+            write_index = add_with_limit(write_index, w_len, LOG_BUF_SIZE);
+            log+=w_len;
+            len-=w_len;
+            if(0==len){
+                return;
+            }
+        }
+    }
+    else{
+        putchars("log to buf lost, len ");
+        print_hex(len);
+        putchars(" wi ");
+        print_hex(write_index);
+        putchars(" ri ");
+        print_hex(read_index);
+        putchars("\n");
+    }
+}
+
 void lprintf_time(const char *fmt, ...)
 {
     va_list ap;
@@ -273,6 +363,7 @@ void lprintf_time(const char *fmt, ...)
     vslprintf(lprintf_buf,fmt,ap);
     print_with_time = 0;
     putchars(lprintf_buf);
+    log_to_buf(lprintf_buf);
     va_end(ap);
 }
 

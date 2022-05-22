@@ -374,14 +374,20 @@ void mytimer(uint32_t w_seconds)
 void power_off()
 {
     Show_Str(20, 630,RED,0xffff,"Power off in 3 seconds",24,0);
+    lprintf_time("power off in 3 secs\n");
+    foce_save_log_func();
     beep(600, 100);
 #ifndef ALIENTEK_MINI
     check_rtc_alert_and_clear();
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, -1, -1);
     auto_time_correct();
-    GPIO_SetBits(GPIOB,GPIO_Pin_0);	
+    lprintf_time("gpio setb\n");
+    foce_save_log_func();
+    GPIO_SetBits(GPIOB,GPIO_Pin_0);
+    lprintf_time("gpio setb done\n");
 #endif
     delay_ms(200);
+    lprintf_time("power off done\n");
     while(1);
 }
 typedef struct timer_struct
@@ -511,6 +517,8 @@ void main_init(void)
   GPIO_InitTypeDef GPIO_InitStructure;
   //led
 #ifdef ALIENTEK_MINI
+  RTC_Init();
+  lprintf_time("\n\n================ALIENTEK_MINI board start================\n");
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13;
@@ -539,8 +547,8 @@ void main_init(void)
   GPIO_InitStructure.GPIO_Pin = LED1_GPIO_PIN;
   GPIO_Init(LED1_GPIO_GROUP, &GPIO_InitStructure);
   GPIO_ResetBits(LED1_GPIO_GROUP, LED1_GPIO_PIN);
-  RTC_Init();
 #else
+  lprintf_time("\n\n================Hamer board start================\n");
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
   /* Configure PD0 and PD2 in output pushpull mode */
@@ -563,17 +571,21 @@ void main_init(void)
   //led end
 
   RCC_GetClocksFreq(&RCC_ClocksStatus);
-  lprintf("Version %s%s\n", VERSION, GIT_SHA1);
+  lprintf_time("Version %s%s\n", VERSION, GIT_SHA1);
   get_rtc_time(0);
-  lprintf("%s\n", get_rtc_time(0));
+  lprintf_time("%s\n", get_rtc_time(0));
   lprintf("clk %d %d %d %d %d Hz\n\r",
 		  RCC_ClocksStatus.SYSCLK_Frequency,
 		  RCC_ClocksStatus.HCLK_Frequency,
 		  RCC_ClocksStatus.PCLK1_Frequency,
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
+  lprintf_time("lcd init\n");
   lcd_sueb_init(0);
+  lprintf_time("lcd init done.\n");
+  lprintf_time("SD init\n");
   SD_Init();
+  lprintf_time("SD init done\n");
   //SD_LowLevel_Init();
 
   /*1us/timer_count, 10ms/timer_intrpt*/
@@ -724,6 +736,8 @@ void main_init(void)
 
 void soft_reset_system()
 {
+    lprintf_time("system reset\n");
+    foce_save_log_func();
     set_BL_value(0);
     LCD_RESET();
     __disable_fault_irq();
@@ -732,8 +746,11 @@ void soft_reset_system()
 
 void reboot_download()
 {
+    lprintf_time("reboot download\n");
     GPIO_SetBits(GPIOA,GPIO_Pin_13);
     beep(100, 500);
+    lprintf_time("reboot download\n");
+    foce_save_log_func();
     soft_reset_system();
 }
 

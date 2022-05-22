@@ -288,7 +288,7 @@ void task_music(struct task*vp)
             cur_task_event_flag |= 1<<EVENT_MUSIC_PLAY_END;
             //set_led1(false);
             //set_led2(false);
-            lprintf("play end\r\n");
+            lprintf_time("play end\n");
             beep_by_timer_100(0);
             set_music_note_period(DEFAULT_MUSIC_NOTE_PERIOD);//recover default note period
             music_task_play_info.pu = NULL;
@@ -399,7 +399,7 @@ void task_misc(struct task*vp)
             TP_Draw_Big_Point(cached_touch_x,cached_touch_y,BLACK);
             draw_x = cached_touch_x;
             draw_y = cached_touch_y;
-            lprintf("%X:tpup:%d,%d\n", (uint32_t)(get_system_us()/1000), (uint32_t)draw_x, (uint32_t)draw_y);
+            lprintf_time("tpup:%d,%d\n", (uint32_t)draw_x, (uint32_t)draw_y);
         }
         if(g_flag_1s){
             no_key_down_ct++;

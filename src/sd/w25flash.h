@@ -60,6 +60,7 @@ void SPI_Flash_PowerDown(void);           //进入掉电模式
 void SPI_Flash_WAKEUP(void);			  //唤醒
 void SPI_Flash_Write_Byte(u8 data,u32 WriteAddr);//写入byte
 u8 SPI_Flash_Read_Byte(u32 WriteAddr);//read byte
+void SPI_Flash_Write_direct_erase(const u8* pBuffer,u32 WriteAddr,u32 NumByteToWrite);
 #endif
 
 

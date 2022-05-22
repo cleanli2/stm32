@@ -167,6 +167,10 @@ void w25f(char *p)
             erase_env_area();
         }
     }
+    else if(cmdindex == 0xc){//
+        lprintf("print log in spi flash:\n");
+        spi_flash_log_print();
+    }
     con_send('\n');
 
     return;

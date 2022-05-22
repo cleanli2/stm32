@@ -1,6 +1,7 @@
 #ifndef __LPRINTF_H
 #define __LPRINTF_H
 #include<stdint.h>
+#include "task.h"
 
 int __io_putchar(int ch);
 uint16_t __io_getchar();
@@ -14,5 +15,8 @@ void slprintf(char*buf, const char *fmt, ...);
 void lcd_lprintf(uint32_t x, uint32_t y, const char *fmt, ...);
 void lcd_lprintf_win(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const char *fmt, ...);
 void mem_print(const char*buf, uint32_t ct_start, uint32_t len);
+void task_log(struct task*vp);
+void foce_save_log_func();
+void puthexch(char c);
 
 #endif

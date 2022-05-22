@@ -282,8 +282,8 @@ void P8563_init()
     //	    P3_4 = 0;
     //       for(i=0;i<=3;i++) g8563_Store[i]=c8563_Store[i]; /*初始化时间*/
     //       P8563_settime();
-    lprintf("rtc reg0=%b\n", rtc_read_reg(0));
-    lprintf("rtc reg1=%b\n", rtc_read_reg(1));
+    puthexch(rtc_read_reg(0));
+    puthexch(rtc_read_reg(1));
     rtc_write_reg(0x0,0x00);
     //       writeData(0xa,0x8); /*8:00报警*/
     rtc_write_reg(0x1,0x12|rtc_read_reg(0x1)); /*报警有效*/
@@ -411,8 +411,9 @@ void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y)
     if(m != dt_alt.minute){
         rtc_write_reg(0x09, hex2bcd(dt_alt.minute));
     }
+    lprintf_time("Next auto power on: %b:%b", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
     if(show_x>0 && show_y>0){
-        lcd_lprintf(show_x, show_y, "Next auto power on: %b:%b", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
+        lcd_lprintf(show_x, show_y, "Next auto power on: %b:%b\n", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
     }
 }
 
@@ -421,9 +422,9 @@ void auto_time_correct()
     char ch_t[ENV_MAX_VALUE_LEN], *p=&ch_t[0];
     date_info_t dt, dt_lastadj;
     uint32_t hours_adj_1min, diff_hours, v_tmp;
-    lprintf("auto_time_correct +\n");
+    lprintf_time("auto_time_correct +\n");
     if(ENV_OK != get_env("LastTimeAdj", ch_t)){
-        lprintf("skip ATC 1\n");
+        lprintf_time("skip ATC 1\n");
         return;
     }
     //replace '.' & ':' with space
@@ -450,7 +451,7 @@ void auto_time_correct()
 
     if(ENV_OK != get_env("HsAdj1Min", ch_t) ||
             (ch_t[0]!='+' && ch_t[0]!='-') ){
-        lprintf("skip ATC 2\n");
+        lprintf_time("skip ATC 2\n");
         return;
     }
     //'-169' means slower 1 min or '+169' faster
@@ -465,7 +466,7 @@ void auto_time_correct()
     dt_lastadj.minute = bcd2hex(dt_lastadj.minute );
     dt_lastadj.second = bcd2hex(dt_lastadj.second );
     dt_lastadj.weekday= bcd2hex(dt_lastadj.weekday);
-    lprintf("get last adj:%d %d %d %d %d %d %d\n",
+    lprintf_time("get last adj:%d %d %d %d %d %d %d\n",
         dt_lastadj.year,
         dt_lastadj.month,
         dt_lastadj.day  ,
@@ -474,30 +475,30 @@ void auto_time_correct()
         dt_lastadj.second,
         dt_lastadj.weekday);
     hours_adj_1min = bcd2hex_32(hours_adj_1min);
-    lprintf("hours adj %c%d\n", ch_t[0], hours_adj_1min);
+    lprintf_time("hours adj %c%d\n", ch_t[0], hours_adj_1min);
 
-    lprintf("curtime:%s\n",get_rtc_time(&dt));
+    lprintf_time("curtime:%s\n",get_rtc_time(&dt));
     if(!is_later_than(&dt, &dt_lastadj)){
         lprintf("skip ATC 3\n");
         return;
     }
     diff_hours = time_diff_hours(&dt, &dt_lastadj);
-    lprintf("diff hours %d\n", diff_hours);
+    lprintf_time("diff hours %d\n", diff_hours);
     lcd_lprintf(340, 610, "HoursPass:%d", diff_hours);
 
     if(diff_hours>hours_adj_1min){
         if(ch_t[0]=='+'){
-            lprintf("try faster 1min\n");
+            lprintf_time("try faster 1min\n");
         }
         else{
-            lprintf("try slower 1min\n");
+            lprintf_time("try slower 1min\n");
         }
         if(RTC_OK==adjust_1min(ch_t[0]=='+')){
             set_env("LastTimeAdj", get_rtc_time(NULL));
-            lprintf("adj OK\n");
+            lprintf_time("adj OK\n");
         }
         else{
-            lprintf("adj fail\n");
+            lprintf_time("adj fail\n");
         }
     }
 }
@@ -509,7 +510,7 @@ uint8_t check_rtc_alert_and_clear()
     lprintf("rtcreg1=%x\n", reg);
     ret = reg&0x08;
     if(ret){
-        lprintf("rtc flag set found!!!!!!!!!\n");
+        lprintf_time("rtc flag set found!!!!!!!!!\n");
         rtc_write_reg(1,0x12);//clear rtc int pin
     }
     return ret;

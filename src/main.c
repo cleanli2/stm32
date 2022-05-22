@@ -30,6 +30,9 @@ struct task all_tasks[]=
     {
         task_misc,
     },
+    {
+        task_log,
+    },
 };
 uint32_t task_mask = 0;
 int main()

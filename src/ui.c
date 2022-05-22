@@ -56,9 +56,11 @@ void main_ui_init(void*vp)
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     lprintf_time("mainmenu\n");
+#ifndef ALIENTEK_MINI
     if(check_rtc_alert_and_clear()){
         often_used_timer();
     }
+#endif
     common_ui_init(vp);
 }
 void main_ui_process_event(void*vp)
@@ -66,6 +68,7 @@ void main_ui_process_event(void*vp)
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     if(cur_task_event_flag & (1<<EVENT_NOKEYCT_MAXREACHED)){
+        lprintf_time("evt:no keyinput timeout\n");
         ui_transfer(UI_POFF_CTD);
     }
     common_process_event(vp);
@@ -147,6 +150,7 @@ void timer_ui_process_event(void*vp)
     ui_t* uif =(ui_t*)vp;
     if(cur_task_event_flag & (1<<EVENT_MUSIC_PLAY_END)
             && ui_buf[TMR_REPETCT_INDX]==0){
+        lprintf_time("timer timeout\n");
         ui_transfer(UI_MAIN_MENU);
     }
     if(g_flag_1s){
@@ -168,6 +172,7 @@ void timer_ui_process_event(void*vp)
         if(ui_buf[TMR_REPETCT_INDX]==0){
             update_prgb(uif, uif->prgb_info);
             if(uif->timeout_music){
+                //lprintf_time("timeout_music, start play\n");
                 play_music(uif->timeout_music, 0);
             }
         }
@@ -180,6 +185,7 @@ void timer_ui_process_event(void*vp)
                 ui_buf[TMR_TMOUTCT_INDX] = ui_buf[TMR_TMOUT_INDX];
                 draw_prgb_raw(&timer_prgb[0]);
                 play_music(notice_music, 0);
+                lprintf_time("play notice_music\n");
             }
             ui_buf[TMR_TMOUTCT_INDX]--;
         }
@@ -1259,7 +1265,12 @@ void process_button(ui_t* uif, button_t*pbt)
         }
         if(IN_RANGE(x, pbt->x, pbt->x+pbt->w) &&
                 IN_RANGE(y, pbt->y, pbt->y+pbt->h)){
-            if(pbt->text) lprintf("in botton %s\n", pbt->text);
+            if(pbt->text){
+                lprintf_time("in botton %s\n", pbt->text);
+            }
+            else{
+                lprintf_time("in botton NULL text\n", pbt->text);
+            }
 #if 0
             draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, 0x0f0f);
             lprintf("in button\n");
@@ -1351,7 +1362,8 @@ void ui_transfer(uint8 ui_id)
     else{
         common_ui_init(current_ui);
     }
-    lprintf_time("ui %u->%u\r\n", last_ui_index, ui_id);
+    lprintf_time("%s\n", get_rtc_time(NULL));
+    lprintf_time("ui %u->%u\n", last_ui_index, ui_id);
 }
 
 void common_process_event(void*vp)
@@ -1396,6 +1408,7 @@ void common_process_event(void*vp)
 #endif
             //lprintf("ev flag %x EVUTO %x\r\n", evt_flag, EVENT_UI_TIMEOUT);
             if(evt_flag == (1<<EVENT_UI_TIMEOUT)){
+                lprintf_time("UI timeout\n");
                 if(uif->timeout_music){
                     play_music(uif->timeout_music, 0);
                 }
@@ -1412,6 +1425,7 @@ void common_process_event(void*vp)
                 process_button(uif, common_button);
             }
             if(evt_flag == (1<<EVENT_BATT_LOW)){
+                lprintf_time("Battary low\n");
                 if(UI_POFF_CTD != cur_ui_index){
                     ui_transfer(UI_POFF_CTD);
                     return;
@@ -1436,6 +1450,11 @@ void common_process_event(void*vp)
 
 void ui_start()
 {
+#ifdef LARGE_SCREEN
+    lprintf_time("ui large_screen start\n");
+#else
+    lprintf_time("ui small_screen start\n");
+#endif
     memcpy(&working_ui_t, &ui_list[0], sizeof(ui_t));
     current_ui = & working_ui_t;
     if(current_ui->ui_init){
