@@ -322,12 +322,15 @@ void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
 {
     const char*line_stt = buf;
     uint32_t left=len, line_len;
-    lprintf("\nMemShow Start:");
+    putchars("\nMemShow Start:");
     while(left){
         int j, li;
         line_len = left>16?16:left;
         li=line_len;
-        lprintf("\n%X: ", ct_start);
+        __io_putchar('\n');
+        print_hex(ct_start);
+        __io_putchar(':');
+        __io_putchar(' ');
         j=0;
         while(li--){
             puthexch(line_stt[j]);
