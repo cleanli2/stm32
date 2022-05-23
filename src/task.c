@@ -31,6 +31,7 @@ uint no_key_down_ct_lcd = 0;
 uint no_key_down_ct = 0;
 bool save_power_mode = false;
 int sound_pool_full();
+static u32 sound_time_ct = 0;
 struct delay_work_info delayed_works[]={
     {
         NULL,
@@ -228,7 +229,8 @@ void set_music_note_period(uint p)
 
 bool is_playing_music()
 {
-    return (music_task_play_info.music_status == MUSIC_PLAYING);
+    //return (music_task_play_info.music_status == MUSIC_PLAYING);
+    return sound_time_ct > 0;
 }
 
 void pause_music()
@@ -404,7 +406,6 @@ int put_sound(u32 mrv, u32 stc)
 
 void sound_execute()
 {
-    static u32 sound_time_ct = 0;
     sound_info* si;
     if(0 != sound_time_ct){
         sound_time_ct--;
