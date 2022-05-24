@@ -257,7 +257,7 @@ static uint32_t beep_st = 0;
 void beep_by_timer_100(uint32_t hz_100)
 {
     TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-    RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
+    //RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
     //GPIO_InitTypeDef GPIO_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
@@ -327,10 +327,11 @@ void beep_by_timer(uint32_t hz)
 
 void TIM3_IRQHandler(void)
 {
+    static int tog=0;
     //if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
     TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
     if(sound_enable){
-        if(beep_st++&0x1){
+        if(tog++&0x1){
             GPIO_SetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
         }
         else{
