@@ -172,8 +172,9 @@
 //举例：如果是16位模式：DB0-DB7分别接GPIOB_Pin0-GPIOB_Pin7,DB10-DB17对应接至单片机GPIOB_Pin8-GPIOB_Pin15
 //Note:DB4<->A3 DB3<->A2 for HW problem
 //NOTE:the HW problem above is not problem, it's caused by error config
-#define DATAOUT(x) {GPIOB->ODR=((x)&0xff00)|(GPIOB->ODR&0xff);}
-//#define DATAIN     GPIOB->IDR; //数据输入
+#define DATAOUT(x) {GPIOB->BRR = 0xff00; GPIOB->BSRR = (0xff00&x);}
+#define DATAIN()     (GPIOB->IDR)
+/*
 static inline uint16_t DATAIN()
 {
 	uint16_t ret = GPIOB->IDR;
@@ -181,6 +182,7 @@ static inline uint16_t DATAIN()
 	//GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2)?(ret|=0x08):(ret&=(~0x08));
 	return ret;
 }
+*/
 
 //////////////////////////////////////////////////////////////////////////////////	  
 //定义LCD的尺寸
