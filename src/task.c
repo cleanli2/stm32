@@ -299,6 +299,10 @@ void task_music(struct task*vp)
         //lprintf("pu_index %u status %x\r\n", music_task_play_info.pu_index, music_task_play_info.music_status);
         music_note = music_task_play_info.pu[music_task_play_info.pu_index++];
         if(music_note==SCORE_END){
+            if(is_playing_music()){
+                music_task_play_info.pu_index--;
+                return;
+            }
             music_task_play_info.music_status = MUSIC_END;
             cur_task_event_flag |= 1<<EVENT_MUSIC_PLAY_END;
             //set_led1(false);
