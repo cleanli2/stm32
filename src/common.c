@@ -116,15 +116,16 @@ uint64_t get_system_us()
     return system_us_count;
 }
 
+u32 sche_time;
 u32* TIM2_IRQHandler_local(u32*stack_data)
 {
+    u32 t = TIM_GetCounter(TIM2);
 	//if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
-	{
-		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-        g_10ms_count++;
-	}
+    TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+    g_10ms_count++;
     //sound_execute();
     stack_data=sche_os_task(stack_data);
+    sche_time = TIM_GetCounter(TIM2) - t;
     return stack_data;
 }
 
