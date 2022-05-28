@@ -25,10 +25,11 @@ void os_task_init()
     tasks_for_use_index = 1;
 }
 
-int os_task_add(func_p fc, u32*stack_base)
+int os_task_add(func_p fc, u32*stack_base, const char* name)
 {
     u32 set_base_offset = STACK_SIZE_LOCAL - INTERRUPT_REGS_BAK_NUM - 1;
     if(tasks_for_use_index == MAX_OS_TASKS){
+        lprintf("max os tasks\n");
         return OS_FAIL;
     }
     os_task_st* new_tk = &os_tasks[tasks_for_use_index++];
@@ -40,7 +41,7 @@ int os_task_add(func_p fc, u32*stack_base)
     new_tk->next = cur_os_task->next;
     new_tk->stack_p=stack_base+set_base_offset;
     cur_os_task->next = new_tk;
-    new_tk->name = "t1";
+    new_tk->name = name;
     return OS_OK;
 }
 

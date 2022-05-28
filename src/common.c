@@ -32,6 +32,7 @@ static u8  fac_us=0;
 static u16 fac_ms=0;
 static uint32_t g_10ms_count = 0;
 void os_task1(void*);
+void os_task2(void*);
 static inline u32 get_sp()
 {
     register u32 __reg_sp __asm("sp");
@@ -514,6 +515,7 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
   * @retval None
   */
 u32 task1_stack[STACK_SIZE_LOCAL];
+u32 task2_stack[STACK_SIZE_LOCAL];
 void main_init(void)
 {
   /*!< At this stage the microcontroller clock setting is already configured, 
@@ -639,18 +641,8 @@ void main_init(void)
       led_flash(0x3, 100);
   }
   beep_by_timer_100(0);
-  os_task_add(os_task1, task1_stack);
-#if 0
-  while(1){
-      mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
-      putchars("--0 0\n");
-      GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-      w10ms_delay(100);
-      putchars("--0 1\n");
-      GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-      w10ms_delay(100);
-  }
-#endif
+  os_task_add(os_task1, task1_stack, "t1");
+  os_task_add(os_task2, task2_stack, "t2");
   while(1) run_cmd_interface();
 #if 0
   ict=0;
@@ -793,15 +785,30 @@ void main_init(void)
 
 void os_task1(void*p)
 {
+    u32 td = 250;
     (void)p;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
-        w10ms_delay(350);
+        w10ms_delay(td);
         //putchars("1 1\n");
         GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
-        w10ms_delay(350);
+        w10ms_delay(td);
         //putchars("1 0\n");
         GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
+    }
+}
+void os_task2(void*p)
+{
+    (void)p;
+    u32 td = 150;
+    while(1){
+        //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
+        //putchars("--0 0\n");
+        GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
+        w10ms_delay(td);
+        //putchars("--0 1\n");
+        GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
+        w10ms_delay(td);
     }
 }
 void soft_reset_system()
