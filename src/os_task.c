@@ -42,3 +42,19 @@ int os_task_add(func_p fc)
     new_tk->name = "t1";
     return OS_OK;
 }
+
+/************lock***********/
+static u32 spin_lock_base = 0;
+void spin_lock_init(u32 lockno)
+{
+    BIT_ACCESS(&spin_lock_base,lockno) = 0;
+}
+void spin_lock(u32 lockno)
+{
+    while(1 == BIT_ACCESS(&spin_lock_base, lockno));
+    BIT_ACCESS(&spin_lock_base, 0)=1;
+}
+void spin_unlock(u32 lockno)
+{
+    BIT_ACCESS(&spin_lock_base, lockno) = 0;
+}

@@ -413,6 +413,8 @@ void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
 {
     const char*line_stt = buf;
     uint32_t left=len, line_len;
+
+    spin_lock(0);
     putchars("\nMemShow Start:");
     while(left){
         int j, li;
@@ -445,4 +447,5 @@ void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
         ct_start+=line_len;
     }
     lprintf("\nMemShow End:\n");
+    spin_unlock(0);
 }
