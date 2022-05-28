@@ -638,6 +638,7 @@ void main_init(void)
   }
   beep_by_timer_100(0);
   os_task_add(os_task1);
+#if 0
   while(1){
       mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
       putchars("--0 0\n");
@@ -647,7 +648,8 @@ void main_init(void)
       GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
       w10ms_delay(100);
   }
-  //while(1) run_cmd_interface();
+#endif
+  while(1) run_cmd_interface();
 #if 0
   ict=0;
   lcd_clr_window(0xf00f, 0, 0, 100, 100);
@@ -791,12 +793,12 @@ void os_task1(void*p)
 {
     (void)p;
     while(1){
-        mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
+        //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
         w10ms_delay(350);
-        putchars("1 1\n");
+        //putchars("1 1\n");
         GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
         w10ms_delay(350);
-        putchars("1 0\n");
+        //putchars("1 0\n");
         GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
     }
 }
