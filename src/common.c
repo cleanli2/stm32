@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdint.h>
 #include "sd/stm32_eval_spi_sd.h"
+#include "os_task.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
@@ -30,6 +31,13 @@ static int sound_enable=1;
 static u8  fac_us=0;
 static u16 fac_ms=0;
 static uint32_t g_10ms_count = 0;
+void os_task1(void*);
+static inline u32 get_sp()
+{
+    register u32 __reg_sp __asm("sp");
+    return (__reg_sp);
+}
+
 int get_sound_sta()
 {
     return sound_enable;
@@ -108,14 +116,16 @@ uint64_t get_system_us()
     return system_us_count;
 }
 
-void TIM2_IRQHandler(void)
+u32* TIM2_IRQHandler_local(u32*stack_data)
 {
 	//if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
 	{
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
         g_10ms_count++;
 	}
-    sound_execute();
+    //sound_execute();
+    stack_data=sche_os_task(stack_data);
+    return stack_data;
 }
 
 /*low 4 bit: Pin14Value | Pin13Value | ToCtlPin14 | ToCtlPin13*/
@@ -441,6 +451,18 @@ void clear_progress_indicator(progress_indicator_t*pip)
 {
     lcd_clr_window(WHITE, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
 }
+
+void w10ms_delay(u32 ct)
+{
+    u32 x;
+    x = g_10ms_count + ct;
+    while(x > g_10ms_count)
+    {
+        //putchars("\nx=");
+        //print_hex(x);
+    }
+}
+
 void update_progress_indicator(progress_indicator_t*pip, uint32_t progressed, uint32_t total)
 {
     uint32_t t;
@@ -522,6 +544,8 @@ void main_init(void)
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
   //Touch_Test();
 
+  os_task_init();
+
   //72M/72=1M, 1us/count
   timer_init(10000, 72);
 
@@ -600,10 +624,10 @@ void main_init(void)
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
   lprintf_time("lcd init\n");
-  lcd_sueb_init(0);
+  //lcd_sueb_init(0);
   lprintf_time("lcd init done.\n");
   lprintf_time("SD init\n");
-  SD_Init();
+  //SD_Init();
   lprintf_time("SD init done\n");
   //SD_LowLevel_Init();
 
@@ -613,6 +637,16 @@ void main_init(void)
       led_flash(0x3, 100);
   }
   beep_by_timer_100(0);
+  os_task_add(os_task1);
+  while(1){
+      mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
+      putchars("--0 0\n");
+      GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
+      w10ms_delay(100);
+      putchars("--0 1\n");
+      GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
+      w10ms_delay(100);
+  }
   //while(1) run_cmd_interface();
 #if 0
   ict=0;
@@ -753,6 +787,19 @@ void main_init(void)
 #endif
 }
 
+void os_task1(void*p)
+{
+    (void)p;
+    while(1){
+        mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
+        w10ms_delay(350);
+        putchars("1 1\n");
+        GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
+        w10ms_delay(350);
+        putchars("1 0\n");
+        GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
+    }
+}
 void soft_reset_system()
 {
     lprintf_time("system reset\n");

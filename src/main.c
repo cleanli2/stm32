@@ -38,6 +38,7 @@ uint32_t task_mask = 0;
 int main()
 {
     main_init();
+    /*
     ui_start();
     while(1){
         for(unsigned int i = 0; i<sizeof(all_tasks)/sizeof(struct task); i++){
@@ -46,5 +47,6 @@ int main()
             }
         }
     }
+    */
     return 0;
 }

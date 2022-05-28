@@ -46,9 +46,9 @@ endif
 
 .PHONY: all clean
 
-all:$(C_OBJ)
+all:$(C_OBJ) src/asm.o
 	touch src/version.h
-	$(CC) $(C_OBJ) -T $(LDFILE).ld -o $(TARGET).elf $(LDFLAGS)
+	$(CC) $(C_OBJ) src/asm.o -T $(LDFILE).ld -o $(TARGET).elf $(LDFLAGS)
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).bin -Obinary 
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).hex -Oihex
 	cp $(TARGET).hex $(TARGET)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
@@ -64,3 +64,6 @@ clean:
 	rm -f $(shell find ./ -name '*.elf')
 	rm -f $(shell find ./ -name '*.bin')
 	rm -f $(shell find ./ -name '*.hex')
+
+src/asm.o:src/asm.s
+	$(AS) -mcpu=cortex-m3 -mthumb src/asm.s -o src/asm.o
