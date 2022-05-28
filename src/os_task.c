@@ -25,19 +25,20 @@ void os_task_init()
     tasks_for_use_index = 1;
 }
 
-#define stbase 0x70
-int os_task_add(func_p fc)
+int os_task_add(func_p fc, u32*stack_base)
 {
+    u32 set_base_offset = STACK_SIZE_LOCAL - INTERRUPT_REGS_BAK_NUM - 1;
     if(tasks_for_use_index == MAX_OS_TASKS){
         return OS_FAIL;
     }
     os_task_st* new_tk = &os_tasks[tasks_for_use_index++];
-    new_tk->stack_bak[stbase+1] = 0xfffffff9;
-    new_tk->stack_bak[stbase+7] = (u32)fc;
-    new_tk->stack_bak[stbase+8] = (u32)fc;
-    new_tk->stack_bak[stbase+9] = 0x21000000;
+    memset((void*)stack_base, 0x55, STACK_SIZE_LOCAL*sizeof(u32));
+    stack_base[set_base_offset+1] = 0xfffffff9;
+    stack_base[set_base_offset+7] = (u32)fc;
+    stack_base[set_base_offset+8] = (u32)fc;
+    stack_base[set_base_offset+9] = 0x21000000;
     new_tk->next = cur_os_task->next;
-    new_tk->stack_p=new_tk->stack_bak+stbase;
+    new_tk->stack_p=stack_base+set_base_offset;
     cur_os_task->next = new_tk;
     new_tk->name = "t1";
     return OS_OK;

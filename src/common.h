@@ -23,6 +23,7 @@
 #include "soc_rtc.h"
 #include "ui.h"
 #include "music.h"
+#include "os_task.h"
 
 extern uint32_t logv;
 

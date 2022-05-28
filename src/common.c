@@ -512,6 +512,7 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
   * @param  None
   * @retval None
   */
+u32 task1_stack[STACK_SIZE_LOCAL];
 void main_init(void)
 {
   /*!< At this stage the microcontroller clock setting is already configured, 
@@ -637,7 +638,7 @@ void main_init(void)
       led_flash(0x3, 100);
   }
   beep_by_timer_100(0);
-  os_task_add(os_task1);
+  os_task_add(os_task1, task1_stack);
 #if 0
   while(1){
       mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
