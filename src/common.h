@@ -29,6 +29,7 @@ extern uint32_t logv;
 
 void delay_us(u32 nus);
 void delay_ms(uint16_t nms);
+void w10ms_delay(u32 ct);
 void led_flash(u32 led_flag, u32 ms_ct);
 void soft_reset_system();
 void power_off();

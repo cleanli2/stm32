@@ -25,16 +25,17 @@ void os_task_init()
     tasks_for_use_index = 1;
 }
 
-int os_task_add(func_p fc, u32*stack_base, const char* name)
+int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)
 {
     lprintf("add task %s\n", name);
-    u32 set_base_offset = STACK_SIZE_LOCAL - INTERRUPT_REGS_BAK_NUM - 1;
+    u32 set_base_offset = stack_size - INTERRUPT_REGS_BAK_NUM - 1;
     if(tasks_for_use_index == MAX_OS_TASKS){
         lprintf("max os tasks\n");
         return OS_FAIL;
     }
     os_task_st* new_tk = &os_tasks[tasks_for_use_index++];
-    memset((void*)stack_base, 0x55, STACK_SIZE_LOCAL*sizeof(u32));
+    memset((void*)stack_base, 0xAA, stack_size*sizeof(u32));
+    memset((void*)stack_base, 0x55, stack_size*sizeof(u32)/2);
     stack_base[set_base_offset+1] = 0xfffffff9;
     stack_base[set_base_offset+7] = (u32)fc;
     stack_base[set_base_offset+8] = (u32)fc;
