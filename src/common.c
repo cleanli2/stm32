@@ -222,20 +222,19 @@ void STM_COMInit(COM_TypeDef COM, USART_InitTypeDef* USART_InitStruct)
   USART_Cmd(COM_USART[COM], ENABLE);
 }
 
+int putchar_raw(int ch)
+{
+  /* Loop until the end of transmission */
+  while (USART_GetFlagStatus(BOARD_COM1, USART_FLAG_TC) == RESET);
+  USART_SendData(BOARD_COM1, (uint8_t) ch);
+  return ch;
+}
+
 int __io_putchar(int ch)
 {
-  /* Place your implementation of fputc here */
-  /* e.g. write a character to the USART */
-  USART_SendData(BOARD_COM1, (uint8_t) ch);
-
-  /* Loop until the end of transmission */
-  while (USART_GetFlagStatus(BOARD_COM1, USART_FLAG_TC) == RESET)
-  {}
-  if(ch == '\n')
-      USART_SendData(BOARD_COM1, '\r');
-  while (USART_GetFlagStatus(BOARD_COM1, USART_FLAG_TC) == RESET);
-
-  return ch;
+    putchar_raw(ch);
+    if(ch=='\n')putchar_raw('\r');
+    return ch;
 }
 
 uint16_t __io_getchar()

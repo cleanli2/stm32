@@ -27,6 +27,7 @@ void os_task_init()
 
 int os_task_add(func_p fc, u32*stack_base, const char* name)
 {
+    lprintf("add task %s\n", name);
     u32 set_base_offset = STACK_SIZE_LOCAL - INTERRUPT_REGS_BAK_NUM - 1;
     if(tasks_for_use_index == MAX_OS_TASKS){
         lprintf("max os tasks\n");
