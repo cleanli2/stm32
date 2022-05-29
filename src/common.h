@@ -40,6 +40,7 @@ void main_init(void);
 void enable_sound(int en);
 int get_sound_sta();
 uint add_with_limit(uint a, uint b, uint limit);
+uint sub_with_limit(uint a, uint b, uint limit);
 
 #define LED_R_C 0x1
 #define LED_Y_C 0x2

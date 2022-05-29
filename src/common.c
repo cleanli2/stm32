@@ -17,6 +17,9 @@
   * @{
   */
 
+#define TIM2_RELOAD 60000
+#define COUNTS_PER_US 6
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -28,8 +31,6 @@ USART_InitTypeDef USART_InitStructure;
 /* Private functions ---------------------------------------------------------*/
 
 static int sound_enable=1;
-static u8  fac_us=0;
-static u16 fac_ms=0;
 static uint32_t g_10ms_count = 0;
 void os_task1(void*);
 void os_task2(void*);
@@ -100,20 +101,20 @@ void timer_init(uint16_t arr, uint16_t psr)
     TIM_Cmd(TIM2, ENABLE);
 }
 
-void delay_init()
+void systick_init()
 {
-
+    lprintf("SystemCoreClock=%d\n", SystemCoreClock);
+#if 0
     SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
-    fac_us=SystemCoreClock/8000000;
-
-    fac_ms=(u16)fac_us*1000;
+    SysTick_Config(SysTick_LOAD_RELOAD_Msk);
+#endif
 }
 
 uint64_t get_system_us()
 {
     uint64_t system_us_count;
 
-    system_us_count = g_10ms_count * 10000 + TIM_GetCounter(TIM2);
+    system_us_count = g_10ms_count * 10000 + TIM_GetCounter(TIM2)/6;
     return system_us_count;
 }
 
@@ -161,32 +162,16 @@ void led_flash(u32 led_flag, u32 ms_ct)
 
 void delay_us(u32 nus)
 {
-    u32 temp;
-    SysTick->LOAD=nus*fac_us;
-    SysTick->VAL=0x00;
-    SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;
-    do
-    {
-        temp=SysTick->CTRL;
-    }
-    while(temp&0x01&&!(temp&(1<<16)));
-    SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;
-    SysTick->VAL =0X00;
+    u32 ts;
+    ts = TIM_GetCounter(TIM2);
+    while(sub_with_limit(TIM_GetCounter(TIM2), ts, TIM2_RELOAD) < (nus*COUNTS_PER_US));
 }
 
 void delay_ms(u16 nms)
 {
-    u32 temp;
-    SysTick->LOAD=(u32)nms*fac_ms;
-    SysTick->VAL =0x00;
-    SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;
-    do
-    {
-        temp=SysTick->CTRL;
+    while(nms--){
+        delay_us(1000);
     }
-    while(temp&0x01&&!(temp&(1<<16)));
-    SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;
-    SysTick->VAL =0X00;
 }
 
 /**
@@ -528,8 +513,6 @@ void main_init(void)
   //uint32_t ict;
   RCC_ClocksTypeDef RCC_ClocksStatus;
 
-  delay_init();
-
   USART_InitStructure.USART_BaudRate = 115200;
   USART_InitStructure.USART_WordLength = USART_WordLength_8b;
   USART_InitStructure.USART_StopBits = USART_StopBits_1;
@@ -544,6 +527,8 @@ void main_init(void)
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.  */
 
+  systick_init();
+
   //PB3 PB4 PA15 PA13 PA14 set to gpio instead of SWJ
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
   //Touch_Test();
@@ -551,7 +536,8 @@ void main_init(void)
   os_task_init();
 
   //72M/72=1M, 1us/count
-  timer_init(10000, 72);
+  //72M/12=6M, 1/6us / count
+  timer_init(TIM2_RELOAD, 12);
 
   GPIO_InitTypeDef GPIO_InitStructure;
   //led
@@ -860,6 +846,17 @@ uint add_with_limit(uint a, uint b, uint limit)
     uint ret = a + b;
     if(ret >= limit){
         ret -= limit;
+    }
+    return ret;
+}
+uint sub_with_limit(uint a, uint b, uint limit)
+{
+    uint ret;
+    if(a>=b){
+        ret = a-b;
+    }
+    else{
+        ret = a+limit-b;
     }
     return ret;
 }
