@@ -628,7 +628,9 @@ void main_init(void)
   beep_by_timer_100(0);
   os_task_add(os_task1, task1_stack, "t1");
   os_task_add(os_task2, task2_stack, "t2");
-  while(1) run_cmd_interface();
+  while(1){
+      run_cmd_interface();
+  }
 #if 0
   ict=0;
   lcd_clr_window(0xf00f, 0, 0, 100, 100);

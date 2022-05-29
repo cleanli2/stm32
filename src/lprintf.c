@@ -372,10 +372,12 @@ void lprintf(const char *fmt, ...)
 #if 1
     va_list ap;
 
+    spin_lock(LPRINTF_LOCK);
     va_start(ap,fmt);
     vslprintf(lprintf_buf,fmt,ap);
     putchars(lprintf_buf);
     va_end(ap);
+    spin_unlock(LPRINTF_LOCK);
 #else
     putchars(fmt);
 #endif

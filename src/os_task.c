@@ -52,10 +52,15 @@ void spin_lock_init(u32 lockno)
 {
     BIT_ACCESS(&spin_lock_base,lockno) = 0;
 }
+//#define BIT_ACCESS(addr, bitnum) MEM_ADDR(BITBAND(addr, bitnum))
 void spin_lock(u32 lockno)
 {
-    while(1 == BIT_ACCESS(&spin_lock_base, lockno));
-    BIT_ACCESS(&spin_lock_base, 0)=1;
+    u32 atomic_ret = 1;
+    while(atomic_ret){
+        if(0 == BIT_ACCESS(&spin_lock_base, lockno)){
+            atomic_ret = atomic_inc((u32*)BITBAND(&spin_lock_base, lockno));
+        }
+    }
 }
 void spin_unlock(u32 lockno)
 {

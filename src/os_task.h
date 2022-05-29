@@ -8,6 +8,9 @@
 #define OS_FAIL -1
 #define OS_OK 0 
 #define BIT_ACCESS(addr, bitnum) MEM_ADDR(BITBAND(addr, bitnum))
+
+#define MEM_PRINT_LOCK 0
+#define LPRINTF_LOCK 1
 typedef struct _os_task_st
 {
     struct _os_task_st * next;
@@ -22,5 +25,6 @@ int os_task_add(func_p fc, u32*, const char*);
 void spin_lock_init(u32 lockno);
 void spin_lock(u32 lockno);
 void spin_unlock(u32 lockno);
+u32 atomic_inc(u32*);
 
 #endif
