@@ -523,7 +523,7 @@ void main_init(void)
   //Touch_Test();
 
   //72M/72=1M, 1us/count
-  timer_init(10000, 72);
+  timer_init(10000, 72-1);
 
   GPIO_InitTypeDef GPIO_InitStructure;
   //led
