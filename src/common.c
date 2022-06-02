@@ -253,6 +253,18 @@ int __io_char_received()
   return (USART_GetFlagStatus(BOARD_COM1, USART_FLAG_RXNE) == SET);
 }
 
+u32 get_con_char_10ms(u32 tout)
+{
+    tout += g_10ms_count;
+    while(!con_is_recved() && g_10ms_count < tout);
+    if(con_is_recved()){
+        return con_recv();
+    }
+    else{
+        return 0x100;
+    }
+}
+
 static uint32_t beep_st = 0;
 void beep_by_timer_100(uint32_t hz_100)
 {

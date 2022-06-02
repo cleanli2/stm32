@@ -26,6 +26,7 @@
 
 extern uint32_t logv;
 
+u32 get_con_char_10ms(u32 tout);
 void delay_us(u32 nus);
 void delay_ms(uint16_t nms);
 void led_flash(u32 led_flag, u32 ms_ct);

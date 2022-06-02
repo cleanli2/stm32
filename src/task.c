@@ -438,7 +438,9 @@ void enable_power_save(bool en)
 void task_misc(struct task*vp)
 {
     (void)vp;//fix unused variable warning
-    if(con_is_recved() && (con_recv() == 'c')){
+    if(con_is_recved() && (con_recv() == 'c') &&
+            'm' == get_con_char_10ms(50) &&
+            'd' == get_con_char_10ms(50)){
         LCD_Clear(BLACK);	//fill all screen with some color
         lcd_lprintf(0,0,"CMD mode");
         run_cmd_interface();
