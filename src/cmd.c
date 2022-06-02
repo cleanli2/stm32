@@ -1141,6 +1141,22 @@ void gpiotest(char *p)
     return;
 
 }
+void showtasks(char *p)
+{
+    (void)p;
+    os_task_st * tmp_task=cur_os_task;
+    while(1){
+        lprintf("%s\n", tmp_task->name);
+        if(cur_os_task != tmp_task->next){
+            tmp_task = tmp_task->next;
+        }
+        else{
+            break;
+        }
+    }
+
+    return;
+}
 void rtc_cmd(char *p)
 {
     uint8_t d[6], tmp;
@@ -1207,6 +1223,7 @@ static const struct command cmd_list[]=
 #endif
     {"pm",print_mem},
     {"poff",poweroff},
+    {"ps",showtasks},
     {"r",read_mem},
     {"reboot",reboot},
     {"rebootd",rebootd},
