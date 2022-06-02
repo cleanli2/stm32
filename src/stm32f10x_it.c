@@ -122,6 +122,7 @@ void DebugMon_Handler(void)
 {
 }
 
+#if 0
 /**
   * @brief  This function handles PendSV_Handler exception.
   * @param  None
@@ -139,6 +140,7 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
 }
+#endif
 
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */

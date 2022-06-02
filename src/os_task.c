@@ -67,3 +67,13 @@ void spin_unlock(u32 lockno)
 {
     BIT_ACCESS(&spin_lock_base, lockno) = 0;
 }
+
+u32 sche_time;
+u32*PendSV_Handler_local(u32*stack_data)
+{
+    u32 t = TIM_GetCounter(TIM2);
+    //putchars("pendsv\n");
+    stack_data=sche_os_task(stack_data);
+    sche_time = TIM_GetCounter(TIM2) - t;
+    return stack_data;
+}

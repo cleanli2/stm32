@@ -1,12 +1,12 @@
 .text 
 
-.global TIM2_IRQHandler
+.global PendSV_Handler
 .global atomic_inc
 .code 16
 .syntax unified
 
-.type TIM2_IRQHandler, function 
-TIM2_IRQHandler:
+.type PendSV_Handler, function
+PendSV_Handler:
 push {r7, lr}
 mov r0, sp
 /*
@@ -15,7 +15,7 @@ ite eq
 mrseq r0, msp
 mrsne r0, psp
 */
-bl TIM2_IRQHandler_local
+bl PendSV_Handler_local
 mov sp, r0
 pop {r7, pc}
 

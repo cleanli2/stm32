@@ -358,6 +358,7 @@ void lprintf_time(const char *fmt, ...)
 {
     va_list ap;
 
+    spin_lock(LPRINTF_LOCK);
     va_start(ap,fmt);
     print_with_time = 1;
     vslprintf(lprintf_buf,fmt,ap);
@@ -365,6 +366,7 @@ void lprintf_time(const char *fmt, ...)
     putchars(lprintf_buf);
     log_to_buf(lprintf_buf);
     va_end(ap);
+    spin_unlock(LPRINTF_LOCK);
 }
 
 void lprintf(const char *fmt, ...)

@@ -30,8 +30,11 @@ USART_InitTypeDef USART_InitStructure;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
+u32 last_systick;
+u32 interv_systick;
 static int sound_enable=1;
 static uint32_t g_10ms_count = 0;
+static uint32_t g_ms_count = 0;
 void os_task1(void*);
 void os_task2(void*);
 void os_task3(void*);
@@ -102,34 +105,39 @@ void timer_init(uint16_t arr, uint16_t psr)
     TIM_Cmd(TIM2, ENABLE);
 }
 
+void SysTick_Handler(void)
+{
+    g_ms_count++;
+    u32 t = TIM_GetCounter(TIM2);
+    interv_systick = t - last_systick;
+    last_systick = t;
+}
+
 void systick_init()
 {
     lprintf("SystemCoreClock=%d\n", SystemCoreClock);
-#if 0
-    SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
-    SysTick_Config(SysTick_LOAD_RELOAD_Msk);
-#endif
+
+    SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);
+    SysTick_Config(72000-1);
+    NVIC_SetPriority (PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
 }
 
 uint64_t get_system_us()
 {
     uint64_t system_us_count;
 
-    system_us_count = g_10ms_count * 10000 + TIM_GetCounter(TIM2)/6;
+    system_us_count = (uint64_t)g_ms_count * 1000 + (72000-1-SysTick->VAL)/72;
     return system_us_count;
 }
 
-u32 sche_time;
-u32* TIM2_IRQHandler_local(u32*stack_data)
+void TIM2_IRQHandler()
 {
-    u32 t = TIM_GetCounter(TIM2);
 	//if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
     g_10ms_count++;
     //sound_execute();
-    stack_data=sche_os_task(stack_data);
-    sche_time = TIM_GetCounter(TIM2) - t;
-    return stack_data;
+    //*(u32*)0xe000ed04=0x10000000;
+    SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
 }
 
 /*low 4 bit: Pin14Value | Pin13Value | ToCtlPin14 | ToCtlPin13*/
@@ -538,7 +546,7 @@ void main_init(void)
 
   //72M/72=1M, 1us/count
   //72M/12=6M, 1/6us / count
-  timer_init(TIM2_RELOAD, 12);
+  timer_init(TIM2_RELOAD, 12-1);
 
   GPIO_InitTypeDef GPIO_InitStructure;
   //led
