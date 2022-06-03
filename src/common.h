@@ -27,6 +27,7 @@
 
 extern uint32_t logv;
 
+extern uint32_t g_ms_count;
 void delay_us(u32 nus);
 void delay_ms(uint16_t nms);
 void w10ms_delay(u32 ct);

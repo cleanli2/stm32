@@ -34,10 +34,11 @@ u32 last_systick;
 u32 interv_systick;
 static int sound_enable=1;
 static uint32_t g_10ms_count = 0;
-static uint32_t g_ms_count = 0;
+uint32_t g_ms_count = 0;
 void os_task1(void*);
 void os_task2(void*);
 void os_task3(void*);
+void compute_cpu_occp();
 static inline u32 get_sp()
 {
     register u32 __reg_sp __asm("sp");
@@ -639,7 +640,8 @@ void main_init(void)
   os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL);
   os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LOCAL);
   os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE);
-  while(1);
+  while(1){
+  }
 #if 0
   ict=0;
   lcd_clr_window(0xf00f, 0, 0, 100, 100);

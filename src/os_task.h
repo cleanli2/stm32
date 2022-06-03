@@ -17,6 +17,9 @@ typedef struct _os_task_st
     struct _os_task_st * next;
     u32*stack_p;
     const char* name;
+    u32 start_run_time_count;
+    u32 run_time_counts;
+    u32 cpu_accp_perctg;
 } os_task_st;
 
 extern os_task_st * cur_os_task;
