@@ -106,12 +106,20 @@ void timer_init(uint16_t arr, uint16_t psr)
     TIM_Cmd(TIM2, ENABLE);
 }
 
+extern os_task_timer *g_tt;
 void SysTick_Handler(void)
 {
     g_ms_count++;
     u32 t = TIM_GetCounter(TIM2);
     interv_systick = t - last_systick;
     last_systick = t;
+    if(g_tt->time != 0){
+        if(g_tt->time < g_ms_count){
+            g_tt->time = 0;
+            g_tt->task->task_status = TASK_STATUS_RUNNING;
+            NVIC_SetPriority (PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
+        }
+    }
 }
 
 void systick_init()
@@ -783,14 +791,14 @@ void main_init(void)
 
 void os_task1(void*p)
 {
-    u32 td = 250;
+    u32 td = 2500;
     (void)p;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
-        w10ms_delay(td);
+        os_10ms_delay(td);
         //putchars("1 1\n");
         GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
-        w10ms_delay(td);
+        os_10ms_delay(td);
         //putchars("1 0\n");
         GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
     }

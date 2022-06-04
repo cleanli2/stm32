@@ -12,6 +12,10 @@
 
 #define MEM_PRINT_LOCK 0
 #define LPRINTF_LOCK 1
+
+#define TASK_STATUS_RUNNING 0
+#define TASK_STATUS_SLEEPING 1
+
 typedef struct _os_task_st
 {
     struct _os_task_st * next;
@@ -20,7 +24,14 @@ typedef struct _os_task_st
     u32 start_run_time_count;
     u32 run_time_counts;
     u32 cpu_accp_perctg;
+    u32 task_status;
 } os_task_st;
+
+typedef struct _task_timer
+{
+    os_task_st* task;
+    u32 time;
+} os_task_timer;
 
 extern os_task_st * cur_os_task;
 u32*sche_os_task(u32*stack_data);
@@ -30,5 +41,6 @@ void spin_lock_init(u32 lockno);
 void spin_lock(u32 lockno);
 void spin_unlock(u32 lockno);
 u32 atomic_inc(u32*);
+void os_10ms_delay(u32);
 
 #endif

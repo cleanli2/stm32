@@ -3,10 +3,23 @@
 #include "task.h"
 
 os_task_st * cur_os_task;
+os_task_timer g_task_timer;
+os_task_timer* g_tt;
 
 void os_task1(void*);
 os_task_st os_tasks[MAX_OS_TASKS];
 int tasks_for_use_index = 0;
+void os_10ms_delay(u32 timeout)
+{
+    if(g_tt->time == 0){
+        g_tt->time = g_ms_count + timeout;
+        g_tt->task = cur_os_task;
+        cur_os_task->task_status = TASK_STATUS_SLEEPING;
+        //os_switch_trigger();
+        SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
+    }
+}
+
 void compute_cpu_occp()
 {
     static u32 last_cpu_compute = 0;
@@ -16,7 +29,7 @@ void compute_cpu_occp()
         os_task_st * tmp_task=cur_os_task;
         while(1){
             tmp_task->cpu_accp_perctg =
-                tmp_task->run_time_counts * 100 / time_long;
+                (tmp_task->run_time_counts+5) * 100 / time_long;
             tmp_task->run_time_counts = 0;
             if(cur_os_task != tmp_task->next){
                 tmp_task = tmp_task->next;
@@ -30,10 +43,17 @@ void compute_cpu_occp()
 u32* sche_os_task(u32*stack_data)
 {
     if(cur_os_task != cur_os_task->next){
+        os_task_st* t = cur_os_task;
+        while(1){
+            t = t->next;
+            if(t->task_status == TASK_STATUS_RUNNING){
+                break;
+            }
+        }
         cur_os_task->stack_p=stack_data;
         cur_os_task->run_time_counts +=
             g_ms_count - cur_os_task->start_run_time_count;
-        cur_os_task = cur_os_task->next;
+        cur_os_task = t;
         stack_data=cur_os_task->stack_p;
         cur_os_task->start_run_time_count =
             g_ms_count;
@@ -48,6 +68,7 @@ void os_task_init()
     cur_os_task->next = cur_os_task;
     cur_os_task->name = "main";
     tasks_for_use_index = 1;
+    g_tt = & g_task_timer;
 }
 
 int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)
@@ -71,6 +92,7 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)
     new_tk->name = name;
     new_tk->start_run_time_count = 0;
     cur_os_task->run_time_counts = 0;
+    cur_os_task->task_status = TASK_STATUS_RUNNING;
     return OS_OK;
 }
 
