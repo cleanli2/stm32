@@ -2,6 +2,7 @@
 #include "os_task.h"
 #include "task.h"
 
+struct list_head tasks_head;
 u32 os_is_running = 0;
 os_task_st * cur_os_task;
 os_task_st * usart1_wait_task = NULL;
@@ -121,6 +122,8 @@ void os_task_init()
     tasks_for_use_index = 1;
     enable_uart1_int();
     os_is_running = 1;
+    INIT_LIST_HEAD(&tasks_head);
+    list_add_tail(&tasks_head, &cur_os_task->list);
 }
 
 int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)
@@ -143,8 +146,9 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)
     cur_os_task->next = new_tk;
     new_tk->name = name;
     new_tk->start_run_time_count = 0;
-    cur_os_task->run_time_counts = 0;
-    cur_os_task->task_status = TASK_STATUS_RUNNING;
+    new_tk->run_time_counts = 0;
+    new_tk->task_status = TASK_STATUS_RUNNING;
+    list_add_tail(&tasks_head, &new_tk->list);
     return OS_OK;
 }
 

@@ -1,6 +1,8 @@
 #ifndef __OS_TASK_H
 #define __OS_TASK_H
 
+#include "list.h"
+
 #define INTERRUPT_REGS_BAK_NUM 10
 #define STACK_SIZE_LOCAL 0x30
 #define STACK_SIZE_LARGE 0xA0
@@ -21,6 +23,7 @@
 
 typedef struct _os_task_st
 {
+    struct list_head list;
     struct _os_task_st * next;
     u32*stack_p;
     const char* name;
