@@ -9,6 +9,11 @@ void os_task1(void*);
 os_task_st os_tasks[MAX_OS_TASKS];
 int tasks_for_use_index = 0;
 
+void os_switch_trigger()
+{
+    SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
+}
+
 void check_os_timer()
 {
     os_task_timer *g_tt = g_task_timer;
@@ -18,7 +23,7 @@ void check_os_timer()
             if(g_tt->time < g_ms_count){
                 g_tt->time = TIMER_AVALABLE;
                 g_tt->task->task_status = TASK_STATUS_RUNNING;
-                NVIC_SetPriority (PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
+                os_switch_trigger();
                 return;
             }
         }
@@ -49,8 +54,7 @@ void os_10ms_delay(u32 timeout)
         g_tt->time = g_ms_count + timeout;
         g_tt->task = cur_os_task;
         cur_os_task->task_status = TASK_STATUS_SLEEPING;
-        //os_switch_trigger();
-        SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
+        os_switch_trigger();
     }
 }
 

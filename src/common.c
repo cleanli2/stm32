@@ -140,7 +140,7 @@ void TIM2_IRQHandler()
     g_10ms_count++;
     //sound_execute();
     //*(u32*)0xe000ed04=0x10000000;
-    SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
+    os_switch_trigger();
 }
 
 /*low 4 bit: Pin14Value | Pin13Value | ToCtlPin14 | ToCtlPin13*/
@@ -807,7 +807,7 @@ void os_task3(void*p)
 void os_task2(void*p)
 {
     (void)p;
-    u32 td = 150;
+    u32 td = 1500;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
         //putchars("--0 0\n");

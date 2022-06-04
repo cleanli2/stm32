@@ -46,5 +46,6 @@ void spin_unlock(u32 lockno);
 u32 atomic_inc(u32*);
 void os_10ms_delay(u32);
 void check_os_timer();
+void os_switch_trigger();
 
 #endif
