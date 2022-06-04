@@ -5,6 +5,7 @@
 #define STACK_SIZE_LOCAL 0x30
 #define STACK_SIZE_LARGE 0xA0
 #define MAX_OS_TASKS 4
+#define MAX_OS_TIMERS 4
 
 #define OS_FAIL -1
 #define OS_OK 0 
@@ -15,6 +16,8 @@
 
 #define TASK_STATUS_RUNNING 0
 #define TASK_STATUS_SLEEPING 1
+
+#define TIMER_AVALABLE 0
 
 typedef struct _os_task_st
 {
@@ -42,5 +45,6 @@ void spin_lock(u32 lockno);
 void spin_unlock(u32 lockno);
 u32 atomic_inc(u32*);
 void os_10ms_delay(u32);
+void check_os_timer();
 
 #endif

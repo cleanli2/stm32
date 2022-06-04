@@ -3,15 +3,49 @@
 #include "task.h"
 
 os_task_st * cur_os_task;
-os_task_timer g_task_timer;
-os_task_timer* g_tt;
+os_task_timer g_task_timer[MAX_OS_TIMERS];
 
 void os_task1(void*);
 os_task_st os_tasks[MAX_OS_TASKS];
 int tasks_for_use_index = 0;
+
+void check_os_timer()
+{
+    os_task_timer *g_tt = g_task_timer;
+    int i = MAX_OS_TIMERS;
+    while(i--){
+        if(g_tt->time != TIMER_AVALABLE){
+            if(g_tt->time < g_ms_count){
+                g_tt->time = TIMER_AVALABLE;
+                g_tt->task->task_status = TASK_STATUS_RUNNING;
+                NVIC_SetPriority (PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
+                return;
+            }
+        }
+        g_tt++;
+    }
+}
+
+os_task_timer* get_os_timer()
+{
+    int index = 0;
+    while(1){
+        if(g_task_timer[index].time == TIMER_AVALABLE){
+            return &g_task_timer[index];
+        }
+        if(index == MAX_OS_TIMERS){
+            lprintf("os timer not available\n");
+            return 0;
+        }
+        index++;
+    }
+}
+
 void os_10ms_delay(u32 timeout)
 {
-    if(g_tt->time == 0){
+    os_task_timer* g_tt;
+    g_tt = get_os_timer();
+    if(g_tt != 0){
         g_tt->time = g_ms_count + timeout;
         g_tt->task = cur_os_task;
         cur_os_task->task_status = TASK_STATUS_SLEEPING;
@@ -68,7 +102,6 @@ void os_task_init()
     cur_os_task->next = cur_os_task;
     cur_os_task->name = "main";
     tasks_for_use_index = 1;
-    g_tt = & g_task_timer;
 }
 
 int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)

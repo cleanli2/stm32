@@ -113,13 +113,7 @@ void SysTick_Handler(void)
     u32 t = TIM_GetCounter(TIM2);
     interv_systick = t - last_systick;
     last_systick = t;
-    if(g_tt->time != 0){
-        if(g_tt->time < g_ms_count){
-            g_tt->time = 0;
-            g_tt->task->task_status = TASK_STATUS_RUNNING;
-            NVIC_SetPriority (PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
-        }
-    }
+    check_os_timer();
 }
 
 void systick_init()
@@ -818,10 +812,10 @@ void os_task2(void*p)
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
         //putchars("--0 0\n");
         GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-        w10ms_delay(td);
+        os_10ms_delay(td);
         //putchars("--0 1\n");
         GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-        w10ms_delay(td);
+        os_10ms_delay(td);
     }
 }
 void soft_reset_system()
