@@ -182,7 +182,6 @@ u32*PendSV_Handler_local(u32*stack_data)
 void USART1_IRQHandler()
 {
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET){
-        __io_putchar('8');
         USART_ITConfig(USART1, USART_IT_RXNE, DISABLE);
         if(usart1_wait_task != NULL){
             usart1_wait_task->task_status = TASK_STATUS_RUNNING;
