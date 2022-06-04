@@ -2,7 +2,9 @@
 #include "os_task.h"
 #include "task.h"
 
+u32 os_is_running = 0;
 os_task_st * cur_os_task;
+os_task_st * usart1_wait_task = NULL;
 os_task_timer g_task_timer[MAX_OS_TIMERS];
 
 void os_task1(void*);
@@ -100,12 +102,25 @@ u32* sche_os_task(u32*stack_data)
     return stack_data;
 }
 
+void enable_uart1_int()
+{
+    NVIC_InitTypeDef NVIC_InitStructure;
+
+    NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+}
+
 void os_task_init()
 {
     cur_os_task = &os_tasks[0];
     cur_os_task->next = cur_os_task;
     cur_os_task->name = "main";
     tasks_for_use_index = 1;
+    enable_uart1_int();
+    os_is_running = 1;
 }
 
 int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)
@@ -162,4 +177,27 @@ u32*PendSV_Handler_local(u32*stack_data)
     stack_data=sche_os_task(stack_data);
     sche_time = TIM_GetCounter(TIM2) - t;
     return stack_data;
+}
+
+void USART1_IRQHandler()
+{
+    if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET){
+        __io_putchar('8');
+        USART_ITConfig(USART1, USART_IT_RXNE, DISABLE);
+        if(usart1_wait_task != NULL){
+            usart1_wait_task->task_status = TASK_STATUS_RUNNING;
+            usart1_wait_task = NULL;
+            os_switch_trigger();
+        }
+    }
+}
+uint16_t os_con_recv()
+{
+    while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET){
+        usart1_wait_task = cur_os_task;
+        cur_os_task->task_status = TASK_STATUS_SLEEPING;
+        USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+        os_switch_trigger();
+    }
+    return 0xff&USART_ReceiveData(USART1);
 }

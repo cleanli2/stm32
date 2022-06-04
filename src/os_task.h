@@ -37,6 +37,7 @@ typedef struct _task_timer
 } os_task_timer;
 
 extern os_task_st * cur_os_task;
+extern u32 os_is_running;
 u32*sche_os_task(u32*stack_data);
 void os_task_init();
 int os_task_add(func_p fc, u32*, const char*, u32 stack_size);
@@ -47,5 +48,6 @@ u32 atomic_inc(u32*);
 void os_10ms_delay(u32);
 void check_os_timer();
 void os_switch_trigger();
+uint16_t os_con_recv();
 
 #endif
