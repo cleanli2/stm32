@@ -7,6 +7,7 @@ u32 os_is_running = 0;
 os_task_st * cur_os_task;
 os_task_st * usart1_wait_task = NULL;
 os_task_timer g_task_timer[MAX_OS_TIMERS];
+u32 total_tasks_num = 0;
 
 void os_task1(void*);
 os_task_st os_tasks[MAX_OS_TASKS];
@@ -83,23 +84,31 @@ void compute_cpu_occp()
 }
 u32* sche_os_task(u32*stack_data)
 {
-    if(cur_os_task != cur_os_task->next){
-        os_task_st* t = cur_os_task;
-        while(1){
-            t = t->next;
-            if(t->task_status == TASK_STATUS_RUNNING){
+    struct list_head * t;
+    os_task_st* t_task;
+
+    if(total_tasks_num > 1){
+        list_for_each(t, &tasks_head){
+            if(&cur_os_task->list == t){
+                continue;
+            }
+            t_task = list_entry(t, os_task_st, list);
+            if(t_task->task_status == TASK_STATUS_RUNNING){
                 break;
             }
+        }
+        if(&tasks_head == t){
+            t_task = cur_os_task;
         }
         cur_os_task->stack_p=stack_data;
         cur_os_task->run_time_counts +=
             g_ms_count - cur_os_task->start_run_time_count;
-        cur_os_task = t;
+        cur_os_task = t_task;
         stack_data=cur_os_task->stack_p;
         cur_os_task->start_run_time_count =
             g_ms_count;
+        compute_cpu_occp();
     }
-    compute_cpu_occp();
     return stack_data;
 }
 
@@ -123,7 +132,8 @@ void os_task_init()
     enable_uart1_int();
     os_is_running = 1;
     INIT_LIST_HEAD(&tasks_head);
-    list_add_tail(&tasks_head, &cur_os_task->list);
+    list_add_tail(&cur_os_task->list, &tasks_head);
+    total_tasks_num = 1;
 }
 
 int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)
@@ -148,7 +158,8 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)
     new_tk->start_run_time_count = 0;
     new_tk->run_time_counts = 0;
     new_tk->task_status = TASK_STATUS_RUNNING;
-    list_add_tail(&tasks_head, &new_tk->list);
+    list_add_tail(&new_tk->list, &tasks_head);
+    total_tasks_num++;
     return OS_OK;
 }
 
