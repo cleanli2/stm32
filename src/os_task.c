@@ -122,8 +122,8 @@ void os_task_init()
     tasks_for_use_index = 1;
     enable_uart1_int();
     os_is_running = 1;
-    //INIT_LIST_HEAD(&tasks_head);
-    //list_add_tail(&tasks_head, &cur_os_task->list);
+    INIT_LIST_HEAD(&tasks_head);
+    list_add_tail(&tasks_head, &cur_os_task->list);
 }
 
 int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)
@@ -148,7 +148,7 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)
     new_tk->start_run_time_count = 0;
     new_tk->run_time_counts = 0;
     new_tk->task_status = TASK_STATUS_RUNNING;
-    //list_add_tail(&tasks_head, &new_tk->list);
+    list_add_tail(&tasks_head, &new_tk->list);
     return OS_OK;
 }
 
