@@ -2,7 +2,7 @@
 #include "os_task.h"
 #include "task.h"
 
-struct list_head tasks_head;
+struct list_head priority_tasks_head[TASK_PRIORITIES_NUM];
 u32 os_is_running = 0;
 os_task_st * cur_os_task;
 os_task_st * usart1_wait_task = NULL;
@@ -86,18 +86,27 @@ u32* sche_os_task(u32*stack_data)
 {
     struct list_head * t;
     os_task_st* t_task;
+    u32 task_pri_index = 0;
 
     if(total_tasks_num > 1){
-        list_for_each(t, &tasks_head){
-            if(&cur_os_task->list == t){
-                continue;
+        while(task_pri_index < TASK_PRIORITIES_NUM){
+            list_for_each(t, &priority_tasks_head[task_pri_index]){
+                if(&cur_os_task->list == t){
+                    continue;
+                }
+                t_task = list_entry(t, os_task_st, list);
+                if(t_task->task_status == TASK_STATUS_RUNNING){
+                    break;
+                }
             }
-            t_task = list_entry(t, os_task_st, list);
-            if(t_task->task_status == TASK_STATUS_RUNNING){
+            if(&priority_tasks_head[task_pri_index] == t){
+                task_pri_index++;
+            }
+            else{
                 break;
             }
         }
-        if(&tasks_head == t){
+        if(&priority_tasks_head[TASK_PRIORITIES_NUM - 1] == t){
             t_task = cur_os_task;
         }
         cur_os_task->stack_p=stack_data;
@@ -131,12 +140,14 @@ void os_task_init()
     tasks_for_use_index = 1;
     enable_uart1_int();
     os_is_running = 1;
-    INIT_LIST_HEAD(&tasks_head);
-    list_add_tail(&cur_os_task->list, &tasks_head);
+    for(int i = 0; i < TASK_PRIORITIES_NUM; i++){
+        INIT_LIST_HEAD(&priority_tasks_head[i]);
+    }
+    list_add_tail(&cur_os_task->list, &priority_tasks_head[TASK_PRIORITIES_NUM-1]);
     total_tasks_num = 1;
 }
 
-int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)
+int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size, u32 task_pri)
 {
     lprintf("add task %s\n", name);
     u32 set_base_offset = stack_size - INTERRUPT_REGS_BAK_NUM - 1;
@@ -158,7 +169,10 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size)
     new_tk->start_run_time_count = 0;
     new_tk->run_time_counts = 0;
     new_tk->task_status = TASK_STATUS_RUNNING;
-    list_add_tail(&new_tk->list, &tasks_head);
+    if(task_pri>TASK_PRIORITIES_NUM-1){
+        task_pri = TASK_PRIORITIES_NUM-1;
+    }
+    list_add_tail(&new_tk->list, &priority_tasks_head[task_pri]);
     total_tasks_num++;
     return OS_OK;
 }

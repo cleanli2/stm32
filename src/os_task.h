@@ -20,6 +20,7 @@
 #define TASK_STATUS_SLEEPING 1
 
 #define TIMER_AVALABLE 0
+#define TASK_PRIORITIES_NUM 4
 
 typedef struct _os_task_st
 {
@@ -43,7 +44,7 @@ extern os_task_st * cur_os_task;
 extern u32 os_is_running;
 u32*sche_os_task(u32*stack_data);
 void os_task_init();
-int os_task_add(func_p fc, u32*, const char*, u32 stack_size);
+int os_task_add(func_p fc, u32*, const char*, u32 stack_size, u32 priority);
 void spin_lock_init(u32 lockno);
 void spin_lock(u32 lockno);
 void spin_unlock(u32 lockno);

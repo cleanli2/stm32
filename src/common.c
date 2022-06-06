@@ -639,9 +639,9 @@ void main_init(void)
       led_flash(0x3, 100);
   }
   beep_by_timer_100(0);
-  os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL);
-  os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LOCAL);
-  os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE);
+  os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 0);
+  os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LOCAL, 1);
+  os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 2);
   while(1){
   }
 #if 0
