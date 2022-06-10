@@ -45,6 +45,7 @@ extern u32 os_is_running;
 u32*sche_os_task(u32*stack_data);
 void os_task_init();
 int os_task_add(func_p fc, u32*, const char*, u32 stack_size, u32 priority);
+void showtasks();
 void spin_lock_init(u32 lockno);
 void spin_lock(u32 lockno);
 void spin_unlock(u32 lockno);

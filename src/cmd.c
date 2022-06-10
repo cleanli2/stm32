@@ -1141,20 +1141,10 @@ void gpiotest(char *p)
     return;
 
 }
-void showtasks(char *p)
+void ps(char *p)
 {
     (void)p;
-    os_task_st * tmp_task=cur_os_task;
-    while(1){
-        lprintf("%s %d%\n", tmp_task->name, tmp_task->cpu_accp_perctg);
-        if(cur_os_task != tmp_task->next){
-            tmp_task = tmp_task->next;
-        }
-        else{
-            break;
-        }
-    }
-
+    showtasks();
     return;
 }
 void rtc_cmd(char *p)
