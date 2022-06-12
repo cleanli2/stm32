@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include "sd/stm32_eval_spi_sd.h"
 #include "os_task.h"
+#include "ring_buf.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
@@ -17,6 +18,7 @@
   * @{
   */
 
+DECLARE_RB_DATA(int, rb_test, 3)
 #define TIM2_RELOAD 60000
 #define COUNTS_PER_US 6
 
@@ -643,6 +645,11 @@ void main_init(void)
   os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LOCAL, 1);
   os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 2);
   while(1){
+      if(!RB_IS_EMPTY(int, rb_test)){
+          int*rtet = RB_R_GET(int, rb_test);
+          lprintf("read int from other task %d\n", *rtet);
+          RB_R_SET(int, rb_test);
+      }
   }
 #if 0
   ict=0;
@@ -786,6 +793,7 @@ void main_init(void)
 void os_task1(void*p)
 {
     u32 td = 2500;
+    u32 test=0;
     (void)p;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
@@ -795,6 +803,11 @@ void os_task1(void*p)
         os_10ms_delay(td);
         //putchars("1 0\n");
         GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
+        if(!RB_IS_FULL(int, rb_test)){
+            int *dtw=RB_W_GET(int, rb_test);
+            *dtw = test++;
+            RB_W_SET(int, rb_test);
+        }
     }
 }
 void os_task3(void*p)
