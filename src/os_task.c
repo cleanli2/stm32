@@ -116,7 +116,16 @@ u32* sche_os_task(u32*stack_data)
                 }
             }
             if(&priority_tasks_head[task_pri_index] == t){
-                task_pri_index++;
+                //if higher or same priority with current has no other running task,
+                //keep running current task
+                if(cur_os_task->task_priority == task_pri_index &&
+                        cur_os_task->task_status == TASK_STATUS_RUNNING){
+                    t_task = cur_os_task;
+                    break;
+                }
+                else{
+                    task_pri_index++;
+                }
             }
             else{
                 break;
@@ -160,6 +169,7 @@ void os_task_init()
         INIT_LIST_HEAD(&priority_tasks_head[i]);
     }
     list_add_tail(&cur_os_task->list, &priority_tasks_head[TASK_PRIORITIES_NUM-1]);
+    cur_os_task->task_priority = TASK_PRIORITIES_NUM-1;
     total_tasks_num = 1;
 }
 
@@ -185,6 +195,7 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size, u32
     new_tk->start_run_time_count = 0;
     new_tk->run_time_counts = 0;
     new_tk->task_status = TASK_STATUS_RUNNING;
+    new_tk->task_priority = task_pri;
     if(task_pri>TASK_PRIORITIES_NUM-1){
         task_pri = TASK_PRIORITIES_NUM-1;
     }

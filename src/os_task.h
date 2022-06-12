@@ -32,6 +32,7 @@ typedef struct _os_task_st
     u32 run_time_counts;
     u32 cpu_accp_perctg;
     u32 task_status;
+    u32 task_priority;
 } os_task_st;
 
 typedef struct _task_timer
