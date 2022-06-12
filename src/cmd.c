@@ -1147,6 +1147,17 @@ void ps(char *p)
     showtasks();
     return;
 }
+void m_p(char *p)
+{
+    (void)p;
+    uint32_t tmp, i=0;
+    tmp = get_howmany_para(p);
+    if(tmp>0){
+        p = str_to_hex(p, &i);
+    }
+    play_music(music_lst[i], 0);
+    return;
+}
 void rtc_cmd(char *p)
 {
     uint8_t d[6], tmp;
@@ -1210,6 +1221,7 @@ static const struct command cmd_list[]=
     {"lst",lcdsuebinit},
     {"lstep",lcdsuebstep},
     {"lstest",lcdsuebtest},
+    {"music",m_p},
 #endif
     {"pm",print_mem},
     {"poff",poweroff},
