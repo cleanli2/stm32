@@ -37,8 +37,9 @@ typedef struct _rb_ctl{
 #define RB_R_SET(TYPE, name) {\
     rb_ctl##name.ri = INC_ROUND(rb_ctl##name.ri, RB_DATA_SIZE(TYPE, name)); \
     wake_up(rb_ctl##name.r_notify)}
-#define RB_W_SET(TYPE, name) \
-    (rb_ctl##name.wi = INC_ROUND(rb_ctl##name.wi, RB_DATA_SIZE(TYPE, name)))
+#define RB_W_SET(TYPE, name) {\
+    rb_ctl##name.wi = INC_ROUND(rb_ctl##name.wi, RB_DATA_SIZE(TYPE, name)); \
+    wake_up(rb_ctl##name.w_notify)}
 
 #define RB_OK 0
 #define RB_FAIL 0
@@ -46,5 +47,9 @@ typedef struct _rb_ctl{
 #define RB_W_GET_wait(TYPE, name) ({ \
         while(RB_IS_FULL(TYPE, name))sleep_wait(rb_ctl##name.r_notify); \
         RB_W_GET(TYPE, name);})
+
+#define RB_R_GET_wait(TYPE, name) ({ \
+        while(RB_IS_EMPTY(TYPE, name))sleep_wait(rb_ctl##name.w_notify); \
+        RB_R_GET(TYPE, name);})
 
 #endif

@@ -787,12 +787,12 @@ void main_init(void)
 
 void os_task1(void*p)
 {
-    u32 td = 500;
+    u32 td = 2000;
     u32 test=0;
     (void)p;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
-        //os_10ms_delay(td);
+        os_10ms_delay(td);
         //putchars("1 1\n");
         GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
         os_10ms_delay(td);
@@ -820,7 +820,7 @@ void os_task3(void*p)
 void os_task2(void*p)
 {
     (void)p;
-    u32 td = 1500;
+    u32 td = 200;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
         //putchars("--0 0\n");
@@ -828,12 +828,10 @@ void os_task2(void*p)
         os_10ms_delay(td);
         //putchars("--0 1\n");
         GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-        os_10ms_delay(td);
-        if(!RB_IS_EMPTY(int, rb_test)){
-            int*rtet = RB_R_GET(int, rb_test);
-            lprintf("read int from other task %d\n", *rtet);
-            RB_R_SET(int, rb_test);
-        }
+        //os_10ms_delay(td);
+        int*rtet = RB_R_GET_wait(int, rb_test);
+        lprintf("read int from other task %d\n", *rtet);
+        RB_R_SET(int, rb_test);
     }
 }
 void soft_reset_system()
