@@ -645,11 +645,6 @@ void main_init(void)
   os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LOCAL, 1);
   os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 2);
   while(1){
-      if(!RB_IS_EMPTY(int, rb_test)){
-          int*rtet = RB_R_GET(int, rb_test);
-          lprintf("read int from other task %d\n", *rtet);
-          RB_R_SET(int, rb_test);
-      }
   }
 #if 0
   ict=0;
@@ -792,22 +787,27 @@ void main_init(void)
 
 void os_task1(void*p)
 {
-    u32 td = 2500;
+    u32 td = 500;
     u32 test=0;
     (void)p;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
-        os_10ms_delay(td);
+        //os_10ms_delay(td);
         //putchars("1 1\n");
         GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
         os_10ms_delay(td);
         //putchars("1 0\n");
         GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
+#if 0
         if(!RB_IS_FULL(int, rb_test)){
             int *dtw=RB_W_GET(int, rb_test);
             *dtw = test++;
             RB_W_SET(int, rb_test);
         }
+#endif
+        int *dtw=RB_W_GET_wait(int, rb_test);
+        *dtw = test++;
+        RB_W_SET(int, rb_test);
     }
 }
 void os_task3(void*p)
@@ -829,6 +829,11 @@ void os_task2(void*p)
         //putchars("--0 1\n");
         GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
         os_10ms_delay(td);
+        if(!RB_IS_EMPTY(int, rb_test)){
+            int*rtet = RB_R_GET(int, rb_test);
+            lprintf("read int from other task %d\n", *rtet);
+            RB_R_SET(int, rb_test);
+        }
     }
 }
 void soft_reset_system()

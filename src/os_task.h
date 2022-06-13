@@ -4,7 +4,7 @@
 #include "list.h"
 
 #define INTERRUPT_REGS_BAK_NUM 10
-#define STACK_SIZE_LOCAL 0x30
+#define STACK_SIZE_LOCAL 0x50
 #define STACK_SIZE_LARGE 0xA0
 #define MAX_OS_TASKS 4
 #define MAX_OS_TIMERS 4
@@ -55,5 +55,15 @@ void os_10ms_delay(u32);
 void check_os_timer();
 void os_switch_trigger();
 uint16_t os_con_recv();
+
+#define sleep_wait(task_to_wait) {\
+    task_to_wait = cur_os_task; \
+    cur_os_task->task_status = TASK_STATUS_SLEEPING; \
+    os_switch_trigger();}
+
+#define wake_up(task_to_wake) \
+    if(NULL!=task_to_wake){ \
+        task_to_wake->task_status = TASK_STATUS_RUNNING; \
+        task_to_wake = NULL;}
 
 #endif
