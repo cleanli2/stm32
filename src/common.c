@@ -787,7 +787,7 @@ void main_init(void)
 
 void os_task1(void*p)
 {
-    u32 td = 2000;
+    u32 td = 200;
     u32 test=0;
     (void)p;
     while(1){
@@ -820,7 +820,7 @@ void os_task3(void*p)
 void os_task2(void*p)
 {
     (void)p;
-    u32 td = 200;
+    u32 td = 40;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
         //putchars("--0 0\n");
@@ -830,7 +830,7 @@ void os_task2(void*p)
         GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
         //os_10ms_delay(td);
         int*rtet = RB_R_GET_wait(int, rb_test);
-        lprintf("read int from other task %d\n", *rtet);
+        lprintf("other task %d\n", *rtet);
         RB_R_SET(int, rb_test);
     }
 }

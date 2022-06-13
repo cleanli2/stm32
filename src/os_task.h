@@ -62,8 +62,6 @@ uint16_t os_con_recv();
     os_switch_trigger();}
 
 #define wake_up(task_to_wake) \
-    if(NULL!=task_to_wake){ \
-        task_to_wake->task_status = TASK_STATUS_RUNNING; \
-        task_to_wake = NULL;}
+    if(NULL!=task_to_wake)task_to_wake->task_status = TASK_STATUS_RUNNING;
 
 #endif
