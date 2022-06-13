@@ -16,9 +16,6 @@ struct task all_tasks[]=
     {
         task_disp,
     },
-    {
-        task_music,
-    },
 #ifndef ALIENTEK_MINI
     {
         task_power,

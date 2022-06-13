@@ -6,7 +6,7 @@
 #define INTERRUPT_REGS_BAK_NUM 10
 #define STACK_SIZE_LOCAL 0x50
 #define STACK_SIZE_LARGE 0xA0
-#define MAX_OS_TASKS 4
+#define MAX_OS_TASKS 5
 #define MAX_OS_TIMERS 4
 
 #define OS_FAIL -1
@@ -20,7 +20,7 @@
 #define TASK_STATUS_SLEEPING 1
 
 #define TIMER_AVALABLE 0
-#define TASK_PRIORITIES_NUM 4
+#define TASK_PRIORITIES_NUM 5
 
 typedef struct _os_task_st
 {
