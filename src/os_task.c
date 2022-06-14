@@ -87,12 +87,14 @@ void showtasks()
     os_task_st * tmp_task;
     struct list_head * t;
 
-    lprintf("name\tcpu\tpriority\n");
+    lprintf("name\tcpu\tpri\tstatus\n");
     for(int task_pri_index=0;task_pri_index<TASK_PRIORITIES_NUM;task_pri_index++){
         list_for_each(t, &priority_tasks_head[task_pri_index]){
             tmp_task = list_entry(t, os_task_st, list);
-            lprintf("%s\t%d%\t%d\n", tmp_task->name,
-                    tmp_task->cpu_accp_perctg, task_pri_index);
+            lprintf("%s\t%d%\t%d\t%s\n", tmp_task->name,
+                    tmp_task->cpu_accp_perctg,
+                    task_pri_index,
+                    tmp_task->task_status==TASK_STATUS_RUNNING?"running":"sleep");
         }
     }
     lprintf("\n");
