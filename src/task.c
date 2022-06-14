@@ -303,16 +303,9 @@ void task_music(void*vp)
         //lprintf("pu_index %u status %x\r\n", music_task_play_info.pu_index, music_task_play_info.music_status);
         music_note = music_task_play_info.pu[music_task_play_info.pu_index++];
         if(music_note==SCORE_END){
-            if(is_playing_music()){
-                music_task_play_info.pu_index--;
-                return;
-            }
             music_task_play_info.music_status = MUSIC_END;
             cur_task_event_flag |= 1<<EVENT_MUSIC_PLAY_END;
-            //set_led1(false);
-            //set_led2(false);
-            lprintf_time("play end\n");
-            //beep_by_timer_100(0);
+            lprintf_time("pu end\n");
             set_music_note_period(DEFAULT_MUSIC_NOTE_PERIOD);//recover default note period
             music_task_play_info.pu = NULL;
         }

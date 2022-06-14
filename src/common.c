@@ -140,7 +140,7 @@ void TIM2_IRQHandler()
 	//if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
     g_10ms_count++;
-    //sound_execute();
+    sound_execute();
     //*(u32*)0xe000ed04=0x10000000;
     os_switch_trigger();
 }
@@ -832,7 +832,7 @@ void os_task2(void*p)
         GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
         //os_10ms_delay(td);
         int*rtet = RB_R_GET_wait(int, rb_test);
-        lprintf("other task %d\n", *rtet);
+        //lprintf("other task %d\n", *rtet);
         RB_R_SET(int, rb_test);
     }
 }
