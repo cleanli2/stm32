@@ -787,10 +787,21 @@ void main_init(void)
 #endif
 }
 
+DECLARE_OS_LOCK(oslktest, 3);
+void os_lock_test()
+{
+    lprintf("task %s wait lock\n", cur_os_task->name);
+    os_lock(&oslktest);
+    lprintf("task %s in\n", cur_os_task->name);
+    os_10ms_delay(2000);
+    lprintf("task %s out\n", cur_os_task->name);
+    os_unlock(&oslktest);
+    lprintf("task %s release lock\n", cur_os_task->name);
+}
+
 void os_task1(void*p)
 {
     u32 td = 200;
-    u32 test=0;
     (void)p;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
@@ -807,9 +818,7 @@ void os_task1(void*p)
             RB_W_SET(int, rb_test);
         }
 #endif
-        int *dtw=RB_W_GET_wait(int, rb_test);
-        *dtw = test++;
-        RB_W_SET(int, rb_test);
+        os_lock_test();
     }
 }
 void os_task3(void*p)
@@ -831,9 +840,8 @@ void os_task2(void*p)
         //putchars("--0 1\n");
         GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
         //os_10ms_delay(td);
-        int*rtet = RB_R_GET_wait(int, rb_test);
         //lprintf("other task %d\n", *rtet);
-        RB_R_SET(int, rb_test);
+        os_lock_test();
     }
 }
 void soft_reset_system()

@@ -8,6 +8,7 @@
 #define STACK_SIZE_LARGE 0xA0
 #define MAX_OS_TASKS 5
 #define MAX_OS_TIMERS 4
+#define OS_LOCK_TASKS_NUM 4
 
 #define OS_FAIL -1
 #define OS_OK 0 
@@ -41,6 +42,12 @@ typedef struct _task_timer
     u32 time;
 } os_task_timer;
 
+typedef struct _oslock_o
+{
+    u32 lockno;
+    os_task_st* wait_tasks[OS_LOCK_TASKS_NUM];
+} oslock_o;
+
 extern os_task_st * cur_os_task;
 extern u32 os_is_running;
 u32*sche_os_task(u32*stack_data);
@@ -55,6 +62,8 @@ void os_10ms_delay(u32);
 void check_os_timer();
 void os_switch_trigger();
 uint16_t os_con_recv();
+void os_lock(oslock_o* lock);
+void os_unlock(oslock_o* lock);
 
 #define sleep_wait(task_to_wait) {\
     task_to_wait = cur_os_task; \
@@ -64,4 +73,6 @@ uint16_t os_con_recv();
 #define wake_up(task_to_wake) \
     if(NULL!=task_to_wake)task_to_wake->task_status = TASK_STATUS_RUNNING;
 
+#define DECLARE_OS_LOCK(lockname, lockno) \
+    oslock_o lockname = {lockno, {0}}
 #endif

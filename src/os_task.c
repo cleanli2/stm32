@@ -227,6 +227,41 @@ void spin_unlock(u32 lockno)
     BIT_ACCESS(&spin_lock_base, lockno) = 0;
 }
 
+void os_lock(oslock_o* lock)
+{
+    int i;
+    u32 atomic_ret = 1;
+    while(atomic_ret){
+        if(0 == BIT_ACCESS(&spin_lock_base, lock->lockno)){
+            atomic_ret = atomic_inc((u32*)BITBAND(&spin_lock_base, lock->lockno));
+        }
+        else{
+            for(i=0;i<OS_LOCK_TASKS_NUM;i++){
+                if(NULL==lock->wait_tasks[i]){
+                    lock->wait_tasks[i]=cur_os_task;
+                    break;
+                }
+            }
+            if(OS_LOCK_TASKS_NUM==i){
+                lprintf("os lock tasks full\n");
+            }
+            cur_os_task->task_status=TASK_STATUS_SLEEPING;
+            os_switch_trigger();
+        }
+    }
+}
+void os_unlock(oslock_o* lock)
+{
+    int i;
+    BIT_ACCESS(&spin_lock_base, lock->lockno) = 0;
+    for(i=0;i<OS_LOCK_TASKS_NUM;i++){
+        if(NULL!=lock->wait_tasks[i]){
+            lock->wait_tasks[i]->task_status=TASK_STATUS_RUNNING;
+            lock->wait_tasks[i]=NULL;
+        }
+    }
+}
+
 u32 sche_time;
 u32*PendSV_Handler_local(u32*stack_data)
 {
