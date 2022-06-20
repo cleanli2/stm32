@@ -231,6 +231,9 @@ void os_lock(oslock_o* lock)
 {
     int i;
     u32 atomic_ret = 1;
+    if(!os_is_running){
+        return spin_lock(lock->lockno);
+    }
     while(atomic_ret){
         if(0 == BIT_ACCESS(&spin_lock_base, lock->lockno)){
             atomic_ret = atomic_inc((u32*)BITBAND(&spin_lock_base, lock->lockno));
@@ -254,6 +257,9 @@ void os_unlock(oslock_o* lock)
 {
     int i;
     BIT_ACCESS(&spin_lock_base, lock->lockno) = 0;
+    if(!os_is_running){
+        return;
+    }
     for(i=0;i<OS_LOCK_TASKS_NUM;i++){
         if(NULL!=lock->wait_tasks[i]){
             lock->wait_tasks[i]->task_status=TASK_STATUS_RUNNING;

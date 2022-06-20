@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "common.h"
+#include "os_task.h"
 
 #define LOG_BUF_SIZE 512
 char log_buf[LOG_BUF_SIZE];
@@ -11,6 +12,8 @@ static u32 read_index = 0;
 char lprintf_buf[256];
 char lcdprintf_buf[256];
 static int print_with_time = 0;
+DECLARE_OS_LOCK(oslk_lprintf, LPRINTF_LOCK);
+DECLARE_OS_LOCK(oslk_mempt, MEM_PRINT_LOCK);
 char halfbyte2char(char c)
 {
         return ((c & 0x0f) < 0x0a)?(0x30 + c):('A' + c - 0x0a);
@@ -358,7 +361,7 @@ void lprintf_time(const char *fmt, ...)
 {
     va_list ap;
 
-    spin_lock(LPRINTF_LOCK);
+    os_lock(&oslk_lprintf);
     va_start(ap,fmt);
     print_with_time = 1;
     vslprintf(lprintf_buf,fmt,ap);
@@ -366,7 +369,7 @@ void lprintf_time(const char *fmt, ...)
     putchars(lprintf_buf);
     log_to_buf(lprintf_buf);
     va_end(ap);
-    spin_unlock(LPRINTF_LOCK);
+    os_unlock(&oslk_lprintf);
 }
 
 void lprintf(const char *fmt, ...)
@@ -374,12 +377,12 @@ void lprintf(const char *fmt, ...)
 #if 1
     va_list ap;
 
-    spin_lock(LPRINTF_LOCK);
+    os_lock(&oslk_lprintf);
     va_start(ap,fmt);
     vslprintf(lprintf_buf,fmt,ap);
     putchars(lprintf_buf);
     va_end(ap);
-    spin_unlock(LPRINTF_LOCK);
+    os_unlock(&oslk_lprintf);
 #else
     putchars(fmt);
 #endif
@@ -418,7 +421,7 @@ void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
     const char*line_stt = buf;
     uint32_t left=len, line_len;
 
-    spin_lock(0);
+    os_lock(&oslk_mempt);
     putchars("\nMemShow Start:");
     while(left){
         int j, li;
@@ -451,5 +454,5 @@ void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
         ct_start+=line_len;
     }
     lprintf("\nMemShow End:\n");
-    spin_unlock(0);
+    os_unlock(&oslk_mempt);
 }
