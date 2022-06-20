@@ -793,7 +793,7 @@ void os_lock_test()
     lprintf("task %s wait lock\n", cur_os_task->name);
     os_lock(&oslktest);
     lprintf("task %s in\n", cur_os_task->name);
-    os_10ms_delay(2000);
+    os_10ms_delay(200);
     lprintf("task %s out\n", cur_os_task->name);
     os_unlock(&oslktest);
     lprintf("task %s release lock\n", cur_os_task->name);
@@ -801,7 +801,7 @@ void os_lock_test()
 
 void os_task1(void*p)
 {
-    u32 td = 200;
+    u32 td = 1000;
     (void)p;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
