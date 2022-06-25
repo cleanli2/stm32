@@ -925,13 +925,12 @@ void logflag(char *p)
     }
     logv = p1;
 }
-void os_lock_test();
 void test(char *p)
 {
     u32 p1,p2;
     p = str_to_hex(p, &p1);
     p = str_to_hex(p, &p2);
-    os_lock_test();
+    //os_lock_test();
     //put_sound(p1, p2);
 #if 0
     uint32_t px1, py1, s,e;

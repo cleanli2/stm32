@@ -629,10 +629,10 @@ void main_init(void)
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
   lprintf_time("lcd init\n");
-  //lcd_sueb_init(0);
+  lcd_sueb_init(0);
   lprintf_time("lcd init done.\n");
   lprintf_time("SD init\n");
-  //SD_Init();
+  SD_Init();
   lprintf_time("SD init done\n");
   //SD_LowLevel_Init();
 
@@ -787,6 +787,7 @@ void main_init(void)
 #endif
 }
 
+#if 0
 DECLARE_OS_LOCK(oslktest, 3);
 void os_lock_test()
 {
@@ -798,6 +799,7 @@ void os_lock_test()
     os_unlock(&oslktest);
     lprintf("task %s release lock\n", cur_os_task->name);
 }
+#endif
 
 void os_task1(void*p)
 {
@@ -818,7 +820,6 @@ void os_task1(void*p)
             RB_W_SET(int, rb_test);
         }
 #endif
-        os_lock_test();
     }
 }
 void os_task3(void*p)
@@ -839,9 +840,8 @@ void os_task2(void*p)
         os_10ms_delay(td);
         //putchars("--0 1\n");
         GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-        //os_10ms_delay(td);
+        os_10ms_delay(td);
         //lprintf("other task %d\n", *rtet);
-        os_lock_test();
     }
 }
 void soft_reset_system()
