@@ -280,6 +280,11 @@ void TP_Draw_Big_Point(u16 x,u16 y,u16 color)
 	gui_circle(x,y,POINT_COLOR,4,0);//»­ÖÐÐÄÈ¦
 }	
 
+int touch_down()
+{
+    return PEN==0;
+}
+
 /*****************************************************************************
  * @name       :u8 TP_Scan(u8 tp)
  * @date       :2018-08-09 

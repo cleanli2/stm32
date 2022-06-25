@@ -6,7 +6,7 @@
 #define INTERRUPT_REGS_BAK_NUM 10
 #define STACK_SIZE_LOCAL 0x80
 #define STACK_SIZE_LARGE 0xA0
-#define MAX_OS_TASKS 5
+#define MAX_OS_TASKS 6
 #define MAX_OS_TIMERS 4
 #define OS_LOCK_TASKS_NUM 4
 
@@ -22,7 +22,7 @@
 #define TASK_STATUS_SLEEPING 1
 
 #define TIMER_AVALABLE 0
-#define TASK_PRIORITIES_NUM 5
+#define TASK_PRIORITIES_NUM 6
 
 typedef struct _os_task_st
 {
@@ -76,4 +76,7 @@ void os_unlock(oslock_o* lock);
 
 #define DECLARE_OS_LOCK(lockname, lockno) \
     oslock_o lockname = {lockno, {0}}
+
+extern os_task_st * touch_wait_task;
+
 #endif

@@ -41,6 +41,23 @@ void os_task1(void*);
 void os_task2(void*);
 void os_task3(void*);
 void compute_cpu_occp();
+void os_touch(void*p)
+{
+    uint16_t touch_x;
+    uint16_t touch_y;
+    (void)p;
+    while(1){
+        while(!touch_down()){
+            touch_wait_task = cur_os_task;
+            cur_os_task->task_status = TASK_STATUS_SLEEPING;
+            os_switch_trigger();
+        }
+        if(get_TP_point(&touch_x, &touch_y)){
+            lprintf("touch: %d %d\n", touch_x, touch_y);
+        }
+        os_10ms_delay(100);
+    }
+}
 static inline u32 get_sp()
 {
     register u32 __reg_sp __asm("sp");
@@ -514,6 +531,7 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
   */
 u32 task1_stack[STACK_SIZE_LOCAL];
 u32 task2_stack[STACK_SIZE_LOCAL];
+u32 touch_stack[STACK_SIZE_LOCAL];
 u32 cmd_stack[STACK_SIZE_LARGE];
 u32 music_stack[STACK_SIZE_LARGE];
 void main_init(void)
@@ -644,8 +662,9 @@ void main_init(void)
   beep_by_timer_100(0);
   os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 0);
   os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LOCAL, 1);
-  os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 2);
-  os_task_add(task_music, music_stack, "music", STACK_SIZE_LARGE, 3);
+  os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 3);
+  os_task_add(os_touch, touch_stack, "touch", STACK_SIZE_LOCAL, 2);
+  os_task_add(task_music, music_stack, "music", STACK_SIZE_LARGE, 4);
   while(1){
   }
 #if 0
