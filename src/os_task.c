@@ -53,6 +53,7 @@ os_task_timer* get_os_timer()
 void os_10ms_delay(u32 timeout)
 {
     os_task_timer* g_tt;
+    if(timeout == 0)return;
     g_tt = get_os_timer();
     if(g_tt != 0){
         g_tt->time = g_ms_count + timeout;

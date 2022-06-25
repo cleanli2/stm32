@@ -803,16 +803,31 @@ void os_lock_test()
 
 void os_task1(void*p)
 {
-    u32 td = 1000;
+    int td = 0;
+    u32 direct = 1;
     (void)p;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
-        os_10ms_delay(td);
+        os_10ms_delay(td/5);
         //putchars("1 1\n");
         GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
-        os_10ms_delay(td);
+        os_10ms_delay(20-td/5+1);
         //putchars("1 0\n");
         GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
+#if 1
+        if(direct){
+            td++;
+            if(td>=100){
+                direct = 0;
+            }
+        }
+        if(!direct){
+            td--;
+            if(td<=0){
+                direct = 1;
+            }
+        }
+#endif
 #if 0
         if(!RB_IS_FULL(int, rb_test)){
             int *dtw=RB_W_GET(int, rb_test);
