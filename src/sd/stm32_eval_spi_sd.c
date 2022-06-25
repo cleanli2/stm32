@@ -111,6 +111,7 @@ uint32_t logv = 0;
 uint8_t  SD_Type = 0;//no card
 uint8_t SD_WaitReady(void);
 void SD_DisSelect(void);
+DECLARE_OS_LOCK(oslk_spibus, SPI_BUS_LOCK);
 
 uint8_t SD_SPI_ReadWriteByte(uint8_t data)
 {
@@ -251,6 +252,7 @@ u8 SD_RecvData(u8*buf,u16 len)
 u8 SD_GetCXD(u8 *csd_data, u8 cmd)
 {
     u8 r1;	 
+    os_lock(&oslk_spibus);
     r1=SD_SendCmd(cmd,0,0x01);//发CMD9命令，读CSD
     if(r1==0)
 	{
@@ -258,6 +260,7 @@ u8 SD_GetCXD(u8 *csd_data, u8 cmd)
     	r1=SD_RecvData(csd_data, 16);//接收16个字节的数据 
     }
 	SD_DisSelect();//取消片选
+    os_unlock(&oslk_spibus);
 	if(r1){
         lprintf("read %b fail\n", cmd);
         return 1;
@@ -271,7 +274,7 @@ u8 SD_GetCXD(u8 *csd_data, u8 cmd)
 void sf_read_id()
 {
     uint16_t id;
-	SD_CS_HIGH();
+    os_lock(&oslk_spibus);
 	SF_CS_HIGH();
 	SF_CS_LOW();
 	SD_WriteByte(0x90);
@@ -284,6 +287,7 @@ void sf_read_id()
     id |= SD_ReadByte();
     lprintf("id=%x\n", id);
 	SF_CS_HIGH();
+    os_unlock(&oslk_spibus);
 }
 
 uint8_t SD_GetRes(void)
@@ -299,12 +303,14 @@ uint8_t SD_GetRes(void)
 	return r1;
 }
 
+#if 0
 uint8_t getres_SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc)
 {
 	//lprintf("cmd %x arg %x crc %x\n", Cmd, Arg, Crc);
 	SD_SendCmd(Cmd, Arg, Crc);
 	return SD_GetRes();
 }
+#endif
 
 /**
   * @brief  DeInitializes the SD/SD communication.
@@ -542,6 +548,7 @@ u8 SD_ReadDisk(u8*buf,u32 sector,u8 cnt)
 	u8 r1;
     lprintf("R sec %x, n %d\n", sector, cnt);
 	if(SD_Type!=SD_TYPE_V2HC)sector <<= 9;//转换为字节地址
+    os_lock(&oslk_spibus);
 	if(cnt==1)
 	{
 		r1=SD_SendCmd(CMD17,sector,0X01);//读命令
@@ -560,6 +567,7 @@ u8 SD_ReadDisk(u8*buf,u32 sector,u8 cnt)
 		SD_SendCmd(CMD12,0,0X01);	//发送停止命令
 	}   
 	SD_DisSelect();//取消片选
+    os_unlock(&oslk_spibus);
 	return r1;//
 }
 
@@ -746,6 +754,7 @@ u8 SD_WriteDisk(u8*buf,u32 sector,u8 cnt)
 	u8 r1;
     lprintf("W sec %x, n %d\n", sector, cnt);
 	if(SD_Type!=SD_TYPE_V2HC)sector *= 512;//转换为字节地址
+    os_lock(&oslk_spibus);
 	if(cnt==1)
 	{
 		r1=SD_SendCmd(CMD24,sector,0X01);
@@ -772,9 +781,11 @@ u8 SD_WriteDisk(u8*buf,u32 sector,u8 cnt)
 		}
 	}   
 	SD_DisSelect();//取消片选
+    os_unlock(&oslk_spibus);
 	return r1;//
 }	
 
+#if 0
 /**
   * @brief  Reads multiple block of data from the SD.
   * @param  pBuffer: pointer to the buffer that receives the data read from the 
@@ -838,6 +849,7 @@ SD_Error SD_ReadMultiBlocks(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockS
   /*!< Returns the reponse */
   return rvalue;
 }
+#endif
 
 /**
   * @brief  Writes a block on the SD
@@ -936,6 +948,7 @@ SD_Error SD_WriteBlock(uint8_t* w_buf, uint32_t WriteBlockNo, uint16_t Size)
 #endif
 }
 
+#if 0
 /**
   * @brief  Writes many blocks on the SD
   * @param  pBuffer: pointer to the buffer containing the data to be written on 
@@ -1001,6 +1014,7 @@ SD_Error SD_WriteMultiBlocks(uint8_t* pBuffer, uint64_t WriteAddr, uint16_t Bloc
   /*!< Returns the reponse */
   return rvalue;
 }
+#endif
 
 /**
   * @brief  Read the CSD card register.
@@ -1345,7 +1359,6 @@ SD_Error SD_GetResponse(uint8_t Response)
     return SD_RESPONSE_NO_ERROR;
   }
 }
-#endif
 
 /**
   * @brief  Returns the SD status.
@@ -1370,6 +1383,7 @@ uint16_t SD_GetStatus(void)
 
   return Status;
 }
+#endif
 
 //SPI硬件层初始化
 /**
@@ -1386,6 +1400,7 @@ SD_Error SD_GoIdleState(void)
 	int retry = 100;
   lprintf("%s:%d\n", __func__, __LINE__);
   
+  os_lock(&oslk_spibus);
   do{
   /*!< Send CMD0 (SD_CMD_GO_IDLE_STATE) with CS low to put SD in SPI mode */
     r1=SD_SendCmd(SD_CMD_GO_IDLE_STATE, 0, 0x95);
@@ -1396,6 +1411,7 @@ SD_Error SD_GoIdleState(void)
   }
   lprintf("sdtype %b\n", SD_Type);
   SD_DisSelect();//取消片选
+  os_unlock(&oslk_spibus);
   if(SD_Type)return 0;
   else if(r1)return r1; 	   
   lprintf("%s:%d\n", __func__, __LINE__);

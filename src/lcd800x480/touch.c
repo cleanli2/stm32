@@ -182,13 +182,16 @@ u8 TP_Read_XY(u16 *x,u16 *y)
 {
 	u16 xtemp,ytemp;			 	 		  
 #ifdef TS_SPI_USE_COMMON
-    uint16_t spi_sp = spi_speed(SPI_BaudRatePrescaler_128);
+    uint16_t spi_sp;
+    os_lock(&oslk_spibus);
+    spi_sp = spi_speed(SPI_BaudRatePrescaler_128);
 #endif
 	xtemp=TP_Read_XOY(CMD_RDX);
 	ytemp=TP_Read_XOY(CMD_RDY);	  												   
     lprintf("xt %x yt %x\n", (u32)xtemp, (u32)ytemp);
 #ifdef TS_SPI_USE_COMMON
     spi_speed(spi_sp);
+    os_unlock(&oslk_spibus);
 #endif
 	if(xtemp==0||ytemp==0||xtemp==0xfff||ytemp==0xfff){
         lprintf("tprxy fail\n");

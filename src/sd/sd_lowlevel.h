@@ -1,5 +1,7 @@
 #ifndef _SD_LOWLEVEL_H
 #define _SD_LOWLEVEL_H
+#include "task.h"
+#include "os_task.h"
 
 #define SD_SPI                           SPI1
 #define SD_SPI_CLK                       RCC_APB2Periph_SPI1
@@ -19,6 +21,7 @@
 #endif
 
 
+extern oslock_o oslk_spibus;
 /*******************export api********/
 void SD_LowLevel_Init(void);
 void SD_LowLevel_DeInit(void);

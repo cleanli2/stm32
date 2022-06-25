@@ -282,7 +282,7 @@ uint8_t getres_SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc);
 SD_Error SD_GetResponse(uint8_t Response);
 uint8_t SD_GetDataResponse(void);
 SD_Error SD_GoIdleState(void);
-uint16_t SD_GetStatus(void);
+//uint16_t SD_GetStatus(void);
 
 uint8_t SD_WriteByte(uint8_t byte);
 uint8_t SD_SPI_ReadWriteByte(uint8_t byte);

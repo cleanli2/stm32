@@ -244,11 +244,6 @@ void sd(char *p)
 	SD_SendCmd(para1, para2, para3);
     }
     else if(cmdindex == 6){//cmd
-	lprintf("line %d %x %x %x\n", __LINE__, para1, para2, para3);
-        p = str_to_hex(p, &para1);
-        p = str_to_hex(p, &para2);
-        p = str_to_hex(p, &para3);
-	lprintf("return %x\n", getres_SD_SendCmd(para1, para2, para3));
     }
     else if(cmdindex == 7){//low init/deinit
         str_to_hex(p, &para1);
