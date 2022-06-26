@@ -188,7 +188,7 @@ u8 TP_Read_XY(u16 *x,u16 *y)
 #endif
 	xtemp=TP_Read_XOY(CMD_RDX);
 	ytemp=TP_Read_XOY(CMD_RDY);	  												   
-    lprintf("xt %x yt %x\n", (u32)xtemp, (u32)ytemp);
+    //lprintf("xt %x yt %x\n", (u32)xtemp, (u32)ytemp);
 #ifdef TS_SPI_USE_COMMON
     spi_speed(spi_sp);
     os_unlock(&oslk_spibus);
@@ -308,7 +308,7 @@ u8 TP_Scan(u8 tp)
 			//lprintf("line%d:x %d y %d ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
 	 	} 
         //if(tp_dev.x<480 && tp_dev.y < 800){
-            lprintf("touch pressed\n");
+            //lprintf("touch pressed\n");
             if((tp_dev.sta&TP_PRES_DOWN)==0)//之前没有被按下
             {
                 tp_dev.sta=TP_PRES_DOWN|TP_CATH_PRES;//按键按下  

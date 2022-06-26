@@ -74,7 +74,7 @@ void os_touch(void*p)
             msg *dtw=RB_W_GET_wait(msg, rb_msg);
             //do work
             dtw->type = MSG_SCRN_TOUCH;
-            dtw->pkg = &pt;
+            memcpy(dtw->pkg, &pt, sizeof(struct point));
             RB_W_SET(msg, rb_msg);
         }
         os_10ms_delay(100);

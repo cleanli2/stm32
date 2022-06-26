@@ -57,7 +57,7 @@ enum MSG_TYPE {
 typedef struct _msg
 {
     u32 type;
-    void*pkg;
+    u8 pkg[8];
 } msg;
 
 extern os_task_st * cur_os_task;
