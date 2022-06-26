@@ -235,8 +235,8 @@ u8 TP_Read_XY2(u16 *x,u16 *y)
         goto fail;
     }
 fail:
-    lprintf("tp err, reinit tp\n");
-    set_touch_need_reinit();
+    //lprintf("tp err, reinit tp\n");
+    //set_touch_need_reinit();
     return 0;
 } 
 

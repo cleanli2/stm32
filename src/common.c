@@ -51,7 +51,11 @@ void os_ui(void*p)
         switch(dtw->type){
             case MSG_SCRN_TOUCH:
                 ppt = (struct point*)dtw->pkg;
-                TP_Draw_Big_Point(ppt->px,ppt->py,BLACK);
+                POINT_COLOR=BLACK;
+                LCD_DrawPoint(ppt->px,ppt->py);
+                LCD_DrawPoint(ppt->px,ppt->py+1);
+                LCD_DrawPoint(ppt->px+1,ppt->py);
+                LCD_DrawPoint(ppt->px+1,ppt->py+1);
                 break;
             default:
                 lprintf("unknow msg type\n");
@@ -65,14 +69,14 @@ void os_touch(void*p)
     (void)p;
     while(1){
         if(touch_down() && get_TP_point(&pt.px, &pt.py)){
-            lprintf("touch: %d %d\n", pt.px, pt.py);
+            //lprintf("touch: %d %d\n", pt.px, pt.py);
             msg *dtw=RB_W_GET_wait(msg, rb_msg);
             //do work
             dtw->type = MSG_SCRN_TOUCH;
             memcpy(dtw->pkg, &pt, sizeof(struct point));
             RB_W_SET(msg, rb_msg);
         }
-        os_10ms_delay(30);
+        os_10ms_delay(20);
     }
 }
 static inline u32 get_sp()
