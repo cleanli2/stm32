@@ -64,12 +64,7 @@ void os_touch(void*p)
     struct point pt;
     (void)p;
     while(1){
-        while(!touch_down()){
-            touch_wait_task = cur_os_task;
-            cur_os_task->task_status = TASK_STATUS_SLEEPING;
-            os_switch_trigger();
-        }
-        if(get_TP_point(&pt.px, &pt.py)){
+        if(touch_down() && get_TP_point(&pt.px, &pt.py)){
             lprintf("touch: %d %d\n", pt.px, pt.py);
             msg *dtw=RB_W_GET_wait(msg, rb_msg);
             //do work
@@ -77,7 +72,7 @@ void os_touch(void*p)
             memcpy(dtw->pkg, &pt, sizeof(struct point));
             RB_W_SET(msg, rb_msg);
         }
-        os_10ms_delay(100);
+        os_10ms_delay(30);
     }
 }
 static inline u32 get_sp()

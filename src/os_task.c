@@ -6,7 +6,7 @@ struct list_head priority_tasks_head[TASK_PRIORITIES_NUM];
 u32 os_is_running = 0;
 os_task_st * cur_os_task;
 os_task_st * usart1_wait_task = NULL;
-os_task_st * touch_wait_task = NULL;
+//os_task_st * touch_wait_task = NULL;
 os_task_timer g_task_timer[MAX_OS_TIMERS];
 u32 total_tasks_num = 0;
 
@@ -33,13 +33,6 @@ void check_os_timer()
             }
         }
         g_tt++;
-    }
-    if(touch_down()){
-        if(touch_wait_task != NULL){
-            touch_wait_task->task_status = TASK_STATUS_RUNNING;
-            touch_wait_task = NULL;
-            os_switch_trigger();
-        }
     }
 }
 
