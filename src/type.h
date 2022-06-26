@@ -15,4 +15,9 @@ typedef uint8_t u8;
 #define true 1
 #define false 0
 
+struct point
+{
+    uint16_t px;
+    uint16_t py;
+};
 #endif

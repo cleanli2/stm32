@@ -18,7 +18,7 @@
   * @{
   */
 
-DECLARE_RB_DATA(int, rb_test, 3)
+DECLARE_RB_DATA(msg, rb_msg, 3)
 #define TIM2_RELOAD 60000
 #define COUNTS_PER_US 6
 
@@ -41,10 +41,27 @@ void os_task1(void*);
 void os_task2(void*);
 void os_task3(void*);
 void compute_cpu_occp();
+void os_ui(void*p)
+{
+    (void)p;
+    struct point* ppt;
+    msg *dtw;
+    while(1){
+        dtw=RB_R_GET_wait(msg, rb_msg);
+        switch(dtw->type){
+            case MSG_SCRN_TOUCH:
+                ppt = (struct point*)dtw->pkg;
+                TP_Draw_Big_Point(ppt->px,ppt->py,BLACK);
+                break;
+            default:
+                lprintf("unknow msg type\n");
+        };
+        RB_R_SET(msg, rb_msg);
+    }
+}
 void os_touch(void*p)
 {
-    uint16_t touch_x;
-    uint16_t touch_y;
+    struct point pt;
     (void)p;
     while(1){
         while(!touch_down()){
@@ -52,8 +69,13 @@ void os_touch(void*p)
             cur_os_task->task_status = TASK_STATUS_SLEEPING;
             os_switch_trigger();
         }
-        if(get_TP_point(&touch_x, &touch_y)){
-            lprintf("touch: %d %d\n", touch_x, touch_y);
+        if(get_TP_point(&pt.px, &pt.py)){
+            lprintf("touch: %d %d\n", pt.px, pt.py);
+            msg *dtw=RB_W_GET_wait(msg, rb_msg);
+            //do work
+            dtw->type = MSG_SCRN_TOUCH;
+            dtw->pkg = &pt;
+            RB_W_SET(msg, rb_msg);
         }
         os_10ms_delay(100);
     }
@@ -533,6 +555,7 @@ u32 task1_stack[STACK_SIZE_LOCAL];
 u32 task2_stack[STACK_SIZE_LOCAL];
 u32 touch_stack[STACK_SIZE_LOCAL];
 u32 cmd_stack[STACK_SIZE_LARGE];
+u32 ui_stack[STACK_SIZE_LARGE];
 u32 music_stack[STACK_SIZE_LARGE];
 void main_init(void)
 {
@@ -662,9 +685,10 @@ void main_init(void)
   beep_by_timer_100(0);
   os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 0);
   os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LOCAL, 1);
-  os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 3);
+  os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 4);
   os_task_add(os_touch, touch_stack, "touch", STACK_SIZE_LOCAL, 2);
-  os_task_add(task_music, music_stack, "music", STACK_SIZE_LARGE, 4);
+  os_task_add(os_ui, ui_stack, "ui", STACK_SIZE_LOCAL, 3);
+  os_task_add(task_music, music_stack, "music", STACK_SIZE_LARGE, 5);
   while(1){
   }
 #if 0
@@ -845,13 +869,6 @@ void os_task1(void*p)
             if(td<=0){
                 direct = 1;
             }
-        }
-#endif
-#if 0
-        if(!RB_IS_FULL(int, rb_test)){
-            int *dtw=RB_W_GET(int, rb_test);
-            *dtw = test++;
-            RB_W_SET(int, rb_test);
         }
 #endif
     }

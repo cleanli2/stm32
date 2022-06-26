@@ -6,7 +6,7 @@
 #define INTERRUPT_REGS_BAK_NUM 10
 #define STACK_SIZE_LOCAL 0x80
 #define STACK_SIZE_LARGE 0xA0
-#define MAX_OS_TASKS 6
+#define MAX_OS_TASKS 7
 #define MAX_OS_TIMERS 4
 #define OS_LOCK_TASKS_NUM 4
 
@@ -22,7 +22,7 @@
 #define TASK_STATUS_SLEEPING 1
 
 #define TIMER_AVALABLE 0
-#define TASK_PRIORITIES_NUM 6
+#define TASK_PRIORITIES_NUM 7
 
 typedef struct _os_task_st
 {
@@ -48,6 +48,17 @@ typedef struct _oslock_o
     u32 lockno;
     os_task_st* wait_tasks[OS_LOCK_TASKS_NUM];
 } oslock_o;
+
+enum MSG_TYPE {
+    MSG_SCRN_TOUCH,
+    MSG_END
+};
+
+typedef struct _msg
+{
+    u32 type;
+    void*pkg;
+} msg;
 
 extern os_task_st * cur_os_task;
 extern u32 os_is_running;

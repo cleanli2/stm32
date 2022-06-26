@@ -371,11 +371,6 @@ button_t timer_set_button[]={
 };
 
 /*UI DATE*/
-struct point
-{
-    uint16_t px;
-    uint16_t py;
-};
 button_t date_button[];
 
 #define LAST_SEC_INDX 0

@@ -1089,6 +1089,7 @@ void lcd_sueb_init(int testitem)
 	delay_ms(50);
 	LCD_Display_Dir(0);		 	//默认为竖屏
 	LCD_LED_SET;					//点亮背光
+	LCD_Clear(WHITE);//清全屏白色
 #else
 //************* OTM8009初始化**********//	
 	//3.97inch OTM8009 Init 20190116
