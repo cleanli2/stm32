@@ -1140,7 +1140,12 @@ void gpiotest(char *p)
 void ps(char *p)
 {
     (void)p;
-    showtasks();
+    lprintf("ps start:\n");
+    while(!con_is_recved()){
+        lprintf("===============\n");
+        showtasks();
+        os_10ms_delay(1000);
+    }
     return;
 }
 void m_p(char *p)
@@ -1221,7 +1226,7 @@ static const struct command cmd_list[]=
 #endif
     {"pm",print_mem},
     {"poff",poweroff},
-    {"ps",showtasks},
+    {"ps",ps},
     {"r",read_mem},
     {"reboot",reboot},
     {"rebootd",rebootd},

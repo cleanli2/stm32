@@ -62,6 +62,9 @@ void os_10ms_delay(u32 timeout)
         cur_os_task->task_status = TASK_STATUS_SLEEPING;
         os_switch_trigger();
     }
+    else{
+        lprintf("err!Out of os timer\n");
+    }
 }
 
 void compute_cpu_occp()
