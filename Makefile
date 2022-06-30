@@ -25,13 +25,82 @@ INC_FLAGS= \
 CFLAGS =  -W -Wall -g -mcpu=cortex-m3 -mthumb -DUSE_STDPERIPH_DRIVER $(INC_FLAGS) -O0 -std=gnu11 -ffunction-sections -fdata-sections
 CFLAGS+=-DGIT_SHA1=\"$(GIT_SHA1)$(DIRTY)$(CLEAN)\"
 LDFLAGS =  -mthumb -mcpu=cortex-m3 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=Project.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80
-C_SRC=$(shell find src/ -name '*.c')  
+C_SRC= \
+src/adc.c                                                                                             \
+src/cmd.c                                                                                             \
+src/CoIDE_startup.c                                                                                   \
+src/common.c                                                                                          \
+src/date.c                                                                                            \
+src/env.c                                                                                             \
+src/fs.c                                                                                              \
+src/lcd800x480/cch_str.c                                                                              \
+src/lcd800x480/gui.c                                                                                  \
+src/lcd800x480/lcd_sueb.c                                                                             \
+src/lcd800x480/test.c                                                                                 \
+src/lcd800x480/touch.c                                                                                \
+src/lprintf.c                                                                                         \
+src/main.c                                                                                            \
+src/music.c                                                                                           \
+src/rtc.c                                                                                             \
+src/sd/sd_lowlevel.c                                                                                  \
+src/sd/stm32_eval_spi_sd.c                                                                            \
+src/sd/w25flash.c                                                                                     \
+src/soc_rtc.c                                                                                         \
+src/stm32f10x_it.c                                                                                    \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c  \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/misc.c                    \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c        \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c          \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c         \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c          \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c          \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c          \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c          \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c           \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c         \
+src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c          \
+src/task.c                                                                                            \
+src/ui.c                                                                                              \
+src/usb/USB/CONFIG/hw_config.c                                                                        \
+src/usb/USB/CONFIG/mass_mal.c                                                                         \
+src/usb/USB/CONFIG/memory.c                                                                           \
+src/usb/USB/CONFIG/scsi_data.c                                                                        \
+src/usb/USB/CONFIG/usb_bot.c                                                                          \
+src/usb/USB/CONFIG/usb_desc.c                                                                         \
+src/usb/USB/CONFIG/usb_endp.c                                                                         \
+src/usb/USB/CONFIG/usb_istr.c                                                                         \
+src/usb/USB/CONFIG/usb_prop.c                                                                         \
+src/usb/USB/CONFIG/usb_pwr.c                                                                          \
+src/usb/USB/CONFIG/usb_scsi.c                                                                         \
+src/usb/USB/STM32_USB-FS-Device_Driver/src/usb_core.c                                                 \
+src/usb/USB/STM32_USB-FS-Device_Driver/src/usb_init.c                                                 \
+src/usb/USB/STM32_USB-FS-Device_Driver/src/usb_int.c                                                  \
+src/usb/USB/STM32_USB-FS-Device_Driver/src/usb_mem.c                                                  \
+src/usb/USB/STM32_USB-FS-Device_Driver/src/usb_regs.c                                                 \
+src/usb/USB/STM32_USB-FS-Device_Driver/src/usb_sil.c                                                  \
+src/usb/usb_main.c
+
 C_OBJ=$(C_SRC:%.c=%.o)
 ifeq ($(type),write_w25f)
 CFLAGS+=-DWRITE_W25F
 C_OBJ+=unused/ziku16.o
 endif
 
+ifeq ($(board),)
+board=alientek_mini
+endif
 ifeq ($(board),alientek_mini)
 $(warning choose board alientek_mini)
 CFLAGS+=-DALIENTEK_MINI
