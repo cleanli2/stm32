@@ -18,7 +18,7 @@
   * @{
   */
 
-DECLARE_RB_DATA(msg, rb_msg, 3)
+DECLARE_RB_DATA(msg, rb_msg, 3, MSG_LOCK_NO)
 #define TIM2_RELOAD 60000
 #define COUNTS_PER_US 6
 

@@ -17,6 +17,8 @@
 #define MEM_PRINT_LOCK 0
 #define LPRINTF_LOCK 1
 #define SPI_BUS_LOCK 2
+#define MSG_LOCK_NO 3
+#define SOUND_LOCK_NO 4
 
 #define TASK_STATUS_RUNNING 0
 #define TASK_STATUS_SLEEPING 1
