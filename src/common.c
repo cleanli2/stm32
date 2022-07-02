@@ -18,7 +18,7 @@
   * @{
   */
 
-DECLARE_RB_DATA(msg, rb_msg, 3)
+DECLARE_RB_DATA(evt, rb_evt, 3)
 #define TIM2_RELOAD 60000
 #define COUNTS_PER_US 6
 
@@ -45,11 +45,11 @@ void os_ui(void*p)
 {
     (void)p;
     struct point* ppt;
-    msg *dtw;
+    evt *dtw;
     while(1){
-        dtw=RB_R_GET_wait(msg, rb_msg);
+        dtw=RB_R_GET_wait(evt, rb_evt);
         switch(dtw->type){
-            case MSG_SCRN_TOUCH:
+            case EVT_SCRN_TOUCH:
                 ppt = (struct point*)dtw->pkg;
                 POINT_COLOR=BLACK;
                 LCD_DrawPoint(ppt->px,ppt->py);
@@ -58,9 +58,9 @@ void os_ui(void*p)
                 LCD_DrawPoint(ppt->px+1,ppt->py+1);
                 break;
             default:
-                lprintf("unknow msg type\n");
+                lprintf("unknow evt type\n");
         };
-        RB_R_SET(msg, rb_msg);
+        RB_R_SET(evt, rb_evt);
     }
 }
 void os_touch(void*p)
@@ -70,11 +70,11 @@ void os_touch(void*p)
     while(1){
         if(touch_down() && get_TP_point(&pt.px, &pt.py)){
             //lprintf("touch: %d %d\n", pt.px, pt.py);
-            msg *dtw=RB_W_GET_wait(msg, rb_msg);
+            evt *dtw=RB_W_GET_wait(evt, rb_evt);
             //do work
-            dtw->type = MSG_SCRN_TOUCH;
+            dtw->type = EVT_SCRN_TOUCH;
             memcpy(dtw->pkg, &pt, sizeof(struct point));
-            RB_W_SET(msg, rb_msg);
+            RB_W_SET(evt, rb_evt);
         }
         os_10ms_delay(20);
     }

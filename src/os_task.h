@@ -49,16 +49,16 @@ typedef struct _oslock_o
     os_task_st* wait_tasks[OS_LOCK_TASKS_NUM];
 } oslock_o;
 
-enum MSG_TYPE {
-    MSG_SCRN_TOUCH,
-    MSG_END
+enum EVT_TYPE {
+    EVT_SCRN_TOUCH,
+    EVT_END
 };
 
-typedef struct _msg
+typedef struct _evt
 {
     u32 type;
     u8 pkg[8];
-} msg;
+} evt;
 
 extern os_task_st * cur_os_task;
 extern u32 os_is_running;
