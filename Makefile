@@ -42,6 +42,7 @@ src/lprintf.c                                                                   
 src/main.c                                                                                            \
 src/music.c                                                                                           \
 src/rtc.c                                                                                             \
+src/os_task.c                                                                                             \
 src/sd/sd_lowlevel.c                                                                                  \
 src/sd/stm32_eval_spi_sd.c                                                                            \
 src/sd/w25flash.c                                                                                     \
