@@ -191,7 +191,7 @@ void task_disp(struct task*vp)
 }
 
 //music start
-DECLARE_RB_DATA(sound_info, si_pool, 4, SOUND_LOCK_NO)
+DECLARE_RB_DATA(sound_info, si_pool, 4)
 void reset_music_note()
 {
     music_note_task_play_info.music_note = 0;
