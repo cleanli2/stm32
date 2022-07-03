@@ -46,6 +46,8 @@ void os_ui(void*p)
     (void)p;
     struct point* ppt;
     evt *dtw;
+
+    //ui_start();
     while(1){
         dtw=RB_R_GET_wait(evt, rb_evt);
         switch(dtw->type){
@@ -686,8 +688,8 @@ void main_init(void)
   os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LOCAL, 1);
   os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 4);
   os_task_add(os_touch, touch_stack, "touch", STACK_SIZE_LOCAL, 2);
-  os_task_add(os_ui, ui_stack, "ui", STACK_SIZE_LOCAL, 3);
   os_task_add(task_music, music_stack, "music", STACK_SIZE_LARGE, 5);
+  os_task_add(os_ui, ui_stack, "ui", STACK_SIZE_LOCAL, 3);
   while(1){
   }
 #if 0
