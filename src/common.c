@@ -51,7 +51,7 @@ void os_ui(void*p)
     while(1){
         dtw=RB_R_GET_wait(evt, rb_evt);
         switch(dtw->type){
-            case EVT_SCRN_TOUCH:
+            case EVT_SCRN_TOUCH_UP:
                 ppt = (struct point*)dtw->pkg;
                 POINT_COLOR=BLACK;
                 LCD_DrawPoint(ppt->px,ppt->py);
@@ -68,16 +68,27 @@ void os_ui(void*p)
 void os_touch(void*p)
 {
     struct point pt;
+    struct point pt_cache;
+    int touch_pressed = 0;
     (void)p;
     while(1){
-        if(touch_down() && get_TP_point(&pt.px, &pt.py)){
-            //lprintf("touch: %d %d\n", pt.px, pt.py);
-            evt *dtw=RB_W_GET_wait(evt, rb_evt);
-            //do work
-            dtw->type = EVT_SCRN_TOUCH;
-            memcpy(dtw->pkg, &pt, sizeof(struct point));
-            RB_W_SET(evt, rb_evt);
+        if(touch_down()){
+            touch_pressed = 0;
+	    if(get_TP_point(&pt.px, &pt.py)){
+                //lprintf("touch: %d %d\n", pt.px, pt.py);
+		pt_cache = pt;
+	    }
         }
+	else{
+            if(touch_pressed == 0){
+                evt *dtw=RB_W_GET_wait(evt, rb_evt);
+                //do work
+                dtw->type = EVT_SCRN_TOUCH_UP;
+                memcpy(dtw->pkg, &pt_cache, sizeof(struct point));
+                RB_W_SET(evt, rb_evt);
+	    }
+            touch_pressed = 1;
+	}
         os_10ms_delay(20);
     }
 }

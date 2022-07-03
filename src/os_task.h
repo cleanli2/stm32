@@ -50,7 +50,8 @@ typedef struct _oslock_o
 } oslock_o;
 
 enum EVT_TYPE {
-    EVT_SCRN_TOUCH,
+    EVT_SCRN_TOUCH_PRESSED,
+    EVT_SCRN_TOUCH_UP,
     EVT_END
 };
 
