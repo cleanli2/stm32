@@ -74,21 +74,21 @@ void os_touch(void*p)
     while(1){
         if(touch_down()){
             touch_pressed = 0;
-	    if(get_TP_point(&pt.px, &pt.py)){
+            if(get_TP_point(&pt.px, &pt.py)){
                 //lprintf("touch: %d %d\n", pt.px, pt.py);
-		pt_cache = pt;
-	    }
+                pt_cache = pt;
+            }
         }
-	else{
+        else{
             if(touch_pressed == 0){
                 evt *dtw=RB_W_GET_wait(evt, rb_evt);
                 //do work
                 dtw->type = EVT_SCRN_TOUCH_UP;
                 memcpy(dtw->pkg, &pt_cache, sizeof(struct point));
                 RB_W_SET(evt, rb_evt);
-	    }
+            }
             touch_pressed = 1;
-	}
+        }
         os_10ms_delay(20);
     }
 }
