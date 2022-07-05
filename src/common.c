@@ -45,6 +45,7 @@ void os_ui(void*p)
 {
     (void)p;
     struct point* ppt;
+    struct point last_pt = {0xffff, 0xffff};;
     evt *dtw;
 
     ui_start();
@@ -53,11 +54,11 @@ void os_ui(void*p)
         switch(dtw->type){
             case EVT_SCRN_TOUCH_UP:
                 ppt = (struct point*)dtw->pkg;
-                POINT_COLOR=BLACK;
-                LCD_DrawPoint(ppt->px,ppt->py);
-                LCD_DrawPoint(ppt->px,ppt->py+1);
-                LCD_DrawPoint(ppt->px+1,ppt->py);
-                LCD_DrawPoint(ppt->px+1,ppt->py+1);
+                if(last_pt.px != 0xffff){
+                    TP_Draw_Big_Point(last_pt.px, last_pt.py, WHITE);
+                }
+                TP_Draw_Big_Point(ppt->px, ppt->py, BLACK);
+                last_pt = *ppt;
                 break;
             default:
                 lprintf("unknow evt type\n");
@@ -73,21 +74,21 @@ void os_touch(void*p)
     (void)p;
     while(1){
         if(touch_down()){
-            touch_pressed = 0;
+            touch_pressed = 1;
             if(get_TP_point(&pt.px, &pt.py)){
                 //lprintf("touch: %d %d\n", pt.px, pt.py);
                 pt_cache = pt;
             }
         }
         else{
-            if(touch_pressed == 0){
+            if(touch_pressed == 1){
                 evt *dtw=RB_W_GET_wait(evt, rb_evt);
                 //do work
                 dtw->type = EVT_SCRN_TOUCH_UP;
                 memcpy(dtw->pkg, &pt_cache, sizeof(struct point));
                 RB_W_SET(evt, rb_evt);
             }
-            touch_pressed = 1;
+            touch_pressed = 0;
         }
         os_10ms_delay(20);
     }
