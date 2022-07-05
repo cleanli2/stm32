@@ -36,12 +36,12 @@ ifeq ($(board),alientek_mini)
 $(warning choose board alientek_mini)
 CFLAGS+=-DALIENTEK_MINI
 CFLAGS+=-DSTM32F10X_HD
-LDFILE=stm32_f103_128k_gcc
+LDFILE=stm32_f103_512k_gcc
 else
 $(warning choose board hammer)
 board=hammer
-LDFILE=stm32_f103_512k_gcc
 CFLAGS+=-DSTM32F10X_MD
+LDFILE=stm32_f103_128k_gcc
 endif
 
 .PHONY: all clean
