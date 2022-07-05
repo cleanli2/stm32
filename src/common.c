@@ -47,7 +47,7 @@ void os_ui(void*p)
     struct point* ppt;
     evt *dtw;
 
-    //ui_start();
+    ui_start();
     while(1){
         dtw=RB_R_GET_wait(evt, rb_evt);
         switch(dtw->type){
