@@ -59,11 +59,15 @@ void os_ui(void*p)
                 }
                 TP_Draw_Big_Point(ppt->px, ppt->py, BLACK);
                 last_pt = *ppt;
+                cur_task_event_flag |= 1<<EVENT_TOUCH_UP;
+                cached_touch_x = ppt->px;
+                cached_touch_y = ppt->py;
                 break;
             default:
                 lprintf("unknow evt type\n");
         };
         RB_R_SET(evt, rb_evt);
+        task_ui(NULL);
     }
 }
 void os_touch(void*p)
