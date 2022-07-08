@@ -17,6 +17,7 @@
 #define MEM_PRINT_LOCK 0
 #define LPRINTF_LOCK 1
 #define SPI_BUS_LOCK 2
+#define EVT_LOCK_NO 3
 
 #define TASK_STATUS_RUNNING 0
 #define TASK_STATUS_SLEEPING 1
@@ -52,6 +53,7 @@ typedef struct _oslock_o
 enum EVT_TYPE {
     EVT_SCRN_TOUCH_PRESSED,
     EVT_SCRN_TOUCH_UP,
+    EVT_ONE_SECOND,
     EVT_END
 };
 

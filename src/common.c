@@ -18,6 +18,7 @@
   * @{
   */
 
+DECLARE_OS_LOCK(oslk_evt, EVT_LOCK_NO);
 DECLARE_RB_DATA(evt, rb_evt, 3)
 #define TIM2_RELOAD 60000
 #define COUNTS_PER_US 6
@@ -50,6 +51,7 @@ void os_ui(void*p)
 
     ui_start();
     while(1){
+        g_flag_1s = false;
         dtw=RB_R_GET_wait(evt, rb_evt);
         switch(dtw->type){
             case EVT_SCRN_TOUCH_UP:
@@ -62,6 +64,9 @@ void os_ui(void*p)
                 cur_task_event_flag |= 1<<EVENT_TOUCH_UP;
                 cached_touch_x = ppt->px;
                 cached_touch_y = ppt->py;
+                break;
+            case EVT_ONE_SECOND:
+                g_flag_1s = true;
                 break;
             default:
                 lprintf("unknow evt type\n");
@@ -86,11 +91,13 @@ void os_touch(void*p)
         }
         else{
             if(touch_pressed == 1){
+                os_lock(&oslk_evt);
                 evt *dtw=RB_W_GET_wait(evt, rb_evt);
                 //do work
                 dtw->type = EVT_SCRN_TOUCH_UP;
                 memcpy(dtw->pkg, &pt_cache, sizeof(struct point));
                 RB_W_SET(evt, rb_evt);
+                os_unlock(&oslk_evt);
             }
             touch_pressed = 0;
         }
@@ -900,7 +907,7 @@ void os_task3(void*p)
 void os_task2(void*p)
 {
     (void)p;
-    u32 td = 400;
+    u32 td = 500;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
         //putchars("--0 0\n");
@@ -910,6 +917,7 @@ void os_task2(void*p)
         GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
         os_10ms_delay(td);
         //lprintf("other task %d\n", *rtet);
+        task_timer(NULL);
     }
 }
 void soft_reset_system()

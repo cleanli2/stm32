@@ -16,6 +16,10 @@ typedef struct _rb_ctl{
     TYPE RB_DATA_##name[SIZE]; \
     rb_ctl rb_ctl##name = {0, 0, 0, 0};
 
+#define EXTERN_DECLARE_RB_DATA(TYPE, name, SIZE) \
+    extern TYPE RB_DATA_##name[SIZE]; \
+    extern rb_ctl rb_ctl##name;
+
 #define RB_DATA_SIZE(TYPE, name) (sizeof(RB_DATA_##name)/sizeof(TYPE))
 
 #define RB_IS_EMPTY(TYPE, name) (rb_ctl##name.ri == rb_ctl##name.wi)

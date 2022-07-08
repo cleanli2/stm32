@@ -8,6 +8,8 @@
 #include "os_task.h"
 #include "ring_buf.h"
 
+EXTERN_DECLARE_RB_DATA(evt, rb_evt, 3)
+extern oslock_o oslk_evt;
 os_task_st*music_wait;
 uint last_count_1s = 0;
 uint last_count_10ms = 0;
@@ -140,18 +142,28 @@ void task_power(struct task*vp)
 void task_timer(struct task*vp)
 {
     (void)vp;//fix unused variable warning
-    g_flag_1s = false;
-    g_flag_10ms = false;
+    //g_flag_1s = false;
+    //g_flag_10ms = false;
     uint64_t systime = get_system_us();
     count_1s = systime/1000000;
+#if 0
     count_10ms = (systime - 1000000*count_1s)/10000;
     if(count_10ms != last_count_10ms){
         g_flag_10ms = true;
     }
+#endif
     if(count_1s != last_count_1s){
         char*date = get_rtc_time(&g_cur_date);
-        g_flag_1s = true;
+        //g_flag_1s = true;
         lcd_lprintf(0,0,date);
+        //
+        os_lock(&oslk_evt);
+        evt *dtw=RB_W_GET_wait(evt, rb_evt);
+        //do work
+        dtw->type = EVT_ONE_SECOND;
+        RB_W_SET(evt, rb_evt);
+        os_unlock(&oslk_evt);
+        //
         //lprintf("task timect %u\r\n", cur_task_timeout_ct);
         if(cur_task_timeout_ct > 0 && (current_ui->time_disp_mode & TIME_OUT_EN)){
             if(cur_task_timer_started){
@@ -182,7 +194,7 @@ void task_timer(struct task*vp)
         }
     }
     last_count_1s = count_1s;
-    last_count_10ms = count_10ms;
+    //last_count_10ms = count_10ms;
 }
 
 void task_disp(struct task*vp)
