@@ -298,6 +298,27 @@ void foce_save_log_func()
     read_index =  wi;
 }
 
+os_task_st * log_wait_task = NULL;
+void os_task_log(void*p)
+{
+    u32 log_size=0, wi;
+    (void)p;
+
+    while(1){
+        while(log_size==0){
+            log_size = get_log_size();
+            if(0 == log_size){
+                log_wait_task = cur_os_task;
+                cur_os_task->task_status = TASK_STATUS_SLEEPING;
+                os_switch_trigger();
+            }
+        }
+        wi = write_index;
+        log_to_flash(log_buf, read_index, log_size, LOG_BUF_SIZE);
+        read_index =  wi;
+    }
+}
+
 void task_log(struct task*vp)
 {
     u32 log_size, wi;
@@ -342,7 +363,7 @@ void log_to_buf(const char* log)
             log+=w_len;
             len-=w_len;
             if(0==len){
-                return;
+                goto end;
             }
         }
     }
@@ -354,6 +375,11 @@ void log_to_buf(const char* log)
         putchars(" ri ");
         print_hex(read_index);
         putchars("\n");
+    }
+end:
+    if(log_wait_task != NULL){
+        log_wait_task->task_status = TASK_STATUS_RUNNING;
+        log_wait_task = NULL;
     }
 }
 

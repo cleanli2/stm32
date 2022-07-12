@@ -18,5 +18,7 @@ void mem_print(const char*buf, uint32_t ct_start, uint32_t len);
 void task_log(struct task*vp);
 void foce_save_log_func();
 void puthexch(char c);
+void log_to_buf(const char* log);
+void os_task_log(void*p);
 
 #endif
