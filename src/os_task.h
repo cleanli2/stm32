@@ -7,7 +7,7 @@
 #define STACK_SIZE_LOCAL 0x80
 #define STACK_SIZE_LARGE 0xA0
 #define MAX_OS_TASKS 7
-#define MAX_OS_TIMERS 4
+#define MAX_OS_TIMERS 8
 #define OS_LOCK_TASKS_NUM 4
 
 #define OS_FAIL -1
