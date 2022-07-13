@@ -195,9 +195,7 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size, u32
     stack_base[set_base_offset+7] = (u32)fc;
     stack_base[set_base_offset+8] = (u32)fc;
     stack_base[set_base_offset+9] = 0x21000000;
-    new_tk->next = cur_os_task->next;
     new_tk->stack_p=stack_base+set_base_offset;
-    cur_os_task->next = new_tk;
     new_tk->name = name;
     new_tk->start_run_time_count = 0;
     new_tk->run_time_counts = 0;
@@ -206,7 +204,12 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size, u32
     if(task_pri>TASK_PRIORITIES_NUM-1){
         task_pri = TASK_PRIORITIES_NUM-1;
     }
+
+    __disable_irq();
+    new_tk->next = cur_os_task->next;
+    cur_os_task->next = new_tk;
     list_add_tail(&new_tk->list, &priority_tasks_head[task_pri]);
+    __enable_irq();
     total_tasks_num++;
     return OS_OK;
 }
