@@ -577,7 +577,7 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
   */
 u32 task1_stack[STACK_SIZE_LOCAL];
 u32 task2_stack[STACK_SIZE_LOCAL];
-u32 log_stack[STACK_SIZE_LOCAL];
+u32 task_log_stack[STACK_SIZE_LOCAL];
 u32 touch_stack[STACK_SIZE_LOCAL];
 u32 cmd_stack[STACK_SIZE_LARGE];
 u32 ui_stack[STACK_SIZE_LARGE];
@@ -708,7 +708,7 @@ void main_init(void)
       led_flash(0x3, 100);
   }
   beep_by_timer_100(0);
-  os_task_add(os_task_log, log_stack, "log", STACK_SIZE_LOCAL, 6);
+  os_task_add(os_task_log, task_log_stack, "log", STACK_SIZE_LOCAL, 6);
   os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 0);
   os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LOCAL, 1);
   os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 4);
