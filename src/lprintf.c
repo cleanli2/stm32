@@ -14,6 +14,7 @@ char lcdprintf_buf[256];
 static int print_with_time = 0;
 DECLARE_OS_LOCK(oslk_lprintf, LPRINTF_LOCK);
 DECLARE_OS_LOCK(oslk_mempt, MEM_PRINT_LOCK);
+DECLARE_OS_LOCK(oslk_log, LOG_LOCK_NO);
 char halfbyte2char(char c)
 {
         return ((c & 0x0f) < 0x0a)?(0x30 + c):('A' + c - 0x0a);
@@ -275,12 +276,14 @@ char*vslprintf(char*s_buf, const char *fmt, va_list args)
 u32 get_log_size()
 {
     u32 ret;
+    os_lock(&oslk_log);
     if(read_index<=write_index){
         ret = write_index - read_index;
     }
     else{
         ret = LOG_BUF_SIZE - read_index + write_index;
     }
+    os_unlock(&oslk_log);
     return ret;
 }
 static int force_save_log = 0;
@@ -295,7 +298,9 @@ void foce_save_log_func()
     log_size = get_log_size();
     wi = write_index;
     log_to_flash(log_buf, read_index, log_size, LOG_BUF_SIZE);
+    os_lock(&oslk_log);
     read_index =  wi;
+    os_unlock(&oslk_log);
 }
 
 os_task_st * log_wait_task = NULL;
@@ -315,7 +320,9 @@ void os_task_log(void*p)
         }
         wi = write_index;
         log_to_flash(log_buf, read_index, log_size, LOG_BUF_SIZE);
+        os_lock(&oslk_log);
         read_index =  wi;
+        os_unlock(&oslk_log);
     }
 }
 
@@ -359,7 +366,9 @@ void log_to_buf(const char* log)
                 w_len = len;
             }
             memcpy(&log_buf[write_index], log, w_len);
+            os_lock(&oslk_log);
             write_index = add_with_limit(write_index, w_len, LOG_BUF_SIZE);
+            os_unlock(&oslk_log);
             log+=w_len;
             len-=w_len;
             if(0==len){

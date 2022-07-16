@@ -18,6 +18,7 @@
 #define LPRINTF_LOCK 1
 #define SPI_BUS_LOCK 2
 #define EVT_LOCK_NO 3
+#define LOG_LOCK_NO 4
 
 #define TASK_STATUS_RUNNING 0
 #define TASK_STATUS_SLEEPING 1
