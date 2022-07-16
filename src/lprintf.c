@@ -305,8 +305,8 @@ void os_task_log(void*p)
     (void)p;
 
     while(1){
+        log_size = get_log_size();
         while(log_size==0){
-            log_size = get_log_size();
             if(0 == log_size){
                 log_wait_task = cur_os_task;
                 cur_os_task->task_status = TASK_STATUS_SLEEPING;
