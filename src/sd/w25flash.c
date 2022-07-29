@@ -205,7 +205,7 @@ void SPI_Flash_Write_direct_erase(const u8* pBuffer,u32 WriteAddr,u32 NumByteToW
     u32 secpos;
     u16 secoff;
     u16 secremain;
-    lprintf("sfwde:%X  %X %x", pBuffer, WriteAddr, NumByteToWrite);
+    //lprintf("sfwde:%X  %X %x", pBuffer, WriteAddr, NumByteToWrite);
     secpos=WriteAddr/4096;//sector addr
     secoff=WriteAddr%4096;//offset inside sector
     secremain=4096-secoff;//left in sectore
@@ -214,16 +214,16 @@ void SPI_Flash_Write_direct_erase(const u8* pBuffer,u32 WriteAddr,u32 NumByteToW
     }
     while(1)
     {
-        lprintf("pos %x\n", secpos);
+        //lprintf("pos %x\n", secpos);
         if(0==secoff)//erase
         {
-            lprintf("erase sector %x\n", WriteAddr);
+            //lprintf("erase sector %x\n", WriteAddr);
             SPI_Flash_Erase_Sector(secpos);//erase sector
-            lprintf("erase sector %x done\n", WriteAddr);
+            //lprintf("erase sector %x done\n", WriteAddr);
         }
-        lprintf("write %x %x\n", WriteAddr, secremain);
+        //lprintf("write %x %x\n", WriteAddr, secremain);
         SPI_Flash_Write_NoCheck(pBuffer,WriteAddr,secremain);//
-        lprintf("write %x %x done\n", WriteAddr, secremain);
+        //lprintf("write %x %x done\n", WriteAddr, secremain);
         if(NumByteToWrite==secremain){
             break;//write end
         }
@@ -242,7 +242,7 @@ void SPI_Flash_Write_direct_erase(const u8* pBuffer,u32 WriteAddr,u32 NumByteToW
             }
         }
     };
-    lprintf("write_de end\n");
+    //lprintf("write_de end\n");
 }
 
 //дSPI FLASH  
