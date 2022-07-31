@@ -15,6 +15,7 @@ static int print_with_time = 0;
 DECLARE_OS_LOCK(oslk_lprintf, LPRINTF_LOCK);
 DECLARE_OS_LOCK(oslk_mempt, MEM_PRINT_LOCK);
 DECLARE_OS_LOCK(oslk_log, LOG_LOCK_NO);
+DECLARE_OS_LOCK(oslk_lcdpt, LCD_PRINT_LOCK_NO);
 char halfbyte2char(char c)
 {
         return ((c & 0x0f) < 0x0a)?(0x30 + c):('A' + c - 0x0a);
@@ -438,19 +439,23 @@ uint16_t LCD_PRINT_FRONT_COLOR = BLACK;
 void lcd_lprintf_win(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const char *fmt, ...)
 {
     va_list ap;
+    os_lock(&oslk_lcdpt);
     memset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
     va_start(ap,fmt);
     vslprintf(lcdprintf_buf,fmt,ap);
     va_end(ap);
+    os_unlock(&oslk_lcdpt);
     Show_Str_win(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lcdprintf_buf,16,0, w, h);
 }
 void lcd_lprintf(uint32_t x, uint32_t y, const char *fmt, ...)
 {
     va_list ap;
+    os_lock(&oslk_lcdpt);
     memset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
     va_start(ap,fmt);
     vslprintf(lcdprintf_buf,fmt,ap);
     va_end(ap);
+    os_unlock(&oslk_lcdpt);
     Show_Str(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lcdprintf_buf,16,0);
 }
 
