@@ -31,6 +31,7 @@ src/cmd.c                                                                       
 src/CoIDE_startup.c                                                                                   \
 src/common.c                                                                                          \
 src/date.c                                                                                            \
+src/display.c                                                                                            \
 src/env.c                                                                                             \
 src/fs.c                                                                                              \
 src/lcd800x480/cch_str.c                                                                              \
