@@ -20,6 +20,7 @@
 #define EVT_LOCK_NO 3
 #define LOG_LOCK_NO 4
 #define LCD_PRINT_LOCK_NO 5
+#define DISP_RB_LOCK 6
 
 #define TASK_STATUS_RUNNING 0
 #define TASK_STATUS_SLEEPING 1

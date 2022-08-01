@@ -58,6 +58,7 @@
 #include "FONT.H" 
 #include "common.h"
 #include "gui.h"
+#include "display.h"
 
 /*******************************************************************
  * @name       :void GUI_DrawPoint(u16 x,u16 y,u16 color)
@@ -925,15 +926,23 @@ void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, const char *str, u32 size, u32 m
     wd.h=win_height;
     wd.dx=0;
     wd.dy=0;
-    Show_Str_win_raw(&x, &y, fc, bc, str, size, mode, &wd, 0);
+    if(os_is_running){
+        Proxy_Show_Str_win_raw(&x, &y, fc, bc, str, size, mode, &wd, 0);
+    }
+    else{
+        Show_Str_win_raw(&x, &y, fc, bc, str, size, mode, &wd, 0);
+    }
 }
 
 const char* area_show_str(win_pt wdp, u32 *xp, u32 *yp, const char*string, int is_dummy)
 {
     const char* ret;
-    //lprintf("ass>x %d y %d\n", *xp, *yp);
-    ret = Show_Str_win_raw(xp, yp, BLACK, WHITE, string, 16, 0, wdp, is_dummy);
-    //lprintf("ass<x %d y %d\n", *xp, *yp);
+    if(os_is_running){
+        ret = Proxy_Show_Str_win_raw(xp, yp, BLACK, WHITE, string, 16, 0, wdp, is_dummy);
+    }
+    else{
+        ret = Show_Str_win_raw(xp, yp, BLACK, WHITE, string, 16, 0, wdp, is_dummy);
+    }
     return ret;
 }
 

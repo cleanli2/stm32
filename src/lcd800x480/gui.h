@@ -57,12 +57,12 @@
 #define __GUI_H__
 
 typedef struct window{
-    uint32_t x;
-    uint32_t y;
-    uint32_t w;
-    uint32_t h;
-    uint32_t dx;
-    uint32_t dy;
+    uint16_t x;
+    uint16_t y;
+    uint16_t w;
+    uint16_t h;
+    uint16_t dx;
+    uint16_t dy;
 } *win_pt, win;
 
 #define RATIO_BASE_OF_LENGTH 20
