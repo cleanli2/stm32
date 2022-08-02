@@ -1139,8 +1139,8 @@ void often_used_timer()
 
 void PutPixel(int x, int y, int color)
 {
-    POINT_COLOR = color;
-    LCD_DrawPoint(x, y);
+    PROXY_POINT_COLOR = color;
+    Proxy_LCD_DrawPoint(x, y);
 }
 
 #define diff(x,y) (x>y?x-y:y-x)

@@ -2,8 +2,23 @@
 #include "common.h"
 #include "ring_buf.h"
 
+u16 PROXY_POINT_COLOR = 0x0000;
 DECLARE_OS_LOCK(oslk_disp_para, DISP_RB_LOCK);
 DECLARE_RB_DATA(disp_func_para, rb_disp_para, 2)
+
+void Proxy_LCD_DrawPoint(u16 x,u16 y)
+{
+    disp_func_para*rbdpp;
+
+    os_lock(&oslk_disp_para);
+    rbdpp=RB_W_GET_wait(disp_func_para, rb_disp_para);
+    rbdpp->type = DISPFUNC_DRAW_POINT;
+    rbdpp->draw_point_para.color=PROXY_POINT_COLOR;
+    rbdpp->draw_point_para.x=x;
+    rbdpp->draw_point_para.y=y;
+    RB_W_SET(disp_func_para, rb_disp_para);
+    os_unlock(&oslk_disp_para);
+}
 
 void Proxy_lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye)
 {
@@ -87,6 +102,12 @@ void os_task_display(void*p)
                 xe=rbdpp->win_clr_para.xe;
                 ye=rbdpp->win_clr_para.ye;
                 lcd_clr_window(color, xs, ys, xe, ye);
+                break;
+            case DISPFUNC_DRAW_POINT:
+                POINT_COLOR=rbdpp->draw_point_para.color;
+                xs=rbdpp->draw_point_para.x;
+                ys=rbdpp->draw_point_para.y;
+                LCD_DrawPoint(xs,ys);
                 break;
             default:
                 lprintf("unknow dispfunc type %d\n", rbdpp->type);
