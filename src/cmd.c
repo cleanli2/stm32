@@ -4,6 +4,7 @@
 #include "sd/stm32_eval_spi_sd.h"
 #include <stdint.h>
 #include <string.h>
+#include <display.h>
 #define uint uint32_t
 #define lprint lprintf
 
@@ -647,7 +648,7 @@ void lcdsuebstep(char *p)
         p=str_to_hex(p, &para4);
 	if(tmp==6)
         p=str_to_hex(p, &color);
-        lcd_clr_window(color, para1, para2, para3, para4);
+        Proxy_lcd_clr_window(color, para1, para2, para3, para4);
     }
     else if(cmdindex == 6){//cmd
 	if (tmp<2)goto error;

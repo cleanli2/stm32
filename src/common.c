@@ -440,22 +440,6 @@ void beep(uint32_t hz, uint32_t t_ms)
     GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
 }
 
-void mytimer(uint32_t w_seconds)
-{
-    uint32_t seconds = w_seconds;
-    uint32_t t;
-    lcd_clr_window(0, 120, 10, 400, 30);
-    while(seconds){
-        delay_ms(1000);
-        seconds--;
-        t = (400-120)*(w_seconds-seconds)/w_seconds;
-        if(t>0) lcd_clr_window(0xff, 120, 10, t+120, 30);
-        lcd_lprintf(430, 10, "%d", seconds);
-    }
-    lprintf("beep\n");
-    beep(1000, 3000);
-}
-
 void power_off()
 {
     Show_Str(20, 630,RED,0xffff,"Power off in 3 seconds",24,0);
@@ -534,40 +518,6 @@ void update_progress_indicator(progress_indicator_t*pip, uint32_t progressed, ui
     t = pip->w*progressed/total;
     if(t>0)lcd_clr_window(pip->f_color, pip->x, pip->y, pip->x+t, pip->y+pip->h);
     lcd_lprintf(pip->x+pip->w+5, pip->y, "%d/%d", progressed, total);
-}
-void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
-{
-#if 0
-    uint32_t repts = w_repts;
-    uint32_t t;
-    lcd_clr_window(0, 120, 50, 400, 70);
-    beep(1000, 3000);
-    while(repts){
-        mytimer(seconds);
-        repts--;
-        t = (400-120)*(w_repts-repts)/w_repts;
-        if(t>0)lcd_clr_window(0xff, 120, 50, t+120, 70);
-        lcd_lprintf(430, 50, "%d", repts);
-    }
-    power_off();
-#endif
-    if(g_timer.running){
-        g_timer.running = 0;
-        clear_progress_indicator(&g_timer_repeat_pi);
-        clear_progress_indicator(&g_timer_pi);
-        beep(400, 300);
-        return;
-    }
-    g_timer.timeout_poff = 1;
-    get_rtc_time(&g_timer.start);
-    g_timer.seconds_len = seconds;
-    g_timer.running = 1;
-    g_timer.repeat = w_repts;
-    g_timer.to_repeat = w_repts;
-    if(w_repts>1){
-        update_progress_indicator(&g_timer_repeat_pi, 0, g_timer.repeat);
-    }
-    beep(800, 3000);
 }
 #define AUTO_POWER_OFF_COUNT 100000
 //static uint32_t single_timer_len = 16;
@@ -720,143 +670,6 @@ void main_init(void)
   os_task_add(os_ui, ui_stack, "ui", STACK_SIZE_LOCAL, 3);
   while(1){
   }
-#if 0
-  ict=0;
-  lcd_clr_window(0xf00f, 0, 0, 100, 100);
-  lcd_clr_window(BLUE, 0, 100, 100, 200);
-  lcd_clr_window(0xff0f, 0, 200, 100, 300);
-  lcd_lprintf(5, 250, "PowerOff");
-  lcd_clr_window(0xff, 0, 300, 100, 400);
-  lcd_lprintf(5, 350, "Timer");
-
-  //reboot to download mode
-  lcd_clr_window(RED, 0, 400, 100, 480);
-  lcd_lprintf(5, 450, "Download");
-
-  lcd_clr_window(0, 120, 760, 400, 780);
-  lcd_clr_window(0xf0f, 120, 760, 163, 780);
-
-  lcd_clr_window(GREEN, 40, 500, 440, 600);
-  lcd_clr_window(0xf0f, 56, 500, 440, 600);
-  LCD_DrawLine(71, 500, 71, 600);
-  LCD_DrawLine(109, 500, 109, 600);//5min
-  LCD_DrawLine(138, 500, 138, 600);//10min
-  LCD_DrawLine(210, 500, 210, 600);//30min
-  LCD_DrawLine(280, 500, 280, 600);//60min
-  lcd_lprintf(60, 580, "0 hours 0 minutes 16 seconds");
-  lcd_lprintf(68, 620, "1    5   10       30        60  mins");
-  auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS);
-  {
-      char*date = get_rtc_time(0);
-      Show_Str(190, 700,0,0xffff,(uint8_t*)date,24,0);
-      if(check_rtc_alert_and_clear()){
-          my_repeat_timer(3, 300);
-      }
-  }
-  while(1){
-      static uint32_t no_touch_count = 0;
-      uint16_t tx = 0, ty=0;
-      if(ict==0){
-          char*date = get_rtc_time(&g_cur_date);
-          if(g_timer.running){//timer
-              uint32_t timer_ran = time_diff_seconds(&g_cur_date, &g_timer.start);
-              if(timer_ran>g_timer.seconds_len){
-                  beep(800, 3000);
-                  if(g_timer.to_repeat>1){
-                      g_timer.to_repeat--;
-                      g_timer.start = g_cur_date;
-                      update_progress_indicator(&g_timer_repeat_pi,
-                              g_timer.repeat - g_timer.to_repeat,
-                              g_timer.repeat);
-                  }
-                  else{
-                      g_timer.running = 0;
-                      if(g_timer.timeout_poff){
-                          power_off();
-                      }
-                  }
-              }
-              else{
-                  update_progress_indicator(&g_timer_pi, timer_ran, g_timer.seconds_len);
-              }
-          }
-          Show_Str(190, 700,0,0xffff,(uint8_t*)date,24,0);
-          adc_test();
-          lprintf("sys_us %U\n", get_system_us());;
-      }
-      if(ict++>600){
-          ict = 0;
-      }
-      delay_ms(1);
-      if(get_TP_point(&tx, &ty)){
-          no_touch_count = 0;
-          if(get_BL_value()<=DEFAULT_IDLE_BL){
-              set_BL_value(DEFAULT_BL);
-          }
-          TP_Draw_Big_Point(tx,ty,BLACK);		//画图
-          if(tx < 100 && ty < 480 && ty > 400){//single timer
-              reboot_download();
-          }
-          if(tx < 100 && ty < 400 && ty > 300){//single timer
-              my_repeat_timer(1, single_timer_len);
-          }
-          if(tx < 100 && ty < 300 && ty > 200){//poweroff
-              power_off();
-          }
-          if(tx < 100 && ty < 200 && ty > 100){
-              my_repeat_timer(3, 10);
-              //beep(1000, 2000);
-          }
-          if(tx < 100 && ty < 100){
-              my_repeat_timer(3, 300);
-              //beep(1000, 2000);
-          }
-          if(tx < 400 && tx > 120 && ty < 780 && ty > 760){
-              uint16_t lcd_brt;
-              lcd_clr_window(0, 120, 760, 400, 780);
-              lcd_clr_window(0xf0f, 120, 760, tx, 780);
-              lcd_brt = (tx - 120)*100/280;
-              set_BL_value(lcd_brt);
-          }
-          if(tx < 440 && tx > 40 && ty < 600 && ty > 500){
-              if(!g_timer.running){
-                  uint32_t h, m, s;
-                  lcd_clr_window(GREEN, 40, 500, 440, 600);
-                  lcd_clr_window(0xf0f, 40, 500, tx, 600);
-                  LCD_DrawLine(71, 500, 71, 600);//11min
-                  LCD_DrawLine(109, 500, 109, 600);//5min
-                  LCD_DrawLine(138, 500, 138, 600);//10min
-                  LCD_DrawLine(210, 500, 210, 600);//30min
-                  LCD_DrawLine(280, 500, 280, 600);//60min
-                  single_timer_len = (tx - 40)*(tx - 40)/16;
-                  h = single_timer_len/3600;
-                  m = (single_timer_len%3600)/60;
-                  s = single_timer_len%60;
-                  lcd_lprintf(60, 580, "%d hours %d minutes %d seconds", h, m, s);
-              }
-          }
-      }
-      if(con_is_recved() && (con_recv() == 'c')){
-          run_cmd_interface();
-      }
-      if(!g_timer.running){
-          if(no_touch_count>AUTO_POWER_OFF_COUNT){
-              if((no_touch_count-AUTO_POWER_OFF_COUNT)%1000 == 0){
-                  beep(1000-(no_touch_count-AUTO_POWER_OFF_COUNT)/100, 200);
-              }
-              if(no_touch_count-AUTO_POWER_OFF_COUNT>9000)power_off();
-          }
-      }
-      if(no_touch_count++>AUTO_POWER_OFF_COUNT/5){
-          if(((no_touch_count/2000)%10) == 0){
-              if(get_BL_value() != DEFAULT_BL) set_BL_value(DEFAULT_BL);
-          }
-          else{
-              if(get_BL_value() != DEFAULT_IDLE_BL) set_BL_value(DEFAULT_IDLE_BL);
-          }
-      }
-  }
-#endif
 }
 
 #if 0

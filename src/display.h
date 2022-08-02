@@ -6,6 +6,7 @@
 
 enum disp_func_type {
     DISPFUNC_WIN_STR,
+    DISPFUNC_WIN_CLR,
     MAX_NUM_DISPFUNC
 };
 
@@ -21,9 +22,17 @@ typedef union _disp_func_para {
         u16 mode;
         win df_win;
     } win_str_para;
+    struct _win_clr_para {
+        u16 color;
+        u16 xs;
+        u16 ys;
+        u16 xe;
+        u16 ye;
+    } win_clr_para;
 } disp_func_para;
 
 void os_task_display(void*p);
 
 const char* Proxy_Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, u32 size, u32 mode, win_pt wd, int is_dummy);
+void Proxy_lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye);
 #endif

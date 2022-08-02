@@ -2,6 +2,7 @@
 #include "fs.h"
 #include "music.h"
 #include "ui.h"
+#include "display.h"
 
 #define POWER_INDICATOR_CYCLE 30
 ui_t working_ui_t;
@@ -229,7 +230,7 @@ void music_test()
 void show_sound_status()
 {
     int dt = (SOUND_STA_SIZE-SOUND_STA_SMALL)/2;
-    lcd_clr_window(WHITE, SOUND_STA_X, SOUND_STA_Y, SOUND_STA_X+SOUND_STA_SIZE, SOUND_STA_Y+SOUND_STA_SIZE);
+    Proxy_lcd_clr_window(WHITE, SOUND_STA_X, SOUND_STA_Y, SOUND_STA_X+SOUND_STA_SIZE, SOUND_STA_Y+SOUND_STA_SIZE);
     draw_sq(SOUND_STA_X, SOUND_STA_Y+dt,
             SOUND_STA_X+SOUND_STA_SIZE/2, SOUND_STA_Y+SOUND_STA_SMALL+dt,0);
     draw_sq(SOUND_STA_X+SOUND_STA_SIZE/2, SOUND_STA_Y,
@@ -821,7 +822,7 @@ int show_book(int flag)
         win bookw={BOOK_SHOW_WIN_X, BOOK_SHOW_WIN_Y, BOOK_SHOW_WIN_W, BOOK_SHOW_WIN_H,
                 BOOK_SHOW_WIN_DX, BOOK_SHOW_WIN_DY};
         if(!is_dummy)lcd_lprintf(BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-20, " book.txt               ");
-        if(!is_dummy)lcd_clr_window(WHITE, BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5,
+        if(!is_dummy)Proxy_lcd_clr_window(WHITE, BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5,
                 BOOK_SHOW_WIN_X+BOOK_SHOW_WIN_W+5, BOOK_SHOW_WIN_Y+BOOK_SHOW_WIN_H+5);
         draw_sq(BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5,
                 BOOK_SHOW_WIN_X+BOOK_SHOW_WIN_W+5, BOOK_SHOW_WIN_Y+BOOK_SHOW_WIN_H+5, BLACK);
@@ -1169,7 +1170,7 @@ void draw_sq(int x1, int y1, int x2, int y2, int color)
 void draw_prgb_raw(prgb_t*pip)
 {
     if(!pip)return;
-    lcd_clr_window(WHITE, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
+    Proxy_lcd_clr_window(WHITE, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
     draw_sq(pip->x, pip->y, pip->x+pip->w, pip->y+pip->h, prgb_color);
 }
 
@@ -1231,14 +1232,14 @@ void update_prgb(ui_t* uif, prgb_t*pip)
     (void)uif;
     int t;
     if(!pip)return;
-    //lcd_clr_window(pip->b_color, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
+    //Proxy_lcd_clr_window(pip->b_color, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
     while(pip->x >=0){
         if(pip->last_data != *pip->data){
             pip->last_data = *pip->data;
             t = pip->w*(*pip->data)/(*pip->max);
             if(t>=0 && t<pip->w){
                 draw_prgb_raw(pip);
-                lcd_clr_window(prgb_color, pip->x, pip->y, pip->x+pip->w-t, pip->y+pip->h);
+                Proxy_lcd_clr_window(prgb_color, pip->x, pip->y, pip->x+pip->w-t, pip->y+pip->h);
             }
             if(pip->des){
                 lcd_lprintf(pip->x, pip->y - PRGB_TEXT_SPACE,

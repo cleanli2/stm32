@@ -5,6 +5,22 @@
 DECLARE_OS_LOCK(oslk_disp_para, DISP_RB_LOCK);
 DECLARE_RB_DATA(disp_func_para, rb_disp_para, 2)
 
+void Proxy_lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye)
+{
+    disp_func_para*rbdpp;
+
+    os_lock(&oslk_disp_para);
+    rbdpp=RB_W_GET_wait(disp_func_para, rb_disp_para);
+    rbdpp->type = DISPFUNC_WIN_CLR;
+    rbdpp->win_clr_para.color=color;
+    rbdpp->win_clr_para.xs=xs;
+    rbdpp->win_clr_para.ys=ys;
+    rbdpp->win_clr_para.xe=xe;
+    rbdpp->win_clr_para.ye=ye;
+    RB_W_SET(disp_func_para, rb_disp_para);
+    os_unlock(&oslk_disp_para);
+}
+
 const char* Proxy_Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, u32 size, u32 mode, win_pt wd, int is_dummy)
 {
     u32 xbak, ybak;
@@ -49,6 +65,7 @@ void os_task_display(void*p)
     u32 *xp, *yp, fc, bc, size, mode;
     const char *str;
     win_pt wd;
+    u16 color, xs, ys, xe, ye;
     while(1){
         os_lock(&oslk_disp_para);
         rbdpp=RB_R_GET_wait(disp_func_para, rb_disp_para);
@@ -63,6 +80,14 @@ void os_task_display(void*p)
                 mode=rbdpp->win_str_para.mode;
                 wd=&rbdpp->win_str_para.df_win;
                 Show_Str_win_raw(xp, yp, fc, bc, str, size, mode, wd, 0);
+                break;
+            case DISPFUNC_WIN_CLR:
+                color=rbdpp->win_clr_para.color=color;
+                xs=rbdpp->win_clr_para.xs;
+                ys=rbdpp->win_clr_para.ys;
+                xe=rbdpp->win_clr_para.xe;
+                ye=rbdpp->win_clr_para.ye;
+                lcd_clr_window(color, xs, ys, xe, ye);
                 break;
             default:
                 lprintf("unknow dispfunc type\n");
