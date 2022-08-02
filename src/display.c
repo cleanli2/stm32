@@ -67,7 +67,6 @@ void os_task_display(void*p)
     win_pt wd;
     u16 color, xs, ys, xe, ye;
     while(1){
-        os_lock(&oslk_disp_para);
         rbdpp=RB_R_GET_wait(disp_func_para, rb_disp_para);
         switch(rbdpp->type){
             case DISPFUNC_WIN_STR:
@@ -90,9 +89,8 @@ void os_task_display(void*p)
                 lcd_clr_window(color, xs, ys, xe, ye);
                 break;
             default:
-                lprintf("unknow dispfunc type\n");
+                lprintf("unknow dispfunc type %d\n", rbdpp->type);
         };
         RB_R_SET(disp_func_para, rb_disp_para);
-        os_unlock(&oslk_disp_para);
     }
 }
