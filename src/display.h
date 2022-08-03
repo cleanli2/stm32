@@ -13,37 +13,39 @@ enum disp_func_type {
     MAX_NUM_DISPFUNC
 };
 
-typedef union _disp_func_para {
-    enum disp_func_type type;
-    struct _win_str_para {
-        u32 p_x;
-        u32 p_y;
-        u16 fc;
-        u16 bc;
-        const char*str;
-        u16 size;
-        u16 mode;
-        win df_win;
-    } win_str_para;
-    struct _win_clr_para {
-        u16 color;
-        u16 xs;
-        u16 ys;
-        u16 xe;
-        u16 ye;
-    } win_clr_para;
-    struct _draw_point_para {
-        u16 color;
-        u16 x;
-        u16 y;
-    } draw_point_para;
-    struct _draw_sq_para {
-        u16 color;
-        u16 x1;
-        u16 y1;
-        u16 x2;
-        u16 y2;
-    } draw_sq_para;
+typedef struct _disp_func_para {
+    u32 type;
+    union _data {
+        struct _win_str_para {
+            u32 p_x;
+            u32 p_y;
+            u16 fc;
+            u16 bc;
+            const char*str;
+            u16 size;
+            u16 mode;
+            win df_win;
+        } win_str_para;
+        struct _win_clr_para {
+            u16 color;
+            u16 xs;
+            u16 ys;
+            u16 xe;
+            u16 ye;
+        } win_clr_para;
+        struct _draw_point_para {
+            u16 color;
+            u16 x;
+            u16 y;
+        } draw_point_para;
+        struct _draw_sq_para {
+            u16 color;
+            u16 x1;
+            u16 y1;
+            u16 x2;
+            u16 y2;
+        } draw_sq_para;
+    }data;
 } disp_func_para;
 
 void os_task_display(void*p);
