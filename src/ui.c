@@ -236,7 +236,7 @@ void show_sound_status()
     Proxy_draw_sq(SOUND_STA_X+SOUND_STA_SIZE/2, SOUND_STA_Y,
             SOUND_STA_X+SOUND_STA_SIZE, SOUND_STA_Y+SOUND_STA_SIZE,0);
     if(get_sound_sta()==0){
-        LCD_DrawLine(SOUND_STA_X, SOUND_STA_Y, SOUND_STA_X+16, SOUND_STA_Y+16);
+        Proxy_LCD_DrawLine(SOUND_STA_X, SOUND_STA_Y, SOUND_STA_X+16, SOUND_STA_Y+16);
     }
 }
 

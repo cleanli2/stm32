@@ -7,6 +7,21 @@ DECLARE_OS_LOCK(oslk_disp_para, DISP_RB_LOCK);
 DECLARE_RB_DATA(disp_func_para, rb_disp_para, 2)
 
 void draw_sq(int x1, int y1, int x2, int y2, int color);
+void Proxy_LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
+{
+    disp_func_para*rbdpp;
+
+    os_lock(&oslk_disp_para);
+    rbdpp=RB_W_GET_wait(disp_func_para, rb_disp_para);
+    rbdpp->type = DISPFUNC_DRAW_LINE;
+    rbdpp->data.draw_sq_para.x1=x1;
+    rbdpp->data.draw_sq_para.y1=y1;
+    rbdpp->data.draw_sq_para.x2=x2;
+    rbdpp->data.draw_sq_para.y2=y2;
+    RB_W_SET(disp_func_para, rb_disp_para);
+    os_unlock(&oslk_disp_para);
+}
+
 void Proxy_draw_sq(int x1, int y1, int x2, int y2, int color)
 {
     disp_func_para*rbdpp;
@@ -133,6 +148,13 @@ void os_task_display(void*p)
                 xe=rbdpp->data.draw_sq_para.x2;
                 ye=rbdpp->data.draw_sq_para.y2;
                 draw_sq(xs, ys, xe, ye, color);
+                break;
+            case DISPFUNC_DRAW_LINE:
+                xs=rbdpp->data.draw_sq_para.x1;
+                ys=rbdpp->data.draw_sq_para.y1;
+                xe=rbdpp->data.draw_sq_para.x2;
+                ye=rbdpp->data.draw_sq_para.y2;
+                LCD_DrawLine(xs, ys, xe, ye);
                 break;
             default:
                 lprintf("unknow dispfunc type %d\n", rbdpp->type);
