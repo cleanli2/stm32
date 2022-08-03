@@ -6,6 +6,23 @@ u16 PROXY_POINT_COLOR = 0x0000;
 DECLARE_OS_LOCK(oslk_disp_para, DISP_RB_LOCK);
 DECLARE_RB_DATA(disp_func_para, rb_disp_para, 2)
 
+void draw_sq(int x1, int y1, int x2, int y2, int color);
+void Proxy_draw_sq(int x1, int y1, int x2, int y2, int color)
+{
+    disp_func_para*rbdpp;
+
+    os_lock(&oslk_disp_para);
+    rbdpp=RB_W_GET_wait(disp_func_para, rb_disp_para);
+    rbdpp->type = DISPFUNC_DRAW_SQ;
+    rbdpp->draw_sq_para.color=color;
+    rbdpp->draw_sq_para.x1=x1;
+    rbdpp->draw_sq_para.y1=y1;
+    rbdpp->draw_sq_para.x2=x2;
+    rbdpp->draw_sq_para.y2=y2;
+    RB_W_SET(disp_func_para, rb_disp_para);
+    os_unlock(&oslk_disp_para);
+}
+
 void Proxy_LCD_DrawPoint(u16 x,u16 y)
 {
     disp_func_para*rbdpp;
@@ -108,6 +125,14 @@ void os_task_display(void*p)
                 xs=rbdpp->draw_point_para.x;
                 ys=rbdpp->draw_point_para.y;
                 LCD_DrawPoint(xs,ys);
+                break;
+            case DISPFUNC_DRAW_SQ:
+                color=rbdpp->draw_sq_para.color;
+                xs=rbdpp->draw_sq_para.x1;
+                ys=rbdpp->draw_sq_para.y1;
+                xe=rbdpp->draw_sq_para.x2;
+                ye=rbdpp->draw_sq_para.y2;
+                draw_sq(xs, ys, xe, ye, color);
                 break;
             default:
                 lprintf("unknow dispfunc type %d\n", rbdpp->type);

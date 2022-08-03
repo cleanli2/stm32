@@ -231,9 +231,9 @@ void show_sound_status()
 {
     int dt = (SOUND_STA_SIZE-SOUND_STA_SMALL)/2;
     Proxy_lcd_clr_window(WHITE, SOUND_STA_X, SOUND_STA_Y, SOUND_STA_X+SOUND_STA_SIZE, SOUND_STA_Y+SOUND_STA_SIZE);
-    draw_sq(SOUND_STA_X, SOUND_STA_Y+dt,
+    Proxy_draw_sq(SOUND_STA_X, SOUND_STA_Y+dt,
             SOUND_STA_X+SOUND_STA_SIZE/2, SOUND_STA_Y+SOUND_STA_SMALL+dt,0);
-    draw_sq(SOUND_STA_X+SOUND_STA_SIZE/2, SOUND_STA_Y,
+    Proxy_draw_sq(SOUND_STA_X+SOUND_STA_SIZE/2, SOUND_STA_Y,
             SOUND_STA_X+SOUND_STA_SIZE, SOUND_STA_Y+SOUND_STA_SIZE,0);
     if(get_sound_sta()==0){
         LCD_DrawLine(SOUND_STA_X, SOUND_STA_Y, SOUND_STA_X+16, SOUND_STA_Y+16);
@@ -824,7 +824,7 @@ int show_book(int flag)
         if(!is_dummy)lcd_lprintf(BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-20, " book.txt               ");
         if(!is_dummy)Proxy_lcd_clr_window(WHITE, BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5,
                 BOOK_SHOW_WIN_X+BOOK_SHOW_WIN_W+5, BOOK_SHOW_WIN_Y+BOOK_SHOW_WIN_H+5);
-        draw_sq(BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5,
+        Proxy_draw_sq(BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5,
                 BOOK_SHOW_WIN_X+BOOK_SHOW_WIN_W+5, BOOK_SHOW_WIN_Y+BOOK_SHOW_WIN_H+5, BLACK);
         set_LCD_Char_scale(text_scale);
         while(1){
@@ -1139,8 +1139,8 @@ void often_used_timer()
 
 void PutPixel(int x, int y, int color)
 {
-    PROXY_POINT_COLOR = color;
-    Proxy_LCD_DrawPoint(x, y);
+    POINT_COLOR = color;
+    LCD_DrawPoint(x, y);
 }
 
 #define diff(x,y) (x>y?x-y:y-x)
@@ -1171,7 +1171,7 @@ void draw_prgb_raw(prgb_t*pip)
 {
     if(!pip)return;
     Proxy_lcd_clr_window(WHITE, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
-    draw_sq(pip->x, pip->y, pip->x+pip->w, pip->y+pip->h, prgb_color);
+    Proxy_draw_sq(pip->x, pip->y, pip->x+pip->w, pip->y+pip->h, prgb_color);
 }
 
 void draw_prgb(prgb_t*pip)
@@ -1205,7 +1205,7 @@ void draw_button(button_t*pbt)
         }
         int lx = MIN(pbt->x, pbt->x+pbt->w);
         int ly = MIN(pbt->y, pbt->y+pbt->h);
-        draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, color);
+        Proxy_draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, color);
         if(pbt->ch_text && !is_eng){
             lcd_lprintf(lx+BUTTON_LINE_SPACE,ly+BUTTON_LINE_SPACE,pbt->ch_text);
         }
@@ -1268,10 +1268,10 @@ void process_button(ui_t* uif, button_t*pbt)
                 lprintf_time("in botton NULL text\n", pbt->text);
             }
 #if 0
-            draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, 0x0f0f);
+            Proxy_draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, 0x0f0f);
             lprintf("in button\n");
             udelay(100*1000);
-            draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, 0xffff);
+            Proxy_draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, 0xffff);
 #endif
             if(pbt->need_re_init_ui){
                 uif->ui_init(uif);
