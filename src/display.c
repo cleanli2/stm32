@@ -2,8 +2,10 @@
 #include "common.h"
 #include "ring_buf.h"
 
+char os_lcd_printf_buf[256];
 u16 PROXY_POINT_COLOR = 0x0000;
 DECLARE_OS_LOCK(oslk_disp_para, DISP_RB_LOCK);
+DECLARE_OS_LOCK(oslk_os_lcd_printf_buf, OS_LCD_PRT_BUF_LOCK);
 DECLARE_RB_DATA(disp_func_para, rb_disp_para, 2)
 
 void draw_sq(int x1, int y1, int x2, int y2, int color);
@@ -88,7 +90,9 @@ const char* Proxy_Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char 
     rbdpp->data.win_str_para.p_y=ybak;
     rbdpp->data.win_str_para.fc=fc;
     rbdpp->data.win_str_para.bc=bc;
-    rbdpp->data.win_str_para.str=str;
+    os_lock(&oslk_os_lcd_printf_buf);
+    strcpy(os_lcd_printf_buf, str);
+    rbdpp->data.win_str_para.str=os_lcd_printf_buf;
     rbdpp->data.win_str_para.size=size;
     rbdpp->data.win_str_para.mode=mode;
     rbdpp->data.win_str_para.df_win=*wd;
@@ -126,6 +130,7 @@ void os_task_display(void*p)
                 mode=rbdpp->data.win_str_para.mode;
                 wd=&rbdpp->data.win_str_para.df_win;
                 Show_Str_win_raw(xp, yp, fc, bc, str, size, mode, wd, 0);
+                os_unlock(&oslk_os_lcd_printf_buf);
                 break;
             case DISPFUNC_WIN_CLR:
                 color=rbdpp->data.win_clr_para.color=color;
