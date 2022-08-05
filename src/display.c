@@ -133,7 +133,7 @@ void os_task_display(void*p)
                 os_unlock(&oslk_os_lcd_printf_buf);
                 break;
             case DISPFUNC_WIN_CLR:
-                color=rbdpp->data.win_clr_para.color=color;
+                color=rbdpp->data.win_clr_para.color;
                 xs=rbdpp->data.win_clr_para.xs;
                 ys=rbdpp->data.win_clr_para.ys;
                 xe=rbdpp->data.win_clr_para.xe;
