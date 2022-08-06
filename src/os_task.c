@@ -55,14 +55,17 @@ void os_10ms_delay(u32 timeout)
 {
     os_task_timer* g_tt;
     if(timeout == 0)return;
+    __disable_irq();
     g_tt = get_os_timer();
     if(g_tt != 0){
         g_tt->time = g_ms_count + timeout;
         g_tt->task = cur_os_task;
         cur_os_task->task_status = TASK_STATUS_SLEEPING;
+        __enable_irq();
         os_switch_trigger();
     }
     else{
+        __enable_irq();
         lprintf("err!Out of os timer\n");
     }
 }
