@@ -10,6 +10,20 @@ DECLARE_RB_DATA(disp_func_para, rb_disp_para, 2)
 
 void draw_sq(int x1, int y1, int x2, int y2, int color);
 
+void Proxy_TP_Draw_Big_Point(u16 xc,u16 yc,u16 color)
+{
+    disp_func_para*rbdpp;
+
+    os_lock(&oslk_disp_para);
+    rbdpp=RB_W_GET_wait(disp_func_para, rb_disp_para);
+    rbdpp->type = DISPFUNC_DRAW_BIG_POINT;
+    rbdpp->data.draw_circle_para.xc=xc;
+    rbdpp->data.draw_circle_para.yc=yc;
+    rbdpp->data.draw_circle_para.color=color;
+    RB_W_SET(disp_func_para, rb_disp_para);
+    os_unlock(&oslk_disp_para);
+}
+
 void Proxy_gui_circle(int xc, int yc,u16 c,int r, int fill)
 {
     disp_func_para*rbdpp;
@@ -137,6 +151,7 @@ void os_task_display(void*p)
     u16 color, xs, ys, xe, ye;
     while(1){
         rbdpp=RB_R_GET_wait(disp_func_para, rb_disp_para);
+        lprintf("dtp:%d---get\n", rbdpp->type);
         switch(rbdpp->type){
             case DISPFUNC_WIN_STR:
                 xp=&rbdpp->data.win_str_para.p_x;
@@ -189,9 +204,17 @@ void os_task_display(void*p)
                         rbdpp->data.draw_circle_para.fill
                         );
                 break;
+            case DISPFUNC_DRAW_BIG_POINT:
+                TP_Draw_Big_Point(
+                        rbdpp->data.draw_circle_para.xc,
+                        rbdpp->data.draw_circle_para.yc,
+                        rbdpp->data.draw_circle_para.color
+                        );
+                break;
             default:
                 lprintf("unknow dispfunc type %d\n", rbdpp->type);
         };
+        lprintf("dtp:%d--done\n", rbdpp->type);
         RB_R_SET(disp_func_para, rb_disp_para);
     }
 }
