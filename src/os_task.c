@@ -265,12 +265,14 @@ void os_lock(oslock_o* lock)
             atomic_ret = atomic_inc((u32*)BITBAND(&spin_lock_base, lock->lockno));
         }
         else{
+            __disable_irq();
             for(i=0;i<OS_LOCK_TASKS_NUM;i++){
                 if(NULL==lock->wait_tasks[i]){
                     lock->wait_tasks[i]=cur_os_task;
                     break;
                 }
             }
+            __enable_irq();
             if(OS_LOCK_TASKS_NUM==i){
                 lprintf("os lock tasks full\n");
             }
@@ -286,12 +288,14 @@ void os_unlock(oslock_o* lock)
     if(!os_is_running){
         return;
     }
+    __disable_irq();
     for(i=0;i<OS_LOCK_TASKS_NUM;i++){
         if(NULL!=lock->wait_tasks[i]){
             lock->wait_tasks[i]->task_status=TASK_STATUS_RUNNING;
             lock->wait_tasks[i]=NULL;
         }
     }
+    __enable_irq();
 }
 
 u32 sche_time;
