@@ -85,12 +85,14 @@ void os_lock(oslock_o* lock);
 void os_unlock(oslock_o* lock);
 
 #define sleep_wait(task_to_wait) {\
-    task_to_wait = cur_os_task; \
-    cur_os_task->task_status = TASK_STATUS_SLEEPING; \
+    __disable_irq();task_to_wait = cur_os_task; \
+    cur_os_task->task_status = TASK_STATUS_SLEEPING; __enable_irq();\
     os_switch_trigger();}
 
 #define wake_up(task_to_wake) \
-    if(NULL!=task_to_wake)task_to_wake->task_status = TASK_STATUS_RUNNING;
+    __disable_irq(); \
+    if(NULL!=task_to_wake)task_to_wake->task_status = TASK_STATUS_RUNNING; \
+    __enable_irq();
 
 #define DECLARE_OS_LOCK(lockname, lockno) \
     oslock_o lockname = {lockno, {0}}

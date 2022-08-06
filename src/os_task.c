@@ -287,11 +287,11 @@ void os_lock(oslock_o* lock)
                     break;
                 }
             }
-            __enable_irq();
             if(OS_LOCK_TASKS_NUM==i){
                 lprintf("os lock tasks full\n");
             }
             cur_os_task->task_status=TASK_STATUS_SLEEPING;
+            __enable_irq();
             os_switch_trigger();
         }
     }
