@@ -9,6 +9,23 @@ DECLARE_OS_LOCK(oslk_os_lcd_printf_buf, OS_LCD_PRT_BUF_LOCK);
 DECLARE_RB_DATA(disp_func_para, rb_disp_para, 2)
 
 void draw_sq(int x1, int y1, int x2, int y2, int color);
+
+void Proxy_gui_circle(int xc, int yc,u16 c,int r, int fill)
+{
+    disp_func_para*rbdpp;
+
+    os_lock(&oslk_disp_para);
+    rbdpp=RB_W_GET_wait(disp_func_para, rb_disp_para);
+    rbdpp->type = DISPFUNC_DRAW_CIRCLE;
+    rbdpp->data.draw_circle_para.xc=xc;
+    rbdpp->data.draw_circle_para.yc=yc;
+    rbdpp->data.draw_circle_para.color=c;
+    rbdpp->data.draw_circle_para.r=r;
+    rbdpp->data.draw_circle_para.fill=fill;
+    RB_W_SET(disp_func_para, rb_disp_para);
+    os_unlock(&oslk_disp_para);
+}
+
 void Proxy_LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
 {
     disp_func_para*rbdpp;
@@ -160,6 +177,15 @@ void os_task_display(void*p)
                 xe=rbdpp->data.draw_sq_para.x2;
                 ye=rbdpp->data.draw_sq_para.y2;
                 LCD_DrawLine(xs, ys, xe, ye);
+                break;
+            case DISPFUNC_DRAW_CIRCLE:
+                gui_circle(
+                        rbdpp->data.draw_circle_para.xc,
+                        rbdpp->data.draw_circle_para.yc,
+                        rbdpp->data.draw_circle_para.color,
+                        rbdpp->data.draw_circle_para.r,
+                        rbdpp->data.draw_circle_para.fill
+                        );
                 break;
             default:
                 lprintf("unknow dispfunc type %d\n", rbdpp->type);
