@@ -151,7 +151,6 @@ void os_task_display(void*p)
     u16 color, xs, ys, xe, ye;
     while(1){
         rbdpp=RB_R_GET_wait(disp_func_para, rb_disp_para);
-        lprintf("dtp:%d---get\n", rbdpp->type);
         switch(rbdpp->type){
             case DISPFUNC_WIN_STR:
                 xp=&rbdpp->data.win_str_para.p_x;
@@ -214,7 +213,6 @@ void os_task_display(void*p)
             default:
                 lprintf("unknow dispfunc type %d\n", rbdpp->type);
         };
-        lprintf("dtp:%d--done\n", rbdpp->type);
         RB_R_SET(disp_func_para, rb_disp_para);
     }
 }

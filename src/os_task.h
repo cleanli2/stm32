@@ -83,15 +83,20 @@ void os_switch_trigger();
 uint16_t os_con_recv();
 void os_lock(oslock_o* lock);
 void os_unlock(oslock_o* lock);
+void system_halt();
 
+void putchars(const char *pt);
 #define sleep_wait(task_to_wait) {\
-    __disable_irq();task_to_wait = cur_os_task; \
+    __disable_irq(); \
+    if(task_to_wait!=NULL){putchars("ERROR:sleep wait lost\n");system_halt();} \
+    task_to_wait = cur_os_task; \
     cur_os_task->task_status = TASK_STATUS_SLEEPING; __enable_irq();\
     os_switch_trigger();}
 
 #define wake_up(task_to_wake) \
     __disable_irq(); \
-    if(NULL!=task_to_wake)task_to_wake->task_status = TASK_STATUS_RUNNING; \
+    if(NULL!=task_to_wake){task_to_wake->task_status = TASK_STATUS_RUNNING; \
+    task_to_wake=NULL;} \
     __enable_irq();
 
 #define DECLARE_OS_LOCK(lockname, lockno) \

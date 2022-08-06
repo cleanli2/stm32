@@ -51,7 +51,7 @@ os_task_timer* get_os_timer()
                 g_task_timer[index].task == cur_os_task){
             lprintf("system:%d ms\n", g_ms_count);
             lprintf("[%d] %d %s\n", index, g_task_timer[index].time,
-                    g_task_timer[index].task);
+                    g_task_timer[index].task->name);
             lprintf("Fatal:cur task %s already in wait, status %d\n",
                     cur_os_task->name, cur_os_task->task_status);
             goto error_handle;
