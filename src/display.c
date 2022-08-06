@@ -26,7 +26,7 @@ void Proxy_gui_circle(int xc, int yc,u16 c,int r, int fill)
     os_unlock(&oslk_disp_para);
 }
 
-void Proxy_LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
+void Proxy_LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2, u16 color)
 {
     disp_func_para*rbdpp;
 
@@ -37,6 +37,7 @@ void Proxy_LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
     rbdpp->data.draw_sq_para.y1=y1;
     rbdpp->data.draw_sq_para.x2=x2;
     rbdpp->data.draw_sq_para.y2=y2;
+    rbdpp->data.draw_sq_para.color=color;
     RB_W_SET(disp_func_para, rb_disp_para);
     os_unlock(&oslk_disp_para);
 }
@@ -176,7 +177,8 @@ void os_task_display(void*p)
                 ys=rbdpp->data.draw_sq_para.y1;
                 xe=rbdpp->data.draw_sq_para.x2;
                 ye=rbdpp->data.draw_sq_para.y2;
-                LCD_DrawLine(xs, ys, xe, ye);
+                color=rbdpp->data.draw_sq_para.color;
+                LCD_DrawLine_Color(xs, ys, xe, ye, color);
                 break;
             case DISPFUNC_DRAW_CIRCLE:
                 gui_circle(

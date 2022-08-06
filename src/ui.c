@@ -228,7 +228,7 @@ void show_sound_status()
     Proxy_draw_sq(SOUND_STA_X+SOUND_STA_SIZE/2, SOUND_STA_Y,
             SOUND_STA_X+SOUND_STA_SIZE, SOUND_STA_Y+SOUND_STA_SIZE,0);
     if(get_sound_sta()==0){
-        Proxy_LCD_DrawLine(SOUND_STA_X, SOUND_STA_Y, SOUND_STA_X+16, SOUND_STA_Y+16);
+        Proxy_LCD_DrawLine(SOUND_STA_X, SOUND_STA_Y, SOUND_STA_X+16, SOUND_STA_Y+16, BLACK);
     }
 }
 
@@ -463,14 +463,14 @@ void draw_clock_face(int xc, int yc)
         else{
             ll = 1;
         }
-        LCD_DrawLine_direction(xc, yc, xc+clock_point[i].px, yc-CLOCK_R+clock_point[i].py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
-        LCD_DrawLine_direction(xc, yc, xc-clock_point[i].px, yc-CLOCK_R+clock_point[i].py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
-        LCD_DrawLine_direction(xc, yc, xc+clock_point[i].px, yc+CLOCK_R-clock_point[i].py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
-        LCD_DrawLine_direction(xc, yc, xc-clock_point[i].px, yc+CLOCK_R-clock_point[i].py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
-        LCD_DrawLine_direction(xc, yc, xc-CLOCK_R+clock_point[i].py, yc+clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
-        LCD_DrawLine_direction(xc, yc, xc-CLOCK_R+clock_point[i].py, yc-clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
-        LCD_DrawLine_direction(xc, yc, xc+CLOCK_R-clock_point[i].py, yc+clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
-        LCD_DrawLine_direction(xc, yc, xc+CLOCK_R-clock_point[i].py, yc-clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
+        LCD_DrawLine_direction(xc, yc, xc+clock_point[i].px, yc-CLOCK_R+clock_point[i].py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH, BLACK);
+        LCD_DrawLine_direction(xc, yc, xc-clock_point[i].px, yc-CLOCK_R+clock_point[i].py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH, BLACK);
+        LCD_DrawLine_direction(xc, yc, xc+clock_point[i].px, yc+CLOCK_R-clock_point[i].py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH, BLACK);
+        LCD_DrawLine_direction(xc, yc, xc-clock_point[i].px, yc+CLOCK_R-clock_point[i].py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH, BLACK);
+        LCD_DrawLine_direction(xc, yc, xc-CLOCK_R+clock_point[i].py, yc+clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH, BLACK);
+        LCD_DrawLine_direction(xc, yc, xc-CLOCK_R+clock_point[i].py, yc-clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH, BLACK);
+        LCD_DrawLine_direction(xc, yc, xc+CLOCK_R-clock_point[i].py, yc+clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH, BLACK);
+        LCD_DrawLine_direction(xc, yc, xc+CLOCK_R-clock_point[i].py, yc-clock_point[i].px, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH, BLACK);
     }
 #if 0
     for(int i = 0;i < 60; i++){
@@ -484,18 +484,18 @@ void draw_clock_face(int xc, int yc)
         else{
             ll = 1;
         }
-        LCD_DrawLine_direction(xc, yc, tmp_point.px, tmp_point.py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH);
+        LCD_DrawLine_direction(xc, yc, tmp_point.px, tmp_point.py, RATIO_BASE_OF_LENGTH-ll, RATIO_BASE_OF_LENGTH, BLACK);
     }
 #endif
 }
 
-void draw_clock_pointer(int xc, int yc, int pt_inx, int len)
+void draw_clock_pointer(int xc, int yc, int pt_inx, int len, u16 color)
 {
     struct point tmp_point;
     tmp_point.px=xc;
     tmp_point.py=yc;
     get_real_clock_point(pt_inx, &tmp_point);
-    LCD_DrawLine_direction(xc, yc, tmp_point.px, tmp_point.py, -4, len);
+    LCD_DrawLine_direction(xc, yc, tmp_point.px, tmp_point.py, -4, len, color);
 }
 
 void date_ui_init(void*vp)
@@ -548,18 +548,14 @@ void date_ui_process_event(void*vp)
 
 
         if(t_cur_date.second != ui_buf[LAST_SEC_INDX]){
-            POINT_COLOR=WHITE;//clear old one
-            draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_SEC_INDX],SEC_PTER_LEN);
-            POINT_COLOR=BLACK;
-            draw_clock_pointer(CLOCK_CX, CLOCK_CY,t_cur_date.second,SEC_PTER_LEN);
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_SEC_INDX],SEC_PTER_LEN, WHITE);
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,t_cur_date.second,SEC_PTER_LEN, BLACK);
         }
         if(t_cur_date.minute != ui_buf[LAST_MIN_INDX] ||
                 (60+t_cur_date.minute-ui_buf[LAST_SEC_INDX])%30==0 ||
                 t_cur_date.minute==ui_buf[LAST_SEC_INDX]){//cleared by second pointer
-            POINT_COLOR=WHITE;//clear old one
-            draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_MIN_INDX],MIN_PTER_LEN);
-            POINT_COLOR=BLACK;
-            draw_clock_pointer(CLOCK_CX, CLOCK_CY,t_cur_date.minute,MIN_PTER_LEN);
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_MIN_INDX],MIN_PTER_LEN, WHITE);
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,t_cur_date.minute,MIN_PTER_LEN, BLACK);
         }
         h_ix = (t_cur_date.hour%12)*5+t_cur_date.minute/12;
         if(h_ix != ui_buf[LAST_HOR_INDX] ||
@@ -567,10 +563,8 @@ void date_ui_process_event(void*vp)
                 (60+h_ix-ui_buf[LAST_MIN_INDX])%30==0 ||
                 (60+h_ix-ui_buf[LAST_SEC_INDX])%30==0 ||
                 h_ix==ui_buf[LAST_SEC_INDX]){//cleared by second pointer
-            POINT_COLOR=WHITE;//clear old one
-            draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_HOR_INDX],HOR_PTER_LEN);
-            POINT_COLOR=BLACK;
-            draw_clock_pointer(CLOCK_CX, CLOCK_CY,h_ix,HOR_PTER_LEN);
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,ui_buf[LAST_HOR_INDX],HOR_PTER_LEN, WHITE);
+            draw_clock_pointer(CLOCK_CX, CLOCK_CY,h_ix,HOR_PTER_LEN, BLACK);
         }
         ui_buf[LAST_SEC_INDX]=t_cur_date.second;
         ui_buf[LAST_MIN_INDX]=t_cur_date.minute;

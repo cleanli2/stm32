@@ -110,7 +110,7 @@ void LCD_Fill(u16 sx,u16 sy,u16 ex,u16 ey,u16 color)
 								y2:the ending y coordinate of the line
  * @retvalue   :None
 ********************************************************************/
-void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
+void LCD_DrawLine_Color(u16 x1, u16 y1, u16 x2, u16 y2, u16 color)
 {
 	u16 t; 
 	int xerr=0,yerr=0,delta_x,delta_y,distance; 
@@ -130,7 +130,7 @@ void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
 	else distance=delta_y; 
 	for(t=0;t<=distance+1;t++ )//画线输出 
 	{  
-		LCD_DrawPoint(uRow,uCol);//画点 
+		LCD_DrawPoint_Color(uRow,uCol,color);//画点 
 		xerr+=delta_x ; 
 		yerr+=delta_y ; 
 		if(xerr>distance) 
@@ -146,6 +146,11 @@ void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
 	}  
 } 
 
+void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
+{
+    LCD_DrawLine_Color(x1, y1, x2, y2, POINT_COLOR);
+}
+
 /*******************************************************************
  * @name       :void LCD_DrawLine_direction(u16 x1, u16 y1, u16 x2, u16 y2, int start, int end)
  * @date       :2018-08-09
@@ -158,7 +163,7 @@ void LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2)
                 end: * length_1_2 / RATIO_BASE_OF_LENGTH
  * @retvalue   :None
 ********************************************************************/
-void LCD_DrawLine_direction(u16 x1, u16 y1, u16 x2, u16 y2, int start, int end)
+void LCD_DrawLine_direction(u16 x1, u16 y1, u16 x2, u16 y2, int start, int end, u16 color)
 {
     u16 nx1, nx2, ny1, ny2;
     nx1=x1+(x2-x1)*start/RATIO_BASE_OF_LENGTH;
@@ -167,7 +172,7 @@ void LCD_DrawLine_direction(u16 x1, u16 y1, u16 x2, u16 y2, int start, int end)
     ny2=y1+(y2-y1)*end/RATIO_BASE_OF_LENGTH;
     //lprintf("old %d %d %d %d\n", x1, y1, x2, y2);
     //lprintf("new %d %d %d %d\n", nx1, ny1, nx2, ny2);
-    Proxy_LCD_DrawLine(nx1, ny1, nx2, ny2);
+    Proxy_LCD_DrawLine(nx1, ny1, nx2, ny2, color);
 }
 
 /*****************************************************************************

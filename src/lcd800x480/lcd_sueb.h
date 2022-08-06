@@ -148,6 +148,7 @@ u16 LCD_read(void);
 void LCD_Clear(u16 Color);	 
 void LCD_SetCursor(u16 Xpos, u16 Ypos);
 void LCD_DrawPoint(u16 x,u16 y);//»­µã
+void LCD_DrawPoint_Color(u16 x,u16 y,u16 color);//»­µã
 u16  LCD_ReadPoint(u16 x,u16 y); //¶Áµã	   
 void lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye);
 void LCD_SetWindows(u16 xStar, u16 yStar,u16 xEnd,u16 yEnd);

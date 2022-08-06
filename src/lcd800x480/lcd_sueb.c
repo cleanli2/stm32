@@ -336,6 +336,11 @@ u16 Lcd_ReadData_16Bit(void)
 	return Color_To_565(r, g, b);
 }
 
+void LCD_DrawPoint_Color(u16 x,u16 y,u16 color)
+{
+	LCD_SetCursor(x,y);//设置光标位置 
+	Lcd_WriteData_16Bit(color); 
+}
 /*****************************************************************************
  * @name       :void LCD_DrawPoint(u16 x,u16 y)
  * @date       :2018-08-09 
