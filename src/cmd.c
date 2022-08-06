@@ -664,7 +664,7 @@ void lcdsuebstep(char *p)
         p=str_to_hex(p, &para5);
         p=str_to_hex(p, &para6);
         p=str_to_hex(p, &para7);
-	Show_Str(para1,para2,para3,para4,(char*)&para5,para6,para7);
+	Show_Str(para1,para2,para3,para4,(char*)&para5,para6,para7, 1);
     }
     else if(cmdindex == 8){//
 	    main_test(); 		//测试主界面

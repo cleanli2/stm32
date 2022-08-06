@@ -63,6 +63,7 @@ typedef struct window{
     uint16_t h;
     uint16_t dx;
     uint16_t dy;
+    uint16_t char_scale;
 } *win_pt, win;
 
 #define RATIO_BASE_OF_LENGTH 20
@@ -82,9 +83,9 @@ void LCD_ShowString(u16 x,u16 y,u8 size,const char *p,u8 mode);
 void GUI_DrawFont16(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode);
 void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode);
 void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode);
-void Show_Str(u16 x, u16 y, u16 fc, u16 bc, const char *str,u8 size,u8 mode);
+void Show_Str(u16 x, u16 y, u16 fc, u16 bc, const char *str,u8 size,u8 mode, u32 cs);
 const char* Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, u32 size, u32 mode, win_pt wd, int);
-void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, const char *str, u32 size, u32 mode, u32 win_width, u32 win_height);
+void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, const char *str, u32 size, u32 mode, u32 win_width, u32 win_height, u32 cs);
 void Gui_Drawbmp16(u16 x,u16 y,u16 w,u16 h,const unsigned char *p); //œ‘ æ40*40 QQÕº∆¨
 void gui_circle(int xc, int yc,u16 c,int r, int fill);
 void Gui_StrCenter(u16 x, u16 y, u16 fc, u16 bc, char *str,u8 size,u8 mode);

@@ -41,9 +41,9 @@ void timer_set_ui_init(void*vp)
     common_ui_init(vp);
     ui_buf[8] = 1;
 #ifdef LARGE_SCREEN
-    lcd_lprintf(60, 280, "Repeat %d times   ", ui_buf[8]);
+    lcd_lprintf(1, 60, 280, "Repeat %d times   ", ui_buf[8]);
 #else
-    lcd_lprintf(60, 180, "Repeat %d times   ", ui_buf[8]);
+    lcd_lprintf(1, 60, 180, "Repeat %d times   ", ui_buf[8]);
 #endif
 }
 void timer_set_ui_process_event(void*vp)
@@ -79,7 +79,7 @@ void poff_ctd_ui_init(void*vp)
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     common_ui_init(vp);
-    lcd_lprintf(20, 100, "Version:%s%s", VERSION, GIT_SHA1);
+    lcd_lprintf(1, 20, 100, "Version:%s%s", VERSION, GIT_SHA1);
 #ifndef ALIENTEK_MINI
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 20, 140);
     auto_time_correct();
@@ -91,10 +91,8 @@ void poff_ctd_ui_process_event(void*vp)
     (void)uif;
     if(cur_task_event_flag & (1<<EVENT_BATT_LOW)){
         LCD_PRINT_FRONT_COLOR = RED;
-        set_LCD_Char_scale(3);
-        lcd_lprintf(90, 600, "LOW POWER");
+        lcd_lprintf(3, 90, 600, "LOW POWER");
         LCD_PRINT_FRONT_COLOR = BLACK;
-        set_LCD_Char_scale(1);
     }
     if(cur_task_event_flag & (1<<EVENT_MUSIC_PLAY_END)){
         power_off();
@@ -155,21 +153,15 @@ void timer_ui_process_event(void*vp)
         ui_transfer(UI_MAIN_MENU);
     }
     if(g_flag_1s){
-#ifdef LARGE_SCREEN
-        set_LCD_Char_scale(6);
-#else
-        set_LCD_Char_scale(2);
-#endif
         mins = ui_buf[TMR_TMOUTCT_INDX]/60;
         secs = ui_buf[TMR_TMOUTCT_INDX] -  mins*60;
 #ifdef LARGE_SCREEN
-        lcd_lprintf(100, 400, "%d:%d   ", mins, secs);
-        lcd_lprintf(100, 520, "RP:%d ", ui_buf[TMR_REPETCT_INDX]);
+        lcd_lprintf(6, 100, 400, "%d:%d   ", mins, secs);
+        lcd_lprintf(6, 100, 520, "RP:%d ", ui_buf[TMR_REPETCT_INDX]);
 #else
-        lcd_lprintf(60, 180, "%d:%d   ", mins, secs);
-        lcd_lprintf(60, 220, "RP:%d ", ui_buf[TMR_REPETCT_INDX]);
+        lcd_lprintf(2, 60, 180, "%d:%d   ", mins, secs);
+        lcd_lprintf(2, 60, 220, "RP:%d ", ui_buf[TMR_REPETCT_INDX]);
 #endif
-        set_LCD_Char_scale(1);
         if(ui_buf[TMR_REPETCT_INDX]==0){
             update_prgb(uif, uif->prgb_info);
             if(uif->timeout_music){
@@ -178,8 +170,8 @@ void timer_ui_process_event(void*vp)
             }
         }
         else{
-            //lcd_lprintf(50, 200, "Counts :%d  ", ui_buf[TMR_TMOUTCT_INDX]);
-            //lcd_lprintf(50, 250, "Repeats:%d  ", ui_buf[TMR_REPETCT_INDX]);
+            //lcd_lprintf(1, 50, 200, "Counts :%d  ", ui_buf[TMR_TMOUTCT_INDX]);
+            //lcd_lprintf(1, 50, 250, "Repeats:%d  ", ui_buf[TMR_REPETCT_INDX]);
             update_prgb(uif, uif->prgb_info);
             if(ui_buf[TMR_TMOUTCT_INDX] == 0){
                 ui_buf[TMR_REPETCT_INDX]--;
@@ -318,25 +310,25 @@ void mins_1h()
 void rp_2()
 {
     ui_buf[8]=2;
-    lcd_lprintf(60, 280, "Repeat %d times   ", ui_buf[8]);
+    lcd_lprintf(1, 60, 280, "Repeat %d times   ", ui_buf[8]);
 }
 
 void rp_3()
 {
     ui_buf[8]=3;
-    lcd_lprintf(60, 280, "Repeat %d times   ", ui_buf[8]);
+    lcd_lprintf(1, 60, 280, "Repeat %d times   ", ui_buf[8]);
 }
 
 void rp_4()
 {
     ui_buf[8]=4;
-    lcd_lprintf(60, 280, "Repeat %d times   ", ui_buf[8]);
+    lcd_lprintf(1, 60, 280, "Repeat %d times   ", ui_buf[8]);
 }
 
 void rp_1()
 {
     ui_buf[8]=1;
-    lcd_lprintf(60, 280, "Repeat %d times   ", ui_buf[8]);
+    lcd_lprintf(1, 60, 280, "Repeat %d times   ", ui_buf[8]);
 }
 
 button_t timer_set_button[]={
@@ -516,12 +508,12 @@ void date_ui_init(void*vp)
     lprintf_time("data ui\n");
     common_ui_init(vp);
 #ifdef LARGE_SCREEN
-    lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
+    lcd_lprintf(1, 0, 20, "Version:%s%s", VERSION, GIT_SHA1);
     if(ENV_OK == get_env("LastTimeAdj", t)){
-        lcd_lprintf(15, 630, "last adj date:%s", t);
+        lcd_lprintf(1, 15, 630, "last adj date:%s", t);
     }
     if(ENV_OK == get_env("HsAdj1Min", t)){
-        lcd_lprintf(320, 630, "AutoCorrect:%s", t);
+        lcd_lprintf(1, 320, 630, "AutoCorrect:%s", t);
     }
     if(check_rtc_alert_and_clear()){
         often_used_timer();
@@ -548,9 +540,7 @@ void date_ui_process_event(void*vp)
 
     if(g_flag_1s){
 #ifdef LARGE_SCREEN
-        set_LCD_Char_scale(2);
-        lcd_lprintf(10, 100, "%s  ", get_rtc_time(&t_cur_date));
-        set_LCD_Char_scale(1);
+        lcd_lprintf(2, 10, 100, "%s  ", get_rtc_time(&t_cur_date));
 #else
         get_rtc_time(&t_cur_date);
 #endif
@@ -720,7 +710,7 @@ void sd_ui_init(void*vp)
     (void)uif;
     lprintf("sd ui\n");
     common_ui_init(vp);
-    lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
+    lcd_lprintf(1, 0, 20, "Version:%s%s", VERSION, GIT_SHA1);
     page_start_offset = get_env_uint("book_posi", 0);
     lprintf("getenv page_start_offset %d\n", page_start_offset);
     page_end_offset = page_start_offset - 1;
@@ -754,30 +744,30 @@ int chs_need_adjust(const char*s)
 int init_sd(int is_dummy)
 {
     SD_CardInfo mycard;
-    if(!is_dummy)lcd_lprintf(0, 40, "Detecting sd card...");
+    if(!is_dummy)lcd_lprintf(1, 0, 40, "Detecting sd card...");
     if(SD_Init() != SD_OK && SD_Init() != SD_OK)
     {
         //retry once
         lprintf("Fail\n");
-        if(!is_dummy)lcd_lprintf(0, 60, "Failed.");
+        if(!is_dummy)lcd_lprintf(1, 0, 60, "Failed.");
         return -1;
     }
     else{
         lprintf("OK\n");
     }
-    if(!is_dummy)lcd_lprintf(0, 60, "OK.    ");
+    if(!is_dummy)lcd_lprintf(1, 0, 60, "OK.    ");
     if(SD_GetCardInfo(&mycard) != SD_OK)
     {
         lprintf("get card info Fail\n");
-        if(!is_dummy)lcd_lprintf(0, 80, "Get card info Fail            ");
-        if(!is_dummy)lcd_lprintf(0, 100, "                              ");
+        if(!is_dummy)lcd_lprintf(1, 0, 80, "Get card info Fail            ");
+        if(!is_dummy)lcd_lprintf(1, 0, 100, "                              ");
         return -1;
     }
     else{
         lprintf("block size %d\n", mycard.CardBlockSize);
-        if(!is_dummy)lcd_lprintf(0, 80, "block size %d", mycard.CardBlockSize);
+        if(!is_dummy)lcd_lprintf(1, 0, 80, "block size %d", mycard.CardBlockSize);
         lprintf("block capacity %d\n", mycard.CardCapacity);
-        if(!is_dummy)lcd_lprintf(0, 100, "block capacity %d", mycard.CardCapacity);
+        if(!is_dummy)lcd_lprintf(1, 0, 100, "block capacity %d", mycard.CardCapacity);
         return 0;
     }
 }
@@ -820,13 +810,12 @@ int show_book(int flag)
     if(ret == FS_OK){
         u32 show_x=BOOK_SHOW_WIN_X, show_y=BOOK_SHOW_WIN_Y;
         win bookw={BOOK_SHOW_WIN_X, BOOK_SHOW_WIN_Y, BOOK_SHOW_WIN_W, BOOK_SHOW_WIN_H,
-                BOOK_SHOW_WIN_DX, BOOK_SHOW_WIN_DY};
-        if(!is_dummy)lcd_lprintf(BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-20, " book.txt               ");
+                BOOK_SHOW_WIN_DX, BOOK_SHOW_WIN_DY, text_scale};
+        if(!is_dummy)lcd_lprintf(1, BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-20, " book.txt               ");
         if(!is_dummy)Proxy_lcd_clr_window(WHITE, BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5,
                 BOOK_SHOW_WIN_X+BOOK_SHOW_WIN_W+5, BOOK_SHOW_WIN_Y+BOOK_SHOW_WIN_H+5);
         Proxy_draw_sq(BOOK_SHOW_WIN_X-5, BOOK_SHOW_WIN_Y-5,
                 BOOK_SHOW_WIN_X+BOOK_SHOW_WIN_W+5, BOOK_SHOW_WIN_Y+BOOK_SHOW_WIN_H+5, BLACK);
-        set_LCD_Char_scale(text_scale);
         while(1){
 #if 0
             mem_print(book_buf, 0, 512);
@@ -847,7 +836,6 @@ int show_book(int flag)
             }
             next_show_char=book_buf;
         }
-        set_LCD_Char_scale(1);
     }
     else{
         lprintf("sd read fail\n");
@@ -1000,10 +988,10 @@ int update_percentage()
         return -1;
     }
 #ifdef LARGE_SCREEN
-    set_LCD_Char_scale(2);
+    lcd_lprintf(2, pbt->x+5, pbt->y+5, "%d%  ", pct);
+#else
+    lcd_lprintf(1, pbt->x+5, pbt->y+5, "%d%  ", pct);
 #endif
-    lcd_lprintf(pbt->x+5, pbt->y+5, "%d%  ", pct);
-    set_LCD_Char_scale(1);
     return 0;
 }
 
@@ -1207,10 +1195,10 @@ void draw_button(button_t*pbt)
         int ly = MIN(pbt->y, pbt->y+pbt->h);
         Proxy_draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, color);
         if(pbt->ch_text && !is_eng){
-            lcd_lprintf(lx+BUTTON_LINE_SPACE,ly+BUTTON_LINE_SPACE,pbt->ch_text);
+            lcd_lprintf(1, lx+BUTTON_LINE_SPACE,ly+BUTTON_LINE_SPACE,pbt->ch_text);
         }
         else if(pbt->text){
-            lcd_lprintf(lx+BUTTON_LINE_SPACE,ly+BUTTON_LINE_SPACE,pbt->text);
+            lcd_lprintf(1, lx+BUTTON_LINE_SPACE,ly+BUTTON_LINE_SPACE,pbt->text);
         }
         pbt++;
     }
@@ -1242,7 +1230,7 @@ void update_prgb(ui_t* uif, prgb_t*pip)
                 Proxy_lcd_clr_window(prgb_color, pip->x, pip->y, pip->x+pip->w-t, pip->y+pip->h);
             }
             if(pip->des){
-                lcd_lprintf(pip->x, pip->y - PRGB_TEXT_SPACE,
+                lcd_lprintf(1, pip->x, pip->y - PRGB_TEXT_SPACE,
                     "%s:%d/%d  ", pip->des, (*pip->data), (*pip->max));
             }
         }

@@ -413,7 +413,7 @@ void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y)
     }
     lprintf_time("Next auto power on: %b:%b\n", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
     if(show_x>0 && show_y>0){
-        lcd_lprintf(show_x, show_y, "Next auto power on: %b:%b", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
+        lcd_lprintf(1, show_x, show_y, "Next auto power on: %b:%b", hex2bcd(dt_alt.hour), hex2bcd(dt_alt.minute));
     }
 }
 
@@ -484,7 +484,7 @@ void auto_time_correct()
     }
     diff_hours = time_diff_hours(&dt, &dt_lastadj);
     lprintf_time("diff hours %d\n", diff_hours);
-    lcd_lprintf(340, 610, "HoursPass:%d", diff_hours);
+    lcd_lprintf(1, 340, 610, "HoursPass:%d", diff_hours);
 
     if(diff_hours>hours_adj_1min){
         if(ch_t[0]=='+'){

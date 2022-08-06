@@ -841,6 +841,7 @@ const char* Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, 
 {
     u32 bHz=0, xmax=wd->x+wd->w, ymax=wd->y+wd->h;
     u32 x=*xp, y=*yp, dx=wd->dx, dy=wd->dy;
+    LCD_Char_scale=wd->char_scale;
     while(*str!=0)
     {
         if(!bHz)
@@ -917,7 +918,7 @@ end:
     return str;
 }
 
-void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, const char *str, u32 size, u32 mode, u32 win_width, u32 win_height)
+void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, const char *str, u32 size, u32 mode, u32 win_width, u32 win_height, u32 chscale)
 {
     win wd;
     wd.x=x;
@@ -926,6 +927,7 @@ void Show_Str_win(u32 x, u32 y, u32 fc, u32 bc, const char *str, u32 size, u32 m
     wd.h=win_height;
     wd.dx=0;
     wd.dy=0;
+    wd.char_scale=chscale;
     if(os_is_running){
         Proxy_Show_Str_win_raw(&x, &y, fc, bc, str, size, mode, &wd, 0);
     }
@@ -959,9 +961,9 @@ const char* area_show_str(win_pt wdp, u32 *xp, u32 *yp, const char*string, int i
 								mode:0-no overlying,1-overlying
  * @retvalue   :None
 ******************************************************************************/	   		   
-void Show_Str(u16 x, u16 y, u16 fc, u16 bc, const char *str,u8 size,u8 mode)
+void Show_Str(u16 x, u16 y, u16 fc, u16 bc, const char *str,u8 size,u8 mode, u32 cs)
 {					
-    Show_Str_win(x, y, fc, bc, str, size, mode, lcddev.width-x, lcddev.height-y);
+    Show_Str_win(x, y, fc, bc, str, size, mode, lcddev.width-x, lcddev.height-y, cs);
 #if 0
 	u16 x0=x;							  	  
   	u8 bHz=0;     //字符或者中文 
@@ -1038,7 +1040,7 @@ void Gui_StrCenter(u16 x, u16 y, u16 fc, u16 bc, char *str,u8 size,u8 mode)
     (void)x;
 	u16 len=strlen((const char *)str);
 	u16 x1=(lcddev.width-len*8)/2;
-	Show_Str(x1,y,fc,bc,str,size,mode);
+	Show_Str(x1,y,fc,bc,str,size,mode, LCD_Char_scale);
 } 
  
 /*****************************************************************************

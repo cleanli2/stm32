@@ -155,7 +155,7 @@ void task_timer(struct task*vp)
     if(count_1s != last_count_1s){
         char*date = get_rtc_time(&g_cur_date);
         //g_flag_1s = true;
-        lcd_lprintf(0,0,date);
+        lcd_lprintf(1, 0,0,date);
         //
         os_lock(&oslk_evt);
         evt *dtw=RB_W_GET_wait(evt, rb_evt);
@@ -409,7 +409,7 @@ void task_misc(struct task*vp)
     (void)vp;//fix unused variable warning
     if(con_is_recved() && (con_recv() == 'c')){
         LCD_Clear(BLACK);	//fill all screen with some color
-        lcd_lprintf(0,0,"CMD mode");
+        lcd_lprintf(1, 0,0,"CMD mode");
         run_cmd_interface();
         ui_start();
     }

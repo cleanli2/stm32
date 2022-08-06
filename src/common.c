@@ -442,7 +442,7 @@ void beep(uint32_t hz, uint32_t t_ms)
 
 void power_off()
 {
-    Show_Str(20, 630,RED,0xffff,"Power off in 3 seconds",24,0);
+    Show_Str(20, 630,RED,0xffff,"Power off in 3 seconds",24,0,1);
     lprintf_time("power off in 3 secs\n");
     foce_save_log_func();
     beep(600, 100);
@@ -517,7 +517,7 @@ void update_progress_indicator(progress_indicator_t*pip, uint32_t progressed, ui
     lcd_clr_window(pip->b_color, pip->x, pip->y, pip->x+pip->w, pip->y+pip->h);
     t = pip->w*progressed/total;
     if(t>0)lcd_clr_window(pip->f_color, pip->x, pip->y, pip->x+t, pip->y+pip->h);
-    lcd_lprintf(pip->x+pip->w+5, pip->y, "%d/%d", progressed, total);
+    lcd_lprintf(1, pip->x+pip->w+5, pip->y, "%d/%d", progressed, total);
 }
 #define AUTO_POWER_OFF_COUNT 100000
 //static uint32_t single_timer_len = 16;

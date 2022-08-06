@@ -117,13 +117,13 @@ void Test_Color(void)
 {
 	//DrawTestPage("测试1:纯色填充测试");
 	LCD_Fill(0,0,lcddev.width-1,lcddev.height-1,WHITE);
-	Show_Str(20,30,BLUE,YELLOW,"BL Test",16,1);delay_ms(800);
+	Show_Str(20,30,BLUE,YELLOW,"BL Test",16,1,1);delay_ms(800);
 	LCD_Fill(0,0,lcddev.width-1,lcddev.height-1,RED);
-	Show_Str(20,30,BLUE,YELLOW,"RED ",16,1);delay_ms(800);
+	Show_Str(20,30,BLUE,YELLOW,"RED ",16,1,1);delay_ms(800);
 	LCD_Fill(0,0,lcddev.width-1,lcddev.height-1,GREEN);
-	Show_Str(20,30,BLUE,YELLOW,"GREEN ",16,1);delay_ms(800);
+	Show_Str(20,30,BLUE,YELLOW,"GREEN ",16,1,1);delay_ms(800);
 	LCD_Fill(0,0,lcddev.width-1,lcddev.height-1,BLUE);
-	Show_Str(20,30,RED,YELLOW,"BLUE ",16,1);delay_ms(800);
+	Show_Str(20,30,RED,YELLOW,"BLUE ",16,1,1);delay_ms(800);
 }
 
 /*****************************************************************************
@@ -190,12 +190,12 @@ void Test_Circle(void)
 void English_Font_test(void)
 {
 	DrawTestPage("测试6:英文显示测试");
-	Show_Str(10,30,BLUE,YELLOW,"6X12:abcdefghijklmnopqrstuvwxyz0123456789",12,0);
-	Show_Str(10,45,BLUE,YELLOW,"6X12:ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",12,1);
-	Show_Str(10,60,BLUE,YELLOW,"6X12:~!@#$%^&*()_+{}:<>?/|-+.",12,0);
-	Show_Str(10,80,BLUE,YELLOW,"8X16:abcdefghijklmnopqrstuvwxyz0123456789",16,0);
-	Show_Str(10,100,BLUE,YELLOW,"8X16:ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",16,1);
-	Show_Str(10,120,BLUE,YELLOW,"8X16:~!@#$%^&*()_+{}:<>?/|-+.",16,0); 
+	Show_Str(10,30,BLUE,YELLOW,"6X12:abcdefghijklmnopqrstuvwxyz0123456789",12,0,1);
+	Show_Str(10,45,BLUE,YELLOW,"6X12:ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",12,1,1);
+	Show_Str(10,60,BLUE,YELLOW,"6X12:~!@#$%^&*()_+{}:<>?/|-+.",12,0,1);
+	Show_Str(10,80,BLUE,YELLOW,"8X16:abcdefghijklmnopqrstuvwxyz0123456789",16,0,1);
+	Show_Str(10,100,BLUE,YELLOW,"8X16:ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",16,1,1);
+	Show_Str(10,120,BLUE,YELLOW,"8X16:~!@#$%^&*()_+{}:<>?/|-+.",16,0,1); 
 	delay_ms(1200);
 }
 
@@ -239,10 +239,10 @@ void Test_Triangle(void)
 void Chinese_Font_test(void)
 {	
 	DrawTestPage("测试7:中文显示测试");
-	Show_Str(10,30,BLUE,YELLOW,"16X16:全动电子技术有限公司欢迎您",16,0);
-	Show_Str(10,50,BLUE,YELLOW,"16X16:Welcome全动电子",16,0);
-	Show_Str(10,70,BLUE,YELLOW,"24X24:深圳市中文测试",24,1);
-	Show_Str(10,100,BLUE,YELLOW,"32X32:字体测试",32,1);
+	Show_Str(10,30,BLUE,YELLOW,"16X16:全动电子技术有限公司欢迎您",16,0,1);
+	Show_Str(10,50,BLUE,YELLOW,"16X16:Welcome全动电子",16,0,1);
+	Show_Str(10,70,BLUE,YELLOW,"24X24:深圳市中文测试",24,1,1);
+	Show_Str(10,100,BLUE,YELLOW,"32X32:字体测试",32,1,1);
 	delay_ms(1200);
 }
 
@@ -258,11 +258,11 @@ void Pic_test(void)
 	DrawTestPage("测试8:图片显示测试");
 	//LCD_Fill(0,20,lcddev.width,lcddev.height-20,WHITE);
 	Gui_Drawbmp16(30,30,40,40,gImage_qq);
-	Show_Str(30+12,75,BLUE,YELLOW,"QQ",16,1);
+	Show_Str(30+12,75,BLUE,YELLOW,"QQ",16,1,1);
 	Gui_Drawbmp16(90,30,40,40,gImage_qq);
-	Show_Str(90+12,75,BLUE,YELLOW,"QQ",16,1);
+	Show_Str(90+12,75,BLUE,YELLOW,"QQ",16,1,1);
 	Gui_Drawbmp16(150,30,40,40,gImage_qq);
-	Show_Str(150+12,75,BLUE,YELLOW,"QQ",16,1);
+	Show_Str(150+12,75,BLUE,YELLOW,"QQ",16,1,1);
 	delay_ms(1200);
 }
 
@@ -282,7 +282,7 @@ void Rotate_Test(void)
 	{
 	LCD_direction(i);
 	DrawTestPage("测试9:屏幕旋转测试");
-	Show_Str(20,30,BLUE,YELLOW,Direction[i],16,1);
+	Show_Str(20,30,BLUE,YELLOW,Direction[i],16,1,1);
 	Gui_Drawbmp16(30,50,40,40,gImage_qq);
 	delay_ms(1000);
 	Chinese_Font_test();
@@ -387,14 +387,14 @@ void Test_Read(void)
 	LCD_Fill(0,20,lcddev.width,lcddev.height-20,WHITE);
 	lcd_id = LCD_Read_ID();
 	sprintf((char *)buf,"ID:0x%x",lcd_id);
-	Show_Str(50,25,BLUE,YELLOW,buf,16,1);
+	Show_Str(50,25,BLUE,YELLOW,buf,16,1,1);
 	for (i=0; i<sizeof(ColornTab); i++) 
 	{
 		POINT_COLOR=ColornTab[i];
 		LCD_DrawFillRectangle(40-10,55+i*25-10,40+10,55+i*25+10);
 		color = LCD_ReadPoint(40,55+i*25);
 		sprintf((char *)cbuf,"read color:0x%04X",color);
-		Show_Str(40+20,55+i*25-8,POINT_COLOR,YELLOW,cbuf,16,1);
+		Show_Str(40+20,55+i*25-8,POINT_COLOR,YELLOW,cbuf,16,1,1);
 	}
 	delay_ms(1500);
 }
