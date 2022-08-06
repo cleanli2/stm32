@@ -57,6 +57,7 @@
 #include "stdlib.h"
 #include "common.h"	 
 #include "test.h"	 
+#include "display.h"
 
 	   
 #ifdef ALIENTEK_MINI
@@ -790,7 +791,7 @@ LCD_Set_Window(xs,ys,w, h);
 ******************************************************************************/	
 void LCD_Clear(u16 Color)
 {
-	lcd_clr_window(Color, 0,0,lcddev.width-1,lcddev.height-1);
+	Proxy_lcd_clr_window(Color, 0,0,lcddev.width-1,lcddev.height-1);
 }
 
 /*****************************************************************************
