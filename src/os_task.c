@@ -45,25 +45,40 @@ void system_halt()
 os_task_timer* get_os_timer()
 {
     int index = 0;
+    //check if current task already in os timer wait
+    for(index = 0; index < MAX_OS_TIMERS; index++){
+        if(g_task_timer[index].time != TIMER_AVALABLE &&
+                g_task_timer[index].task == cur_os_task){
+            lprintf("system:%d ms\n", g_ms_count);
+            lprintf("[%d] %d %s\n", index, g_task_timer[index].time,
+                    g_task_timer[index].task);
+            lprintf("Fatal:cur task %s already in wait, status %d\n",
+                    cur_os_task->name, cur_os_task->task_status);
+            goto error_handle;
+        }
+    }
+    index=0;
     while(1){
         if(g_task_timer[index].time == TIMER_AVALABLE){
             return &g_task_timer[index];
         }
         if(index == MAX_OS_TIMERS){
             lprintf("Fatal:os timer not available\n");
-            __disable_irq();
-            for(index = 0; index < MAX_OS_TIMERS; index++){
-                lprintf("[%d]:%d", index, g_task_timer[index].time);
-                if(g_task_timer[index].task){
-                    lprintf("%s", g_task_timer[index].task->name);
-                }
-                lprintf("\n");
-            }
-            system_halt();
-            return 0;
+            goto error_handle;
         }
         index++;
     }
+error_handle:
+    __disable_irq();
+    for(index = 0; index < MAX_OS_TIMERS; index++){
+        lprintf("[%d]:%d->", index, g_task_timer[index].time);
+        if(g_task_timer[index].task){
+            lprintf("%s", g_task_timer[index].task->name);
+        }
+        lprintf("\n");
+    }
+    system_halt();
+    return 0;
 }
 
 void os_10ms_delay(u32 timeout)
