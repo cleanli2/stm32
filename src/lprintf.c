@@ -455,8 +455,8 @@ void lcd_lprintf(uint32_t chscale, uint32_t x, uint32_t y, const char *fmt, ...)
     va_start(ap,fmt);
     vslprintf(lcdprintf_buf,fmt,ap);
     va_end(ap);
-    os_unlock(&oslk_lcdpt);
     Show_Str(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lcdprintf_buf,16,0, chscale);
+    os_unlock(&oslk_lcdpt);
 }
 
 void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
