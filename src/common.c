@@ -532,7 +532,7 @@ u32 task_log_stack[STACK_SIZE_LOCAL];
 u32 touch_stack[STACK_SIZE_LOCAL];
 u32 display_stack[STACK_SIZE_LARGE];
 u32 cmd_stack[STACK_SIZE_LARGE];
-u32 ui_stack[STACK_SIZE_LARGE];
+u32 ui_stack[STACK_SIZE_LARGE*3/2];
 u32 music_stack[STACK_SIZE_LARGE];
 void main_init(void)
 {
@@ -667,7 +667,7 @@ void main_init(void)
   os_task_add(os_touch, touch_stack, "touch", STACK_SIZE_LOCAL, 2);
   os_task_add(os_task_display, display_stack, "display", STACK_SIZE_LARGE, 7);
   os_task_add(task_music, music_stack, "music", STACK_SIZE_LARGE, 6);
-  os_task_add(os_ui, ui_stack, "ui", STACK_SIZE_LOCAL, 3);
+  os_task_add(os_ui, ui_stack, "ui", STACK_SIZE_LOCAL*3/2, 3);
   while(1){
   }
 }
