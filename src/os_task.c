@@ -36,6 +36,12 @@ void check_os_timer()
     }
 }
 
+void system_halt()
+{
+    __disable_irq();
+    while(1);
+}
+
 os_task_timer* get_os_timer()
 {
     int index = 0;
@@ -44,7 +50,16 @@ os_task_timer* get_os_timer()
             return &g_task_timer[index];
         }
         if(index == MAX_OS_TIMERS){
-            lprintf("os timer not available\n");
+            lprintf("Fatal:os timer not available\n");
+            __disable_irq();
+            for(index = 0; index < MAX_OS_TIMERS; index++){
+                lprintf("[%d]:%d", index, g_task_timer[index].time);
+                if(g_task_timer[index].task){
+                    lprintf("%s", g_task_timer[index].task->name);
+                }
+                lprintf("\n");
+            }
+            system_halt();
             return 0;
         }
         index++;
