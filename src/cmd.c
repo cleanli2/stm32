@@ -1142,11 +1142,16 @@ void ps(char *p)
 {
     (void)p;
     lprintf("ps start:\n");
+  if(os_is_running){
     while(!con_is_recved()){
         lprintf("===============\n");
         showtasks();
         os_10ms_delay(1000);
     }
+  }
+  else{
+    showtasks();
+  }
     return;
 }
 void m_p(char *p)
