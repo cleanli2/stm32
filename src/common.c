@@ -59,9 +59,9 @@ void os_ui(void*p)
             case EVT_SCRN_TOUCH_UP:
                 ppt = (struct point*)dtw->pkg;
                 if(last_pt.px != 0xffff){
-                    TP_Draw_Big_Point(last_pt.px, last_pt.py, WHITE);
+                    Proxy_TP_Draw_Big_Point(last_pt.px, last_pt.py, WHITE);
                 }
-                TP_Draw_Big_Point(ppt->px, ppt->py, BLACK);
+                Proxy_TP_Draw_Big_Point(ppt->px, ppt->py, BLACK);
                 last_pt = *ppt;
                 cur_task_event_flag |= 1<<EVENT_TOUCH_UP;
                 cached_touch_x = ppt->px;

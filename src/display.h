@@ -72,4 +72,5 @@ void Proxy_LCD_DrawPoint(u16 x,u16 y);
 void Proxy_draw_sq(int x1, int y1, int x2, int y2, int color);
 void Proxy_LCD_DrawLine(u16 x1, u16 y1, u16 x2, u16 y2, u16 color);
 void Proxy_gui_circle(int xc, int yc,u16 c,int r, int fill);
+void Proxy_TP_Draw_Big_Point(u16 xc,u16 yc,u16 color);
 #endif
