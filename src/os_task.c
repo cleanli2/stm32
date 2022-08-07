@@ -139,13 +139,13 @@ void showtasks()
     for(int task_pri_index=0;task_pri_index<TASK_PRIORITIES_NUM;task_pri_index++){
         list_for_each(t, &priority_tasks_head[task_pri_index]){
             tmp_task = list_entry(t, os_task_st, list);
-            lprintf("%s\t%d%\t%d\t%s\t%X\t%X\t%X\n", tmp_task->name,
+            lprintf("%s\t%d%\t%d\t%s\t%X\t%X\t%X\t%X\n", tmp_task->name,
                     tmp_task->cpu_accp_perctg,
                     task_pri_index,
                     os_task_status_str[tmp_task->task_status],
                     tmp_task->stack_p,
                     tmp_task->stack_base,
-                    tmp_task->stack_size);
+                    tmp_task->stack_size, tmp_task->debug_data);
         }
     }
     lprintf("\n");
@@ -308,6 +308,7 @@ void os_lock(oslock_o* lock)
                 lprintf("os lock tasks full\n");
             }
             cur_os_task->task_status=TASK_STATUS_SLEEPING_WAITLOCK;
+            cur_os_task->debug_data=lock->lockno;
             __enable_irq();
             os_switch_trigger();
         }
