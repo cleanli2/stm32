@@ -23,17 +23,28 @@
 #define DISP_RB_LOCK 6
 #define OS_LCD_PRT_BUF_LOCK 7
 
-#define TASK_STATUS_RUNNING 0
-#define TASK_STATUS_SLEEPING 1
 
 #define TIMER_AVALABLE 0
 #define TASK_PRIORITIES_NUM MAX_OS_TASKS
+
+enum task_status{
+    TASK_STATUS_RUNNING,
+    TASK_STATUS_SLEEPING_IDLE,
+    TASK_STATUS_SLEEPING_TIMER,
+    TASK_STATUS_SLEEPING_WAITLOCK,
+    TASK_STATUS_SLEEPING_WAITIO,
+    TASK_STATUS_SLEEPING_RRB,
+    TASK_STATUS_SLEEPING_WRB
+};
+
 
 typedef struct _os_task_st
 {
     struct list_head list;
     struct _os_task_st * next;
     u32*stack_p;
+    u32* stack_base;
+    u32 stack_size;
     const char* name;
     u32 start_run_time_count;
     u32 run_time_counts;
@@ -86,11 +97,11 @@ void os_unlock(oslock_o* lock);
 void system_halt();
 
 void putchars(const char *pt);
-#define sleep_wait(task_to_wait) {\
+#define sleep_wait(task_to_wait, sleep_type) {\
     __disable_irq(); \
     if(task_to_wait!=NULL){putchars("ERROR:sleep wait lost\n");system_halt();} \
     task_to_wait = cur_os_task; \
-    cur_os_task->task_status = TASK_STATUS_SLEEPING; __enable_irq();\
+    cur_os_task->task_status = sleep_type; __enable_irq();\
     os_switch_trigger();}
 
 #define wake_up(task_to_wake) \

@@ -316,7 +316,7 @@ void os_task_log(void*p)
             if(0 == log_size){
                 __disable_irq();
                 log_wait_task = cur_os_task;
-                cur_os_task->task_status = TASK_STATUS_SLEEPING;
+                cur_os_task->task_status = TASK_STATUS_SLEEPING_IDLE;
                 __enable_irq();
                 os_switch_trigger();
             }

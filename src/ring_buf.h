@@ -49,11 +49,11 @@ typedef struct _rb_ctl{
 #define RB_FAIL 0
 
 #define RB_W_GET_wait(TYPE, name) ({ \
-        while(RB_IS_FULL(TYPE, name))sleep_wait(rb_ctl##name.r_notify); \
+        while(RB_IS_FULL(TYPE, name))sleep_wait(rb_ctl##name.r_notify, TASK_STATUS_SLEEPING_WRB); \
         RB_W_GET(TYPE, name);})
 
 #define RB_R_GET_wait(TYPE, name) ({ \
-        while(RB_IS_EMPTY(TYPE, name))sleep_wait(rb_ctl##name.w_notify); \
+        while(RB_IS_EMPTY(TYPE, name))sleep_wait(rb_ctl##name.w_notify, TASK_STATUS_SLEEPING_RRB); \
         RB_R_GET(TYPE, name);})
 
 #endif

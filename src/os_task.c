@@ -2,6 +2,16 @@
 #include "os_task.h"
 #include "task.h"
 
+char* os_task_status_str[]={
+    "taskrunning",
+    "sleep_idle",
+    "sleep_timer",
+    "sleep_lock",
+    "sleep_io",
+    "sleep_rrb",
+    "sleep_wrb",
+};
+
 struct list_head priority_tasks_head[TASK_PRIORITIES_NUM];
 u32 os_is_running = 0;
 os_task_st * cur_os_task;
@@ -90,7 +100,7 @@ void os_10ms_delay(u32 timeout)
     if(g_tt != 0){
         g_tt->time = g_ms_count + timeout;
         g_tt->task = cur_os_task;
-        cur_os_task->task_status = TASK_STATUS_SLEEPING;
+        cur_os_task->task_status = TASK_STATUS_SLEEPING_TIMER;
         __enable_irq();
         os_switch_trigger();
     }
@@ -125,15 +135,17 @@ void showtasks()
     os_task_st * tmp_task;
     struct list_head * t;
 
-    lprintf("name\tcpu\tpri\tstatus\tstack\n");
+    lprintf("name\tcpu\tpri\tstatus\t\tstack\tbase\tsize\n");
     for(int task_pri_index=0;task_pri_index<TASK_PRIORITIES_NUM;task_pri_index++){
         list_for_each(t, &priority_tasks_head[task_pri_index]){
             tmp_task = list_entry(t, os_task_st, list);
-            lprintf("%s\t%d%\t%d\t%s\t%X\n", tmp_task->name,
+            lprintf("%s\t%d%\t%d\t%s\t%X\t%X\t%X\n", tmp_task->name,
                     tmp_task->cpu_accp_perctg,
                     task_pri_index,
-                    tmp_task->task_status==TASK_STATUS_RUNNING?"running":"sleep",
-                    tmp_task->stack_p);
+                    os_task_status_str[tmp_task->task_status],
+                    tmp_task->stack_p,
+                    tmp_task->stack_base,
+                    tmp_task->stack_size);
         }
     }
     lprintf("\n");
@@ -203,6 +215,8 @@ void os_task_init()
     cur_os_task = &os_tasks[0];
     cur_os_task->next = cur_os_task;
     cur_os_task->name = "main";
+    cur_os_task->stack_base=0;
+    cur_os_task->stack_size=0;
     tasks_for_use_index = 1;
     enable_uart1_int();
     os_is_running = 1;
@@ -229,6 +243,8 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size, u32
     stack_base[set_base_offset+7] = (u32)fc;
     stack_base[set_base_offset+8] = (u32)fc;
     stack_base[set_base_offset+9] = 0x21000000;
+    new_tk->stack_base=stack_base;
+    new_tk->stack_size=stack_size;
     new_tk->stack_p=stack_base+set_base_offset;
     new_tk->name = name;
     new_tk->start_run_time_count = 0;
@@ -291,7 +307,7 @@ void os_lock(oslock_o* lock)
             if(OS_LOCK_TASKS_NUM==i){
                 lprintf("os lock tasks full\n");
             }
-            cur_os_task->task_status=TASK_STATUS_SLEEPING;
+            cur_os_task->task_status=TASK_STATUS_SLEEPING_WAITLOCK;
             __enable_irq();
             os_switch_trigger();
         }
@@ -339,7 +355,7 @@ uint16_t os_con_recv()
 {
     while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET){
         usart1_wait_task = cur_os_task;
-        cur_os_task->task_status = TASK_STATUS_SLEEPING;
+        cur_os_task->task_status = TASK_STATUS_SLEEPING_WAITIO;
         USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
         os_switch_trigger();
     }

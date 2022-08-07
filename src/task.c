@@ -310,7 +310,7 @@ void task_music(void*vp)
         while(music_task_play_info.pu == NULL ||
                 music_task_play_info.music_status != MUSIC_PLAYING)
         {
-            sleep_wait(music_wait);
+            sleep_wait(music_wait, TASK_STATUS_SLEEPING_IDLE);
         }
         //lprintf("pu_index %u status %x\r\n", music_task_play_info.pu_index, music_task_play_info.music_status);
         music_note = music_task_play_info.pu[music_task_play_info.pu_index++];
