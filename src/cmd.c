@@ -1428,6 +1428,7 @@ void handle_cmd()
     lprint("Unknow cmd:%s\n%s",cmd_buf, "Please check the cmd list.");
 }
 
+extern unsigned long debug_enable;
 uint time_limit_recv_byte(uint limit, char * c);
 void run_cmd_interface()
 {
@@ -1437,6 +1438,7 @@ void run_cmd_interface()
     mrw_addr = (uint32_t*)0x20000000;
     lprintf("Version %s%s\n", VERSION, GIT_SHA1);
     lprint("\n\nclean_cmd. \n'c' key go cmd...\n");
+  if(0xdeb49eab!=debug_enable){
     while(timeout--){
         if(os_is_running){
             os_10ms_delay(1000);
@@ -1453,6 +1455,7 @@ void run_cmd_interface()
 #endif
         }
     }
+  }
     lmemset(cmd_buf, 0, COM_MAX_LEN);
     memset(&cmd_caches[0][0], 0, CMD_CACHES_SIZE*COM_MAX_LEN);;
     cmd_buf_p = 0;

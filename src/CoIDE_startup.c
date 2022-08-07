@@ -119,6 +119,8 @@ extern void SystemInit(void);    /*!< Setup the microcontroller system(CMSIS) */
 void Default_Reset_Handler(void);   /*!< Default reset handler                */
 static void Default_Handler(void);  /*!< Default exception handler            */
 
+unsigned long debug_enable;
+
 
 /**
   *@brief The minimal vector table for a Cortex M3.  Note that the proper constructs
@@ -221,6 +223,9 @@ void Default_Reset_Handler(void)
   /* Initialize data and bss */
   unsigned long *pulSrc, *pulDest;
 
+  if(debug_enable == 0xdeb49eab){
+      main();
+  }
   /* Copy the data segment initializers from flash to SRAM */
   pulSrc = &_sidata;
 

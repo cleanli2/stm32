@@ -18,6 +18,7 @@
 /** @addtogroup GPIO_IOToggle
   * @{
   */
+extern unsigned long debug_enable;
 
 DECLARE_OS_LOCK(oslk_evt, EVT_LOCK_NO);
 DECLARE_RB_DATA(evt, rb_evt, 3)
@@ -560,6 +561,12 @@ void main_init(void)
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.  */
 
+  lprintf("debug_enable %X@%X vs %X\n", debug_enable, &debug_enable, 0xdeb49eab);
+  if(0xdeb49eab==debug_enable){
+      os_is_running=0;
+      lprintf("Go to debug mode\n");
+      run_cmd_interface();
+  }
   systick_init();
 
   //PB3 PB4 PA15 PA13 PA14 set to gpio instead of SWJ
