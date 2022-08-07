@@ -161,7 +161,7 @@ void os_task_display(void*p)
                 size=rbdpp->data.win_str_para.size;
                 mode=rbdpp->data.win_str_para.mode;
                 wd=&rbdpp->data.win_str_para.df_win;
-                Show_Str_win_raw(xp, yp, fc, bc, str, size, mode, wd, 0);
+                //Show_Str_win_raw(xp, yp, fc, bc, str, size, mode, wd, 0);
                 os_unlock(&oslk_os_lcd_printf_buf);
                 break;
             case DISPFUNC_WIN_CLR:
@@ -176,7 +176,7 @@ void os_task_display(void*p)
                 POINT_COLOR=rbdpp->data.draw_point_para.color;
                 xs=rbdpp->data.draw_point_para.x;
                 ys=rbdpp->data.draw_point_para.y;
-                LCD_DrawPoint(xs,ys);
+                //LCD_DrawPoint(xs,ys);
                 break;
             case DISPFUNC_DRAW_SQ:
                 color=rbdpp->data.draw_sq_para.color;
@@ -184,7 +184,7 @@ void os_task_display(void*p)
                 ys=rbdpp->data.draw_sq_para.y1;
                 xe=rbdpp->data.draw_sq_para.x2;
                 ye=rbdpp->data.draw_sq_para.y2;
-                draw_sq(xs, ys, xe, ye, color);
+                //draw_sq(xs, ys, xe, ye, color);
                 break;
             case DISPFUNC_DRAW_LINE:
                 xs=rbdpp->data.draw_sq_para.x1;
@@ -192,9 +192,10 @@ void os_task_display(void*p)
                 xe=rbdpp->data.draw_sq_para.x2;
                 ye=rbdpp->data.draw_sq_para.y2;
                 color=rbdpp->data.draw_sq_para.color;
-                LCD_DrawLine_Color(xs, ys, xe, ye, color);
+                //LCD_DrawLine_Color(xs, ys, xe, ye, color);
                 break;
             case DISPFUNC_DRAW_CIRCLE:
+#if 0
                 gui_circle(
                         rbdpp->data.draw_circle_para.xc,
                         rbdpp->data.draw_circle_para.yc,
@@ -202,13 +203,16 @@ void os_task_display(void*p)
                         rbdpp->data.draw_circle_para.r,
                         rbdpp->data.draw_circle_para.fill
                         );
+#endif
                 break;
             case DISPFUNC_DRAW_BIG_POINT:
+#if 0
                 TP_Draw_Big_Point(
                         rbdpp->data.draw_circle_para.xc,
                         rbdpp->data.draw_circle_para.yc,
                         rbdpp->data.draw_circle_para.color
                         );
+#endif
                 break;
             default:
                 lprintf("unknow dispfunc type %d\n", rbdpp->type);
