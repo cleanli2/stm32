@@ -563,9 +563,14 @@ void main_init(void)
 
   lprintf("debug_enable %X@%X vs %X\n", debug_enable, &debug_enable, 0xdeb49eab);
   if(0xdeb49eab==debug_enable){
+      debug_enable=0;
       os_is_running=0;
       lprintf("Go to debug mode\n");
       run_cmd_interface();
+  }
+  else{
+      lprintf("prepare debug\n");
+      debug_enable = 0xdeb49eab;
   }
   systick_init();
 

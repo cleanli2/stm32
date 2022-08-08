@@ -1443,7 +1443,7 @@ void run_cmd_interface()
     mrw_addr = (uint32_t*)0x20000000;
     lprintf("Version %s%s\n", VERSION, GIT_SHA1);
     lprint("\n\nclean_cmd. \n'c' key go cmd...\n");
-  if(0xdeb49eab!=debug_enable){
+  if(os_is_running){
     while(timeout--){
         if(os_is_running){
             os_10ms_delay(1000);
