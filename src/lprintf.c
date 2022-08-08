@@ -325,7 +325,7 @@ void os_task_log(void*p)
             }
         }
         wi = write_index;
-        log_to_flash(log_buf, read_index, log_size, LOG_BUF_SIZE);
+        //log_to_flash(log_buf, read_index, log_size, LOG_BUF_SIZE);
         os_lock(&oslk_log);
         read_index =  wi;
         os_unlock(&oslk_log);
