@@ -509,7 +509,6 @@ void date_ui_init(void*vp)
     common_ui_init(vp);
 #ifdef LARGE_SCREEN
     lcd_lprintf(1, 0, 20, "Version:%s%s", VERSION, GIT_SHA1);
-#if 0
     if(ENV_OK == get_env("LastTimeAdj", t)){
         lcd_lprintf(1, 15, 630, "last adj date:%s", t);
     }
@@ -520,7 +519,6 @@ void date_ui_init(void*vp)
         often_used_timer();
     }
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 260, 45);
-#endif
 #endif
     draw_clock_face(CLOCK_CX, CLOCK_CY);
     ui_buf[LAST_SEC_INDX]=60;
@@ -578,7 +576,6 @@ void date_ui_process_event(void*vp)
 
 int is_english()
 {
-    return 0;
     char t[ENV_MAX_VALUE_LEN];
     if(ENV_OK == get_env("language", t)){
         lprintf("getenv laguage %s\n", t);
@@ -596,7 +593,6 @@ int is_english()
 
 void language_set()
 {
-#if 0
     if(is_english()){
         lprintf("iseng=1, set to C\n");
         set_env("language", "C");
@@ -605,7 +601,6 @@ void language_set()
         lprintf("iseng=0, set to E\n");
         set_env("language", "E");
     }
-#endif
     draw_button(&date_button[0]);
 }
 
@@ -631,7 +626,7 @@ void slow_1()
     if(RTC_OK==adjust_1min(0)){
         date_button[2].disable = 1;
         draw_button(&date_button[2]);
-        //set_env("LastTimeAdj", get_rtc_time(NULL));
+        set_env("LastTimeAdj", get_rtc_time(NULL));
     }
 }
 
@@ -640,7 +635,7 @@ void fast_1()
     if(RTC_OK==adjust_1min(1)){
         date_button[1].disable = 1;
         draw_button(&date_button[1]);
-        //set_env("LastTimeAdj", get_rtc_time(NULL));
+        set_env("LastTimeAdj", get_rtc_time(NULL));
     }
 }
 
@@ -649,7 +644,7 @@ void clr_s()
     clear_second();
     date_button[3].disable = 1;
     draw_button(&date_button[3]);
-   // set_env("LastTimeAdj", get_rtc_time(NULL));
+    set_env("LastTimeAdj", get_rtc_time(NULL));
 }
 
 button_t date_button[]={
@@ -710,20 +705,16 @@ void sd_ui_init(void*vp)
     lprintf("sd ui\n");
     common_ui_init(vp);
     lcd_lprintf(1, 0, 20, "Version:%s%s", VERSION, GIT_SHA1);
-#if 0
     page_start_offset = get_env_uint("book_posi", 0);
     lprintf("getenv page_start_offset %d\n", page_start_offset);
-#endif
     page_end_offset = page_start_offset - 1;
     sd_detect();
 }
 void sd_ui_uninit(void*vp)
 {
     common_ui_uninit(vp);
-#if 0
     lprintf("setenv page_start_offset %d\n", page_start_offset);
     set_env_uint("book_posi", page_start_offset);
-#endif
 }
 void sd_ui_process_event(void*vp)
 {
@@ -1196,18 +1187,12 @@ void draw_button(button_t*pbt)
         }
         int lx = MIN(pbt->x, pbt->x+pbt->w);
         int ly = MIN(pbt->y, pbt->y+pbt->h);
-        lprintf("line %d\n", __LINE__);
         Proxy_draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, color);
-        lprintf("line %d\n", __LINE__);
         if(pbt->ch_text && !is_eng){
-        lprintf("line %d\n", __LINE__);
             lcd_lprintf(1, lx+BUTTON_LINE_SPACE,ly+BUTTON_LINE_SPACE,pbt->ch_text);
-        lprintf("line %d\n", __LINE__);
         }
         else if(pbt->text){
-        lprintf("line %d\n", __LINE__);
             lcd_lprintf(1, lx+BUTTON_LINE_SPACE,ly+BUTTON_LINE_SPACE,pbt->text);
-        lprintf("line %d\n", __LINE__);
         }
         pbt++;
     }
@@ -1296,19 +1281,14 @@ void common_ui_init(void*vp)
         cur_task_timer_started = true;
     }
     LCD_Clear(WHITE);	//fill all screen with some color
-    lprintf("drawb 1\n");
     draw_button(p_bt);
-    lprintf("drawb 2\n");
     draw_button(common_button);
-    lprintf("drawp--\n");
     draw_prgb(uif->prgb_info);
     //power bar
     power_prgb[0].max = &power_max_display;
     power_prgb[0].data = &power_display;
     power_prgb[0].last_data = 0;
-    lprintf("drawp--p\n");
     draw_prgb(&power_prgb[0]);
-    lprintf("dsound\n");
     show_sound_status();
 
 #if 0

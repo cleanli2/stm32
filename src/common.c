@@ -734,33 +734,19 @@ void os_task3(void*p)
         run_cmd_interface();
     }
 }
-u32 teset_td = 100;
 void os_task2(void*p)
 {
     (void)p;
+    u32 td = 500;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
         //putchars("--0 0\n");
         GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-        os_10ms_delay(teset_td);
+        os_10ms_delay(td);
         //putchars("--0 1\n");
         GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-        os_10ms_delay(teset_td);
+        os_10ms_delay(td);
         //lprintf("other task %d\n", *rtet);
-#if 1
-            {
-                struct point pt_cache;
-                os_lock(&oslk_evt);
-                evt *dtw=RB_W_GET_wait(evt, rb_evt);
-                //do work
-                dtw->type = EVT_SCRN_TOUCH_UP;
-                pt_cache.px=220;
-                pt_cache.py=310;
-                memcpy(dtw->pkg, &pt_cache, sizeof(struct point));
-                RB_W_SET(evt, rb_evt);
-                os_unlock(&oslk_evt);
-            }
-#endif
         task_timer(NULL);
     }
 }
