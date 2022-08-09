@@ -78,21 +78,17 @@ void SPI_FLASH_Write_SR(u8 sr)
 //将WEL置位   
 void SPI_FLASH_Write_Enable(void)   
 {
-    os_lock(&oslk_spibus);
 	SPI_FLASH_CS=0;                            //使能器件   
     SPI1_ReadWriteByte(W25X_WriteEnable);      //发送写使能  
 	SPI_FLASH_CS=1;                            //取消片选     	      
-    os_unlock(&oslk_spibus);
 } 
 //SPI_FLASH写禁止	
 //将WEL清零  
 void SPI_FLASH_Write_Disable(void)   
 {  
-    os_lock(&oslk_spibus);
 	SPI_FLASH_CS=0;                            //使能器件   
     SPI1_ReadWriteByte(W25X_WriteDisable);     //发送写禁止指令    
 	SPI_FLASH_CS=1;                            //取消片选     	      
-    os_unlock(&oslk_spibus);
 } 			    
 //读取芯片ID W25X16的ID:0XEF14
 u16 SPI_Flash_ReadID(void)
@@ -156,8 +152,8 @@ void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u16 NumByteToRead)
 void SPI_Flash_Write_Page(const u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 {
  	u16 i;  
-    SPI_FLASH_Write_Enable();                  //SET WEL 
     os_lock(&oslk_spibus);
+    SPI_FLASH_Write_Enable();                  //SET WEL 
 	SPI_FLASH_CS=0;                            //使能器件   
     SPI1_ReadWriteByte(W25X_PageProgram);      //发送写页命令   
     SPI1_ReadWriteByte((u8)((WriteAddr)>>16)); //发送24bit地址    
@@ -165,8 +161,8 @@ void SPI_Flash_Write_Page(const u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
     SPI1_ReadWriteByte((u8)WriteAddr);   
     for(i=0;i<NumByteToWrite;i++)SPI1_ReadWriteByte(pBuffer[i]);//循环写数  
 	SPI_FLASH_CS=1;                            //取消片选 
-    os_unlock(&oslk_spibus);
 	SPI_Flash_Wait_Busy();					   //等待写入结束
+    os_unlock(&oslk_spibus);
 } 
 //无检验写SPI FLASH 
 //必须确保所写的地址范围内的数据全部为0XFF,否则在非0XFF处写入的数据将失败!
@@ -325,18 +321,18 @@ void SPI_Flash_Write(const u8* pBuffer,u32 WriteAddr,u32 NumByteToWrite)
 void SPI_Flash_Erase_Chip(void)   
 {                                             
     lprintf("erase all chip\nwrite enable\n");
+    os_lock(&oslk_spibus);
     SPI_FLASH_Write_Enable();                  //SET WEL 
     lprintf("waite busy...\n");
     SPI_Flash_Wait_Busy();   
     lprintf("done.\n");
     lprintf("sending erase cmd...\n");
-    os_lock(&oslk_spibus);
   	SPI_FLASH_CS=0;                            //使能器件   
     SPI1_ReadWriteByte(W25X_ChipErase);        //发送片擦除命令  
 	SPI_FLASH_CS=1;                            //取消片选     	      
-    os_unlock(&oslk_spibus);
     lprintf("done.\nWaiting...\n");
 	SPI_Flash_Wait_Busy();   				   //等待芯片擦除结束
+    os_unlock(&oslk_spibus);
     lprintf("done.\n");
 }   
 //擦除一个扇区
@@ -346,17 +342,17 @@ void SPI_Flash_Erase_Sector(u32 Dst_Addr)
 {   
 	lprintf("fe:%x\r\n",Dst_Addr);	
 	Dst_Addr*=4096;
+    os_lock(&oslk_spibus);
     SPI_FLASH_Write_Enable();                  //SET WEL 	 
     SPI_Flash_Wait_Busy();   
-    os_lock(&oslk_spibus);
   	SPI_FLASH_CS=0;                            //使能器件   
     SPI1_ReadWriteByte(W25X_SectorErase);      //发送扇区擦除指令 
     SPI1_ReadWriteByte((u8)((Dst_Addr)>>16));  //发送24bit地址    
     SPI1_ReadWriteByte((u8)((Dst_Addr)>>8));   
     SPI1_ReadWriteByte((u8)Dst_Addr);  
 	SPI_FLASH_CS=1;                            //取消片选     	      
-    os_unlock(&oslk_spibus);
     SPI_Flash_Wait_Busy();   				   //等待擦除完成
+    os_unlock(&oslk_spibus);
 }  
 //等待空闲
 void SPI_Flash_Wait_Busy(void)   
