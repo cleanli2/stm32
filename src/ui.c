@@ -1441,6 +1441,7 @@ void common_process_event(void*vp)
             power_display = BATT_MAX - v_bat;
             if(v_bat<BATT_LOW_ALERT){
                 set_prgb_color(RED);
+                play_music_note(1, 100);
             }
             update_prgb(uif, &power_prgb[0]);
         }
