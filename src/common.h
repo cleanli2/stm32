@@ -42,7 +42,7 @@ int get_sound_sta();
 uint add_with_limit(uint a, uint b, uint limit);
 void Dac1_Init(void);
 void Dac1_Set_Vol(u32 vol);
-void Dac1_wave();
+void Dac1_wave(u32);
 void Dac1_DeInit(void);
 
 #define LED_R_C 0x1

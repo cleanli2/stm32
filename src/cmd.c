@@ -1168,7 +1168,7 @@ void dac(char *p)
     else if(!strcmp(para, "wave")){
         lprintf("dac wave\n");
         while(!con_is_recved()){
-            Dac1_wave();
+            Dac1_wave(1);
         }
     }
     else{

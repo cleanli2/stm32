@@ -849,15 +849,49 @@ void Dac1_Init(void)
 
 void Dac1_Set_Vol(u32 vol)
 {
-    lprintf("set vol %X\n", vol&0xfff);
+    //lprintf("set vol %X\n", vol&0xfff);
 	DAC_SetChannel1Data(DAC_Align_12b_R,vol&0xFFF);
 }
 
-void Dac1_wave()
+u16 sin_value[10]={
+    0,
+    711,
+    1401,
+    2048,
+    2632,//40
+    3137,
+    3546,
+    3849,//70
+    4033,
+    4095
+};
+void Dac1_wave(u32 type)
 {
     u32 va=0;
-    for(va=0;va<0x1000;va++){
-        Dac1_Set_Vol(va);
+    switch(type){
+        case 0:
+            for(va=0;va<0x1000;va+=40){
+                Dac1_Set_Vol(va);
+            }
+            break;
+        case 1:
+            for(va=0;va<10;va++){
+                Dac1_Set_Vol(sin_value[va]/2+2048);
+            }
+            while(va){
+                Dac1_Set_Vol(sin_value[va-1]/2+2048);
+                va--;
+            }
+            for(va=0;va<10;va++){
+                Dac1_Set_Vol(2048-sin_value[va]/2);
+            }
+            while(va){
+                Dac1_Set_Vol(2048-sin_value[va-1]/2);
+                va--;
+            }
+            break;
+        default:
+            break;
     }
 }
 
