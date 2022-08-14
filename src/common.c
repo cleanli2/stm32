@@ -867,7 +867,7 @@ u16 sin_value[10]={
 };
 void Dac1_wave(u32 type)
 {
-    u32 va=0;
+    u32 va=0,i;
     switch(type){
         case 0:
             for(va=0;va<0x1000;va+=40){
@@ -875,19 +875,20 @@ void Dac1_wave(u32 type)
             }
             break;
         case 1:
-            for(va=0;va<10;va++){
-                Dac1_Set_Vol(sin_value[va]/2+2048);
-            }
-            while(va){
-                Dac1_Set_Vol(sin_value[va-1]/2+2048);
-                va--;
-            }
-            for(va=0;va<10;va++){
-                Dac1_Set_Vol(2048-sin_value[va]/2);
-            }
-            while(va){
-                Dac1_Set_Vol(2048-sin_value[va-1]/2);
-                va--;
+            for(i=0;i<36*9;i++){
+                va=i%36;
+                if(va<10){
+                    Dac1_Set_Vol(sin_value[va]/2+2048);
+                }
+                else if(va<18){
+                    Dac1_Set_Vol(sin_value[18-va]/2+2048);
+                }
+                else if(va<27){
+                    Dac1_Set_Vol(2048-sin_value[va-18]/2);
+                }
+                else{
+                    Dac1_Set_Vol(2048-sin_value[36-va]/2);
+                }
             }
             break;
         default:
