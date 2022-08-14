@@ -1141,6 +1141,40 @@ void gpiotest(char *p)
     return;
 
 }
+
+void dac(char *p)
+{
+    uint32_t tmp, data;
+    char*pbak, *para;
+    tmp = get_howmany_para(p);
+    lprintf("para number=%d\n", tmp);
+    if(tmp<1){
+        lprintf("err\ndac on/off/data");
+        return;
+    }
+    pbak=p;
+    if(tmp>=1){
+        p = str_to_str(p, &para);
+        lprintf("para:%s\n", para);
+    }
+    if(!strcmp(para, "on")){
+        lprintf("dac on\n");
+        Dac1_Init();
+    }
+    else if(!strcmp(para, "off")){
+        lprintf("dac on\n");
+        Dac1_DeInit();
+    }
+    else{
+        lprintf("set dac data %X\n", data);
+        p = str_to_hex(pbak, &data);
+        Dac1_Set_Vol(data);
+    }
+    con_send('\n');
+
+    return;
+}
+
 void rtc_cmd(char *p)
 {
     uint8_t d[6], tmp;
@@ -1182,6 +1216,7 @@ static const struct command cmd_list[]=
     //{"dwb",dispwb},
     {"adc",adc},
     {"bz",buzztest},
+    {"dac",dac},
     {"exit",cmd_exit},
     {"envset",envset},
     {"envget",envget},

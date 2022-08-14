@@ -817,3 +817,46 @@ uint add_with_limit(uint a, uint b, uint limit)
     }
     return ret;
 }
+
+/*DAC code*/
+void Dac1_Init(void)
+{
+
+	GPIO_InitTypeDef GPIO_InitStructure;
+	DAC_InitTypeDef DAC_InitType;
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE );	  //enable port A clk
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE );	  //enable DAC clk
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;				 //config port
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN; 		 //analog input
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_SetBits(GPIOA,GPIO_Pin_4)	;//PA.4 output high
+
+	DAC_InitType.DAC_Trigger=DAC_Trigger_None;	//no trigger
+	DAC_InitType.DAC_WaveGeneration=DAC_WaveGeneration_None;//no wave
+	DAC_InitType.DAC_LFSRUnmask_TriangleAmplitude=DAC_LFSRUnmask_Bit0;//mask ampitude
+	DAC_InitType.DAC_OutputBuffer=DAC_OutputBuffer_Disable ;	//DAC1 output buf close, BOFF1=1
+	DAC_Init(DAC_Channel_1,&DAC_InitType);	 //init DAC1
+
+	DAC_Cmd(DAC_Channel_1, ENABLE);  //enable DAC1
+
+	DAC_SetChannel1Data(DAC_Align_12b_R, 0);  //12bit right align
+
+    lprintf("dac1 init done\n");
+}
+
+void Dac1_Set_Vol(u32 vol)
+{
+    lprintf("set vol %X\n", vol&0xfff);
+	DAC_SetChannel1Data(DAC_Align_12b_R,vol&0xFFF);
+}
+
+void Dac1_DeInit(void)
+{
+	DAC_Cmd(DAC_Channel_1, DISABLE);
+    DAC_DeInit();
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, DISABLE);
+    lprintf("dac1 deinit done\n");
+}

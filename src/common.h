@@ -40,6 +40,9 @@ void main_init(void);
 void enable_sound(int en);
 int get_sound_sta();
 uint add_with_limit(uint a, uint b, uint limit);
+void Dac1_Init(void);
+void Dac1_Set_Vol(u32 vol);
+void Dac1_DeInit(void);
 
 #define LED_R_C 0x1
 #define LED_Y_C 0x2
