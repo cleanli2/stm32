@@ -880,9 +880,9 @@ u16 get_sin_value(u32 x, u32 n)
     return ret;
 }
 
-void Dac1_wave(u32 type)
+void Dac1_wave(u32 type, u32 para2)
 {
-    u32 va=0,i, n=9;
+    u32 va=0,i, n=para2;
     //lprintf("dac1 wave type %d\n", type);
     switch(type){
         case 0:

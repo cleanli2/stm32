@@ -1144,7 +1144,7 @@ void gpiotest(char *p)
 
 void dac(char *p)
 {
-    uint32_t tmp, data;
+    uint32_t tmp, data, type=1, para2=9;
     char*pbak, *para;
     tmp = get_howmany_para(p);
     lprintf("para number=%d\n", tmp);
@@ -1167,8 +1167,15 @@ void dac(char *p)
     }
     else if(!strcmp(para, "wave")){
         lprintf("dac wave\n");
+        if(tmp>=2){
+            p = str_to_hex(p, &type);
+            if(type>1)type=1;
+        }
+        if(tmp>=3){
+            p = str_to_hex(p, &para2);
+        }
         while(!con_is_recved()){
-            Dac1_wave(1);
+            Dac1_wave(type, para2);
         }
     }
     else{
