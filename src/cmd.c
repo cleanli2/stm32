@@ -1165,6 +1165,12 @@ void dac(char *p)
         lprintf("dac on\n");
         Dac1_DeInit();
     }
+    else if(!strcmp(para, "wave")){
+        lprintf("dac wave\n");
+        while(!con_is_recved()){
+            Dac1_wave();
+        }
+    }
     else{
         lprintf("set dac data %X\n", data);
         p = str_to_hex(pbak, &data);

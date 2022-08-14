@@ -853,6 +853,14 @@ void Dac1_Set_Vol(u32 vol)
 	DAC_SetChannel1Data(DAC_Align_12b_R,vol&0xFFF);
 }
 
+void Dac1_wave()
+{
+    u32 va=0;
+    for(va=0;va<0x1000;va++){
+        Dac1_Set_Vol(va);
+    }
+}
+
 void Dac1_DeInit(void)
 {
 	DAC_Cmd(DAC_Channel_1, DISABLE);
