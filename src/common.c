@@ -865,9 +865,25 @@ u16 sin_value[10]={
     4033,
     4095
 };
+#define SIN_SIZE (sizeof(sin_value)/sizeof(sin_value[0]))
+
+u16 get_sin_value(u32 x, u32 n)
+{
+    u16 ret, total, index;
+    u32 dx;
+    u32 sin_size=sizeof(sin_value)/sizeof(sin_value[0]);
+    total = n*(sin_size-1);
+    while(x>total)x-=total;
+    index = x / n;
+    dx = x - index*n;
+    ret = sin_value[index] + dx * (sin_value[index+1] - sin_value[index]) / n;
+    return ret;
+}
+
 void Dac1_wave(u32 type)
 {
-    u32 va=0,i;
+    u32 va=0,i, n=9;
+    //lprintf("dac1 wave type %d\n", type);
     switch(type){
         case 0:
             for(va=0;va<0x1000;va+=40){
@@ -875,19 +891,19 @@ void Dac1_wave(u32 type)
             }
             break;
         case 1:
-            for(i=0;i<36*9;i++){
-                va=i%36;
-                if(va<10){
-                    Dac1_Set_Vol(sin_value[va]/2+2048);
+            for(i=0;i<4*n*(SIN_SIZE-1);i++){
+                va=i;
+                if(va<=(SIN_SIZE-1)*n){
+                    Dac1_Set_Vol(get_sin_value(va, n)/2+2048);
                 }
-                else if(va<18){
-                    Dac1_Set_Vol(sin_value[18-va]/2+2048);
+                else if(va<(SIN_SIZE-1)*n*2){
+                    Dac1_Set_Vol(get_sin_value(2*(SIN_SIZE-1)*n-va, n)/2+2048);
                 }
-                else if(va<27){
-                    Dac1_Set_Vol(2048-sin_value[va-18]/2);
+                else if(va<(SIN_SIZE-1)*n*3){
+                    Dac1_Set_Vol(2048-get_sin_value(va-2*(SIN_SIZE-1)*n, n)/2);
                 }
                 else{
-                    Dac1_Set_Vol(2048-sin_value[36-va]/2);
+                    Dac1_Set_Vol(2048-get_sin_value(4*(SIN_SIZE-1)*n-va, n)/2);
                 }
             }
             break;
