@@ -55,24 +55,20 @@ void SPI_Flash_Init(void)
 u8 SPI_Flash_ReadSR(void)   
 {  
 	u8 byte=0;   
-    os_lock(&oslk_spibus);
 	SPI_FLASH_CS=0;                            //使能器件   
 	SPI1_ReadWriteByte(W25X_ReadStatusReg);    //发送读取状态寄存器命令    
 	byte=SPI1_ReadWriteByte(0Xff);             //读取一个字节  
 	SPI_FLASH_CS=1;                            //取消片选     
-    os_unlock(&oslk_spibus);
 	return byte;   
 } 
 //写SPI_FLASH状态寄存器
 //只有SPR,TB,BP2,BP1,BP0(bit 7,5,4,3,2)可以写!!!
 void SPI_FLASH_Write_SR(u8 sr)   
 {   
-    os_lock(&oslk_spibus);
 	SPI_FLASH_CS=0;                            //使能器件   
 	SPI1_ReadWriteByte(W25X_WriteStatusReg);   //发送写取状态寄存器命令    
 	SPI1_ReadWriteByte(sr);               //写入一个字节  
 	SPI_FLASH_CS=1;                            //取消片选     	      
-    os_unlock(&oslk_spibus);
 }   
 //SPI_FLASH写使能	
 //将WEL置位   
