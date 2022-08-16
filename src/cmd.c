@@ -1165,6 +1165,14 @@ void m_p(char *p)
     play_music(music_lst[i], 0);
     return;
 }
+extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
+void bflog(char *p)
+{
+    (void)p;
+    debug_log_buf[DEBUG_LOG_BUF_SIZE]=0;
+    lprintf("%s\n", debug_log_buf);
+    return;
+}
 void rtc_cmd(char *p)
 {
     uint8_t d[6], tmp;
@@ -1206,6 +1214,7 @@ static const struct command cmd_list[]=
     //{"dwb",dispwb},
     {"adc",adc},
     {"bz",buzztest},
+    {"bflog",bflog},
     {"exit",cmd_exit},
     {"envset",envset},
     {"envget",envget},

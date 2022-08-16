@@ -22,6 +22,7 @@
 #define LCD_PRINT_LOCK_NO 5
 #define DISP_RB_LOCK 6
 #define OS_LCD_PRT_BUF_LOCK 7
+#define LPRINTF_TIMEBUF_LOCK 8
 
 
 #define TIMER_AVALABLE 0

@@ -9,9 +9,12 @@
 char log_buf[LOG_BUF_SIZE];
 static u32 write_index = 0;
 static u32 read_index = 0;
+char buf_printf_buf[64];
+char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 char lprintf_buf[256];
 char lcdprintf_buf[256];
 static int print_with_time = 0;
+DECLARE_OS_LOCK(oslk_timebuf, LPRINTF_TIMEBUF_LOCK);
 DECLARE_OS_LOCK(oslk_lprintf, LPRINTF_LOCK);
 DECLARE_OS_LOCK(oslk_mempt, MEM_PRINT_LOCK);
 DECLARE_OS_LOCK(oslk_log, LOG_LOCK_NO);
@@ -396,6 +399,42 @@ end:
         log_wait_task->task_status = TASK_STATUS_RUNNING;
         log_wait_task = NULL;
     }
+}
+
+void buf_log(const char* log)
+{
+    static u32 w_p = 0;
+    u32 len, w_len, buf_left;
+    len = strlen(log);
+    while(len){
+        buf_left=DEBUG_LOG_BUF_SIZE-w_p;
+        if(buf_left>=len){
+            w_len=len;
+        }
+        else{
+            w_len=buf_left;
+        }
+        memcpy(&debug_log_buf[w_p], log, w_len);
+        w_p= add_with_limit(w_p, w_len, DEBUG_LOG_BUF_SIZE);
+        len-=w_len;
+    }
+}
+
+void lprintf_time_buf(const char *fmt, ...)
+{
+    va_list ap;
+    char*sp=buf_printf_buf;
+    u32 us = get_system_us();
+
+    os_lock(&oslk_timebuf);
+    va_start(ap,fmt);
+
+    sp += sprint_uint(sp, us);
+    *sp++ = ':';
+    vslprintf(sp,fmt,ap);
+    buf_log(buf_printf_buf);
+    va_end(ap);
+    os_unlock(&oslk_timebuf);
 }
 
 void lprintf_time(const char *fmt, ...)
