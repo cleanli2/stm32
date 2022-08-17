@@ -13,7 +13,6 @@ char buf_printf_buf[64];
 char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 char lprintf_buf[256];
 char lcdprintf_buf[256];
-static int print_with_time = 0;
 DECLARE_OS_LOCK(oslk_timebuf, LPRINTF_TIMEBUF_LOCK);
 DECLARE_OS_LOCK(oslk_lprintf, LPRINTF_LOCK);
 DECLARE_OS_LOCK(oslk_mempt, MEM_PRINT_LOCK);
@@ -137,13 +136,14 @@ int sprint_uint(char*s, uint32_t num)
     return strlen(nc);
 }
 
-void sprint_uint_0n(char*s, uint32_t num, uint32_t num_len)
+int sprint_uint_0n(char*s, uint32_t num, uint32_t num_len)
 {
     char nc[22];
     uint32_t raw_len;
     memset(nc,'0', 22);
     raw_len = sprint_uint(nc+11, num);
     strcpy(s, nc+11+raw_len-num_len);
+    return strlen(nc+11+raw_len-num_len);
 }
 
 void print_hex(uint32_t num)
@@ -206,7 +206,7 @@ char*get_sys_hour()
     return sys_hour;
 }
 
-char*vslprintf(char*s_buf, const char *fmt, va_list args)
+char*vslprintf(int print_with_time, char*s_buf, const char *fmt, va_list args)
 {
     const char *s;
     uint32_t d;
@@ -429,9 +429,11 @@ void lprintf_time_buf(const char *fmt, ...)
     os_lock(&oslk_timebuf);
     va_start(ap,fmt);
 
-    sp += sprint_uint(sp, us);
+    sp += sprint_uint(sp, us/1000000);
+    *sp++ = '.';
+    sp += sprint_uint_0n(sp, us%1000000, 6);
     *sp++ = ':';
-    vslprintf(sp,fmt,ap);
+    vslprintf(0, sp,fmt,ap);
     buf_log(buf_printf_buf);
     va_end(ap);
     os_unlock(&oslk_timebuf);
@@ -443,9 +445,7 @@ void lprintf_time(const char *fmt, ...)
 
     os_lock(&oslk_lprintf);
     va_start(ap,fmt);
-    print_with_time = 1;
-    vslprintf(lprintf_buf,fmt,ap);
-    print_with_time = 0;
+    vslprintf(1, lprintf_buf,fmt,ap);
     putchars(lprintf_buf);
     log_to_buf(lprintf_buf);
     va_end(ap);
@@ -459,7 +459,7 @@ void lprintf(const char *fmt, ...)
 
     os_lock(&oslk_lprintf);
     va_start(ap,fmt);
-    vslprintf(lprintf_buf,fmt,ap);
+    vslprintf(0, lprintf_buf,fmt,ap);
     putchars(lprintf_buf);
     va_end(ap);
     os_unlock(&oslk_lprintf);
@@ -472,7 +472,7 @@ void slprintf(char*buf, const char *fmt, ...)
 {
     va_list ap;
     va_start(ap,fmt);
-    vslprintf(buf,fmt,ap);
+    vslprintf(0, buf,fmt,ap);
     va_end(ap);
 }
 uint16_t LCD_PRINT_BACK_COLOR = WHITE;
@@ -483,7 +483,7 @@ void lcd_lprintf_win(uint32_t chscale, uint32_t x, uint32_t y, uint32_t w, uint3
     os_lock(&oslk_lcdpt);
     memset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
     va_start(ap,fmt);
-    vslprintf(lcdprintf_buf,fmt,ap);
+    vslprintf(0, lcdprintf_buf,fmt,ap);
     va_end(ap);
     os_unlock(&oslk_lcdpt);
     Show_Str_win(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lcdprintf_buf,16,0, w, h, chscale);
@@ -494,7 +494,7 @@ void lcd_lprintf(uint32_t chscale, uint32_t x, uint32_t y, const char *fmt, ...)
     os_lock(&oslk_lcdpt);
     memset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
     va_start(ap,fmt);
-    vslprintf(lcdprintf_buf,fmt,ap);
+    vslprintf(0, lcdprintf_buf,fmt,ap);
     va_end(ap);
     Show_Str(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lcdprintf_buf,16,0, chscale);
     os_unlock(&oslk_lcdpt);
