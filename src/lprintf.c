@@ -417,6 +417,7 @@ void buf_log(const char* log)
         memcpy(&debug_log_buf[w_p], log, w_len);
         w_p= add_with_limit(w_p, w_len, DEBUG_LOG_BUF_SIZE);
         len-=w_len;
+        log+=w_len;
     }
 }
 
