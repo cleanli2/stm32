@@ -1165,6 +1165,33 @@ void m_p(char *p)
     play_music(music_lst[i], 0);
     return;
 }
+struct point stress_pts[] = {
+    {225, 305}
+};
+void stress(char *p)
+{
+    (void)p;
+    u32 para_n, test_time, intv;
+    para_n = get_howmany_para(p);
+    if(para_n<=1){
+        lprintf("please input test time minutes & touch interval\nstress min interval\n");
+        return;
+    }
+    p = str_to_hex(p, &test_time);
+    p = str_to_hex(p, &intv);
+    gftp->pts = NULL;//disable currentt test
+    gftp->n_pt = 1;
+    gftp->cur_n_pt = 0;
+    gftp->interval = intv;
+    gftp->cur_interval = 0;
+    gftp->last= test_time;
+    gftp->start= g_ms_count;
+    lprintf("##########stress test start %s\n", get_rtc_time(0));
+    lprintf("##########stress touch interval 20*%d ms\n", gftp->interval);
+    lprintf("##########stress test time long %d mins\n", gftp->last);
+    gftp->pts = stress_pts;
+    return;
+}
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 void bflog(char *p)
 {
@@ -1249,6 +1276,7 @@ static const struct command cmd_list[]=
     {"rtcf",rtcf},
     {"rtcs",rtcs},
     {"sd",sd},
+    {"stress",stress},
 #ifndef WRITE_W25F
     //{"sdcmds",sd_cmds},
     {"test",test},

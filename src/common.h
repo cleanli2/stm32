@@ -25,6 +25,17 @@
 #include "music.h"
 #include "os_task.h"
 
+struct emulate_touch {
+    u32 n_pt;
+    u32 cur_n_pt;
+    u32 cur_interval;
+    u32 interval;
+    u32 start;
+    u32 last;
+    struct point* pts;
+};
+
+extern struct emulate_touch *gftp;
 extern uint32_t logv;
 
 extern uint32_t g_ms_count;

@@ -77,6 +77,8 @@ void os_ui(void*p)
         task_ui(NULL);
     }
 }
+struct emulate_touch g_fake_touch = {0};
+struct emulate_touch *gftp=&g_fake_touch;
 void os_touch(void*p)
 {
     struct point pt;
@@ -84,6 +86,26 @@ void os_touch(void*p)
     int touch_pressed = 0;
     (void)p;
     while(1){
+        if(gftp->n_pt && gftp->pts){
+            u32 test_time;
+            gftp->cur_interval++;
+            if(gftp->cur_interval >= gftp->interval){
+                gftp->cur_interval = 0;
+                if(gftp->cur_n_pt >= gftp->n_pt){
+                    gftp->cur_n_pt = 0;
+                }
+                pt_cache = gftp->pts[gftp->cur_n_pt++];
+                touch_pressed = 1;
+                test_time = g_ms_count-gftp->start;
+                if(gftp->last*60*1000u < test_time){//test done
+                    gftp->pts =NULL;
+                    lprintf("##########stress test end %s\n", get_rtc_time(0));
+                    lprintf("##########stress test time long %d mins %d s %d ms\n",
+                            test_time/1000/60,
+                            (test_time/1000)%60, test_time%1000);
+                }
+            }
+        }
         if(touch_down()){
             touch_pressed = 1;
             if(get_TP_point(&pt.px, &pt.py)){
@@ -530,7 +552,7 @@ void update_progress_indicator(progress_indicator_t*pip, uint32_t progressed, ui
 u32 task1_stack[STACK_SIZE_LOCAL];
 u32 task2_stack[STACK_SIZE_LARGE*2];
 u32 task_log_stack[STACK_SIZE_LOCAL];
-u32 touch_stack[STACK_SIZE_LOCAL];
+u32 touch_stack[STACK_SIZE_LARGE];
 u32 display_stack[STACK_SIZE_LARGE*2];
 u32 cmd_stack[STACK_SIZE_LARGE];
 u32 ui_stack[STACK_SIZE_LARGE*2];
@@ -676,7 +698,7 @@ void main_init(void)
   os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 0);
   os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LARGE*2, 1);
   os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 4);
-  os_task_add(os_touch, touch_stack, "touch", STACK_SIZE_LOCAL, 2);
+  os_task_add(os_touch, touch_stack, "touch", STACK_SIZE_LARGE, 2);
   os_task_add(os_task_display, display_stack, "display", STACK_SIZE_LARGE*2, 7);
   os_task_add(task_music, music_stack, "music", STACK_SIZE_LARGE, 6);
   os_task_add(os_ui, ui_stack, "ui", STACK_SIZE_LOCAL*2, 3);
@@ -747,7 +769,7 @@ void os_task2(void*p)
         GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
         os_10ms_delay(teset_td);
         //lprintf("other task %d\n", *rtet);
-#if 1
+#if 0
             {
                 struct point pt_cache;
                 os_lock(&oslk_evt);
