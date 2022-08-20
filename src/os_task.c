@@ -216,6 +216,7 @@ void os_task_init()
 {
     cur_os_task = &os_tasks[0];
     cur_os_task->next = cur_os_task;
+    cur_os_task->wait_next = NULL;
     cur_os_task->name = "main";
     cur_os_task->stack_base=0;
     cur_os_task->stack_size=0;
@@ -253,6 +254,7 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size, u32
     new_tk->run_time_counts = 0;
     new_tk->task_status = TASK_STATUS_RUNNING;
     new_tk->task_priority = task_pri;
+    new_tk->wait_next = NULL;
     if(task_pri>TASK_PRIORITIES_NUM-1){
         task_pri = TASK_PRIORITIES_NUM-1;
     }

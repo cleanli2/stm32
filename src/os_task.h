@@ -43,6 +43,7 @@ typedef struct _os_task_st
 {
     struct list_head list;
     struct _os_task_st * next;
+    struct _os_task_st * wait_next;
     u32*stack_p;
     u32* stack_base;
     u32 stack_size;
@@ -100,16 +101,21 @@ void system_halt();
 
 void putchars(const char *pt);
 #define sleep_wait(task_to_wait, sleep_type) {\
+    os_task_st*tmp_task=task_to_wait; \
     __disable_irq(); \
-    if(task_to_wait!=NULL){putchars("ERROR:sleep wait lost\n");system_halt();} \
-    task_to_wait = cur_os_task; \
+    if(tmp_task==NULL)task_to_wait = cur_os_task; \
+    else{while(tmp_task->wait_next!=NULL){tmp_task=tmp_task->wait_next;}\
+        tmp_task->wait_next=cur_os_task;} \
     cur_os_task->task_status = sleep_type; __enable_irq();\
     os_switch_trigger();}
 
 #define wake_up(task_to_wake) \
+    os_task_st*tmp_task=task_to_wake, *tmp; \
     __disable_irq(); \
-    if(NULL!=task_to_wake){task_to_wake->task_status = TASK_STATUS_RUNNING; \
-    task_to_wake=NULL;} \
+    while(NULL!=tmp_task){tmp_task->task_status = TASK_STATUS_RUNNING; \
+    tmp = tmp_task; \
+    tmp_task=tmp_task->wait_next;tmp->wait_next=NULL;} \
+    task_to_wake=NULL; \
     __enable_irq();
 
 #define DECLARE_OS_LOCK(lockname, lockno) \
