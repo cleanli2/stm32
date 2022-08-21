@@ -318,9 +318,12 @@ void os_task_log(void*p)
             log_size = get_log_size();
             if(0 == log_size){
                 __disable_irq();
+                lprintf_time_buf("_diq\n");
                 log_wait_task = cur_os_task;
                 cur_os_task->task_status = TASK_STATUS_SLEEPING_IDLE;
+                lprintf_time_buf("_eiq\n");
                 __enable_irq();
+                putchars("logsleep\n");
                 os_switch_trigger();
             }
             else{
@@ -396,6 +399,7 @@ void log_to_buf(const char* log)
     }
 end:
     if(log_wait_task != NULL){
+        putchars("wakelog\n");
         log_wait_task->task_status = TASK_STATUS_RUNNING;
         log_wait_task = NULL;
     }
@@ -427,7 +431,7 @@ void lprintf_time_buf(const char *fmt, ...)
     char*sp=buf_printf_buf;
     u32 us = get_system_us();
 
-    os_lock(&oslk_timebuf);
+    //os_lock(&oslk_timebuf);
     va_start(ap,fmt);
 
     sp += sprint_uint(sp, us/1000000);
@@ -437,7 +441,7 @@ void lprintf_time_buf(const char *fmt, ...)
     vslprintf(0, sp,fmt,ap);
     buf_log(buf_printf_buf);
     va_end(ap);
-    os_unlock(&oslk_timebuf);
+    //os_unlock(&oslk_timebuf);
 }
 
 void lprintf_time(const char *fmt, ...)

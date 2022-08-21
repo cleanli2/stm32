@@ -49,6 +49,7 @@ void check_os_timer()
 void system_halt()
 {
     __disable_irq();
+    lprintf_time_buf("_diq\n");
     while(1);
 }
 
@@ -80,6 +81,7 @@ os_task_timer* get_os_timer()
     }
 error_handle:
     __disable_irq();
+    lprintf_time_buf("_diq\n");
     for(index = 0; index < MAX_OS_TIMERS; index++){
         lprintf("[%d]:%d->", index, g_task_timer[index].time);
         if(g_task_timer[index].task){
@@ -260,9 +262,11 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size, u32
     }
 
     __disable_irq();
+    lprintf_time_buf("_diq\n");
     new_tk->next = cur_os_task->next;
     cur_os_task->next = new_tk;
     list_add_tail(&new_tk->list, &priority_tasks_head[task_pri]);
+    lprintf_time_buf("_eiq\n");
     __enable_irq();
     total_tasks_num++;
     return OS_OK;
@@ -302,6 +306,7 @@ void os_lock(oslock_o* lock)
         }
         else{
             __disable_irq();
+            lprintf_time_buf("_diq\n");
             for(i=0;i<OS_LOCK_TASKS_NUM;i++){
                 if(NULL==lock->wait_tasks[i]){
                     lock->wait_tasks[i]=cur_os_task;
@@ -313,6 +318,7 @@ void os_lock(oslock_o* lock)
             }
             cur_os_task->task_status=TASK_STATUS_SLEEPING_WAITLOCK;
             cur_os_task->debug_data=lock->lockno;
+            lprintf_time_buf("_eiq\n");
             __enable_irq();
             os_switch_trigger();
         }
@@ -326,12 +332,14 @@ void os_unlock(oslock_o* lock)
         return;
     }
     __disable_irq();
+    lprintf_time_buf("_diq\n");
     for(i=0;i<OS_LOCK_TASKS_NUM;i++){
         if(NULL!=lock->wait_tasks[i]){
             lock->wait_tasks[i]->task_status=TASK_STATUS_RUNNING;
             lock->wait_tasks[i]=NULL;
         }
     }
+    lprintf_time_buf("_eiq\n");
     __enable_irq();
 }
 
