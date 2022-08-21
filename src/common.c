@@ -756,7 +756,7 @@ void os_task3(void*p)
         run_cmd_interface();
     }
 }
-u32 teset_td = 100;
+u32 teset_td = 495;
 void os_task2(void*p)
 {
     (void)p;

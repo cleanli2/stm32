@@ -1197,7 +1197,8 @@ void bflog(char *p)
 {
     (void)p;
     debug_log_buf[DEBUG_LOG_BUF_SIZE]=0;
-    lprintf("%s\n", debug_log_buf);
+    putchars(debug_log_buf);
+    putchars("\n");
     return;
 }
 void rtc_cmd(char *p)
