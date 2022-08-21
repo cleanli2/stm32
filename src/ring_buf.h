@@ -52,7 +52,7 @@ typedef struct _rb_ctl{
 #define RB_W_GET_wait(TYPE, name) ({ \
         u32 irqsv; while(RB_IS_FULL(TYPE, name)){ \
         dis_irq_save(irqsv); \
-        lprintf_time_buf(0, "_diq\n"); \
+        lprintf_time_buf(0, "_9diq\n"); \
         if(RB_IS_FULL(TYPE, name))sleep_wait(rb_ctl##name.r_notify, TASK_STATUS_SLEEPING_WRB);lprintf_time_buf(0, "_eiq\n");  irq_restore(irqsv);}\
         RB_W_GET(TYPE, name);})
 #else
@@ -64,7 +64,7 @@ typedef struct _rb_ctl{
 #define RB_R_GET_wait(TYPE, name) ({ \
         u32 irqsv; while(RB_IS_EMPTY(TYPE, name)){ \
         dis_irq_save(irqsv); \
-        lprintf_time_buf(0, "_diq\n"); \
+        lprintf_time_buf(0, "_adiq\n"); \
         if(RB_IS_EMPTY(TYPE, name))sleep_wait(rb_ctl##name.w_notify, TASK_STATUS_SLEEPING_RRB);lprintf_time_buf(0, "_eiq\n"); irq_restore(irqsv);} \
         RB_R_GET(TYPE, name);})
 

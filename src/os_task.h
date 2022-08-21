@@ -103,7 +103,7 @@ void putchars(const char *pt);
 #define sleep_wait(task_to_wait, sleep_type) {\
     os_task_st*tmp_task=task_to_wait;u32 irqsv; \
     dis_irq_save(irqsv); \
-    lprintf_time_buf(0, "_diq\n"); \
+    lprintf_time_buf(0, "_1diq\n"); \
     if(tmp_task==NULL)task_to_wait = cur_os_task; \
     else{while(tmp_task->wait_next!=NULL){tmp_task=tmp_task->wait_next;}\
         tmp_task->wait_next=cur_os_task;} \
@@ -113,7 +113,7 @@ void putchars(const char *pt);
 #define wake_up(task_to_wake) \
     os_task_st*tmp_task=task_to_wake, *tmp;u32 irqsv; \
     dis_irq_save(irqsv); \
-    lprintf_time_buf(0, "_diq\n"); \
+    lprintf_time_buf(0, "_2diq\n"); \
     while(NULL!=tmp_task){tmp_task->task_status = TASK_STATUS_RUNNING; \
     tmp = tmp_task; \
     tmp_task=tmp_task->wait_next;tmp->wait_next=NULL;} \
