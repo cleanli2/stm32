@@ -310,19 +310,19 @@ void foce_save_log_func()
 os_task_st * log_wait_task = NULL;
 void os_task_log(void*p)
 {
-    u32 log_size=0, wi;
+    u32 log_size=0, wi, irqsv;
     (void)p;
 
     while(1){
         while(1){
             log_size = get_log_size();
             if(0 == log_size){
-                __disable_irq();
+                dis_irq_save(irqsv);
                 lprintf_time_buf(0, "_diq\n");
                 log_wait_task = cur_os_task;
                 cur_os_task->task_status = TASK_STATUS_SLEEPING_IDLE;
                 lprintf_time_buf(0, "_eiq\n");
-                __enable_irq();
+                irq_restore(irqsv);
                 os_switch_trigger();
             }
             else{

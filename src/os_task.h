@@ -101,24 +101,24 @@ void system_halt();
 
 void putchars(const char *pt);
 #define sleep_wait(task_to_wait, sleep_type) {\
-    os_task_st*tmp_task=task_to_wait; \
-    __disable_irq(); \
+    os_task_st*tmp_task=task_to_wait;u32 irqsv; \
+    dis_irq_save(irqsv); \
     lprintf_time_buf(0, "_diq\n"); \
     if(tmp_task==NULL)task_to_wait = cur_os_task; \
     else{while(tmp_task->wait_next!=NULL){tmp_task=tmp_task->wait_next;}\
         tmp_task->wait_next=cur_os_task;} \
-    cur_os_task->task_status = sleep_type; lprintf_time_buf(0, "_eiq\n");__enable_irq(); \
+    cur_os_task->task_status = sleep_type; lprintf_time_buf(0, "_eiq\n");irq_restore(irqsv); \
     os_switch_trigger();}
 
 #define wake_up(task_to_wake) \
-    os_task_st*tmp_task=task_to_wake, *tmp; \
-    __disable_irq(); \
+    os_task_st*tmp_task=task_to_wake, *tmp;u32 irqsv; \
+    dis_irq_save(irqsv); \
     lprintf_time_buf(0, "_diq\n"); \
     while(NULL!=tmp_task){tmp_task->task_status = TASK_STATUS_RUNNING; \
     tmp = tmp_task; \
     tmp_task=tmp_task->wait_next;tmp->wait_next=NULL;} \
     task_to_wake=NULL; lprintf_time_buf(0, "_eiq\n");\
-    __enable_irq();
+    irq_restore(irqsv);
 
 #define DECLARE_OS_LOCK(lockname, lockno) \
     oslock_o lockname = {lockno, {0}}

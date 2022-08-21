@@ -50,10 +50,10 @@ typedef struct _rb_ctl{
 
 #if 1
 #define RB_W_GET_wait(TYPE, name) ({ \
-        while(RB_IS_FULL(TYPE, name)){ \
-        __disable_irq(); \
+        u32 irqsv; while(RB_IS_FULL(TYPE, name)){ \
+        dis_irq_save(irqsv); \
         lprintf_time_buf(0, "_diq\n"); \
-        if(RB_IS_FULL(TYPE, name))sleep_wait(rb_ctl##name.r_notify, TASK_STATUS_SLEEPING_WRB);lprintf_time_buf(0, "_eiq\n");  __enable_irq();}\
+        if(RB_IS_FULL(TYPE, name))sleep_wait(rb_ctl##name.r_notify, TASK_STATUS_SLEEPING_WRB);lprintf_time_buf(0, "_eiq\n");  irq_restore(irqsv);}\
         RB_W_GET(TYPE, name);})
 #else
 #define RB_W_GET_wait(TYPE, name) ({ \
@@ -62,10 +62,10 @@ typedef struct _rb_ctl{
 #endif
 
 #define RB_R_GET_wait(TYPE, name) ({ \
-        while(RB_IS_EMPTY(TYPE, name)){ \
-        __disable_irq(); \
+        u32 irqsv; while(RB_IS_EMPTY(TYPE, name)){ \
+        dis_irq_save(irqsv); \
         lprintf_time_buf(0, "_diq\n"); \
-        if(RB_IS_EMPTY(TYPE, name))sleep_wait(rb_ctl##name.w_notify, TASK_STATUS_SLEEPING_RRB);lprintf_time_buf(0, "_eiq\n"); __enable_irq();} \
+        if(RB_IS_EMPTY(TYPE, name))sleep_wait(rb_ctl##name.w_notify, TASK_STATUS_SLEEPING_RRB);lprintf_time_buf(0, "_eiq\n"); irq_restore(irqsv);} \
         RB_R_GET(TYPE, name);})
 
 #endif

@@ -48,13 +48,15 @@ void check_os_timer()
 
 void system_halt()
 {
-    __disable_irq();
+    u32 irqsv;
+    dis_irq_save(irqsv);
     lprintf_time_buf(0, "_diq\n");
     while(1);
 }
 
 os_task_timer* get_os_timer()
 {
+    u32 irqsv;
     int index = 0;
     //check if current task already in os timer wait
     for(index = 0; index < MAX_OS_TIMERS; index++){
@@ -80,7 +82,7 @@ os_task_timer* get_os_timer()
         index++;
     }
 error_handle:
-    __disable_irq();
+    dis_irq_save(irqsv);
     lprintf_time_buf(0, "_diq\n");
     for(index = 0; index < MAX_OS_TIMERS; index++){
         lprintf("[%d]:%d->", index, g_task_timer[index].time);
@@ -95,19 +97,20 @@ error_handle:
 
 void os_10ms_delay(u32 timeout)
 {
+    u32 irqsv;
     os_task_timer* g_tt;
     if(timeout == 0)return;
-    __disable_irq();
+    dis_irq_save(irqsv);
     g_tt = get_os_timer();
     if(g_tt != 0){
         g_tt->time = g_ms_count + timeout;
         g_tt->task = cur_os_task;
         cur_os_task->task_status = TASK_STATUS_SLEEPING_TIMER;
-        __enable_irq();
+        irq_restore(irqsv);
         os_switch_trigger();
     }
     else{
-        __enable_irq();
+        irq_restore(irqsv);
         lprintf("err!Out of os timer\n");
     }
 }
@@ -235,6 +238,7 @@ void os_task_init()
 
 int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size, u32 task_pri)
 {
+    u32 irqsv;
     lprintf("add task %s\n", name);
     u32 set_base_offset = stack_size - INTERRUPT_REGS_BAK_NUM - 1;
     if(tasks_for_use_index == MAX_OS_TASKS){
@@ -261,13 +265,13 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size, u32
         task_pri = TASK_PRIORITIES_NUM-1;
     }
 
-    __disable_irq();
+    dis_irq_save(irqsv);
     lprintf_time_buf(0, "_diq\n");
     new_tk->next = cur_os_task->next;
     cur_os_task->next = new_tk;
     list_add_tail(&new_tk->list, &priority_tasks_head[task_pri]);
     lprintf_time_buf(0, "_eiq\n");
-    __enable_irq();
+    irq_restore(irqsv);
     total_tasks_num++;
     return OS_OK;
 }
@@ -295,6 +299,7 @@ void spin_unlock(u32 lockno)
 
 void os_lock(oslock_o* lock)
 {
+    u32 irqsv;
     int i;
     u32 atomic_ret = 1;
     if(!os_is_running){
@@ -305,7 +310,7 @@ void os_lock(oslock_o* lock)
             atomic_ret = atomic_inc((u32*)BITBAND(&spin_lock_base, lock->lockno));
         }
         else{
-            __disable_irq();
+            dis_irq_save(irqsv);
             lprintf_time_buf(0, "_diq\n");
             for(i=0;i<OS_LOCK_TASKS_NUM;i++){
                 if(NULL==lock->wait_tasks[i]){
@@ -319,19 +324,20 @@ void os_lock(oslock_o* lock)
             cur_os_task->task_status=TASK_STATUS_SLEEPING_WAITLOCK;
             cur_os_task->debug_data=lock->lockno;
             lprintf_time_buf(0, "_eiq\n");
-            __enable_irq();
+            irq_restore(irqsv);
             os_switch_trigger();
         }
     }
 }
 void os_unlock(oslock_o* lock)
 {
+    u32 irqsv;
     int i;
     BIT_ACCESS(&spin_lock_base, lock->lockno) = 0;
     if(!os_is_running){
         return;
     }
-    __disable_irq();
+    dis_irq_save(irqsv);
     lprintf_time_buf(0, "_diq\n");
     for(i=0;i<OS_LOCK_TASKS_NUM;i++){
         if(NULL!=lock->wait_tasks[i]){
@@ -340,7 +346,7 @@ void os_unlock(oslock_o* lock)
         }
     }
     lprintf_time_buf(0, "_eiq\n");
-    __enable_irq();
+    irq_restore(irqsv);
 }
 
 u32 sche_time;
