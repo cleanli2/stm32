@@ -318,10 +318,10 @@ void os_task_log(void*p)
             log_size = get_log_size();
             if(0 == log_size){
                 __disable_irq();
-                lprintf_time_buf("_diq\n");
+                lprintf_time_buf(0, "_diq\n");
                 log_wait_task = cur_os_task;
                 cur_os_task->task_status = TASK_STATUS_SLEEPING_IDLE;
-                lprintf_time_buf("_eiq\n");
+                lprintf_time_buf(0, "_eiq\n");
                 __enable_irq();
                 putchars("logsleep\n");
                 os_switch_trigger();
@@ -425,7 +425,7 @@ void buf_log(const char* log)
     }
 }
 
-void lprintf_time_buf(const char *fmt, ...)
+void lprintf_time_buf(u32 time, const char *fmt, ...)
 {
     va_list ap;
     char*sp=buf_printf_buf;
@@ -434,10 +434,12 @@ void lprintf_time_buf(const char *fmt, ...)
     //os_lock(&oslk_timebuf);
     va_start(ap,fmt);
 
-    sp += sprint_uint(sp, us/1000000);
-    *sp++ = '.';
-    sp += sprint_uint_0n(sp, us%1000000, 6);
-    *sp++ = ':';
+    if(time){
+        sp += sprint_uint(sp, us/1000000);
+        *sp++ = '.';
+        sp += sprint_uint_0n(sp, us%1000000, 6);
+        *sp++ = ':';
+    }
     vslprintf(0, sp,fmt,ap);
     buf_log(buf_printf_buf);
     va_end(ap);
