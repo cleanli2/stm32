@@ -318,8 +318,10 @@ void os_task_log(void*p)
             log_size = get_log_size();
             if(0 == log_size){
                 dis_irq_save(irqsv);
+                lprintf_time_buf(0, "_diq\n");
                 log_wait_task = cur_os_task;
                 cur_os_task->task_status = TASK_STATUS_SLEEPING_IDLE;
+                lprintf_time_buf(0, "_eiq\n");
                 irq_restore(irqsv);
                 os_switch_trigger();
             }

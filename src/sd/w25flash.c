@@ -126,6 +126,7 @@ u16 SPI_Flash_ReadID(void)
 //NumByteToRead:要读取的字节数(最大65535)
 void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u16 NumByteToRead)   
 { 
+    u32 irqsv;
  	u16 i;    												    
     os_lock(&oslk_spibus);
 	SPI_FLASH_CS=0;                            //使能器件   
@@ -133,14 +134,12 @@ void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u16 NumByteToRead)
     SPI1_ReadWriteByte((u8)((ReadAddr)>>16));  //发送24bit地址    
     SPI1_ReadWriteByte((u8)((ReadAddr)>>8));   
     SPI1_ReadWriteByte((u8)ReadAddr);   
-    lprintf_time_buf(1, "sr+\n");
+    dis_irq_save(irqsv);
     for(i=0;i<NumByteToRead;i++)
 	{ 
-    lprintf_time_buf(0, "<%x", i);
         pBuffer[i]=SPI1_ReadWriteByte(0XFF);   //循环读数  
-    lprintf_time_buf(0, ">");
     }
-    lprintf_time_buf(1, "sr-\n");
+    irq_restore(irqsv);
 	SPI_FLASH_CS=1;                            //取消片选     	      
     os_unlock(&oslk_spibus);
 }  
