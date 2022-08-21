@@ -338,7 +338,7 @@ void os_unlock(oslock_o* lock)
         return;
     }
     dis_irq_save(irqsv);
-    lprintf_time_buf(0, "_4diq\n");
+    lprintf_time_buf(0, "_4diq%d-%s\n", lock->lockno, cur_os_task->name);
     for(i=0;i<OS_LOCK_TASKS_NUM;i++){
         if(NULL!=lock->wait_tasks[i]){
             lock->wait_tasks[i]->task_status=TASK_STATUS_RUNNING;
@@ -361,6 +361,7 @@ u32*PendSV_Handler_local(u32*stack_data)
 
 void USART1_IRQHandler()
 {
+    lprintf_time_buf(1, "urt+\n");
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET){
         USART_ITConfig(USART1, USART_IT_RXNE, DISABLE);
         if(usart1_wait_task != NULL){
@@ -369,6 +370,7 @@ void USART1_IRQHandler()
             os_switch_trigger();
         }
     }
+    lprintf_time_buf(1, "urt-\n");
 }
 uint16_t os_con_recv()
 {
