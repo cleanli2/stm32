@@ -68,4 +68,61 @@ void usb_main_init(uint32_t flag);
 
 typedef uint16_t u16;
 typedef uint8_t u8;
+
+
+#if 0
+static inline u32 en_irq_save()
+{
+    //u32 flag = __get_PRIMASK();
+    u32 flags;
+    asm volatile(
+        "   mrs %0, primask @ local_save_flags"
+        : "=r" (flags) : : "memory", "cc");
+    __enable_irq();
+    return flags;
+}
+
+static inline u32 dis_irq_save()
+{
+    //u32 flag = __get_PRIMASK();
+    u32 flags;
+    asm volatile(
+        "   mrs %0, primask @ local_save_flags"
+        : "=r" (flags) : : "memory", "cc");
+    __disable_irq();
+    return flags;
+}
+
+static inline void irq_restore(u32 flags)
+{
+    //__set_PRIMASK(flag);
+    asm volatile(
+        "   msr primask, %0 @ local_irq_restore"
+        :
+        : "r" (flags)
+        : "memory", "cc");
+}
+#else
+#define en_irq_save(flags) \
+{ \
+    asm volatile( \
+        "   mrs %0, primask @ local_save_flags" \
+        : "=r" (flags) : : "memory", "cc"); \
+    asm volatile ("cpsie i"); \
+}
+#define dis_irq_save(flags) \
+{ \
+    asm volatile( \
+        "   mrs %0, primask @ local_save_flags" \
+        : "=r" (flags) : : "memory", "cc"); \
+    asm volatile ("cpsid i"); \
+}
+#define irq_restore(flags) \
+{ \
+    asm volatile( \
+        "   msr primask, %0 @ local_irq_restore" \
+        : : "r" (flags) : "memory", "cc"); \
+}
+#endif
+
 #endif
