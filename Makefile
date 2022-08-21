@@ -7,6 +7,7 @@ export CC             = arm-none-eabi-gcc
 export AS             = arm-none-eabi-as
 export LD             = arm-none-eabi-ld
 export OBJCOPY        = arm-none-eabi-objcopy
+export OBJDUMP        = arm-none-eabi-objdump
 
 TOP=$(shell pwd)
 
@@ -125,6 +126,7 @@ all:$(C_OBJ) src/asm.o
 	cp $(TARGET).hex $(TARGET)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 	rm $(TARGET)_*.hex
 	cp $(TARGET).hex $(TARGET)_$(board)_$(type)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
+	$(OBJDUMP) -d -S $(TARGET).elf > $(TARGET).asm
 
 $(C_OBJ):%.o:%.c
 	$(CC) -c $(CFLAGS) -o $@ $<
@@ -135,6 +137,7 @@ clean:
 	rm -f $(shell find ./ -name '*.elf')
 	rm -f $(shell find ./ -name '*.bin')
 	rm -f $(shell find ./ -name '*.hex')
+	rm -f $(shell find ./ -name '*.asm')
 
 src/asm.o:src/asm.s
 	$(AS) -mcpu=cortex-m3 -mthumb src/asm.s -o src/asm.o
