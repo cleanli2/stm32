@@ -133,10 +133,12 @@ void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u16 NumByteToRead)
     SPI1_ReadWriteByte((u8)((ReadAddr)>>16));  //发送24bit地址    
     SPI1_ReadWriteByte((u8)((ReadAddr)>>8));   
     SPI1_ReadWriteByte((u8)ReadAddr);   
+    __disable_irq();
     for(i=0;i<NumByteToRead;i++)
 	{ 
         pBuffer[i]=SPI1_ReadWriteByte(0XFF);   //循环读数  
     }
+    __enable_irq();
 	SPI_FLASH_CS=1;                            //取消片选     	      
     os_unlock(&oslk_spibus);
 }  

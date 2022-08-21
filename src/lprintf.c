@@ -323,7 +323,6 @@ void os_task_log(void*p)
                 cur_os_task->task_status = TASK_STATUS_SLEEPING_IDLE;
                 lprintf_time_buf(0, "_eiq\n");
                 __enable_irq();
-                putchars("logsleep\n");
                 os_switch_trigger();
             }
             else{
@@ -399,7 +398,6 @@ void log_to_buf(const char* log)
     }
 end:
     if(log_wait_task != NULL){
-        putchars("wakelog\n");
         log_wait_task->task_status = TASK_STATUS_RUNNING;
         log_wait_task = NULL;
     }

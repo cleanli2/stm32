@@ -116,6 +116,7 @@ void stm32_spi_LowLevel_Init(void)
   */
 uint8_t stm32_spi_WriteByte(uint8_t Data)
 {
+  uint8_t ret = 0;
   /*!< Wait until the transmit buffer is empty */
   while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
   {
@@ -130,7 +131,8 @@ uint8_t stm32_spi_WriteByte(uint8_t Data)
   }
   
   /*!< Return the byte read from the SPI bus */ 
-  return SPI_I2S_ReceiveData(SD_SPI);
+  ret = SPI_I2S_ReceiveData(SD_SPI);
+  return ret;
 }
 
 /**
@@ -274,12 +276,14 @@ void SD_LowLevel_Init(void)
 }
 uint8_t SD_WriteByte(uint8_t Data)
 {
+    uint8_t ret;
     if(stm32_spi_choose){
-        return stm32_spi_WriteByte(Data);
+        ret= stm32_spi_WriteByte(Data);
     }
     else{
-        return gpio_spi_WriteByte(Data);
+        ret= gpio_spi_WriteByte(Data);
     }
+    return ret;
 }
 uint8_t SD_ReadByte(void)
 {
