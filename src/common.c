@@ -198,11 +198,15 @@ void timer_init(uint16_t arr, uint16_t psr)
 extern os_task_timer *g_tt;
 void SysTick_Handler(void)
 {
+    lprintf_time_buf(1, "stk+\n");
     g_ms_count++;
+    /*
     u32 t = TIM_GetCounter(TIM2);
     interv_systick = t - last_systick;
     last_systick = t;
+    */
     check_os_timer();
+    lprintf_time_buf(1, "stk-\n");
 }
 
 void systick_init()
@@ -224,12 +228,14 @@ uint64_t get_system_us()
 
 void TIM2_IRQHandler()
 {
+    lprintf_time_buf(1, "tm2+\n");
 	//if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
     g_10ms_count++;
     sound_execute();
     //*(u32*)0xe000ed04=0x10000000;
     os_switch_trigger();
+    lprintf_time_buf(1, "tm2-\n");
 }
 
 /*low 4 bit: Pin14Value | Pin13Value | ToCtlPin14 | ToCtlPin13*/
@@ -425,6 +431,7 @@ void beep_by_timer(uint32_t hz)
 void TIM3_IRQHandler(void)
 {
     static int tog=0;
+    lprintf_time_buf(1, "tm3-\n");
     //if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
     TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
     if(sound_enable){
@@ -435,6 +442,7 @@ void TIM3_IRQHandler(void)
             GPIO_ResetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
         }
     }
+    lprintf_time_buf(1, "tm3-\n");
 }
 
 void beep(uint32_t hz, uint32_t t_ms)
