@@ -196,9 +196,10 @@ void timer_init(uint16_t arr, uint16_t psr)
 }
 
 extern os_task_timer *g_tt;
-void SysTick_Handler(void)
+u32*SysTick_Handler_local(u32*stack_data)
 {
-    lprintf_time_buf(1, "stk+\n");
+    (void)stack_data;
+    lprintf_time_buf(1, "stk+%X:%X\n", stack_data, *(u32*)stack_data);
     g_ms_count++;
     /*
     u32 t = TIM_GetCounter(TIM2);
@@ -206,7 +207,8 @@ void SysTick_Handler(void)
     last_systick = t;
     */
     check_os_timer();
-    lprintf_time_buf(1, "stk-\n");
+    lprintf_time_buf(1, "stk-%X:%X\n", stack_data, *(u32*)stack_data);
+    return stack_data;
 }
 
 void systick_init()
@@ -226,16 +228,18 @@ uint64_t get_system_us()
     return system_us_count;
 }
 
-void TIM2_IRQHandler()
+u32*TIM2_IRQHandler_local(u32*stack_data)
 {
-    lprintf_time_buf(1, "tm2+\n");
+    (void)stack_data;
+    lprintf_time_buf(1, "tm2+%X:%X\n", stack_data, *(u32*)stack_data);
 	//if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
     g_10ms_count++;
     sound_execute();
     //*(u32*)0xe000ed04=0x10000000;
     os_switch_trigger();
-    lprintf_time_buf(1, "tm2-\n");
+    lprintf_time_buf(1, "tm2-%X:%X\n", stack_data, *(u32*)stack_data);
+    return stack_data;
 }
 
 /*low 4 bit: Pin14Value | Pin13Value | ToCtlPin14 | ToCtlPin13*/
