@@ -162,7 +162,8 @@ u32* sche_os_task(u32*stack_data)
     os_task_st* t_task;
     u32 task_pri_index = 0;
 
-    lprintf_time_buf(1, "oss+%s_%X:%X_%X_%X\n", cur_os_task->name, stack_data,
+    lprintf_time_buf(1, "oss+%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
+            stack_data[1],
             stack_data[7],
             stack_data[8],
             stack_data[9]);
@@ -205,7 +206,8 @@ u32* sche_os_task(u32*stack_data)
             g_ms_count;
         compute_cpu_occp();
     }
-    lprintf_time_buf(1, "oss-%s_%X:%X_%X_%X\n", cur_os_task->name, stack_data,
+    lprintf_time_buf(1, "oss-%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
+            stack_data[1],
             stack_data[7],
             stack_data[8],
             stack_data[9]);

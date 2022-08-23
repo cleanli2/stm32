@@ -199,7 +199,8 @@ extern os_task_timer *g_tt;
 u32*SysTick_Handler_local(u32*stack_data)
 {
     (void)stack_data;
-    lprintf_time_buf(1, "stk+%s_%X:%X_%X_%X\n", cur_os_task->name, stack_data,
+    lprintf_time_buf(1, "stk+%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
+            stack_data[1],
             stack_data[7],
             stack_data[8],
             stack_data[9]);
@@ -210,7 +211,8 @@ u32*SysTick_Handler_local(u32*stack_data)
     last_systick = t;
     */
     check_os_timer();
-    lprintf_time_buf(1, "stk-%s_%X:%X_%X_%X\n", cur_os_task->name, stack_data,
+    lprintf_time_buf(1, "stk-%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
+            stack_data[1],
             stack_data[7],
             stack_data[8],
             stack_data[9]);
@@ -237,7 +239,8 @@ uint64_t get_system_us()
 u32*TIM2_IRQHandler_local(u32*stack_data)
 {
     (void)stack_data;
-    lprintf_time_buf(1, "tm2+%s_%X:%X_%X_%X\n", cur_os_task->name, stack_data,
+    lprintf_time_buf(1, "tm2+%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
+            stack_data[1],
             stack_data[7],
             stack_data[8],
             stack_data[9]);
@@ -247,7 +250,8 @@ u32*TIM2_IRQHandler_local(u32*stack_data)
     sound_execute();
     //*(u32*)0xe000ed04=0x10000000;
     os_switch_trigger();
-    lprintf_time_buf(1, "tm2-%s_%X:%X_%X_%X\n", cur_os_task->name, stack_data,
+    lprintf_time_buf(1, "tm2-%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
+            stack_data[1],
             stack_data[7],
             stack_data[8],
             stack_data[9]);
