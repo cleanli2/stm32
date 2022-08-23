@@ -199,7 +199,10 @@ extern os_task_timer *g_tt;
 u32*SysTick_Handler_local(u32*stack_data)
 {
     (void)stack_data;
-    lprintf_time_buf(1, "stk+%X:%X\n", stack_data, *(u32*)stack_data);
+    lprintf_time_buf(1, "stk+%s_%X:%X_%X_%X\n", cur_os_task->name, stack_data,
+            stack_data[7],
+            stack_data[8],
+            stack_data[9]);
     g_ms_count++;
     /*
     u32 t = TIM_GetCounter(TIM2);
@@ -207,7 +210,10 @@ u32*SysTick_Handler_local(u32*stack_data)
     last_systick = t;
     */
     check_os_timer();
-    lprintf_time_buf(1, "stk-%X:%X\n", stack_data, *(u32*)stack_data);
+    lprintf_time_buf(1, "stk-%s_%X:%X_%X_%X\n", cur_os_task->name, stack_data,
+            stack_data[7],
+            stack_data[8],
+            stack_data[9]);
     return stack_data;
 }
 
@@ -231,14 +237,20 @@ uint64_t get_system_us()
 u32*TIM2_IRQHandler_local(u32*stack_data)
 {
     (void)stack_data;
-    lprintf_time_buf(1, "tm2+%X:%X\n", stack_data, *(u32*)stack_data);
+    lprintf_time_buf(1, "tm2+%s_%X:%X_%X_%X\n", cur_os_task->name, stack_data,
+            stack_data[7],
+            stack_data[8],
+            stack_data[9]);
 	//if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
     g_10ms_count++;
     sound_execute();
     //*(u32*)0xe000ed04=0x10000000;
     os_switch_trigger();
-    lprintf_time_buf(1, "tm2-%X:%X\n", stack_data, *(u32*)stack_data);
+    lprintf_time_buf(1, "tm2-%s_%X:%X_%X_%X\n", cur_os_task->name, stack_data,
+            stack_data[7],
+            stack_data[8],
+            stack_data[9]);
     return stack_data;
 }
 
