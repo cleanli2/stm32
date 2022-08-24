@@ -226,6 +226,7 @@ void systick_init()
     SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);
     SysTick_Config(72000-1);
     NVIC_SetPriority (PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
+    NVIC_SetPriorityGrouping(0x7);
 }
 
 uint64_t get_system_us()

@@ -428,12 +428,12 @@ void lprintf_time_buf(u32 time, const char *fmt, ...)
     va_list ap;
     u32 flag;
     char*sp=buf_printf_buf;
+    dis_irq_save(flag);
     u32 us = get_system_us();
 
     //os_lock(&oslk_timebuf);
     va_start(ap,fmt);
 
-    dis_irq_save(flag);
     if(time){
         sp += sprint_uint(sp, us/1000000);
         *sp++ = '.';
