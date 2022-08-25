@@ -279,16 +279,14 @@ uint8_t SD_WriteByte(uint8_t Data)
     uint8_t ret=0;
     u32 irqsv;
     dis_irq_save(irqsv);
-#if 0
     if(stm32_spi_choose){
         ret= stm32_spi_WriteByte(Data);
     }
     else{
         ret= gpio_spi_WriteByte(Data);
     }
-#endif
-    lprintf_time_buf(1, "%");
-    lprintf_time_buf(1, "#");
+    lprintf_time_buf(1, "%\n");
+    lprintf_time_buf(1, "#\n");
     irq_restore(irqsv);
     lprintf_time_buf(1, "O\n");
     return ret;

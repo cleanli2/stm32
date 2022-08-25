@@ -442,8 +442,8 @@ void lprintf_time_buf(u32 time, const char *fmt, ...)
     }
     vslprintf(0, sp,fmt,ap);
     buf_log(buf_printf_buf);
-    irq_restore(flag);
     va_end(ap);
+    irq_restore(flag);
     //os_unlock(&oslk_timebuf);
 }
 
