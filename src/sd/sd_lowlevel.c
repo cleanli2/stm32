@@ -285,7 +285,6 @@ uint8_t SD_WriteByte(uint8_t Data)
     else{
         ret= gpio_spi_WriteByte(Data);
     }
-    lprintf_time_buf(1, "%\n");
     lprintf_time_buf(1, "#\n");
     irq_restore(irqsv);
     lprintf_time_buf(1, "O\n");

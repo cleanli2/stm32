@@ -612,7 +612,7 @@ void main_init(void)
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.  */
 
-  lprintf("debug_enable %X@%X vs %X\n", debug_enable, &debug_enable, 0xdeb49eab);
+  //lprintf("debug_enable %X@%X vs %X\n", debug_enable, &debug_enable, 0xdeb49eab);
   if(0xdeb49eab==debug_enable){
       debug_enable=0;
       os_is_running=0;
