@@ -26,15 +26,17 @@
 #include "os_task.h"
 
 
+extern u32 interv_systick;
 #define TIM2_RELOAD 60000
 enum intnum {
     INTSYSTICK,
     INTTIM2,
     INTTIM3,
     INTPENDSV,
-    INTUART0,
+    INTUART1,
     NUM_INTRPT
 };
+extern u32 intrpt_time[NUM_INTRPT];
 #define tm_cpt_start() u32 t_start=TIM_GetCounter(TIM2)
 #define tm_cpt_end() \
     ({u32 t_end=TIM_GetCounter(TIM2); \

@@ -152,6 +152,11 @@ void showtasks()
         }
     }
     lprintf("\n");
+    lprintf("intrpt\t\tsystk\ttm2\ttm3\tpendsv\turt1\ttkdist\ntime(us)\t");
+    for(int i=0;i<NUM_INTRPT;i++){
+        lprintf("%d\t", intrpt_time[i]/6);
+    }
+    lprintf("%d\n", interv_systick/6);
     return;
 }
 u32* sche_os_task(u32*stack_data)
@@ -353,18 +358,18 @@ void os_unlock(oslock_o* lock)
     irq_restore(irqsv);
 }
 
-u32 sche_time;
 u32*PendSV_Handler_local(u32*stack_data)
 {
-    u32 t = TIM_GetCounter(TIM2);
+    tm_cpt_start();
     //putchars("pendsv\n");
     stack_data=sche_os_task(stack_data);
-    sche_time = TIM_GetCounter(TIM2) - t;
+    intrpt_time[INTPENDSV]=tm_cpt_end();
     return stack_data;
 }
 
-void USART1_IRQHandler()
+u32*USART1_IRQHandler_local(u32*stack_data)
 {
+    tm_cpt_start();
     //lprintf_time_buf(1, "urt+\n");
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET){
         USART_ITConfig(USART1, USART_IT_RXNE, DISABLE);
@@ -375,6 +380,8 @@ void USART1_IRQHandler()
         }
     }
     //lprintf_time_buf(1, "urt-\n");
+    intrpt_time[INTUART1]=tm_cpt_end();
+    return stack_data;
 }
 uint16_t os_con_recv()
 {

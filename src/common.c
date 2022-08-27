@@ -202,7 +202,7 @@ u32*SysTick_Handler_local(u32*stack_data)
     (void)stack_data;
     tm_cpt_start();
     u32 t = TIM_GetCounter(TIM2);
-    interv_systick = t - last_systick;
+    interv_systick = (t>last_systick)?t-last_systick:t+TIM2_RELOAD-last_systick;
     last_systick = t;
 #if 0
     lprintf_time_buf(1, "stk+%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
@@ -460,7 +460,7 @@ void beep_by_timer(uint32_t hz)
     beep_by_timer_100(hz*100);
 }
 
-void TIM3_IRQHandler(void)
+u32*TIM3_IRQHandler_local(u32*stack_data)
 {
     static int tog=0;
     tm_cpt_start();
@@ -481,6 +481,7 @@ void TIM3_IRQHandler(void)
     lprintf_time_buf(1, "tm3-\n");
 #endif
     intrpt_time[INTTIM3]=tm_cpt_end();
+    return stack_data;
 }
 
 void beep(uint32_t hz, uint32_t t_ms)

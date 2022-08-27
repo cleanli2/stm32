@@ -3,6 +3,8 @@
 .global PendSV_Handler
 .global SysTick_Handler
 .global TIM2_IRQHandler
+.global TIM3_IRQHandler
+.global USART1_IRQHandler
 .global atomic_inc
 .code 16
 .syntax unified
@@ -39,13 +41,23 @@ pop {r4-r11, pc}
 TIM2_IRQHandler:
 push {r4-r11, lr}
 mov r0, sp
-/*
-tst lr, #0x4
-ite eq
-mrseq r0, msp
-mrsne r0, psp
-*/
 bl TIM2_IRQHandler_local
+mov sp, r0
+pop {r4-r11, pc}
+
+.type TIM3_IRQHandler, function
+TIM3_IRQHandler:
+push {r4-r11, lr}
+mov r0, sp
+bl TIM3_IRQHandler_local
+mov sp, r0
+pop {r4-r11, pc}
+
+.type USART1_IRQHandler, function
+USART1_IRQHandler:
+push {r4-r11, lr}
+mov r0, sp
+bl USART1_IRQHandler_local
 mov sp, r0
 pop {r4-r11, pc}
 
