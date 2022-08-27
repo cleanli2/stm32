@@ -576,7 +576,6 @@ void date_ui_process_event(void*vp)
 
 int is_english()
 {
-    return 0;
     char t[ENV_MAX_VALUE_LEN];
     if(ENV_OK == get_env("language", t)){
         lprintf("getenv laguage %s\n", t);
