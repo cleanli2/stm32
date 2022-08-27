@@ -20,10 +20,10 @@
   */
 extern unsigned long debug_enable;
 
+u32 intrpt_time[NUM_INTRPT]={0};
 u32 debug_mode = 0;
 DECLARE_OS_LOCK(oslk_evt, EVT_LOCK_NO);
 DECLARE_RB_DATA(evt, rb_evt, 3)
-#define TIM2_RELOAD 60000
 #define COUNTS_PER_US 6
 
 /* Private typedef -----------------------------------------------------------*/
@@ -200,6 +200,7 @@ extern os_task_timer *g_tt;
 u32*SysTick_Handler_local(u32*stack_data)
 {
     (void)stack_data;
+    tm_cpt_start();
 #if 0
     lprintf_time_buf(1, "stk+%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
             stack_data[1],
@@ -221,6 +222,7 @@ u32*SysTick_Handler_local(u32*stack_data)
             stack_data[8],
             stack_data[9]);
 #endif
+    intrpt_time[INTSYSTICK]=tm_cpt_end();
     return stack_data;
 }
 
@@ -231,7 +233,7 @@ void systick_init()
     SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);
     SysTick_Config(72000-1);
     NVIC_SetPriority (PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
-    NVIC_SetPriorityGrouping(0x7);
+    NVIC_SetPriorityGrouping(0x7);//no interrupt preempt
 }
 
 uint64_t get_system_us()
@@ -245,6 +247,7 @@ uint64_t get_system_us()
 u32*TIM2_IRQHandler_local(u32*stack_data)
 {
     (void)stack_data;
+    tm_cpt_start();
 #if 0
     lprintf_time_buf(1, "tm2+%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
             stack_data[1],
@@ -265,6 +268,7 @@ u32*TIM2_IRQHandler_local(u32*stack_data)
             stack_data[8],
             stack_data[9]);
 #endif
+    intrpt_time[INTTIM2]=tm_cpt_end();
     return stack_data;
 }
 
@@ -461,6 +465,7 @@ void beep_by_timer(uint32_t hz)
 void TIM3_IRQHandler(void)
 {
     static int tog=0;
+    tm_cpt_start();
 #if 0
     lprintf_time_buf(1, "tm3-\n");
 #endif
@@ -477,6 +482,7 @@ void TIM3_IRQHandler(void)
 #if 0
     lprintf_time_buf(1, "tm3-\n");
 #endif
+    intrpt_time[INTTIM3]=tm_cpt_end();
 }
 
 void beep(uint32_t hz, uint32_t t_ms)

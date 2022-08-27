@@ -25,6 +25,22 @@
 #include "music.h"
 #include "os_task.h"
 
+
+#define TIM2_RELOAD 60000
+enum intnum {
+    INTSYSTICK,
+    INTTIM2,
+    INTTIM3,
+    INTPENDSV,
+    INTUART0,
+    NUM_INTRPT
+};
+#define tm_cpt_start() u32 t_start=TIM_GetCounter(TIM2)
+#define tm_cpt_end() \
+    ({u32 t_end=TIM_GetCounter(TIM2); \
+    (t_end>t_start?t_end-t_start:t_end+TIM2_RELOAD-t_start);})
+
+
 struct emulate_touch {
     u32 n_pt;
     u32 cur_n_pt;
