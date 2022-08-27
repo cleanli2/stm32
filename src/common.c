@@ -201,6 +201,9 @@ u32*SysTick_Handler_local(u32*stack_data)
 {
     (void)stack_data;
     tm_cpt_start();
+    u32 t = TIM_GetCounter(TIM2);
+    interv_systick = t - last_systick;
+    last_systick = t;
 #if 0
     lprintf_time_buf(1, "stk+%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
             stack_data[1],
@@ -209,11 +212,6 @@ u32*SysTick_Handler_local(u32*stack_data)
             stack_data[9]);
 #endif
     g_ms_count++;
-    /*
-    u32 t = TIM_GetCounter(TIM2);
-    interv_systick = t - last_systick;
-    last_systick = t;
-    */
     check_os_timer();
 #if 0
     lprintf_time_buf(1, "stk-%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
