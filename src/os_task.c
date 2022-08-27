@@ -256,10 +256,10 @@ int os_task_add(func_p fc, u32*stack_base, const char* name, u32 stack_size, u32
     os_task_st* new_tk = &os_tasks[tasks_for_use_index++];
     memset((void*)stack_base, 0xAA, stack_size*sizeof(u32));
     memset((void*)stack_base, 0x55, stack_size*sizeof(u32)/2);
-    stack_base[set_base_offset+1] = 0xfffffff9;
-    stack_base[set_base_offset+7] = (u32)fc;
-    stack_base[set_base_offset+8] = (u32)fc;
-    stack_base[set_base_offset+9] = 0x21000000;
+    stack_base[set_base_offset+OFFINDEX_LR_CODE] = 0xfffffff9;
+    stack_base[set_base_offset+OFFINDEX_LR] = (u32)fc;
+    stack_base[set_base_offset+OFFINDEX_PC] = (u32)fc;
+    stack_base[set_base_offset+OFFINDEX_XPSR] = 0x21000000;
     new_tk->stack_base=stack_base;
     new_tk->stack_size=stack_size;
     new_tk->stack_p=stack_base+set_base_offset;

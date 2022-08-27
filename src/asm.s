@@ -9,7 +9,7 @@
 
 .type PendSV_Handler, function
 PendSV_Handler:
-push {r7, lr}
+push {r4-r11, lr}
 mov r0, sp
 /*
 tst lr, #0x4
@@ -19,11 +19,11 @@ mrsne r0, psp
 */
 bl PendSV_Handler_local
 mov sp, r0
-pop {r7, pc}
+pop {r4-r11, pc}
 
 .type SysTick_Handler, function
 SysTick_Handler:
-push {r7, lr}
+push {r4-r11, lr}
 mov r0, sp
 /*
 tst lr, #0x4
@@ -33,11 +33,11 @@ mrsne r0, psp
 */
 bl SysTick_Handler_local
 mov sp, r0
-pop {r7, pc}
+pop {r4-r11, pc}
 
 .type TIM2_IRQHandler, function
 TIM2_IRQHandler:
-push {r7, lr}
+push {r4-r11, lr}
 mov r0, sp
 /*
 tst lr, #0x4
@@ -47,7 +47,7 @@ mrsne r0, psp
 */
 bl TIM2_IRQHandler_local
 mov sp, r0
-pop {r7, pc}
+pop {r4-r11, pc}
 
 .type atomic_inc, function
 atomic_inc:
