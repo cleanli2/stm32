@@ -160,11 +160,13 @@ u32* sche_os_task(u32*stack_data)
     os_task_st* t_task;
     u32 task_pri_index = 0;
 
+#if 0
     lprintf_time_buf(1, "oss+%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
             stack_data[1],
             stack_data[7],
             stack_data[8],
             stack_data[9]);
+#endif
     if(total_tasks_num > 1){
         while(task_pri_index < TASK_PRIORITIES_NUM){
             list_for_each(t, &priority_tasks_head[task_pri_index]){
@@ -204,11 +206,13 @@ u32* sche_os_task(u32*stack_data)
             g_ms_count;
         compute_cpu_occp();
     }
+#if 0
     lprintf_time_buf(1, "oss-%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
             stack_data[1],
             stack_data[7],
             stack_data[8],
             stack_data[9]);
+#endif
     return stack_data;
 }
 
@@ -361,7 +365,7 @@ u32*PendSV_Handler_local(u32*stack_data)
 
 void USART1_IRQHandler()
 {
-    lprintf_time_buf(1, "urt+\n");
+    //lprintf_time_buf(1, "urt+\n");
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET){
         USART_ITConfig(USART1, USART_IT_RXNE, DISABLE);
         if(usart1_wait_task != NULL){
@@ -370,7 +374,7 @@ void USART1_IRQHandler()
             os_switch_trigger();
         }
     }
-    lprintf_time_buf(1, "urt-\n");
+    //lprintf_time_buf(1, "urt-\n");
 }
 uint16_t os_con_recv()
 {

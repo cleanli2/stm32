@@ -200,11 +200,13 @@ extern os_task_timer *g_tt;
 u32*SysTick_Handler_local(u32*stack_data)
 {
     (void)stack_data;
+#if 0
     lprintf_time_buf(1, "stk+%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
             stack_data[1],
             stack_data[7],
             stack_data[8],
             stack_data[9]);
+#endif
     g_ms_count++;
     /*
     u32 t = TIM_GetCounter(TIM2);
@@ -212,11 +214,13 @@ u32*SysTick_Handler_local(u32*stack_data)
     last_systick = t;
     */
     check_os_timer();
+#if 0
     lprintf_time_buf(1, "stk-%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
             stack_data[1],
             stack_data[7],
             stack_data[8],
             stack_data[9]);
+#endif
     return stack_data;
 }
 
@@ -241,22 +245,26 @@ uint64_t get_system_us()
 u32*TIM2_IRQHandler_local(u32*stack_data)
 {
     (void)stack_data;
+#if 0
     lprintf_time_buf(1, "tm2+%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
             stack_data[1],
             stack_data[7],
             stack_data[8],
             stack_data[9]);
+#endif
 	//if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
     g_10ms_count++;
     sound_execute();
     //*(u32*)0xe000ed04=0x10000000;
     os_switch_trigger();
+#if 0
     lprintf_time_buf(1, "tm2-%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
             stack_data[1],
             stack_data[7],
             stack_data[8],
             stack_data[9]);
+#endif
     return stack_data;
 }
 
@@ -453,7 +461,9 @@ void beep_by_timer(uint32_t hz)
 void TIM3_IRQHandler(void)
 {
     static int tog=0;
+#if 0
     lprintf_time_buf(1, "tm3-\n");
+#endif
     //if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
     TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
     if(sound_enable){
@@ -464,7 +474,9 @@ void TIM3_IRQHandler(void)
             GPIO_ResetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
         }
     }
+#if 0
     lprintf_time_buf(1, "tm3-\n");
+#endif
 }
 
 void beep(uint32_t hz, uint32_t t_ms)
