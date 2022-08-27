@@ -70,6 +70,7 @@ typedef uint16_t u16;
 typedef uint8_t u8;
 
 
+extern u32 debug_mode;
 #if 0
 static inline u32 en_irq_save()
 {

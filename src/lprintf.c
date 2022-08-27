@@ -428,6 +428,7 @@ void lprintf_time_buf(u32 time, const char *fmt, ...)
     va_list ap;
     u32 flag;
     char*sp=buf_printf_buf;
+    if(debug_mode)return;
     dis_irq_save(flag);
     u32 us = get_system_us();
 
@@ -447,6 +448,15 @@ void lprintf_time_buf(u32 time, const char *fmt, ...)
     //os_unlock(&oslk_timebuf);
 }
 
+void putchars_buf(const char *s)
+{
+    u32 flag;
+    if(debug_mode)return;
+    dis_irq_save(flag);
+    buf_log(s);
+    irq_restore(flag);
+}
+
 void lprintf_time(const char *fmt, ...)
 {
     va_list ap;
@@ -457,6 +467,8 @@ void lprintf_time(const char *fmt, ...)
     putchars(lprintf_buf);
     log_to_buf(lprintf_buf);
     va_end(ap);
+    lprintf_time_buf(0, "w\n");
+    putchars_buf(fmt);
     os_unlock(&oslk_lprintf);
 }
 
@@ -470,6 +482,8 @@ void lprintf(const char *fmt, ...)
     vslprintf(0, lprintf_buf,fmt,ap);
     putchars(lprintf_buf);
     va_end(ap);
+    lprintf_time_buf(0, "z\n");
+    putchars_buf(fmt);
     os_unlock(&oslk_lprintf);
 #else
     putchars(fmt);

@@ -20,6 +20,7 @@
   */
 extern unsigned long debug_enable;
 
+u32 debug_mode = 0;
 DECLARE_OS_LOCK(oslk_evt, EVT_LOCK_NO);
 DECLARE_RB_DATA(evt, rb_evt, 3)
 #define TIM2_RELOAD 60000
@@ -614,12 +615,14 @@ void main_init(void)
 
   //lprintf("debug_enable %X@%X vs %X\n", debug_enable, &debug_enable, 0xdeb49eab);
   if(0xdeb49eab==debug_enable){
+      debug_mode = 1;
       debug_enable=0;
       os_is_running=0;
       lprintf("Go to debug mode\n");
       run_cmd_interface();
   }
   else{
+      debug_mode = 0;
       lprintf("prepare debug\n");
       debug_enable = 0xdeb49eab;
   }
