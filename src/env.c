@@ -7,6 +7,9 @@ static uint32_t env_start_addr = 0xffffffff;
 uint8_t env_get_char(uint32_t offset);
 void set_cur_env_area(int env_area);
 static u32 flash_log_write_addr = 0xffffffff;
+#define ENV_ADDR_CACHE_N 3
+u32 env_addr_cache[ENV_ADDR_CACHE_N]={0};
+u32 cache_w = 0;
 uint32_t get_env_start_addr()
 {
     uint8_t tmpc;
@@ -204,11 +207,47 @@ uint32_t find_env_data_start()
     return ret;
 }
 
+void clr_cache()
+{
+    for (int i=0;i<ENV_ADDR_CACHE_N;i++){
+        env_addr_cache[i]=0;
+    }
+}
+
+uint32_t get_env_raw_cache(const char* name, char*value, uint32_t * p_position)
+{
+    u32 i;
+    int val;
+
+    for (i=0;i<ENV_ADDR_CACHE_N;i++){
+        if (env_addr_cache[i]==0)
+            continue;
+        if ((val=envmatch((uint8_t *)name, env_addr_cache[i])) < 0)
+            continue;
+        if(p_position!=NULL){
+            *p_position = env_addr_cache[i];
+            return ENV_OK;
+        }
+        if(value!=NULL){
+            strcpy2mem((uint8_t*)value, val);
+            if(*value==0){//null str
+                return ENV_FAIL;
+            }
+        }
+        return ENV_OK;
+    }
+    return ENV_FAIL;
+}
+
 uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
 {
     uint32_t i = 0, nxt, ret = ENV_OK;
     if(p_position!=NULL){
         *p_position=ENV_INVALID;
+    }
+
+    if(get_env_raw_cache(name, value, p_position) == ENV_OK){
+        return ENV_OK;
     }
 
     if(!name){
@@ -238,6 +277,8 @@ uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
         }
         if ((val=envmatch((uint8_t *)name, i)) < 0)
             continue;
+        env_addr_cache[cache_w]=i;
+        cache_w=add_with_limit(cache_w, 1, ENV_ADDR_CACHE_N);
         if(p_position!=NULL){
             *p_position = i;
             goto end;
@@ -319,6 +360,7 @@ uint32_t set_env_raw(const char* name, const char*value)
 
 end:
     set_touch_need_reinit();
+    clr_cache();
     return ret;
 }
 
