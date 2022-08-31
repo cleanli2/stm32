@@ -837,7 +837,7 @@ void Dac1_Init(void)
 	DAC_InitType.DAC_Trigger=DAC_Trigger_None;	//no trigger
 	DAC_InitType.DAC_WaveGeneration=DAC_WaveGeneration_None;//no wave
 	DAC_InitType.DAC_LFSRUnmask_TriangleAmplitude=DAC_LFSRUnmask_Bit0;//mask ampitude
-	DAC_InitType.DAC_OutputBuffer=DAC_OutputBuffer_Disable ;	//DAC1 output buf close, BOFF1=1
+	DAC_InitType.DAC_OutputBuffer=DAC_OutputBuffer_Enable ;	//DAC1 output buf close, BOFF1=1
 	DAC_Init(DAC_Channel_1,&DAC_InitType);	 //init DAC1
 
 	DAC_Cmd(DAC_Channel_1, ENABLE);  //enable DAC1
