@@ -31,6 +31,15 @@
 //lcd
 //#define LCD_USE8BIT_MODEL   0	//定义数据总线是否使用8位模式 0,使用16位模式.1,使用8位模式
 
+#define RTC_8563
+#define I2C_GPIO_PERIPH RCC_APB2Periph_GPIOC
+#define I2C_GROUP GPIOC
+#define SDA_GG GPIOC
+#define SCL_GG GPIOC
+#define SDA_PIN GPIO_Pin_11
+#define SCL_PIN GPIO_Pin_12
+
+
 ////////////////////////////////////////////////////////////////////
 //-----------------LCD端口定义---------------- 
 #define GPIO_TYPE  GPIOC  //GPIO组类型
@@ -151,6 +160,15 @@
 #define LCD_RST  13       //复位引脚            PC13
 #define LCD_WR   15       //写引脚              PC15
 #define LCD_RD   14       //读引脚              PC14
+
+#define RTC_8563
+#define I2C_GPIO_PERIPH RCC_APB2Periph_GPIOB
+#define I2C_GROUP GPIOB
+#define SDA_GG GPIOB
+#define SCL_GG GPIOB
+#define SDA_PIN GPIO_Pin_7
+#define SCL_PIN GPIO_Pin_6
+
 
 //如果使用官方库函数定义下列底层，速度将会下降到14帧每秒，建议采用我司推荐方法
 //以下IO定义直接操作寄存器，快速IO操作，刷屏速率可以达到28帧每秒！ 

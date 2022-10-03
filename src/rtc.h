@@ -2,11 +2,6 @@
 #define _RTC_H
 #include "date.h"
 
-#define SDA_GG GPIOB
-#define SCL_GG GPIOB
-
-#define SDA_PIN GPIO_Pin_7
-#define SCL_PIN GPIO_Pin_6
 
 #define SDA_HIGH GPIO_WriteBit(SDA_GG, SDA_PIN, 1)
 #define SCL_HIGH GPIO_WriteBit(SCL_GG, SCL_PIN, 1)
