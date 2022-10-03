@@ -409,6 +409,16 @@ void power_off()
     GPIO_SetBits(GPIOB,GPIO_Pin_0);
     lprintf_time("gpio setb done\n");
 #endif
+    //power off pin set high to power down
+    RCC_APB2PeriphClockCmd(POWEROFF_GPIO_PERIPH, ENABLE);
+
+    GPIO_InitStructure.GPIO_Pin = POWEROFF_GPIO_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(POWEROFF_GPIO_GROUP, &GPIO_InitStructure);
+    GPIO_SetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
+    //
+
     delay_ms(200);
     lprintf_time("power off done\n");
     while(1);
@@ -600,6 +610,16 @@ void main_init(void)
   GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
 #endif
   //led end
+
+  //power off pin set low
+  RCC_APB2PeriphClockCmd(POWEROFF_GPIO_PERIPH, ENABLE);
+
+  GPIO_InitStructure.GPIO_Pin = POWEROFF_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(POWEROFF_GPIO_GROUP, &GPIO_InitStructure);
+  GPIO_ResetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
+  //power off pin end
 
   RCC_GetClocksFreq(&RCC_ClocksStatus);
   lprintf_time("Version %s%s\n", VERSION, GIT_SHA1);
