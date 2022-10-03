@@ -400,10 +400,12 @@ void power_off()
     lprintf_time("power off in 3 secs\n");
     foce_save_log_func();
     beep(600, 100);
-#ifndef ALIENTEK_MINI
+#ifdef RTC_8563
     check_rtc_alert_and_clear();
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, -1, -1);
     auto_time_correct();
+#endif
+#ifndef ALIENTEK_MINI
     lprintf_time("gpio setb\n");
     foce_save_log_func();
     GPIO_SetBits(GPIOB,GPIO_Pin_0);
@@ -549,8 +551,10 @@ void main_init(void)
 
   GPIO_InitTypeDef GPIO_InitStructure;
   //led
-#ifdef ALIENTEK_MINI
+#ifdef RTC_SOC
   RTC_Init();
+#endif
+#ifdef ALIENTEK_MINI
   lprintf_time("\n\n================ALIENTEK_MINI board start================\n");
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 

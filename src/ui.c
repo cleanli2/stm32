@@ -56,7 +56,7 @@ void main_ui_init(void*vp)
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     lprintf_time("mainmenu\n");
-#ifndef ALIENTEK_MINI
+#ifdef RTC_8563
     if(check_rtc_alert_and_clear()){
         often_used_timer();
     }
@@ -79,7 +79,7 @@ void poff_ctd_ui_init(void*vp)
     (void)uif;
     common_ui_init(vp);
     lcd_lprintf(20, 100, "Version:%s%s", VERSION, GIT_SHA1);
-#ifndef ALIENTEK_MINI
+#ifdef RTC_8563
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 20, 140);
     auto_time_correct();
 #endif
@@ -527,16 +527,25 @@ void date_ui_init(void*vp)
     if(ENV_OK == get_env("HsAdj1Min", t)){
         lcd_lprintf(320, 630, "AutoCorrect:%s", t);
     }
+#endif
+#ifdef RTC_8563
+#ifdef LARGE_SCREEN
+    if(check_rtc_alert_and_clear()){
+        often_used_timer();
+    }
+    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 260, 45);
+#else
     if(check_rtc_alert_and_clear()){
         often_used_timer();
     }
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 260, 45);
 #endif
+#endif
     draw_clock_face(CLOCK_CX, CLOCK_CY);
     ui_buf[LAST_SEC_INDX]=60;
     ui_buf[LAST_MIN_INDX]=60;
     ui_buf[LAST_HOR_INDX]=60;
-#ifndef ALIENTEK_MINI
+#ifdef RTC_8563
     auto_time_correct();
 #endif
 }
