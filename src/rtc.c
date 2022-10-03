@@ -264,13 +264,13 @@ void P8563_init()
     
         //注意,时钟使能之后,对GPIO的操作才有效
         //所以上拉之前,必须使能时钟.才能实现真正的上拉输出
-        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+        RCC_APB2PeriphClockCmd(I2C_GPIO_PERIPH, ENABLE);
         
         GPIO_InitStructure.GPIO_Pin = SDA_PIN|SCL_PIN;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_Init(GPIOB, &GPIO_InitStructure);
-    GPIO_SetBits(GPIOB,SDA_PIN|SCL_PIN);
+        GPIO_Init(I2C_GROUP, &GPIO_InitStructure);
+    GPIO_SetBits(I2C_GROUP,SDA_PIN|SCL_PIN);
     
         // P8563_settime();
 #if 0
@@ -320,7 +320,7 @@ uint8_t bcd2hex(uint8_t ipt)
 {
     return ((ipt&0xf0)>>4)*10 + (ipt&0xf);
 }
-#ifndef ALIENTEK_MINI
+#ifdef RTC_8563
 char* get_rtc_time(date_info_t*dit)
 {
     uint8_t time_date[7];
@@ -518,7 +518,7 @@ uint8_t check_rtc_alert_and_clear()
 
 uint adjust_1min(uint faster_1min)
 {
-#ifndef ALIENTEK_MINI
+#ifndef RTC_8563
     lprintf("ad1min %d\n", faster_1min);
     uint8_t scd = bcd2hex(rtc_read_reg(SECOND_REG));
     if(scd != bcd2hex(rtc_read_reg(SECOND_REG))){
@@ -552,7 +552,7 @@ uint adjust_1min(uint faster_1min)
 
 void clear_second()
 {
-#ifndef ALIENTEK_MINI
+#ifdef RTC_8563
     rtc_write_reg(SECOND_REG, 0);
 #else
     //rtc_write_reg(SECOND_REG, 0);

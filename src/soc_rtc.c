@@ -209,7 +209,7 @@ u8 RTC_Get_Week(u16 year,u8 month,u8 day)
 	return(temp2%7);
 }			  
 extern char t_d[24];
-#ifdef ALIENTEK_MINI
+#ifndef RTC_8563
 char* get_rtc_time(date_info_t*dit)
 {
     slprintf(t_d, "%d.%b.%b %b:%b:%b W%d",
