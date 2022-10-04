@@ -95,6 +95,7 @@ uint8_t writebyte(uchar wdata)
         SCL_HIGH;
         Delay();
         SCL_LOW;
+        Delay();
     }
     return WaitACK();     //I2C器件或通讯出错，将会退出I2C通讯
 }
@@ -110,6 +111,7 @@ uchar Readbyte()
     for(i=0;i<8;i++)
     {
         SCL_HIGH; 
+        Delay();
         bytedata<<=1;
         bytedata|=GET_SDA;
         SCL_LOW;
