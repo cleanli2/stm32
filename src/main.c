@@ -19,10 +19,10 @@ struct task all_tasks[]=
     {
         task_music,
     },
-#ifndef ALIENTEK_MINI
     {
         task_power,
     },
+#ifndef ALIENTEK_MINI
     {
         task_lcd_bklight,
     },
