@@ -203,6 +203,10 @@ uint8_t P8563_Read(uint8_t*ip)
         ip[6]= 0x22; /*年  */
         return ret;
     }
+    if(time[0]&0x80){
+        lprintf("VL is set, clear it\n");
+        rtc_write_reg(2,time[0]&0x7f); //clear VL
+    }
     ip[0]=time[0]&0x7f; /*秒 */
     ip[1]=time[1]&0x7f; /*分 */
     ip[2]=time[2]&0x3f; /*小时 */
