@@ -75,6 +75,7 @@ uint8_t WaitACK()
     SCL_LOW;
     Delay();
     SDA_set_input(0);
+    SDA_HIGH;
     return ret;
 }
 /********************************************
@@ -193,6 +194,13 @@ uint8_t P8563_Read(uint8_t*ip)
     }
     if(!ret){
         lprintf("RTC read error\n");
+        ip[0]= 0x00;
+        ip[1]= 0x01;
+        ip[2]= 0x02;
+        ip[3]= 0x01;
+        ip[4]= 0x01;
+        ip[5]= 0x09; /*ÔÂ */
+        ip[6]= 0x22; /*Äê  */
         return ret;
     }
     ip[0]=time[0]&0x7f; /*Ãë */
@@ -380,6 +388,14 @@ uint8_t rtc_read_reg(uint8_t addr)
     uint8_t ret;
     ReadData1(addr,1,&ret);
     return ret;
+}
+
+void rtc_dump_regs()
+{
+    uint8_t regs[16];
+    lprintf("dump rtc regs\n");
+    ReadData1(0,16,regs);
+    mem_print((char*)regs, 0, 16);
 }
 
 uint8_t rtc_write_reg(uint8_t addr, uint8_t data)

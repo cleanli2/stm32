@@ -1208,6 +1208,9 @@ void rtc_cmd(char *p)
     }
     else if(tmp==1){
         p = str_to_hex(p, (uint*)&d[0]);
+        if(d[0] == 0xff){
+            rtc_dump_regs();
+        }
         lprintf("read reg %b=%b\n", d[0], rtc_read_reg(d[0]));
     }
     else if(tmp==2){
