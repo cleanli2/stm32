@@ -6,7 +6,7 @@ uint32_t v_bat = 0;
 int adc_test()
 {
     int ret = 0;
-#ifndef ALIENTEK_MINI
+#ifdef POWER_MONITOR
     static int adc_inited = 0;
     GPIO_InitTypeDef GPIO_InitStructure;
     ADC_InitTypeDef ADC_InitStructure;
@@ -18,8 +18,8 @@ int adc_test()
         RCC_ADCCLKConfig(RCC_PCLK2_Div4);
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1|RCC_APB2Periph_GPIOA, ENABLE);
 
-        /* Configure PA.03, PA.04 (ADC Channel3, ADC Channel4 as analog inputs */
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_2;
+        /* Configure analog inputs */
+        GPIO_InitStructure.GPIO_Pin = GPIO_ADC_VREF_PIN | GPIO_ADC_V4_2_PIN | GPIO_ADC_IBAT_PIN;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
         GPIO_Init(GPIOA, &GPIO_InitStructure);
 
@@ -32,8 +32,8 @@ int adc_test()
         ADC_InitStructure.ADC_NbrOfChannel = 1;
         ADC_Init(ADC1, &ADC_InitStructure);
         /* ADC1 regular channels configuration */
-        lprintf("config adc1 using PA3\n");
-        ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 1, ADC_SampleTime_28Cycles5);
+        lprintf("config adc1 using VREF\n");
+        ADC_RegularChannelConfig(ADC1, ADC_Channel_VREF, 1, ADC_SampleTime_28Cycles5);
 
         lprintf("enable adc1\n");
         ADC_Cmd(ADC1, ENABLE);
@@ -54,8 +54,8 @@ int adc_test()
         //lprintf("adc already inited\n");
     }
 
-    //lprintf("start adc1 PA3 convertion\n");
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 1, ADC_SampleTime_28Cycles5);
+    //lprintf("start adc1 VREF convertion\n");
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_VREF, 1, ADC_SampleTime_28Cycles5);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     do
     {
@@ -67,8 +67,8 @@ int adc_test()
     v_core = 2500 * 4096 / v_ref;
     //lprintf("real vcore = %dmv\n", v_core);
 
-    //lprintf("start adc1 PA4 convertion\n");
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 1, ADC_SampleTime_28Cycles5);
+    //lprintf("start adc1 V4_2 convertion\n");
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_V4_2, 1, ADC_SampleTime_28Cycles5);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     do
     {
@@ -77,11 +77,11 @@ int adc_test()
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     v_bat=ADC_GetConversionValue(ADC1);
     v_bat = 2500 * v_bat / v_ref;
-    v_bat = v_bat * (330 + 680) / 330;
+    v_bat = v_bat * V4_2_RATIO;
     //lprintf("real vbat = %dmv\n", v_bat);
 
-    //lprintf("start adc1 PA2 convertion\n");
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_28Cycles5);
+    //lprintf("start adc1 IBAT convertion\n");
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_IBAT, 1, ADC_SampleTime_28Cycles5);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     do
     {
@@ -99,13 +99,16 @@ int adc_test()
         v_currt = v_ref - v_currt;
     }
     //mA/mv
-#define CURRENT_MEASUREMENT_CALIBRATION 1025/1000
     v_currt = 2500 * v_currt / v_ref;
     //lprintf("real v_currt = %dmv\n", v_currt);
     v_currt = v_currt * CURRENT_MEASUREMENT_CALIBRATION;
     //lprintf("real I = %dmA\n", v_currt);
     //lprintf("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, v_currt);
+#ifdef LARGE_SCREEN
     lcd_lprintf(240, 0, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
+#else
+    lcd_lprintf(180, 30, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
+#endif
     if(500000 > (get_system_us()%(1000*1000*200))){//200s
         lprintf_time("v_core %dmv v_bat %dmv in_charge %c I %dmA\n", v_core, v_bat, in_charge, v_currt);
     }

@@ -14,6 +14,17 @@
 
 #ifdef ALIENTEK_MINI
 /////////////////////////////////////ALIENTEK_MINI//////////////////////////////////////////////
+#define POWER_MONITOR
+#define GPIO_ADC_VREF_PIN GPIO_Pin_1
+#define GPIO_ADC_V4_2_PIN GPIO_Pin_4
+#define GPIO_ADC_IBAT_PIN GPIO_Pin_0
+#define ADC_Channel_VREF ADC_Channel_1
+#define ADC_Channel_V4_2 ADC_Channel_4
+#define ADC_Channel_IBAT ADC_Channel_0
+#define CURRENT_MEASUREMENT_CALIBRATION 350/1000
+#define V4_2_RATIO 2
+#define ADC_DEBUG
+
 #define BEEP_GPIO_PERIPH RCC_APB2Periph_GPIOA
 #define BEEP_GPIO_GROUP GPIOA
 #define BEEP_GPIO_PIN GPIO_Pin_14
@@ -127,11 +138,15 @@
 /////////////////////////////////////HAMMER//////////////////////////////////////////////
 
 
-
-
-
-
-
+#define POWER_MONITOR
+#define GPIO_ADC_VREF_PIN GPIO_Pin_3
+#define GPIO_ADC_V4_2_PIN GPIO_Pin_4
+#define GPIO_ADC_IBAT_PIN GPIO_Pin_2
+#define ADC_Channel_VREF ADC_Channel_3
+#define ADC_Channel_V4_2 ADC_Channel_4
+#define ADC_Channel_IBAT ADC_Channel_2
+#define CURRENT_MEASUREMENT_CALIBRATION 1025/1000
+#define V4_2_RATIO (330+680)/330
 
 
 #define BEEP_GPIO_PERIPH RCC_APB2Periph_GPIOB
