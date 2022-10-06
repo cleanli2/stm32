@@ -2,6 +2,11 @@
 #include "adc.h"
 
 #define ADC_INITED 0x11d0
+#ifdef ADC_DEBUG
+#define Debug_LOG_ADC(...) lprintf(__VA_ARGS__)
+#else
+#define Debug_LOG_ADC(...)
+#endif
 uint32_t v_bat = 0;
 int adc_test()
 {
@@ -51,45 +56,45 @@ int adc_test()
         adc_inited = ADC_INITED;
     }
     else{
-        //lprintf("adc already inited\n");
+        Debug_LOG_ADC("adc already inited\n");
     }
 
-    //lprintf("start adc1 VREF convertion\n");
+    Debug_LOG_ADC("start adc1 VREF convertion\n");
     ADC_RegularChannelConfig(ADC1, ADC_Channel_VREF, 1, ADC_SampleTime_28Cycles5);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     do
     {
         delay_us(5);
-        //lprintf("waiting convertion done...\n");
+        Debug_LOG_ADC("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     v_ref=ADC_GetConversionValue(ADC1);
-    //lprintf("vref = %x\n", v_ref);
+    Debug_LOG_ADC("vref = %x\n", v_ref);
     v_core = 2500 * 4096 / v_ref;
-    //lprintf("real vcore = %dmv\n", v_core);
+    Debug_LOG_ADC("real vcore = %dmv\n", v_core);
 
-    //lprintf("start adc1 V4_2 convertion\n");
+    Debug_LOG_ADC("start adc1 V4_2 convertion\n");
     ADC_RegularChannelConfig(ADC1, ADC_Channel_V4_2, 1, ADC_SampleTime_28Cycles5);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     do
     {
         delay_us(5);
-        //lprintf("waiting convertion done...\n");
+        Debug_LOG_ADC("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     v_bat=ADC_GetConversionValue(ADC1);
     v_bat = 2500 * v_bat / v_ref;
     v_bat = v_bat * V4_2_RATIO;
-    //lprintf("real vbat = %dmv\n", v_bat);
+    Debug_LOG_ADC("real vbat = %dmv\n", v_bat);
 
-    //lprintf("start adc1 IBAT convertion\n");
+    Debug_LOG_ADC("start adc1 IBAT convertion\n");
     ADC_RegularChannelConfig(ADC1, ADC_Channel_IBAT, 1, ADC_SampleTime_28Cycles5);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     do
     {
         delay_us(5);
-        //lprintf("waiting convertion done...\n");
+        Debug_LOG_ADC("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     v_currt=ADC_GetConversionValue(ADC1);
-    //lprintf("vcur = %x\n", v_currt);
+    Debug_LOG_ADC("vcur = %x\n", v_currt);
     if(v_currt>v_ref){
         in_charge = '+';
         v_currt = v_currt - v_ref;
@@ -100,10 +105,10 @@ int adc_test()
     }
     //mA/mv
     v_currt = 2500 * v_currt / v_ref;
-    //lprintf("real v_currt = %dmv\n", v_currt);
+    Debug_LOG_ADC("real v_currt = %dmv\n", v_currt);
     v_currt = v_currt * CURRENT_MEASUREMENT_CALIBRATION;
-    //lprintf("real I = %dmA\n", v_currt);
-    //lprintf("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, v_currt);
+    Debug_LOG_ADC("real I = %dmA\n", v_currt);
+    Debug_LOG_ADC("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, v_currt);
 #ifdef LARGE_SCREEN
     lcd_lprintf(240, 0, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
 #else
