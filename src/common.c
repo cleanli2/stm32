@@ -702,6 +702,34 @@ void main_init(void)
   GPIO_InitStructure.GPIO_Pin = LED1_GPIO_PIN;
   GPIO_Init(LED1_GPIO_GROUP, &GPIO_InitStructure);
   GPIO_ResetBits(LED1_GPIO_GROUP, LED1_GPIO_PIN);
+#elif defined SUNRISE
+  lprintf_time("\n\n================SUNRISE board start================\n");
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+  /* Configure PD0 and PD2 in output pushpull mode */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  GPIO_ResetBits(GPIOA,GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13);
+
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+  /* Configure in output pushpull mode */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4|GPIO_Pin_0;//PB4 spi flash cs
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+  GPIO_ResetBits(GPIOC,GPIO_Pin_0);	
+  GPIO_SetBits(GPIOC,GPIO_Pin_4);//spi flash cs =1
+
+  RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
+
+  GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
+  GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
 #else
   lprintf_time("\n\n================Hamer board start================\n");
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
