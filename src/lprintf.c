@@ -359,7 +359,11 @@ void lprintf_time(const char *fmt, ...)
     va_list ap;
 
     va_start(ap,fmt);
+#ifdef SUNRISE
+    print_with_time = 0;
+#else
     print_with_time = 1;
+#endif
     vslprintf(lprintf_buf,fmt,ap);
     print_with_time = 0;
     putchars(lprintf_buf);

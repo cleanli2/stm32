@@ -37,6 +37,11 @@ $(warning choose board alientek_mini)
 CFLAGS+=-DALIENTEK_MINI
 CFLAGS+=-DSTM32F10X_HD
 LDFILE=stm32_f103_512k_gcc
+else ifeq ($(board),sunrise)
+$(warning choose board sunrise)
+CFLAGS+=-DSUNRISE
+CFLAGS+=-DSTM32F10X_HD
+LDFILE=stm32_f103_512k_gcc
 else
 $(warning choose board hammer)
 board=hammer
