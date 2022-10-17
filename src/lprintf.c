@@ -461,7 +461,7 @@ void lprintf_time(const char *fmt, ...)
 
     os_lock(&oslk_lprintf);
     va_start(ap,fmt);
-#ifdef SUNRISE
+#ifdef NO_PRINT_WITH_TIME
     vslprintf(0, lprintf_buf,fmt,ap);
 #else
     vslprintf(1, lprintf_buf,fmt,ap);
