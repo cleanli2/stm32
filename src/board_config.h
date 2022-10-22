@@ -14,6 +14,19 @@
 
 #ifdef ALIENTEK_MINI
 /////////////////////////////////////ALIENTEK_MINI//////////////////////////////////////////////
+#define POWER_MONITOR
+#define GPIO_ADC_VREF_PIN GPIO_Pin_1
+#define GPIO_ADC_V4_2_PIN GPIO_Pin_4
+#define GPIO_ADC_IBAT_PIN GPIO_Pin_0
+#define ADC_Channel_VREF ADC_Channel_1
+#define ADC_Channel_V4_2 ADC_Channel_4
+#define ADC_Channel_IBAT ADC_Channel_0
+#define GPIO_GROUP_VREF GPIOA
+#define GPIO_GROUP_V4_2_IBAT GPIOA
+#define CURRENT_MEASUREMENT_CALIBRATION 350/1000
+#define V4_2_RATIO 2
+#define ADC_DEBUG
+
 #define BEEP_GPIO_PERIPH RCC_APB2Periph_GPIOA
 #define BEEP_GPIO_GROUP GPIOA
 #define BEEP_GPIO_PIN GPIO_Pin_14
@@ -128,20 +141,22 @@
 
 
 #define POWER_MONITOR
-#define GPIO_ADC_VREF_PIN GPIO_Pin_3
-#define GPIO_ADC_V4_2_PIN GPIO_Pin_4
-#define GPIO_ADC_IBAT_PIN GPIO_Pin_2
-#define ADC_Channel_VREF ADC_Channel_4
+#define GPIO_ADC_VREF_PIN GPIO_Pin_5
+#define GPIO_ADC_V4_2_PIN GPIO_Pin_2
+#define GPIO_ADC_IBAT_PIN GPIO_Pin_3
+#define ADC_Channel_VREF ADC_Channel_15
 #define ADC_Channel_V4_2 ADC_Channel_2
 #define ADC_Channel_IBAT ADC_Channel_3
+#define GPIO_GROUP_VREF GPIOC
+#define GPIO_GROUP_V4_2_IBAT GPIOA
 #define CURRENT_MEASUREMENT_CALIBRATION 1025/1000
 #define V4_2_RATIO 2
 #define ADC_DEBUG
 
 
-#define BEEP_GPIO_PERIPH RCC_APB2Periph_GPIOC
-#define BEEP_GPIO_GROUP GPIOC
-#define BEEP_GPIO_PIN GPIO_Pin_5
+#define BEEP_GPIO_PERIPH RCC_APB2Periph_GPIOA
+#define BEEP_GPIO_GROUP GPIOA
+#define BEEP_GPIO_PIN GPIO_Pin_4
 
 #define LED1_GPIO_PERIPH RCC_APB2Periph_GPIOA
 #define LED1_GPIO_GROUP GPIOA
@@ -263,11 +278,17 @@ static inline uint16_t DATAIN()
 /////////////////////////////////////HAMMER//////////////////////////////////////////////
 
 
-
-
-
-
-
+#define POWER_MONITOR
+#define GPIO_ADC_VREF_PIN GPIO_Pin_3
+#define GPIO_ADC_V4_2_PIN GPIO_Pin_4
+#define GPIO_ADC_IBAT_PIN GPIO_Pin_2
+#define ADC_Channel_VREF ADC_Channel_3
+#define ADC_Channel_V4_2 ADC_Channel_4
+#define ADC_Channel_IBAT ADC_Channel_2
+#define GPIO_GROUP_VREF GPIOA
+#define GPIO_GROUP_V4_2_IBAT GPIOA
+#define CURRENT_MEASUREMENT_CALIBRATION 1025/1000
+#define V4_2_RATIO (330+680)/330
 
 
 #define BEEP_GPIO_PERIPH RCC_APB2Periph_GPIOB

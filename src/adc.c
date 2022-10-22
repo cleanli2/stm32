@@ -18,11 +18,12 @@ int adc_test()
         RCC_ADCCLKConfig(RCC_PCLK2_Div4);
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1|RCC_APB2Periph_GPIOA, ENABLE);
 
-        /* Configure PA.03, PA.04 (ADC Channel3, ADC Channel4 as analog inputs */
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_2;
+        /* Configure analog inputs */
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
-        GPIO_Init(GPIOA, &GPIO_InitStructure);
-
+        GPIO_InitStructure.GPIO_Pin = GPIO_ADC_V4_2_PIN | GPIO_ADC_IBAT_PIN;
+        GPIO_Init(GPIO_GROUP_V4_2_IBAT, &GPIO_InitStructure);
+        GPIO_InitStructure.GPIO_Pin = GPIO_ADC_VREF_PIN;
+        GPIO_Init(GPIO_GROUP_VREF, &GPIO_InitStructure);
         /* ADC1 configuration ------------------------------------------------------*/
         ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
         ADC_InitStructure.ADC_ScanConvMode = DISABLE;
