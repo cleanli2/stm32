@@ -256,6 +256,7 @@ button_t main_menu_button[]={
     {130,460,200, 60, f3mins_timer, -1, 0, "3x1mins TIMER", 0, _3x1mins_timer_cch_str},
     {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
+    {350,460,80, 60, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
     {350,600,80, 60, NULL, UI_SD, 0, "SDCard", 0, sd_card_cch_str},
     {350,530,80, 60, sound_ctrl, -1, 0, "Sound", 0, sound_cch_str},
 #else
@@ -267,7 +268,7 @@ button_t main_menu_button[]={
     {20,180,120, 20, music_test, -1, 0, "MusicTest", 0, music_test_cch_str},
     {20,210,120, 20, f3mins_timer, -1, 0, "3x1mins TIMER", 0, _3x1mins_timer_cch_str},
     {20,240,120, 20, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
-    {20,270,120, 20, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
+    {150,210,80, 20, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
     {150,270,80, 20, NULL, UI_SD, 0, "SDCard", 0, sd_card_cch_str},
     {150,240,80, 20, sound_ctrl, -1, 0, "Sound", 0, sound_cch_str},
 #endif
@@ -600,6 +601,16 @@ void date_ui_process_event(void*vp)
         ui_buf[LAST_HOR_INDX]=h_ix;
         gui_circle(CLOCK_CX, CLOCK_CY, BLACK, 15, 1);
     }
+    common_process_event(vp);
+}
+
+void power_ui_init(void*vp)
+{
+    lprintf("power ui\n");
+    common_ui_init(vp);
+}
+void power_ui_process_event(void*vp)
+{
     common_process_event(vp);
 }
 
@@ -1074,7 +1085,18 @@ ui_t ui_list[]={
         date_button,
         UI_DATE,
         220, //timeout
-        TIME_OUT_EN,
+        0,
+        NULL,//char*timeout_music;
+        NULL,
+    },
+    {
+        power_ui_init,
+        power_ui_process_event,
+        NULL,
+        NULL,
+        UI_POWER,
+        220, //timeout
+        0,
         NULL,//char*timeout_music;
         NULL,
     },

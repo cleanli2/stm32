@@ -24,6 +24,7 @@ const char music_test_cch_str[]="音乐";
 const char _3x1mins_timer_cch_str[]="3次1分钟";
 const char more_timer_cch_str[]="更多定时器";
 const char date_cch_str[]="时间日期";
+const char power_cch_str[]="电源监控";
 const char sd_card_cch_str[]="SD卡";
 const char sound_cch_str[]="声音开关";
 const char sd_detect_cch_str[]="SD卡/下页";
