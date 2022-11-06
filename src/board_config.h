@@ -139,6 +139,7 @@
 #elif defined SUNRISE
 /////////////////////////////////////SUNRISE//////////////////////////////////////////////
 
+#define NO_PRINT_WITH_TIME
 
 #define POWER_MONITOR
 #define GPIO_ADC_VREF_PIN GPIO_Pin_5
@@ -187,7 +188,7 @@
 #define SDA_GG GPIOC
 #define SCL_GG GPIOC
 #define SDA_PIN GPIO_Pin_11
-#define SCL_PIN GPIO_Pin_12
+#define SCL_PIN GPIO_Pin_10
 
 //如果使用官方库函数定义下列底层，速度将会下降到14帧每秒，建议采用我司推荐方法
 //以下IO定义直接操作寄存器，快速IO操作，刷屏速率可以达到28帧每秒！ 
