@@ -605,19 +605,37 @@ void date_ui_process_event(void*vp)
     common_process_event(vp);
 }
 
+void clr_wave()
+{
+    lcd_clr_window(WHITE, 0, 30, 480, 650);
+}
+
+button_t power_ui_button[]={
+#ifdef LARGE_SCREEN
+    {15, 680, 100,  40, clr_wave, -1, 0, "Clear", 0, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+#else
+    {10, 270, 60,  20, clr_wave, -1, 0, "Clear", 0, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+#endif
+};
+
 void power_ui_init(void*vp)
 {
     lprintf("power ui\n");
-    ui_buf[0] = 700;
     common_ui_init(vp);
+    ui_buf[0] = 640;
+    lcd_lprintf(10, 655, "I(mA)");
+    lcd_lprintf(170, 655, "VBat(mv)");
+    lcd_lprintf(330, 655, "VCore(mv)");
 }
 void power_ui_process_event(void*vp)
 {
     uint32_t vcore_mv, vbat_mv;
     int32_t i_mA;
 #ifdef LARGE_SCREEN
-    if(ui_buf[0]<=20){
-        ui_buf[0] = 700;
+    if(ui_buf[0]<=30){
+        ui_buf[0] = 640;
     }
     get_myadc_value(&vcore_mv, &vbat_mv, &i_mA);
     i_mA += 2500;
@@ -630,7 +648,7 @@ void power_ui_process_event(void*vp)
     PutPixel(320, ui_buf[0], BLACK);
     vcore_mv -= 2500;
     vcore_mv /= 10;
-    PutPixel(480-vcore_mv, ui_buf[0], GREEN);
+    PutPixel(480-vcore_mv, ui_buf[0], BROWN);
     ui_buf[0]--;
 #else
 #endif
@@ -1116,7 +1134,7 @@ ui_t ui_list[]={
         power_ui_init,
         power_ui_process_event,
         NULL,
-        NULL,
+        power_ui_button,
         UI_POWER,
         220, //timeout
         0,
