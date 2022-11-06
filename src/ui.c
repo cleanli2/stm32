@@ -19,6 +19,7 @@ prgb_t power_prgb[]={
     {-1, -1,  -1,  -1, NULL, NULL, NULL, 0},
 };
 
+void PutPixel(int x, int y, int color);
 void often_used_timer();
 void f3mins_timer();
 void common_process_event(void*vp);
@@ -607,10 +608,32 @@ void date_ui_process_event(void*vp)
 void power_ui_init(void*vp)
 {
     lprintf("power ui\n");
+    ui_buf[0] = 700;
     common_ui_init(vp);
 }
 void power_ui_process_event(void*vp)
 {
+    uint32_t vcore_mv, vbat_mv;
+    int32_t i_mA;
+#ifdef LARGE_SCREEN
+    if(ui_buf[0]<=20){
+        ui_buf[0] = 700;
+    }
+    get_myadc_value(&vcore_mv, &vbat_mv, &i_mA);
+    i_mA += 2500;
+    i_mA /= 30;
+    PutPixel(160-i_mA, ui_buf[0], RED);
+    PutPixel(160, ui_buf[0], BLACK);
+    vbat_mv -= 3000;
+    vbat_mv /= 10;
+    PutPixel(320-vbat_mv, ui_buf[0], BLUE);
+    PutPixel(320, ui_buf[0], BLACK);
+    vcore_mv -= 2500;
+    vcore_mv /= 10;
+    PutPixel(480-vcore_mv, ui_buf[0], GREEN);
+    ui_buf[0]--;
+#else
+#endif
     common_process_event(vp);
 }
 
