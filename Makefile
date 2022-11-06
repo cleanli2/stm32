@@ -32,6 +32,9 @@ CFLAGS+=-DWRITE_W25F
 C_OBJ+=unused/ziku16.o
 endif
 
+ifeq ($(board),)
+	board=sunrise
+endif
 ifeq ($(board),alientek_mini)
 $(warning choose board alientek_mini)
 CFLAGS+=-DALIENTEK_MINI
@@ -58,7 +61,7 @@ all:$(C_OBJ)
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).hex -Oihex
 	cp $(TARGET).hex $(TARGET)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 	rm $(TARGET)_*.hex
-	cp $(TARGET).hex $(TARGET)_$(board)_$(type)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
+	cp $(TARGET).hex $(TARGET)_$(board)_main_$(type)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 
 $(C_OBJ):%.o:%.c
 	$(CC) -c $(CFLAGS) -o $@ $<
