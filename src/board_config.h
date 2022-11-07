@@ -139,8 +139,6 @@
 #elif defined SUNRISE
 /////////////////////////////////////SUNRISE//////////////////////////////////////////////
 
-#define NO_PRINT_WITH_TIME
-
 #define POWER_MONITOR
 #define GPIO_ADC_VREF_PIN GPIO_Pin_5
 #define GPIO_ADC_V4_2_PIN GPIO_Pin_2

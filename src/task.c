@@ -29,6 +29,8 @@ uint cur_task_timeout_ct;
 uint default_music_note_period = DEFAULT_MUSIC_NOTE_PERIOD;
 uint no_key_down_ct_lcd = 0;
 uint no_key_down_ct = 0;
+uint32_t idle_bl = 0xffffffff;
+uint32_t bl = 0xffffffff;
 bool save_power_mode = false;
 int sound_pool_full();
 static u32 sound_time_ct = 0;
@@ -93,20 +95,28 @@ void task_key_status(struct task*vp)
 void task_lcd_bklight(struct task*vp)
 {
     (void)vp;//fix unused variable warning
+    if(idle_bl == 0xffffffff){
+        idle_bl = get_env_uint("idle_bl", DEFAULT_IDLE_BL);
+        lprintf("get idle_bl=%d\r\n", idle_bl);
+    }
+    if(bl == 0xffffffff){
+        bl = get_env_uint("bl", DEFAULT_BL);
+        lprintf("get bl=%d\r\n", bl);
+    }
     if(save_power_mode){
         //lprintf("lcdps:%d %d\n", no_key_down_ct_lcd, get_BL_value());
-        if(get_BL_value() > DEFAULT_IDLE_BL){
+        if(get_BL_value() > idle_bl){
             if(no_key_down_ct_lcd > (LCD_POWER_SAVE_CYCLE/LCD_POWER_SAVE_RATIO)){
-                lprintf_time("lcd_\r\n");
+                lprintf_time("lcd_=%d\r\n", idle_bl);
                 no_key_down_ct_lcd = 0;
-                set_BL_value(DEFAULT_IDLE_BL);
+                set_BL_value(idle_bl);
             }
         }
         else{
             if(no_key_down_ct_lcd > (LCD_POWER_SAVE_CYCLE)){
-                lprintf_time("lcd^\r\n");
+                lprintf_time("lcd^=%d\r\n", bl);
                 no_key_down_ct_lcd = 0;
-                set_BL_value(DEFAULT_BL);
+                set_BL_value(bl);
             }
         }
     }
