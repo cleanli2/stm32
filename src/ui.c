@@ -605,9 +605,32 @@ void date_ui_process_event(void*vp)
     common_process_event(vp);
 }
 
+void scaleplate_drawing()
+{
+    ui_buf[0] = 640;
+    lcd_lprintf(10, 655, "I 400   0  -400(mA)");
+    lcd_lprintf(175, 655, " 4.0  3.6  3.2(v)");
+    lcd_lprintf(330, 655, "VCore(0.2v/d) 3.0v");
+    //i=0
+    POINT_COLOR=LIGHTGRAY;
+    LCD_DrawLine(80, 640, 80, 30);
+    for(int i=1;i<24;i++){
+        LCD_DrawLine(20*i, 640, 20*i, 30);
+    }
+    POINT_COLOR=BLACK;
+    LCD_DrawLine(80, 650, 80, 30);
+    LCD_DrawLine(200, 650, 200, 30);
+    LCD_DrawLine(240, 650, 240, 30);
+    LCD_DrawLine(280, 650, 280, 30);
+    LCD_DrawLine(460, 650, 460, 30);
+    LCD_DrawLine(160, 660, 160, 30);
+    LCD_DrawLine(320, 660, 320, 30);
+}
+
 void clr_wave()
 {
     lcd_clr_window(WHITE, 0, 30, 480, 650);
+    scaleplate_drawing();
 }
 
 button_t power_ui_button[]={
@@ -624,10 +647,7 @@ void power_ui_init(void*vp)
 {
     lprintf("power ui\n");
     common_ui_init(vp);
-    ui_buf[0] = 640;
-    lcd_lprintf(10, 655, "I(mA)");
-    lcd_lprintf(170, 655, "VBat(mv)");
-    lcd_lprintf(330, 655, "VCore(mv)");
+    scaleplate_drawing();
 }
 void power_ui_process_event(void*vp)
 {
@@ -638,15 +658,13 @@ void power_ui_process_event(void*vp)
         ui_buf[0] = 640;
     }
     get_myadc_value(&vcore_mv, &vbat_mv, &i_mA);
-    i_mA += 2500;
-    i_mA /= 30;
+    i_mA += 800;
+    i_mA /= 10;
     PutPixel(160-i_mA, ui_buf[0], RED);
-    PutPixel(160, ui_buf[0], BLACK);
-    vbat_mv -= 3000;
+    vbat_mv -= 2800;
     vbat_mv /= 10;
     PutPixel(320-vbat_mv, ui_buf[0], BLUE);
-    PutPixel(320, ui_buf[0], BLACK);
-    vcore_mv -= 2500;
+    vcore_mv -= 2800;
     vcore_mv /= 10;
     PutPixel(480-vcore_mv, ui_buf[0], BROWN);
     ui_buf[0]--;
