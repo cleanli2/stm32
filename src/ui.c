@@ -524,7 +524,7 @@ void date_ui_init(void*vp)
 #ifdef LARGE_SCREEN
     lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
     if(ENV_OK == get_env("LastTimeAdj", t)){
-        lcd_lprintf(15, 630, "last adj date:%s", t);
+        lcd_lprintf(15, 635, "last adj date:%s", t);
     }
     if(ENV_OK == get_env("HsAdj1Min", t)){
         lcd_lprintf(320, 630, "AutoCorrect:%s", t);
@@ -746,6 +746,17 @@ void clr_s()
     set_env("LastTimeAdj", get_rtc_time(NULL));
 }
 
+void toggle_auto_power_on()
+{
+    if(0!=get_env_uint("autopon", 0)){
+        set_env_uint("autopon", 0);
+    }
+    else{
+        set_env_uint("autopon", 1);
+    }
+    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 260, 45);
+}
+
 button_t date_button[]={
 #ifdef LARGE_SCREEN
     {15, 660, 100,  40, adjust_enable, -1, 0, "time adjust", 0, time_adjust_cch_str},
@@ -753,6 +764,7 @@ button_t date_button[]={
     {255, 660, 100,  40, slow_1, -1, 0, "slower 1min", 1, NULL},
     {375, 660, 100,  40, clr_s, -1, 0, "clear second", 1, NULL},
     {15, 150, 100,  40, language_set, -1, 0, language_cch_str, 0, "English"},
+    {15, 590, 90,  40, toggle_auto_power_on, -1, 0, "autopon", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #else
     {10, 270, 60,  20, adjust_enable, -1, 0, "timeadj", 0, time_adjust_cch_str},

@@ -300,7 +300,7 @@ void P8563_init()
     puthexch(rtc_read_reg(1));
     rtc_write_reg(0x0,0x00);
     //       writeData(0xa,0x8); /*8:00报警*/
-    rtc_write_reg(0x1,0x12|rtc_read_reg(0x1)); /*报警有效*/
+    rtc_write_reg(0x1,0x10|rtc_read_reg(0x1)); /*报警有效*/
     //      writeData(0xd,0xf0);  //编程输出32.768K的频率
     //  }
     rtc_inited = 1;
@@ -417,7 +417,17 @@ void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y)
 {
     date_info_t dt, dt_alt;
     uint32_t h, m;
+    uint8_t reg1;
 
+    reg1 = rtc_read_reg(0x1);
+    if(0==get_env_uint("autopon", 0)){
+        rtc_write_reg(0x1,0xfd&reg1); /*alert disable*/
+        if(show_x>0 && show_y>0){
+            lcd_lprintf(show_x, show_y, "Next auto power on: off");
+        }
+        return;
+    }
+    rtc_write_reg(0x1,0x02|reg1); /*alert enable*/
     get_rtc_time(&dt);
     dt_alt.hour = bcd2hex(rtc_read_reg(0x0a));
     h = dt_alt.hour;
