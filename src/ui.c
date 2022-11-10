@@ -605,6 +605,39 @@ void date_ui_process_event(void*vp)
     common_process_event(vp);
 }
 
+void date_set_ui_init(void*vp)
+{
+#ifdef LARGE_SCREEN
+    common_ui_init(vp);
+#endif
+}
+void date_set_ui_process_event(void*vp)
+{
+    if(g_flag_1s){
+#ifdef LARGE_SCREEN
+        set_LCD_Char_scale(2);
+        lcd_lprintf(10, 100, "%s  ", get_rtc_time(NULL));
+        set_LCD_Char_scale(1);
+#else
+#endif
+    }
+    common_process_event(vp);
+}
+
+void date_set_enable()
+{
+}
+
+button_t date_set_button[]={
+#ifdef LARGE_SCREEN
+    {375, 660, 100,  40, date_set_enable, -1, 0, "OK", 1, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+#else
+    {185, 270, 40,  20, date_set_enable, -1, 0, "OK", 1, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+#endif
+};
+
 void scaleplate_drawing()
 {
     ui_buf[0] = 640;
@@ -765,6 +798,7 @@ button_t date_button[]={
     {375, 660, 100,  40, clr_s, -1, 0, "clear second", 1, NULL},
     {15, 150, 100,  40, language_set, -1, 0, language_cch_str, 0, "English"},
     {15, 590, 90,  40, toggle_auto_power_on, -1, 0, "autopon", 0, NULL},
+    {375, 590, 90,  40, NULL, UI_DATE_SET, 0, "dateset", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #else
     {10, 270, 60,  20, adjust_enable, -1, 0, "timeadj", 0, time_adjust_cch_str},
@@ -1177,6 +1211,17 @@ ui_t ui_list[]={
         sd_ui_uninit,
         sd_button,
         UI_SD,
+        220, //timeout
+        0,
+        NULL,//char*timeout_music;
+        NULL,
+    },
+    {
+        date_set_ui_init,
+        date_set_ui_process_event,
+        NULL,
+        date_set_button,
+        UI_DATE_SET,
         220, //timeout
         0,
         NULL,//char*timeout_music;

@@ -26,6 +26,7 @@ enum UI_NAME_INDEX {
     UI_DATE,
     UI_POWER,
     UI_SD,
+    UI_DATE_SET,
     UI_LAST,
     UI_MAX
 };
