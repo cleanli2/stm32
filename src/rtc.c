@@ -242,7 +242,8 @@ void P8563_settime(uint8_t*ip)
     rtc_write_reg(5,ip[2]); //»’ 
     rtc_write_reg(4,ip[3]); // ± 
     rtc_write_reg(3,ip[4]); //∑÷  
-    rtc_write_reg(2,ip[5]); //√Î 
+    rtc_write_reg(6,ip[5]); //√Î 
+    rtc_write_reg(2, 0); //√Î 
     delay_ms(1000);
     //P8563_gettime(g8563_Store);
 }

@@ -605,14 +605,32 @@ void date_ui_process_event(void*vp)
     common_process_event(vp);
 }
 
+#define DATE_SET_Y_START 200
 void date_set_ui_init(void*vp)
 {
-#ifdef LARGE_SCREEN
+    date_info_t t_date = {0};
     common_ui_init(vp);
+#ifdef LARGE_SCREEN
+    get_rtc_time(&t_date);
+    ui_buf[0]=t_date.year;
+    ui_buf[1]=t_date.month;
+    ui_buf[2]=t_date.day;
+    ui_buf[3]=t_date.hour;
+    ui_buf[4]=t_date.minute;
+    ui_buf[5]=t_date.weekday;
+    set_LCD_Char_scale(3);
+    lcd_lprintf(200, DATE_SET_Y_START, "%d", ui_buf[0]);
+    lcd_lprintf(200, DATE_SET_Y_START+70, "%d", ui_buf[1]);
+    lcd_lprintf(200, DATE_SET_Y_START+140, "%d", ui_buf[2]);
+    lcd_lprintf(200, DATE_SET_Y_START+210, "%d", ui_buf[3]);
+    lcd_lprintf(200, DATE_SET_Y_START+280, "%d", ui_buf[4]);
+    lcd_lprintf(200, DATE_SET_Y_START+350, "%d", ui_buf[5]);
+    set_LCD_Char_scale(1);
 #endif
 }
 void date_set_ui_process_event(void*vp)
 {
+    uint32_t dt;
     if(g_flag_1s){
 #ifdef LARGE_SCREEN
         set_LCD_Char_scale(2);
@@ -621,19 +639,91 @@ void date_set_ui_process_event(void*vp)
 #else
 #endif
     }
+    for(int8 i = 0; i < EVENT_MAX; i++){
+        uint32_t evt_flag=1<<i;
+        if(cur_task_event_flag & evt_flag){
+            if(evt_flag == (1<<EVENT_TOUCH_UP)){
+                uint16_t x = cached_touch_x, y = cached_touch_y;
+                //
+                if(x>360){
+                    dt=10;
+                }
+                else if(x>240){
+                    dt=1;
+                }
+                else if(x>120){
+                    dt=-1;
+                }
+                else{
+                    dt=-10;
+                }
+                if(y<DATE_SET_Y_START+70&&y>DATE_SET_Y_START){
+                    ui_buf[0]+=dt;
+                }
+                else if(y<DATE_SET_Y_START+140){
+                    ui_buf[1]+=dt;
+                    if(ui_buf[1]>12)ui_buf[1]=1;
+                    if(ui_buf[1]==0)ui_buf[1]=12;
+                }
+                else if(y<DATE_SET_Y_START+210){
+                    ui_buf[2]+=dt;
+                    if(ui_buf[2]>31)ui_buf[2]=1;
+                    if(ui_buf[2]==0)ui_buf[2]=31;
+                }
+                else if(y<DATE_SET_Y_START+280){
+                    ui_buf[3]+=dt;
+                    if(ui_buf[3]>0xffffff00)ui_buf[3]=23;
+                    else if(ui_buf[3]>23)ui_buf[3]=0;
+                }
+                else if(y<DATE_SET_Y_START+350){
+                    ui_buf[4]+=dt;
+                    if(ui_buf[4]>0xffffff00)ui_buf[4]=59;
+                    else if(ui_buf[4]>59)ui_buf[4]=0;
+                }
+                else if(y<DATE_SET_Y_START+420){
+                    ui_buf[5]+=dt;
+                    if(ui_buf[5]>0xffffff00)ui_buf[5]=6;
+                    else if(ui_buf[5]>6)ui_buf[5]=0;
+                }
+                set_LCD_Char_scale(3);
+                lcd_lprintf(200, DATE_SET_Y_START, "%d ", ui_buf[0]);
+                lcd_lprintf(200, DATE_SET_Y_START+70, "%d ", ui_buf[1]);
+                lcd_lprintf(200, DATE_SET_Y_START+140, "%d ", ui_buf[2]);
+                lcd_lprintf(200, DATE_SET_Y_START+210, "%d ", ui_buf[3]);
+                lcd_lprintf(200, DATE_SET_Y_START+280, "%d ", ui_buf[4]);
+                lcd_lprintf(200, DATE_SET_Y_START+350, "%d ", ui_buf[5]);
+                set_LCD_Char_scale(1);
+            }
+        }
+    }
     common_process_event(vp);
 }
 
 void date_set_enable()
 {
+    uint8_t dat[6];
+    dat[0]=hex2bcd(ui_buf[0]-2000);
+    dat[1]=hex2bcd(ui_buf[1]);
+    dat[2]=hex2bcd(ui_buf[2]);
+    dat[3]=hex2bcd(ui_buf[3]);
+    dat[4]=hex2bcd(ui_buf[4]);
+    dat[5]=hex2bcd(ui_buf[5]);
+    lcd_lprintf(20, DATE_SET_Y_START+500, "%x %x %x %x %x %x",
+            dat[0],
+            dat[1],
+            dat[2],
+            dat[3],
+            dat[4],
+            dat[5]);
+    rtc_write(dat);
 }
 
 button_t date_set_button[]={
 #ifdef LARGE_SCREEN
-    {375, 660, 100,  40, date_set_enable, -1, 0, "OK", 1, NULL},
+    {375, 660, 100,  40, date_set_enable, -1, 0, "OK", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #else
-    {185, 270, 40,  20, date_set_enable, -1, 0, "OK", 1, NULL},
+    {185, 270, 40,  20, date_set_enable, -1, 0, "OK", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #endif
 };
