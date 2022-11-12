@@ -438,10 +438,10 @@ void enable_power_save(bool en)
 {
     save_power_mode = en;
     if(en){
-        set_BL_value(DEFAULT_IDLE_BL);
+        set_BL_value(get_env_uint("idle_bl", DEFAULT_IDLE_BL));
     }
     else{
-        set_BL_value(DEFAULT_BL);
+        set_BL_value(get_env_uint("bl", DEFAULT_BL));
     }
 }
 
