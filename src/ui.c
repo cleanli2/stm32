@@ -258,6 +258,7 @@ button_t main_menu_button[]={
     {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
     {350,460,80, 60, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
+    {350,390,80, 60, NULL, UI_RANDOM, 0, "Random", 0, NULL},
     {350,600,80, 60, NULL, UI_SD, 0, "SDCard", 0, sd_card_cch_str},
     {350,530,80, 60, sound_ctrl, -1, 0, "Sound", 0, sound_cch_str},
 #else
@@ -270,6 +271,7 @@ button_t main_menu_button[]={
     {20,210,120, 20, f3mins_timer, -1, 0, "3x1mins TIMER", 0, _3x1mins_timer_cch_str},
     {20,240,120, 20, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {150,210,80, 20, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
+    {150,180,80, 20, NULL, UI_RANDOM, 0, "Random", 0, NULL},
     {150,270,80, 20, NULL, UI_SD, 0, "SDCard", 0, sd_card_cch_str},
     {150,240,80, 20, sound_ctrl, -1, 0, "Sound", 0, sound_cch_str},
 #endif
@@ -1228,6 +1230,53 @@ int update_percentage()
 
 /******end of sd_ui********/
 
+/****start of random ui*****/
+void random_ui_init(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    (void)uif;
+    common_ui_init(vp);
+    ui_buf[0] = 0;
+    ui_buf[1] = 0;
+    ui_buf[2] = 0;
+    ui_buf[3] = get_env_uint("random0", 100);
+    ui_buf[4] = get_env_uint("random1", 100);
+}
+void random_ui_process_event(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    (void)uif;
+    ui_buf[0]++;
+    ui_buf[1]++;
+    if(ui_buf[0]>ui_buf[3]){
+        ui_buf[0]=0;
+    }
+    if(ui_buf[1]>ui_buf[4]){
+        ui_buf[1]=0;
+    }
+    common_process_event(vp);
+}
+
+void do_random()
+{
+#ifdef LARGE_SCREEN
+    set_LCD_Char_scale(4);
+    lcd_lprintf(200, 175, "%d  ", ui_buf[0]);
+    lcd_lprintf(200, 350, "%d  ", ui_buf[1]);
+    set_LCD_Char_scale(1);
+#endif
+}
+
+button_t random_button[]={
+#ifdef LARGE_SCREEN
+    {125, 550, 200,  80, do_random, -1, 0, "Push", 0, NULL},
+#else
+    {50, 270, 40,  20, do_random, -1, 0, "Push", 0, NULL},
+#endif
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+};
+/****end of random ui*****/
+
 ui_t ui_list[]={
     {
         main_ui_init,
@@ -1312,6 +1361,17 @@ ui_t ui_list[]={
         NULL,
         date_set_button,
         UI_DATE_SET,
+        220, //timeout
+        0,
+        NULL,//char*timeout_music;
+        NULL,
+    },
+    {
+        random_ui_init,
+        random_ui_process_event,
+        NULL,
+        random_button,
+        UI_RANDOM,
         220, //timeout
         0,
         NULL,//char*timeout_music;
