@@ -607,12 +607,35 @@ void date_ui_process_event(void*vp)
     common_process_event(vp);
 }
 
+nedt_t date_set_nedt[]={
+#ifdef LARGE_SCREEN
+    {80, 100, 350, 40, 0xffffffff, 2000, 10, 1, NULL, "Year"},
+    {80, 160, 350, 40, 12, 1, 10, 1, NULL, "Month"},
+    {80, 220, 350, 40, 31, 1, 10, 1, NULL, "Day"},
+    {80, 280, 350, 40, 23, 0, 10, 1, NULL, "Hour"},
+    {80, 340, 350, 40, 59, 0, 10, 1, NULL, "Min"},
+    {80, 400, 350, 40, 6, 0, 10, 1, NULL, "Week"},
+    {80, 460, 350, 40, 23, 0, 10, 1, NULL, "HAlert"},
+    {80, 520, 350, 40, 59, 0, 10, 1, NULL, "MAlert"},
+    {-1, -1,-1, -1, 0, 0, 0, 0, NULL, NULL},
+#else
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL, NULL},
+#endif
+};
+
 #define DATE_SET_Y_START 200
 void date_set_ui_init(void*vp)
 {
-    date_info_t t_date = {0};
-    common_ui_init(vp);
 #ifdef LARGE_SCREEN
+    date_info_t t_date = {0};
+    date_set_nedt[0].data=&ui_buf[0];
+    date_set_nedt[1].data=&ui_buf[1];
+    date_set_nedt[2].data=&ui_buf[2];
+    date_set_nedt[3].data=&ui_buf[3];
+    date_set_nedt[4].data=&ui_buf[4];
+    date_set_nedt[5].data=&ui_buf[5];
+    date_set_nedt[6].data=&ui_buf[6];
+    date_set_nedt[7].data=&ui_buf[7];
     get_rtc_time(&t_date);
     ui_buf[0]=t_date.year;
     ui_buf[1]=t_date.month;
@@ -620,83 +643,20 @@ void date_set_ui_init(void*vp)
     ui_buf[3]=t_date.hour;
     ui_buf[4]=t_date.minute;
     ui_buf[5]=t_date.weekday;
-    set_LCD_Char_scale(3);
-    lcd_lprintf(200, DATE_SET_Y_START, "%d", ui_buf[0]);
-    lcd_lprintf(200, DATE_SET_Y_START+70, "%d", ui_buf[1]);
-    lcd_lprintf(200, DATE_SET_Y_START+140, "%d", ui_buf[2]);
-    lcd_lprintf(200, DATE_SET_Y_START+210, "%d", ui_buf[3]);
-    lcd_lprintf(200, DATE_SET_Y_START+280, "%d", ui_buf[4]);
-    lcd_lprintf(200, DATE_SET_Y_START+350, "%d", ui_buf[5]);
-    set_LCD_Char_scale(1);
+    ui_buf[6]=bcd2hex(rtc_read_reg(0xa));
+    ui_buf[7]=bcd2hex(rtc_read_reg(0x9));
+    common_ui_init(vp);
 #endif
 }
 void date_set_ui_process_event(void*vp)
 {
-    uint32_t dt;
     if(g_flag_1s){
 #ifdef LARGE_SCREEN
         set_LCD_Char_scale(2);
-        lcd_lprintf(10, 100, "%s  ", get_rtc_time(NULL));
+        lcd_lprintf(10, 40, "%s  ", get_rtc_time(NULL));
         set_LCD_Char_scale(1);
 #else
 #endif
-    }
-    for(int8 i = 0; i < EVENT_MAX; i++){
-        uint32_t evt_flag=1<<i;
-        if(cur_task_event_flag & evt_flag){
-            if(evt_flag == (1<<EVENT_TOUCH_UP)){
-                uint16_t x = cached_touch_x, y = cached_touch_y;
-                //
-                if(x>360){
-                    dt=10;
-                }
-                else if(x>240){
-                    dt=1;
-                }
-                else if(x>120){
-                    dt=-1;
-                }
-                else{
-                    dt=-10;
-                }
-                if(y<DATE_SET_Y_START+70&&y>DATE_SET_Y_START){
-                    ui_buf[0]+=dt;
-                }
-                else if(y<DATE_SET_Y_START+140){
-                    ui_buf[1]+=dt;
-                    if(ui_buf[1]>12)ui_buf[1]=1;
-                    if(ui_buf[1]==0)ui_buf[1]=12;
-                }
-                else if(y<DATE_SET_Y_START+210){
-                    ui_buf[2]+=dt;
-                    if(ui_buf[2]>31)ui_buf[2]=1;
-                    if(ui_buf[2]==0)ui_buf[2]=31;
-                }
-                else if(y<DATE_SET_Y_START+280){
-                    ui_buf[3]+=dt;
-                    if(ui_buf[3]>0xffffff00)ui_buf[3]=23;
-                    else if(ui_buf[3]>23)ui_buf[3]=0;
-                }
-                else if(y<DATE_SET_Y_START+350){
-                    ui_buf[4]+=dt;
-                    if(ui_buf[4]>0xffffff00)ui_buf[4]=59;
-                    else if(ui_buf[4]>59)ui_buf[4]=0;
-                }
-                else if(y<DATE_SET_Y_START+420){
-                    ui_buf[5]+=dt;
-                    if(ui_buf[5]>0xffffff00)ui_buf[5]=6;
-                    else if(ui_buf[5]>6)ui_buf[5]=0;
-                }
-                set_LCD_Char_scale(3);
-                lcd_lprintf(200, DATE_SET_Y_START, "%d ", ui_buf[0]);
-                lcd_lprintf(200, DATE_SET_Y_START+70, "%d ", ui_buf[1]);
-                lcd_lprintf(200, DATE_SET_Y_START+140, "%d ", ui_buf[2]);
-                lcd_lprintf(200, DATE_SET_Y_START+210, "%d ", ui_buf[3]);
-                lcd_lprintf(200, DATE_SET_Y_START+280, "%d ", ui_buf[4]);
-                lcd_lprintf(200, DATE_SET_Y_START+350, "%d ", ui_buf[5]);
-                set_LCD_Char_scale(1);
-            }
-        }
     }
     common_process_event(vp);
 }
@@ -718,6 +678,8 @@ void date_set_enable()
             dat[4],
             dat[5]);
     rtc_write(dat);
+    rtc_write_reg(0xa, hex2bcd(ui_buf[6]));
+    rtc_write_reg(0x9, hex2bcd(ui_buf[7]));
 }
 
 button_t date_set_button[]={
@@ -1288,6 +1250,7 @@ ui_t ui_list[]={
         0,// disp_mode
         NULL,
         NULL,
+        NULL,//nedt_t*
     },
     {
         poff_ctd_ui_init,
@@ -1299,6 +1262,7 @@ ui_t ui_list[]={
         TIME_OUT_EN,
         pwroff_music,//char*timeout_music;
         NULL,
+        NULL,//nedt_t*
     },
     {
         timer_ui_init,
@@ -1310,6 +1274,7 @@ ui_t ui_list[]={
         0,
         xiyouji1,//char*timeout_music;
         timer_prgb,
+        NULL,//nedt_t*
     },
     {
         timer_set_ui_init,
@@ -1321,6 +1286,7 @@ ui_t ui_list[]={
         TIME_OUT_EN,
         NULL,//char*timeout_music;
         NULL,
+        NULL,//nedt_t*
     },
     {
         date_ui_init,
@@ -1332,6 +1298,7 @@ ui_t ui_list[]={
         0,
         NULL,//char*timeout_music;
         NULL,
+        NULL,//nedt_t*
     },
     {
         power_ui_init,
@@ -1343,6 +1310,7 @@ ui_t ui_list[]={
         0,
         NULL,//char*timeout_music;
         NULL,
+        NULL,//nedt_t*
     },
     {
         sd_ui_init,
@@ -1354,6 +1322,7 @@ ui_t ui_list[]={
         0,
         NULL,//char*timeout_music;
         NULL,
+        NULL,//nedt_t*
     },
     {
         date_set_ui_init,
@@ -1365,6 +1334,7 @@ ui_t ui_list[]={
         0,
         NULL,//char*timeout_music;
         NULL,
+        date_set_nedt,
     },
     {
         random_ui_init,
@@ -1376,6 +1346,7 @@ ui_t ui_list[]={
         0,
         NULL,//char*timeout_music;
         NULL,
+        NULL,//nedt_t*
     },
     {
         NULL,//uiinit
@@ -1387,6 +1358,7 @@ ui_t ui_list[]={
         0, //time disp mode
         NULL,//char*timeout_music;
         NULL,//prgb_t*
+        NULL,//nedt_t*
     },
 };
 
@@ -1518,6 +1490,37 @@ void draw_button(button_t*pbt)
     LCD_PRINT_FRONT_COLOR = color_bak;
 }
 
+void draw_nedt(nedt_t *ntt)
+{
+    int lx;
+    uint16_t color, color_bak = LCD_PRINT_FRONT_COLOR;
+    if(!ntt)return;
+
+    lprintf("nedt_draw\n");
+    while(ntt->x >=0){
+        color = BLACK;
+        LCD_PRINT_FRONT_COLOR = BLACK;
+        lx = ntt->w/5;
+        draw_sq(ntt->x, ntt->y, ntt->x+ntt->w, ntt->y+ntt->h, color);
+        draw_sq(ntt->x+lx, ntt->y, ntt->x+lx*4, ntt->y+ntt->h, color);
+        draw_sq(ntt->x+2*lx, ntt->y, ntt->x+lx*3, ntt->y+ntt->h, color);
+        if(ntt->data){
+            lcd_lprintf(ntt->x+lx*2+5, ntt->y+5, "%d", *ntt->data);
+        }
+        LCD_DrawLine(ntt->x+lx/2, ntt->y, ntt->x, ntt->y+ntt->h/2);
+        LCD_DrawLine(ntt->x+lx/2, ntt->y+ntt->h, ntt->x, ntt->y+ntt->h/2);
+        LCD_DrawLine(ntt->x+lx*4+lx/2, ntt->y, ntt->x+lx*5, ntt->y+ntt->h/2);
+        LCD_DrawLine(ntt->x+lx*4+lx/2, ntt->y+ntt->h, ntt->x+lx*5, ntt->y+ntt->h/2);
+        LCD_DrawLine(ntt->x+lx+lx/2, ntt->y, ntt->x+lx+lx/4, ntt->y+ntt->h/2);
+        LCD_DrawLine(ntt->x+lx+lx/2, ntt->y+ntt->h, ntt->x+lx+lx/4, ntt->y+ntt->h/2);
+        LCD_DrawLine(ntt->x+lx*3+lx/2, ntt->y, ntt->x+lx*3+lx*3/4, ntt->y+ntt->h/2);
+        LCD_DrawLine(ntt->x+lx*3+lx/2, ntt->y+ntt->h, ntt->x+lx*3+lx*3/4, ntt->y+ntt->h/2);
+        lcd_lprintf(ntt->x-lx, ntt->y+5, "%s", ntt->nedt_name);
+        ntt++;
+    }
+    LCD_PRINT_FRONT_COLOR = color_bak;
+}
+
 void set_prgb_color(int color)
 {
     prgb_color = color;
@@ -1550,6 +1553,48 @@ void update_prgb(ui_t* uif, prgb_t*pip)
         pip++;
     }
     prgb_color = BLACK;//restore color if changed
+}
+
+void process_nedt(ui_t* uif, nedt_t* ndt)
+{
+    (void)uif;
+    if(!ndt){
+        return;
+    }
+    lprintf("nedt_process\n");
+    int x = cached_touch_x, y = cached_touch_y;
+    int lx = ndt->w/5;
+    while(ndt->x >=0 ){
+        if(IN_RANGE(x, ndt->x, ndt->x+lx) &&
+                IN_RANGE(y, ndt->y, ndt->y+ndt->h)){
+            lprintf_time("in ndt l2\n");
+            *ndt->data -= ndt->dl;
+            if(*ndt->data==ndt->min-1)*ndt->data=ndt->max;
+        }
+        if(IN_RANGE(x, ndt->x+lx, ndt->x+2*lx) &&
+                IN_RANGE(y, ndt->y, ndt->y+ndt->h)){
+            lprintf_time("in ndt l1\n");
+            *ndt->data -= ndt->ds;
+            if(*ndt->data==ndt->min-1)*ndt->data=ndt->max;
+        }
+        if(IN_RANGE(x, ndt->x+3*lx, ndt->x+4*lx) &&
+                IN_RANGE(y, ndt->y, ndt->y+ndt->h)){
+            lprintf_time("in ndt r1\n");
+            *ndt->data += ndt->ds;
+            if(*ndt->data==ndt->max+1)*ndt->data=ndt->min;
+        }
+        if(IN_RANGE(x, ndt->x+4*lx, ndt->x+5*lx) &&
+                IN_RANGE(y, ndt->y, ndt->y+ndt->h)){
+            lprintf_time("in ndt r2\n");
+            *ndt->data += ndt->dl;
+            if(*ndt->data==ndt->max+1)*ndt->data=ndt->min;
+        }
+        if(ndt->data){
+            lcd_lprintf(ndt->x+lx*2+5, ndt->y+5, "    ", *ndt->data);
+            lcd_lprintf(ndt->x+lx*2+5, ndt->y+5, "%d", *ndt->data);
+        }
+        ndt++;
+    }
 }
 
 void process_button(ui_t* uif, button_t*pbt)
@@ -1603,6 +1648,7 @@ void common_ui_init(void*vp)
     draw_button(p_bt);
     draw_button(common_button);
     draw_prgb(uif->prgb_info);
+    draw_nedt(uif->nedt_info);
     //power bar
     power_prgb[0].max = &power_max_display;
     power_prgb[0].data = &power_display;
@@ -1720,6 +1766,7 @@ void common_process_event(void*vp)
                 button_t* p_bt = current_ui->button_info;
                 process_button(uif, p_bt);
                 process_button(uif, common_button);
+                process_nedt(uif, current_ui->nedt_info);
             }
             if(evt_flag == (1<<EVENT_BATT_LOW)){
                 lprintf_time("Battary low\n");
