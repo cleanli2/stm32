@@ -1087,9 +1087,7 @@ void envset(char *p)
     if(tmp>=1){
         p = str_to_str(p, &name);
     }
-    if(tmp>=2){
-        p = str_to_str(p, &value);
-    }
+    value = p;
     if(value){
         lprintf("todo: %s=%s\n", name, value);
     }
