@@ -610,13 +610,13 @@ void date_ui_process_event(void*vp)
 nedt_t date_set_nedt[]={
 #ifdef LARGE_SCREEN
     {80, 100, 350, 40, 0xffffffff, 2000, 10, 1, NULL, "Year"},
-    {80, 160, 350, 40, 12, 1, 10, 1, NULL, "Month"},
+    {80, 160, 350, 40, 12, 1, 6, 1, NULL, "Month"},
     {80, 220, 350, 40, 31, 1, 10, 1, NULL, "Day"},
     {80, 280, 350, 40, 23, 0, 10, 1, NULL, "Hour"},
     {80, 340, 350, 40, 59, 0, 10, 1, NULL, "Min"},
-    {80, 400, 350, 40, 6, 0, 10, 1, NULL, "Week"},
-    {80, 460, 350, 40, 23, 0, 10, 1, NULL, "HAlert"},
-    {80, 520, 350, 40, 59, 0, 10, 1, NULL, "MAlert"},
+    {80, 400, 350, 40, 6, 0, 2, 1, NULL, "Week"},
+    {80, 520, 350, 40, 23, 0, 10, 1, NULL, "HAlert"},
+    {80, 600, 350, 40, 59, 0, 10, 1, NULL, "MAlert"},
     {-1, -1,-1, -1, 0, 0, 0, 0, NULL, NULL},
 #else
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL, NULL},
@@ -678,13 +678,19 @@ void date_set_enable()
             dat[4],
             dat[5]);
     rtc_write(dat);
+    set_env("LastTimeAdj", get_rtc_time(NULL));
+}
+
+void alert_set_enable()
+{
     rtc_write_reg(0xa, hex2bcd(ui_buf[6]));
     rtc_write_reg(0x9, hex2bcd(ui_buf[7]));
 }
 
 button_t date_set_button[]={
 #ifdef LARGE_SCREEN
-    {375, 660, 100,  40, date_set_enable, -1, 0, "OK", 0, NULL},
+    {375, 460, 100,  40, date_set_enable, -1, 0, "OK", 0, NULL},
+    {375, 660, 100,  40, alert_set_enable, -1, 0, "OK", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #else
     {185, 270, 40,  20, date_set_enable, -1, 0, "OK", 0, NULL},
@@ -1569,25 +1575,27 @@ void process_nedt(ui_t* uif, nedt_t* ndt)
                 IN_RANGE(y, ndt->y, ndt->y+ndt->h)){
             lprintf_time("in ndt l2\n");
             *ndt->data -= ndt->dl;
-            if(*ndt->data==ndt->min-1)*ndt->data=ndt->max;
+            if(*ndt->data<=ndt->min-1 || *ndt->data & 0x80000000)
+                *ndt->data=ndt->max;
         }
         if(IN_RANGE(x, ndt->x+lx, ndt->x+2*lx) &&
                 IN_RANGE(y, ndt->y, ndt->y+ndt->h)){
             lprintf_time("in ndt l1\n");
             *ndt->data -= ndt->ds;
-            if(*ndt->data==ndt->min-1)*ndt->data=ndt->max;
+            if(*ndt->data<=ndt->min-1 || *ndt->data & 0x80000000)
+                *ndt->data=ndt->max;
         }
         if(IN_RANGE(x, ndt->x+3*lx, ndt->x+4*lx) &&
                 IN_RANGE(y, ndt->y, ndt->y+ndt->h)){
             lprintf_time("in ndt r1\n");
             *ndt->data += ndt->ds;
-            if(*ndt->data==ndt->max+1)*ndt->data=ndt->min;
+            if(*ndt->data>=ndt->max+1)*ndt->data=ndt->min;
         }
         if(IN_RANGE(x, ndt->x+4*lx, ndt->x+5*lx) &&
                 IN_RANGE(y, ndt->y, ndt->y+ndt->h)){
             lprintf_time("in ndt r2\n");
             *ndt->data += ndt->dl;
-            if(*ndt->data==ndt->max+1)*ndt->data=ndt->min;
+            if(*ndt->data>=ndt->max+1)*ndt->data=ndt->min;
         }
         if(ndt->data){
             lcd_lprintf(ndt->x+lx*2+5, ndt->y+5, "    ", *ndt->data);

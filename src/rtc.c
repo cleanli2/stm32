@@ -424,7 +424,7 @@ void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y)
     if(0==get_env_uint("autopon", 0)){
         rtc_write_reg(0x1,0xfd&reg1); /*alert disable*/
         if(show_x>0 && show_y>0){
-            lcd_lprintf(show_x, show_y, "Next auto power on: off");
+            lcd_lprintf(show_x, show_y, "Next auto power on: off   ");
         }
         return;
     }
