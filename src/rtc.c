@@ -450,92 +450,6 @@ void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y)
     }
 }
 
-void auto_time_correct()
-{
-    char ch_t[ENV_MAX_VALUE_LEN], *p=&ch_t[0];
-    date_info_t dt, dt_lastadj;
-    uint32_t hours_adj_1min, diff_hours, v_tmp;
-    lprintf_time("auto_time_correct +\n");
-    if(ENV_OK != get_env("LastTimeAdj", ch_t)){
-        lprintf_time("skip ATC 1\n");
-        return;
-    }
-    //replace '.' & ':' with space
-    for(int i=0;i<32;i++){
-        if(ch_t[i]=='.' || ch_t[i]==':'){
-            ch_t[i]=' ';
-        }
-    }
-    p=&ch_t[0];
-    p = str_to_hex(p, &v_tmp);
-    dt_lastadj.year = v_tmp;
-    p = str_to_hex(p, &v_tmp);
-    dt_lastadj.month = v_tmp;
-    p = str_to_hex(p, &v_tmp);
-    dt_lastadj.day = v_tmp;
-    p = str_to_hex(p, &v_tmp);
-    dt_lastadj.hour = v_tmp;
-    p = str_to_hex(p, &v_tmp);
-    dt_lastadj.minute = v_tmp;
-    p = str_to_hex(p, &v_tmp);
-    dt_lastadj.second = v_tmp;
-    p = str_to_hex(p, &v_tmp);
-    dt_lastadj.weekday = v_tmp;
-
-    if(ENV_OK != get_env("HsAdj1Min", ch_t) ||
-            (ch_t[0]!='+' && ch_t[0]!='-') ){
-        lprintf_time("skip ATC 2\n");
-        return;
-    }
-    //'-169' means slower 1 min or '+169' faster
-    p=&ch_t[1];
-    p = str_to_hex((char*)p, &hours_adj_1min);
-
-    //convert
-    dt_lastadj.year = bcd2hex_32(dt_lastadj.year);
-    dt_lastadj.month= bcd2hex(dt_lastadj.month);
-    dt_lastadj.day    = bcd2hex(dt_lastadj.day    );
-    dt_lastadj.hour   = bcd2hex(dt_lastadj.hour   );
-    dt_lastadj.minute = bcd2hex(dt_lastadj.minute );
-    dt_lastadj.second = bcd2hex(dt_lastadj.second );
-    dt_lastadj.weekday= bcd2hex(dt_lastadj.weekday);
-    lprintf_time("get last adj:%d %d %d %d %d %d %d\n",
-        dt_lastadj.year,
-        dt_lastadj.month,
-        dt_lastadj.day  ,
-        dt_lastadj.hour ,
-        dt_lastadj.minute,
-        dt_lastadj.second,
-        dt_lastadj.weekday);
-    hours_adj_1min = bcd2hex_32(hours_adj_1min);
-    lprintf_time("hours adj %c%d\n", ch_t[0], hours_adj_1min);
-
-    lprintf_time("curtime:%s\n",get_rtc_time(&dt));
-    if(!is_later_than(&dt, &dt_lastadj)){
-        lprintf("skip ATC 3\n");
-        return;
-    }
-    diff_hours = time_diff_hours(&dt, &dt_lastadj);
-    lprintf_time("diff hours %d\n", diff_hours);
-    lcd_lprintf(340, 610, "HoursPass:%d", diff_hours);
-
-    if(diff_hours>hours_adj_1min){
-        if(ch_t[0]=='+'){
-            lprintf_time("try faster 1min\n");
-        }
-        else{
-            lprintf_time("try slower 1min\n");
-        }
-        if(RTC_OK==adjust_1min(ch_t[0]=='+')){
-            set_env("LastTimeAdj", get_rtc_time(NULL));
-            lprintf_time("adj OK\n");
-        }
-        else{
-            lprintf_time("adj fail\n");
-        }
-    }
-}
-
 uint8_t check_rtc_alert_and_clear()
 {
     uint8_t ret = 0, reg;
@@ -596,4 +510,145 @@ void clear_second()
     s = 0 - dt.second;
     adjust_second(s);
 #endif
+}
+
+int32_t get_t_t_n_c()
+{
+    int32_t ret;
+    char ch_t[ENV_MAX_VALUE_LEN], *p=&ch_t[0];
+    date_info_t dt, dt_lastadj;
+    uint32_t hours_adj_1min, diff_hours, v_tmp;
+    lprintf_time("get_time_correct +\n");
+    if(ENV_OK != get_env("LastTimeAdj", ch_t)){
+        lprintf_time("skip ATC 1\n");
+        return 0;
+    }
+    //replace '.' & ':' with space
+    for(int i=0;i<32;i++){
+        if(ch_t[i]=='.' || ch_t[i]==':'){
+            ch_t[i]=' ';
+        }
+    }
+    p=&ch_t[0];
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.year = v_tmp;
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.month = v_tmp;
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.day = v_tmp;
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.hour = v_tmp;
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.minute = v_tmp;
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.second = v_tmp;
+    p = str_to_hex(p, &v_tmp);
+    dt_lastadj.weekday = v_tmp;
+
+    if(ENV_OK != get_env("HsAdj1Min", ch_t) ||
+            (ch_t[0]!='+' && ch_t[0]!='-') ){
+        lprintf_time("skip ATC 2\n");
+        return 0;
+    }
+    //'-169' means slower 1 min or '+169' faster
+    p=&ch_t[1];
+    p = str_to_hex((char*)p, &hours_adj_1min);
+
+    //convert
+    dt_lastadj.year = bcd2hex_32(dt_lastadj.year);
+    dt_lastadj.month= bcd2hex(dt_lastadj.month);
+    dt_lastadj.day    = bcd2hex(dt_lastadj.day    );
+    dt_lastadj.hour   = bcd2hex(dt_lastadj.hour   );
+    dt_lastadj.minute = bcd2hex(dt_lastadj.minute );
+    dt_lastadj.second = bcd2hex(dt_lastadj.second );
+    dt_lastadj.weekday= bcd2hex(dt_lastadj.weekday);
+    lprintf_time("get last adj:%d %d %d %d %d %d %d\n",
+        dt_lastadj.year,
+        dt_lastadj.month,
+        dt_lastadj.day  ,
+        dt_lastadj.hour ,
+        dt_lastadj.minute,
+        dt_lastadj.second,
+        dt_lastadj.weekday);
+    hours_adj_1min = bcd2hex_32(hours_adj_1min);
+    lprintf_time("hours adj %c%d\n", ch_t[0], hours_adj_1min);
+
+    lprintf_time("curtime:%s\n",get_rtc_time(&dt));
+    /*
+    if(!is_later_than(&dt, &dt_lastadj)){
+        lprintf("skip ATC 3\n");
+        return;
+    }
+    */
+    diff_hours = time_diff_hours(&dt, &dt_lastadj);
+    lprintf_time("diff hours %d\n", diff_hours);
+    lcd_lprintf(340, 610, "HoursPass:%d", diff_hours);
+
+    ret = 60*diff_hours/hours_adj_1min;
+    lprintf("ret %d\n", ret);
+    if(ch_t[0]=='-'){
+        ret = -ret;
+    }
+    return ret;
+    /*
+    if(diff_hours>hours_adj_1min){
+        if(ch_t[0]=='+'){
+            lprintf_time("try faster 1min\n");
+        }
+        else{
+            lprintf_time("try slower 1min\n");
+        }
+        if(RTC_OK==adjust_1min(ch_t[0]=='+')){
+            set_env("LastTimeAdj", get_rtc_time(NULL));
+            lprintf_time("adj OK\n");
+        }
+        else{
+            lprintf_time("adj fail\n");
+        }
+    }
+    */
+}
+
+#define MAGIC_TIME_NEED_CORRECT 203250
+#define DELAY_TIME_CORRECT 10
+#define MAX_SECONDS_TIME_CORRECT 55
+#define TRIGGER_SECONDS_TIME_CORRECT 20
+void do_time_correct()
+{
+    static int32_t time_need_correct_s = MAGIC_TIME_NEED_CORRECT;
+    int32_t t_s;
+
+    if(0 == time_need_correct_s){
+        return;
+    }
+    if(time_need_correct_s > MAGIC_TIME_NEED_CORRECT-DELAY_TIME_CORRECT){
+        lprintf("time corrt skip\n");
+        time_need_correct_s--;
+        return;
+    }
+    if(time_need_correct_s == MAGIC_TIME_NEED_CORRECT-DELAY_TIME_CORRECT){
+        time_need_correct_s = get_t_t_n_c();
+        lprintf("time corrt = %d\n", time_need_correct_s);
+    }
+    if(time_need_correct_s < TRIGGER_SECONDS_TIME_CORRECT &&
+            time_need_correct_s > -TRIGGER_SECONDS_TIME_CORRECT){
+        lprintf("It's not time yet for time correct\n");
+        time_need_correct_s = 0;
+        return;
+    }
+    if(time_need_correct_s > MAX_SECONDS_TIME_CORRECT ||
+            time_need_correct_s < -MAX_SECONDS_TIME_CORRECT){
+        time_need_correct_s = 0;
+    }
+    t_s = bcd2hex(rtc_read_reg(SECOND_REG));
+    lprintf("cur time sec  %d\n", t_s);
+    t_s += time_need_correct_s;
+    if(t_s > 2 || t_s < 58){
+        if(rtc_write_reg(SECOND_REG, 0)){
+            //write OK
+            lprintf("time fix OK %d\n", t_s);
+            time_need_correct_s = 0;
+            set_env("LastTimeAdj", get_rtc_time(NULL));
+        }
+    }
 }

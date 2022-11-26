@@ -23,7 +23,7 @@ char* get_rtc_time(date_info_t*);
 uint8_t rtc_read_reg(uint8_t addr);
 uint8_t rtc_write_reg(uint8_t addr, uint8_t data);
 void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y);
-void auto_time_correct();
+int32_t get_t_t_n_c();
 uint8_t check_rtc_alert_and_clear();
 uint adjust_1min(uint faster_1min);
 void clear_second();
@@ -31,5 +31,6 @@ uint8_t hex2bcd(uint8_t ipt);
 uint8_t bcd2hex(uint8_t ipt);
 void get_date(date_info_t*dit);
 void rtc_dump_regs();
+void do_time_correct();
 
 #endif

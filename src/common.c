@@ -403,7 +403,6 @@ void power_off()
 #ifdef RTC_8563
     check_rtc_alert_and_clear();
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, -1, -1);
-    auto_time_correct();
 #endif
 #ifndef ALIENTEK_MINI
     lprintf_time("gpio setb\n");

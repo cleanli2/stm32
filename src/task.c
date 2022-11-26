@@ -157,6 +157,7 @@ void task_timer(struct task*vp)
         g_flag_10ms = true;
     }
     if(count_1s != last_count_1s){
+        do_time_correct();
         char*date = get_rtc_time(&g_cur_date);
         g_flag_1s = true;
         lcd_lprintf(0,0,date);
