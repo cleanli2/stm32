@@ -512,7 +512,7 @@ void clear_second()
 #endif
 }
 
-int32_t get_t_t_n_c()
+int32_t get_t_t_n_c(int disp)
 {
     int32_t ret;
     char ch_t[ENV_MAX_VALUE_LEN], *p=&ch_t[0];
@@ -582,7 +582,7 @@ int32_t get_t_t_n_c()
     */
     diff_hours = time_diff_hours(&dt, &dt_lastadj);
     lprintf_time("diff hours %d\n", diff_hours);
-    lcd_lprintf(340, 610, "HoursPass:%d", diff_hours);
+    if(disp) lcd_lprintf(340, 610, "HoursPass:%d", diff_hours);
 
     ret = 60*diff_hours/hours_adj_1min;
     lprintf("ret %d\n", ret);
@@ -627,7 +627,7 @@ void do_time_correct()
         return;
     }
     if(time_need_correct_s == MAGIC_TIME_NEED_CORRECT-DELAY_TIME_CORRECT){
-        time_need_correct_s = get_t_t_n_c();
+        time_need_correct_s = get_t_t_n_c(0);
         lprintf("time corrt = %d\n", time_need_correct_s);
     }
     if(time_need_correct_s < TRIGGER_SECONDS_TIME_CORRECT &&

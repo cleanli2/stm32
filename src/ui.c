@@ -82,7 +82,7 @@ void poff_ctd_ui_init(void*vp)
     lcd_lprintf(20, 100, "Version:%s%s", VERSION, GIT_SHA1);
 #ifdef RTC_8563
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 20, 140);
-    get_t_t_n_c();
+    get_t_t_n_c(1);
 #endif
 }
 void poff_ctd_ui_process_event(void*vp)
@@ -550,7 +550,7 @@ void date_ui_init(void*vp)
     ui_buf[LAST_MIN_INDX]=60;
     ui_buf[LAST_HOR_INDX]=60;
 #ifdef RTC_8563
-    get_t_t_n_c();
+    get_t_t_n_c(1);
 #endif
 }
 #define SEC_PTER_LEN 17
