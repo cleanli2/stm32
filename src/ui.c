@@ -270,6 +270,7 @@ button_t main_menu_button[]={
     {20,180,120, 20, music_test, -1, 0, "MusicTest", 0, music_test_cch_str},
     {20,210,120, 20, f3mins_timer, -1, 0, "3x1mins TIMER", 0, _3x1mins_timer_cch_str},
     {20,240,120, 20, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
+    {20,270,120, 20, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
     {150,210,80, 20, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
     {150,180,80, 20, NULL, UI_RANDOM, 0, "Random", 0, NULL},
     {150,270,80, 20, NULL, UI_SD, 0, "SDCard", 0, sd_card_cch_str},
@@ -610,7 +611,7 @@ void date_ui_process_event(void*vp)
 nedt_t date_set_nedt[]={
 #ifdef LARGE_SCREEN
     {80, 100, 350, 40, 0xffffffff, 2000, 10, 1, NULL, "Year"},
-    {80, 160, 350, 40, 12, 1, 6, 1, NULL, "Month"},
+    {80, 160, 350, 40, 12, 1, 6, 1, NULL, "Mon"},
     {80, 220, 350, 40, 31, 1, 10, 1, NULL, "Day"},
     {80, 280, 350, 40, 23, 0, 10, 1, NULL, "Hour"},
     {80, 340, 350, 40, 59, 0, 10, 1, NULL, "Min"},
@@ -619,14 +620,21 @@ nedt_t date_set_nedt[]={
     {80, 600, 350, 40, 59, 0, 10, 1, NULL, "MAlert"},
     {-1, -1,-1, -1, 0, 0, 0, 0, NULL, NULL},
 #else
-    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL, NULL},
+    {40, 20, 195, 20, 0xffffffff, 2000, 10, 1, NULL, "Year"},
+    {40, 45, 195, 20, 12, 1, 6, 1, NULL, "Month"},
+    {40, 70, 195, 20, 31, 1, 10, 1, NULL, "Day"},
+    {40, 95, 195, 20, 23, 0, 10, 1, NULL, "Hour"},
+    {40, 120, 195, 20, 59, 0, 10, 1, NULL, "Min"},
+    {40, 145, 195, 20, 6, 0, 2, 1, NULL, "Week"},
+    {40, 205, 195, 20, 23, 0, 10, 1, NULL, "HAlt"},
+    {40, 230, 195, 20, 59, 0, 10, 1, NULL, "MAlt"},
+    {-1, -1,-1, -1, 0, 0, 0, 0, NULL, NULL},
 #endif
 };
 
 #define DATE_SET_Y_START 200
 void date_set_ui_init(void*vp)
 {
-#ifdef LARGE_SCREEN
     date_info_t t_date = {0};
     date_set_nedt[0].data=&ui_buf[0];
     date_set_nedt[1].data=&ui_buf[1];
@@ -646,7 +654,6 @@ void date_set_ui_init(void*vp)
     ui_buf[6]=bcd2hex(rtc_read_reg(0xa));
     ui_buf[7]=bcd2hex(rtc_read_reg(0x9));
     common_ui_init(vp);
-#endif
 }
 void date_set_ui_process_event(void*vp)
 {
@@ -655,7 +662,6 @@ void date_set_ui_process_event(void*vp)
         set_LCD_Char_scale(2);
         lcd_lprintf(10, 40, "%s  ", get_rtc_time(NULL));
         set_LCD_Char_scale(1);
-#else
 #endif
     }
     common_process_event(vp);
@@ -693,13 +699,15 @@ button_t date_set_button[]={
     {375, 660, 100,  40, alert_set_enable, -1, 0, "OK", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #else
-    {185, 270, 40,  20, date_set_enable, -1, 0, "OK", 0, NULL},
+    {205, 180, 30,  20, date_set_enable, -1, 0, "OK", 0, NULL},
+    {205, 255, 30,  20, alert_set_enable, -1, 0, "OK", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #endif
 };
 
 void scaleplate_drawing()
 {
+#ifdef LARGE_SCREEN
     ui_buf[0] = 640;
     lcd_lprintf(10, 655, "I 400   0  -400(mA)");
     lcd_lprintf(175, 655, " 4.0  3.6  3.2(v)");
@@ -718,11 +726,35 @@ void scaleplate_drawing()
     LCD_DrawLine(460, 650, 460, 30);
     LCD_DrawLine(160, 660, 160, 30);
     LCD_DrawLine(320, 660, 320, 30);
+#else
+    ui_buf[0] = 250;
+    lcd_lprintf(5, 250, "400 0-400");
+    lcd_lprintf(85, 250, "4.0  3.4");
+    lcd_lprintf(156, 250, "VCo(.2)3.0");
+    //i=0
+    POINT_COLOR=LIGHTGRAY;
+    LCD_DrawLine(40, 250, 40, 30);
+    for(int i=1;i<24;i++){
+        LCD_DrawLine(10*i, 250, 10*i, 30);
+    }
+    POINT_COLOR=BLACK;
+    LCD_DrawLine(40, 250, 40, 30);
+    LCD_DrawLine(100, 250, 100, 30);
+    LCD_DrawLine(120, 250, 120, 30);
+    LCD_DrawLine(140, 250, 140, 30);
+    LCD_DrawLine(230, 250, 230, 30);
+    LCD_DrawLine(80, 250, 80, 30);
+    LCD_DrawLine(160, 250, 160, 30);
+#endif
 }
 
 void clr_wave()
 {
+#ifdef LARGE_SCREEN
     lcd_clr_window(WHITE, 0, 30, 480, 650);
+#else
+    lcd_clr_window(WHITE, 0, 30, 240, 250);
+#endif
     scaleplate_drawing();
 }
 
@@ -762,6 +794,20 @@ void power_ui_process_event(void*vp)
     PutPixel(480-vcore_mv, ui_buf[0], BROWN);
     ui_buf[0]--;
 #else
+    if(ui_buf[0]<=30){
+        ui_buf[0] = 250;
+    }
+    get_myadc_value(&vcore_mv, &vbat_mv, &i_mA);
+    i_mA += 800;
+    i_mA /= 20;
+    PutPixel(80-i_mA, ui_buf[0], RED);
+    vbat_mv -= 2800;
+    vbat_mv /= 20;
+    PutPixel(160-vbat_mv, ui_buf[0], BLUE);
+    vcore_mv -= 2800;
+    vcore_mv /= 20;
+    PutPixel(240-vcore_mv, ui_buf[0], BROWN);
+    ui_buf[0]--;
 #endif
     common_process_event(vp);
 }
@@ -866,6 +912,8 @@ button_t date_button[]={
     {135, 270, 40,  20, slow_1, -1, 0, "-1min", 1, NULL},
     {185, 270, 40,  20, clr_s, -1, 0, "sec=0", 1, NULL},
     {10, 55, 55,  20, language_set, -1, 0, language_cch_str, 0, "English"},
+    {5, 245, 50,  20, toggle_auto_power_on, -1, 0, "autopon", 0, NULL},
+    {180, 245, 50, 20, NULL, UI_DATE_SET, 0, "dateset", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #endif
 };
@@ -1232,6 +1280,11 @@ void do_random()
     lcd_lprintf(200, 175, "%d  ", ui_buf[0]);
     lcd_lprintf(200, 350, "%d  ", ui_buf[1]);
     set_LCD_Char_scale(1);
+#else
+    set_LCD_Char_scale(2);
+    lcd_lprintf(100, 100, "%d  ", ui_buf[0]);
+    lcd_lprintf(100, 180, "%d  ", ui_buf[1]);
+    set_LCD_Char_scale(1);
 #endif
 }
 
@@ -1239,7 +1292,7 @@ button_t random_button[]={
 #ifdef LARGE_SCREEN
     {125, 550, 200,  80, do_random, -1, 0, "Push", 0, NULL},
 #else
-    {50, 270, 40,  20, do_random, -1, 0, "Push", 0, NULL},
+    {100, 240, 40,  20, do_random, -1, 0, "Push", 0, NULL},
 #endif
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
