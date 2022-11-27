@@ -438,11 +438,19 @@ void sound_execute()
 void enable_power_save(bool en)
 {
     save_power_mode = en;
+    if(idle_bl == 0xffffffff){
+        idle_bl = get_env_uint("idle_bl", DEFAULT_IDLE_BL);
+        lprintf("get idle_bl=%d\r\n", idle_bl);
+    }
+    if(bl == 0xffffffff){
+        bl = get_env_uint("bl", DEFAULT_BL);
+        lprintf("get bl=%d\r\n", bl);
+    }
     if(en){
-        set_BL_value(get_env_uint("idle_bl", DEFAULT_IDLE_BL));
+        set_BL_value(idle_bl);
     }
     else{
-        set_BL_value(get_env_uint("bl", DEFAULT_BL));
+        set_BL_value(bl);
     }
 }
 
