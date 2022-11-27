@@ -610,7 +610,7 @@ void date_ui_process_event(void*vp)
 
 nedt_t date_set_nedt[]={
 #ifdef LARGE_SCREEN
-    {80, 100, 350, 40, 0xffffffff, 2000, 10, 1, NULL, "Year"},
+    {80, 100, 350, 40, 2099, 2000, 10, 1, NULL, "Year"},
     {80, 160, 350, 40, 12, 1, 6, 1, NULL, "Mon"},
     {80, 220, 350, 40, 31, 1, 10, 1, NULL, "Day"},
     {80, 280, 350, 40, 23, 0, 10, 1, NULL, "Hour"},
@@ -620,7 +620,7 @@ nedt_t date_set_nedt[]={
     {80, 600, 350, 40, 59, 0, 10, 1, NULL, "MAlert"},
     {-1, -1,-1, -1, 0, 0, 0, 0, NULL, NULL},
 #else
-    {40, 20, 195, 20, 0xffffffff, 2000, 10, 1, NULL, "Year"},
+    {40, 20, 195, 20, 2099, 2000, 10, 1, NULL, "Year"},
     {40, 45, 195, 20, 12, 1, 6, 1, NULL, "Month"},
     {40, 70, 195, 20, 31, 1, 10, 1, NULL, "Day"},
     {40, 95, 195, 20, 23, 0, 10, 1, NULL, "Hour"},
@@ -1632,14 +1632,16 @@ void process_nedt(ui_t* uif, nedt_t* ndt)
                 IN_RANGE(y, ndt->y, ndt->y+ndt->h)){
             lprintf_time("in ndt l2\n");
             *ndt->data -= ndt->dl;
-            if(*ndt->data<=ndt->min-1 || *ndt->data & 0x80000000)
+            if((*ndt->data<=ndt->min-1 && *ndt->data & 0x80000000)
+                    || *ndt->data<ndt->min)
                 *ndt->data=ndt->max;
         }
         if(IN_RANGE(x, ndt->x+lx, ndt->x+2*lx) &&
                 IN_RANGE(y, ndt->y, ndt->y+ndt->h)){
             lprintf_time("in ndt l1\n");
             *ndt->data -= ndt->ds;
-            if(*ndt->data<=ndt->min-1 || *ndt->data & 0x80000000)
+            if((*ndt->data<=ndt->min-1 && *ndt->data & 0x80000000)
+                    || *ndt->data<ndt->min)
                 *ndt->data=ndt->max;
         }
         if(IN_RANGE(x, ndt->x+3*lx, ndt->x+4*lx) &&
