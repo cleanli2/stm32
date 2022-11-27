@@ -893,7 +893,11 @@ void toggle_auto_power_on()
     else{
         set_env_uint("autopon", 1);
     }
+#ifdef LARGE_SCREEN
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 260, 45);
+#else
+    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, 5, 30);
+#endif
 }
 
 button_t date_button[]={
