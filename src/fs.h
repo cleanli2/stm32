@@ -149,6 +149,6 @@ typedef struct {
 
 } FIL;
 
-int get_file_content(char* buf, const char*filename, uint32_t file_offset, uint32_t len, block_read_func SD_ReadBlock);
-int get_file_size(block_read_func rd_block);
+int get_file_content(char* buf, const char*filename, const char*extname, uint32_t file_offset, uint32_t len, block_read_func SD_ReadBlock);
+int get_file_size(block_read_func rd_block, const char*filename, const char*extname);
 #endif

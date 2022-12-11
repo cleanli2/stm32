@@ -279,7 +279,7 @@ char* get_root_item_buf(int n)
     return get_file_offset_buf(g_fs->dirbase, SZ_DIRE*n, NULL, SZ_DIRE);
 }
 
-uint32_t get_file_start_cluster(char* filename, char*fileextname)
+uint32_t get_file_start_cluster(const char* filename, const char*fileextname)
 {
     char*item_buf;
     uint32_t file_start_cluster = INVALID_CLUSTER, namelen, extnamelen;
@@ -437,7 +437,7 @@ int init_fs(block_read_func rd_block)
     return FS_OK;
 }
 
-int get_file_size(block_read_func rd_block)
+int get_file_size(block_read_func rd_block, const char*fn, const char*en)
 {
     int ret;
     lprintf("get_file_size+\n");
@@ -460,7 +460,7 @@ int get_file_size(block_read_func rd_block)
         g_fp->fs = g_fs;
     }
     if(g_fp->sclust==INVALID_CLUSTER){
-        g_fp->sclust = get_file_start_cluster("BOOK", "TXT");
+        g_fp->sclust = get_file_start_cluster(fn, en);
     }
     if(g_fp->sclust!=INVALID_CLUSTER){
         //find root dir sec
@@ -472,12 +472,12 @@ int get_file_size(block_read_func rd_block)
     }
 }
 
-int get_file_content(char* buf, const char*filename, uint32_t file_offset, uint32_t len, block_read_func rd_block)
+int get_file_content(char* buf, const char*filename, const char*extname, uint32_t file_offset, uint32_t len, block_read_func rd_block)
 {
     int ret;
     lprintf("get_file_content: fileoff %d len %d\n", file_offset, len);
     slprintf(buf, "fn:%s off:%d len:%d under developing", filename, file_offset, len);
-    ret = get_file_size(rd_block);
+    ret = get_file_size(rd_block,filename,extname);
     if(0 < ret){
         if(NULL == get_file_offset_buf(g_fp->sclust, file_offset, buf, len)){
             return FS_FILE_NOT_FOUND;

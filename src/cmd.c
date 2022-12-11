@@ -2,11 +2,13 @@
 #include "common.h"
 #include "lprintf.h"
 #include "sd/stm32_eval_spi_sd.h"
+#include "fs.h"
 #include <stdint.h>
 #include <string.h>
 #define uint uint32_t
 #define lprint lprintf
 
+static char filebuf[512]; 
 static char cmd_buf[COM_MAX_LEN] = "";
 static uint cmd_buf_p = COM_MAX_LEN;
 static uint quit_cmd = 0;
@@ -1186,6 +1188,30 @@ void dac(char *p)
     return;
 }
 
+void f2erm(char *p)
+{
+    int ret;
+    uint32_t tmp, eaddr;
+    char* fname, *ename;
+    tmp = get_howmany_para(p);
+    lprintf("para number=%d\n", tmp);
+    if(tmp<2){
+        lprintf("err\nf2erm fname addr");
+        return;
+    }
+    p = str_to_str(p, &fname);
+    p = str_to_str(p, &ename);
+    lprintf("fname:%s.%s\n", fname, ename);
+    p = str_to_hex(p, &eaddr);
+    lprintf("erom addr:%X\n", eaddr);
+    ret = get_file_content(filebuf, fname, ename, 0, 512, SD_ReadBlock);
+    if(ret != FS_OK){
+        lprintf("sd file read fail\n");
+        return;
+    }
+    lprintf("file len %d\n", ret);
+}
+
 void rtc_cmd(char *p)
 {
     uint8_t d[6], tmp;
@@ -1235,6 +1261,7 @@ static const struct command cmd_list[]=
     {"envset",envset},
     {"envget",envget},
     {"envprint",envprint},
+    {"f2erm",f2erm},
 #ifndef WRITE_W25F
     {"fmerase",fmerase},
     {"fmrtest",fmrtest},
