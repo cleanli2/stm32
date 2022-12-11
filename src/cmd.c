@@ -1190,7 +1190,7 @@ void dac(char *p)
 
 void f2erm(char *p)
 {
-    int ret;
+    int ret, left_len, foffset=0;
     uint32_t tmp, eaddr;
     char* fname, *ename;
     tmp = get_howmany_para(p);
@@ -1204,12 +1204,34 @@ void f2erm(char *p)
     lprintf("fname:%s.%s\n", fname, ename);
     p = str_to_hex(p, &eaddr);
     lprintf("erom addr:%X\n", eaddr);
-    ret = get_file_content(filebuf, fname, ename, 0, 512, SD_ReadBlock);
-    if(ret != FS_OK){
-        lprintf("sd file read fail\n");
+    memset(filebuf, 0xff, 512);
+    ret = get_file_size(SD_ReadBlock, fname, ename);
+    if( ret == FS_FILE_NOT_FOUND){
+        lprintf("file not found\n");
         return;
     }
     lprintf("file len %d\n", ret);
+    left_len=ret;
+    while(left_len){
+        memset(filebuf, 0xff, 512);
+        lprintf("sd read offset: %X\n", foffset);
+        ret = get_file_content(filebuf, fname, ename, foffset, 512, SD_ReadBlock);
+        if(ret != FS_OK){
+            lprintf("sd file read fail\n");
+            return;
+        }
+        lprintf("ee write: %X\n", eaddr);
+        SPI_Flash_Write_direct_erase((u8*)filebuf, eaddr, 512);
+        if(left_len>512){
+            left_len-=512;
+            eaddr+=512;
+            foffset+=512;
+        }
+        else{
+            lprintf("file copy done\n");
+            return;
+        }
+    }
 }
 
 void rtc_cmd(char *p)
