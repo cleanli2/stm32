@@ -1936,7 +1936,13 @@ void common_process_event(void*vp)
             if(evt_flag == (1<<EVENT_TOUCH_UP)){
                 button_t* p_bt = current_ui->button_info;
                 process_button(uif, p_bt);
+                if(uif!=current_ui){
+                    return;
+                }
                 process_button(uif, common_button);
+                if(uif!=current_ui){
+                    return;
+                }
                 process_nedt(uif, current_ui->nedt_info);
             }
             if(evt_flag == (1<<EVENT_BATT_LOW)){
