@@ -259,6 +259,7 @@ button_t main_menu_button[]={
     {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
     {350,460,80, 60, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
     {350,390,80, 60, NULL, UI_RANDOM, 0, "Random", 0, NULL},
+    {350,320,80, 60, NULL, UI_SET, 0, "Settings", 0, NULL},
     {350,600,80, 60, NULL, UI_SD, 0, "SDCard", 0, sd_card_cch_str},
     {350,530,80, 60, sound_ctrl, -1, 0, "Sound", 0, sound_cch_str},
 #else
@@ -273,6 +274,7 @@ button_t main_menu_button[]={
     {20,270,120, 20, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
     {150,210,80, 20, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
     {150,180,80, 20, NULL, UI_RANDOM, 0, "Random", 0, NULL},
+    {150,150,80, 20, NULL, UI_SET, 0, "Settings", 0, NULL},
     {150,270,80, 20, NULL, UI_SD, 0, "SDCard", 0, sd_card_cch_str},
     {150,240,80, 20, sound_ctrl, -1, 0, "Sound", 0, sound_cch_str},
 #endif
@@ -1302,6 +1304,96 @@ button_t random_button[]={
 };
 /****end of random ui*****/
 
+/****start of set ui*****/
+nedt_t ui_set_nedt[]={
+#ifdef LARGE_SCREEN
+    {80, 100, 350, 40, 0x7fffffff, 1, 10, 1, NULL, "random1"},
+    {80, 160, 350, 40, 0x7fffffff, 1, 10, 1, NULL, "ramdom2"},
+    {80, 220, 350, 40, 0x7fffffff, 1, 10, 1, NULL, "HsAdj1Min"},
+    {80, 280, 350, 40, 1, 0, 1, 1, NULL, "+/-"},
+    {80, 340, 350, 40, 99, 0, 10, 1, NULL, "Idle_BL"},
+    {80, 400, 350, 40, 99, 0, 10, 1, NULL, "BL"},
+    {-1, -1,-1, -1, 0, 0, 0, 0, NULL, NULL},
+#else
+    {40, 20, 195, 20, 0x7fffffff, 1, 10, 1, NULL, "random1"},
+    {40, 45, 195, 20, 0x7fffffff, 1, 10, 1, NULL, "ramdom2"},
+    {40, 70, 195, 20, 0x7fffffff, 1, 10, 1, NULL, "HsAdj1Min"},
+    {40, 95, 195, 20, 1, 0, 1, 1, NULL, "+/-"},
+    {40, 120, 195,20, 99, 0, 10, 1, NULL, "Idle_BL"},
+    {40, 145, 195,20, 99, 0, 10, 1, NULL, "BL"},
+    {-1, -1,-1, -1, 0, 0, 0, 0, NULL, NULL},
+#endif
+};
+
+void set_ui_init(void*vp)
+{
+    char chs[32]={0};
+    ui_set_nedt[0].data=&ui_buf[0];
+    ui_set_nedt[1].data=&ui_buf[1];
+    ui_set_nedt[2].data=&ui_buf[2];
+    ui_set_nedt[3].data=&ui_buf[3];
+    ui_set_nedt[4].data=&ui_buf[4];
+    ui_set_nedt[5].data=&ui_buf[5];
+    ui_buf[0]=get_env_uint("random1", 100);
+    ui_buf[1]=get_env_uint("random2", 100);
+    if(ENV_OK != get_env("HsAdj1Min", chs) ||
+            (chs[0]!='+' && chs[0]!='-') ){
+        ui_buf[2]=0;
+        ui_buf[3]=0;
+    }
+    else{
+        if(chs[0]=='+'){
+            ui_buf[3]=1;
+        }
+        else{
+            ui_buf[3]=0;
+        }
+        str_to_hex(&chs[1], &ui_buf[2]);
+    }
+    ui_buf[4]=get_env_uint("idle_bl", DEFAULT_BL);
+    ui_buf[5]=get_env_uint("bl", DEFAULT_IDLE_BL);
+#if 0
+    for(int i=0;i<6;i++){
+        lprintf("[%d]=%d\n", i, ui_buf[i]);
+    }
+#endif
+    common_ui_init(vp);
+}
+void set_enable()
+{
+    char chs[32]={0};
+#if 0
+    for(int i=0;i<6;i++){
+        lprintf("[%d]=%d\n", i, ui_buf[i]);
+    }
+#endif
+    if(ui_buf[3]==1){
+        chs[0]='+';
+    }
+    else{
+        chs[0]='-';
+    }
+    slprintf(&chs[1], "%d", ui_buf[2]);
+    lprintf("%s\n", chs);
+    set_env_uint("random1", ui_buf[0]);
+    set_env_uint("random2", ui_buf[1]);
+    set_env_uint("idle_bl", ui_buf[4]);
+    set_env_uint("bl", ui_buf[5]);
+    set_env("HsAdj1Min", chs);
+    ui_transfer(UI_LAST);
+}
+
+button_t ui_set_button[]={
+#ifdef LARGE_SCREEN
+    {375, 460, 100,  40, set_enable, -1, 0, "OK", 0, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+#else
+    {205, 180, 30,  20, set_enable, -1, 0, "OK", 0, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+#endif
+};
+/****end of set ui*****/
+
 ui_t ui_list[]={
     {
         main_ui_init,
@@ -1410,6 +1502,18 @@ ui_t ui_list[]={
         NULL,//char*timeout_music;
         NULL,
         NULL,//nedt_t*
+    },
+    {
+        set_ui_init,
+        NULL,
+        NULL,
+        ui_set_button,
+        UI_SET,
+        220, //timeout
+        0,
+        NULL,//char*timeout_music;
+        NULL,
+        ui_set_nedt,
     },
     {
         NULL,//uiinit
