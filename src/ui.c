@@ -1349,6 +1349,7 @@ void set_ui_init(void*vp)
             ui_buf[3]=0;
         }
         str_to_hex(&chs[1], &ui_buf[2]);
+        ui_buf[2]=bcd2hex_32(ui_buf[2]);
     }
     ui_buf[4]=get_env_uint("idle_bl", DEFAULT_BL);
     ui_buf[5]=get_env_uint("bl", DEFAULT_IDLE_BL);
