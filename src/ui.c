@@ -1885,6 +1885,7 @@ void common_process_event(void*vp)
 {
     //bool dg = g_flag_1s;
     ui_t* uif =(ui_t*)vp;
+    int32_t uii_bak=uif->ui_index;
 #if 0
     if(cur_task_event_flag && !is_playing_music()){
         if(keyA2_up){
@@ -1937,11 +1938,11 @@ void common_process_event(void*vp)
             if(evt_flag == (1<<EVENT_TOUCH_UP)){
                 button_t* p_bt = current_ui->button_info;
                 process_button(uif, p_bt);
-                if(uif!=current_ui){
+                if(uii_bak!=current_ui->ui_index){
                     return;
                 }
                 process_button(uif, common_button);
-                if(uif!=current_ui){
+                if(uii_bak!=current_ui->ui_index){
                     return;
                 }
                 process_nedt(uif, current_ui->nedt_info);
