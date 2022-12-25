@@ -1313,6 +1313,7 @@ nedt_t ui_set_nedt[]={
     {80, 280, 350, 40, 1, 0, 1, 1, NULL, "+/-"},
     {80, 340, 350, 40, 99, 0, 10, 1, NULL, "Idle_BL"},
     {80, 400, 350, 40, 99, 0, 10, 1, NULL, "BL"},
+    {80, 460, 350, 40, 99, 0, 10, 1, NULL, "time_ct"},
     {-1, -1,-1, -1, 0, 0, 0, 0, NULL, NULL},
 #else
     {40, 20, 195, 20, 0x7fffffff, 1, 10, 1, NULL, "random1"},
@@ -1321,6 +1322,7 @@ nedt_t ui_set_nedt[]={
     {40, 95, 195, 20, 1, 0, 1, 1, NULL, "+/-"},
     {40, 120, 195,20, 99, 0, 10, 1, NULL, "Idle_BL"},
     {40, 145, 195,20, 99, 0, 10, 1, NULL, "BL"},
+    {40, 170, 195,20, 99, 0, 10, 1, NULL, "time_ct"},
     {-1, -1,-1, -1, 0, 0, 0, 0, NULL, NULL},
 #endif
 };
@@ -1334,6 +1336,7 @@ void set_ui_init(void*vp)
     ui_set_nedt[3].data=&ui_buf[3];
     ui_set_nedt[4].data=&ui_buf[4];
     ui_set_nedt[5].data=&ui_buf[5];
+    ui_set_nedt[6].data=&ui_buf[6];
     ui_buf[0]=get_env_uint("random1", 100);
     ui_buf[1]=get_env_uint("random2", 100);
     if(ENV_OK != get_env("HsAdj1Min", chs) ||
@@ -1353,6 +1356,7 @@ void set_ui_init(void*vp)
     }
     ui_buf[4]=get_env_uint("idle_bl", DEFAULT_BL);
     ui_buf[5]=get_env_uint("bl", DEFAULT_IDLE_BL);
+    ui_buf[6]=get_env_uint("time_ct", 20);
 #if 0
     for(int i=0;i<6;i++){
         lprintf("[%d]=%d\n", i, ui_buf[i]);
@@ -1380,16 +1384,17 @@ void set_enable()
     set_env_uint("random2", ui_buf[1]);
     set_env_uint("idle_bl", ui_buf[4]);
     set_env_uint("bl", ui_buf[5]);
+    set_env_uint("time_ct", ui_buf[6]);
     set_env("HsAdj1Min", chs);
     ui_transfer(UI_LAST);
 }
 
 button_t ui_set_button[]={
 #ifdef LARGE_SCREEN
-    {375, 460, 100,  40, set_enable, -1, 0, "OK", 0, NULL},
+    {375, 520, 100,  40, set_enable, -1, 0, "OK", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #else
-    {205, 180, 30,  20, set_enable, -1, 0, "OK", 0, NULL},
+    {205, 220, 30,  20, set_enable, -1, 0, "OK", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #endif
 };

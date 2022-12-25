@@ -612,11 +612,11 @@ int32_t get_t_t_n_c(int disp)
 #define MAGIC_TIME_NEED_CORRECT 203250
 #define DELAY_TIME_CORRECT 10
 #define MAX_SECONDS_TIME_CORRECT 55
-#define TRIGGER_SECONDS_TIME_CORRECT 20
 void do_time_correct()
 {
     static int32_t time_need_correct_s = MAGIC_TIME_NEED_CORRECT;
     int32_t t_s;
+    int32_t TRIGGER_SECONDS_TIME_CORRECT = (int)get_env_uint("time_ct", 20);
 
     if(0 == time_need_correct_s){
         return;
