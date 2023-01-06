@@ -639,6 +639,8 @@ void do_time_correct()
     if(time_need_correct_s > MAX_SECONDS_TIME_CORRECT ||
             time_need_correct_s < -MAX_SECONDS_TIME_CORRECT){
         time_need_correct_s = 0;
+        lprintf("It's too much for time correct\n");
+        return;
     }
     t_s = bcd2hex(rtc_read_reg(SECOND_REG));
     lprintf("cur time sec  %d\n", t_s);
