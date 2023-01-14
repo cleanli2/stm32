@@ -620,7 +620,7 @@ void do_time_correct()
 {
     static int32_t time_need_correct_s = MAGIC_TIME_NEED_CORRECT;
     int32_t t_s;
-    int32_t TRIGGER_SECONDS_TIME_CORRECT = (int)get_env_uint("time_ct", 20);
+    int32_t TRIGGER_SECONDS_TIME_CORRECT;
 
     if(0 == time_need_correct_s){
         return;
@@ -634,6 +634,7 @@ void do_time_correct()
         time_need_correct_s = get_t_t_n_c(0);
         lprintf_time("time corrt = %d\n", time_need_correct_s);
     }
+    TRIGGER_SECONDS_TIME_CORRECT = (int)get_env_uint("time_ct", 20);
     if(time_need_correct_s < TRIGGER_SECONDS_TIME_CORRECT &&
             time_need_correct_s > -TRIGGER_SECONDS_TIME_CORRECT){
         lprintf_time("It's not time yet for time correct, trigger %d\n",
