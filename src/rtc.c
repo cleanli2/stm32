@@ -628,29 +628,34 @@ void do_time_correct()
     }
     if(time_need_correct_s == MAGIC_TIME_NEED_CORRECT-DELAY_TIME_CORRECT){
         time_need_correct_s = get_t_t_n_c(0);
-        lprintf("time corrt = %d\n", time_need_correct_s);
+        lprintf_time("time corrt = %d\n", time_need_correct_s);
     }
     if(time_need_correct_s < TRIGGER_SECONDS_TIME_CORRECT &&
             time_need_correct_s > -TRIGGER_SECONDS_TIME_CORRECT){
-        lprintf("It's not time yet for time correct\n");
+        lprintf_time("It's not time yet for time correct, trigger %d\n",
+                TRIGGER_SECONDS_TIME_CORRECT);
         time_need_correct_s = 0;
         return;
     }
     if(time_need_correct_s > MAX_SECONDS_TIME_CORRECT ||
             time_need_correct_s < -MAX_SECONDS_TIME_CORRECT){
         time_need_correct_s = 0;
-        lprintf("It's too much for time correct\n");
+        lprintf_time("It's too much for time correct, max %d\n",
+                MAX_SECONDS_TIME_CORRECT);
         return;
     }
     t_s = bcd2hex(rtc_read_reg(SECOND_REG));
-    lprintf("cur time sec  %d\n", t_s);
+    lprintf_time("cur time sec  %d\n", t_s);
     t_s += time_need_correct_s;
     if(t_s > 2 || t_s < 58){
         if(rtc_write_reg(SECOND_REG, 0)){
             //write OK
-            lprintf("time fix OK %d\n", t_s);
+            lprintf_time("time fix OK %d\n", t_s);
             time_need_correct_s = 0;
             set_env("LastTimeAdj", get_rtc_time(NULL));
+        }
+        else{
+            lprintf_time("time fix fail, wait next\n");
         }
     }
 }
