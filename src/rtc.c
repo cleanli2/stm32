@@ -553,6 +553,10 @@ int32_t get_t_t_n_c(int disp)
     //'-169' means slower 1 min or '+169' faster
     p=&ch_t[1];
     p = str_to_hex((char*)p, &hours_adj_1min);
+    if(0==hours_adj_1min){
+        lprintf_time("skip ATC 3\n");
+        return 0;
+    }
 
     //convert
     dt_lastadj.year = bcd2hex_32(dt_lastadj.year);
