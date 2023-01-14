@@ -634,7 +634,9 @@ void do_time_correct()
         time_need_correct_s = get_t_t_n_c(0);
         lprintf_time("time corrt = %d\n", time_need_correct_s);
     }
+    lprintf_time("+geu\n");
     TRIGGER_SECONDS_TIME_CORRECT = (int)get_env_uint("time_ct", 20);
+    lprintf_time("-geu\n");
     if(time_need_correct_s < TRIGGER_SECONDS_TIME_CORRECT &&
             time_need_correct_s > -TRIGGER_SECONDS_TIME_CORRECT){
         lprintf_time("It's not time yet for time correct, trigger %d\n",

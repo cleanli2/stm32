@@ -194,13 +194,27 @@ uint32_t find_env_data_start_raw()
 
 uint32_t find_env_data_start()
 {
-    uint32_t ret = find_env_data_start_raw();
+    static int env_data_start_i = -1;
+    uint32_t ret;
+    uint8_t db, da;
+    if(env_data_start_i != -1){//check if it is OK
+        db = env_get_char(env_data_start_i -1);
+        da = env_get_char(env_data_start_i);
+        if(0xff == db && 0x00 == da){
+            return env_data_start_i;
+        }
+        else{
+            lprintf("env_data_start_i err:0x%b 0x%a\n", db, da);
+        }
+    }
+    ret = find_env_data_start_raw();
     if(ret > ENV_ABNORMAL && ret != ENV_EMPTY_DATA){
         lprintf("w25f read fail, reinit SD lowlevel\n");
         SD_LowLevel_Init();
         //retry
         ret = find_env_data_start_raw();
     }
+    env_data_start_i = ret;
     return ret;
 }
 
