@@ -654,9 +654,10 @@ void do_time_correct()
     t_s = bcd2hex(rtc_read_reg(SECOND_REG));
     lprintf_time("cur time sec  %d\n", t_s);
     t_s += time_need_correct_s;
-    if(t_s > 2 || t_s < 58){
-        if(rtc_write_reg(SECOND_REG, 0)){
+    if(t_s > 2 && t_s < 58){
+        if(rtc_write_reg(SECOND_REG, t_s)){
             //write OK
+            reset_time_offset();
             lprintf_time("time fix OK %d\n", t_s);
             time_need_correct_s = 0;
             set_env("LastTimeAdj", get_rtc_time(NULL));
@@ -664,5 +665,8 @@ void do_time_correct()
         else{
             lprintf_time("time fix fail, wait next\n");
         }
+    }
+    else{
+        lprintf_time("corrected time sec %d, out of range, wait next\n", t_s);
     }
 }

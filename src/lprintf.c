@@ -160,9 +160,13 @@ void print_binary(uint32_t num)
         putchars(nc);
 }
 char sys_hour[14];
+static u32 date_hour_offset = 0xffffffff;
+void reset_time_offset()
+{
+    date_hour_offset = 0xffffffff;
+}
 char*get_sys_hour()
 {
-    static u32 date_hour_offset = 0xffffffff;
     u32 ms_time;
     u32 t;//tmp variable
     if(date_hour_offset == 0xffffffff){
