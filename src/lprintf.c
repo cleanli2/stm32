@@ -206,6 +206,7 @@ char*vslprintf(char*s_buf, const char *fmt, va_list args)
 {
     const char *s;
     uint32_t d;
+    int32_t di;
     uint64_t u;
     va_list ap;
     char*sp = s_buf;
@@ -231,8 +232,18 @@ char*vslprintf(char*s_buf, const char *fmt, va_list args)
                 sp += strlen(s);
                 break;
             case 'u':
-            case 'd':
                 d = va_arg(ap, uint32_t);
+                sp += sprint_uint(sp, d);
+                break;
+            case 'd':
+                di = va_arg(ap, int32_t);
+                if(di<0){
+                    d=-di;
+                    *sp++='-';
+                }
+                else{
+                    d=di;
+                }
                 sp += sprint_uint(sp, d);
                 break;
             case 'U':

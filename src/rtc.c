@@ -518,6 +518,8 @@ int32_t get_t_t_n_c(int disp)
     char ch_t[ENV_MAX_VALUE_LEN], *p=&ch_t[0];
     date_info_t dt, dt_lastadj;
     uint32_t hours_adj_1min, diff_hours, v_tmp;
+    int32_t ha1m;
+
     lprintf_time("get_time_correct +\n");
     if(ENV_OK != get_env("LastTimeAdj", ch_t)){
         lprintf_time("skip ATC 1\n");
@@ -590,9 +592,12 @@ int32_t get_t_t_n_c(int disp)
 
     ret = 60*diff_hours/hours_adj_1min;
     lprintf("ret %d\n", ret);
+    ha1m=hours_adj_1min;
     if(ch_t[0]=='-'){
         ret = -ret;
+        ha1m=-hours_adj_1min;
     }
+    lprintf("HsAdj1Min %d second_fix %d\n", ha1m, ret);
     return ret;
     /*
     if(diff_hours>hours_adj_1min){
