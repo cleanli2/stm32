@@ -153,6 +153,33 @@ int envmatch (uint8_t *s1, int i2)
  * */
 uint32_t find_env_data_start_raw()
 {
+    uint32_t i_down=0, i_up=ENV_STORE_SIZE-1, i;
+    if(env_get_char(i_down) != 0xff){
+        lprintf("env data is full\n");
+        return ENV_INVALID;
+    }
+    if(env_get_char(i_up) == 0xff){
+        lprintf("empty env block\n");
+        return ENV_EMPTY_DATA;
+    }
+    while(1!=i_up-i_down){
+        //lprintf("[%d,%d]\n", i_down, i_up);
+        i=(i_down+i_up)/2;
+        if(0xff==env_get_char(i)){
+            i_down = i;
+        }
+        else{
+            i_up = i;
+        }
+    }
+    //lprintf("i_up %d\n", i_up);
+    if(env_get_char(i_up) != 0){
+        lprintf("FFXX g env flash error %x\n", i_up);
+        lprintf("env_store_start %x size %x\n", get_env_start_addr(), ENV_STORE_SIZE);
+        return ENV_FAIL;
+    }
+    return i_up;
+#if 0
     uint32_t i = 0, ff_i = 0;
     //go through not 0xff
     if(env_get_char(i) != 0xff){
@@ -190,6 +217,7 @@ uint32_t find_env_data_start_raw()
         return ENV_INVALID;
     }
     return i;
+#endif
 }
 
 uint32_t find_env_data_start()
