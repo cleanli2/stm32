@@ -55,7 +55,7 @@ char* disk_read_sector(uint32_t sector_no)
         return NULL;
     }
     current_sector_no = sector_no;
-    lprintf("read 0x%x sector OK\n", sector_no);
+    //lprintf("read 0x%x sector OK\n", sector_no);
     if(debug_fs)mem_print(disk_buf, 512*sector_no, 512);
     return disk_buf;
 }
@@ -440,7 +440,7 @@ int init_fs(block_read_func rd_block)
 int get_file_size(block_read_func rd_block, const char*fn, const char*en)
 {
     int ret;
-    lprintf("get_file_size+\n");
+    //lprintf("get_file_size+\n");
     if(fs_debug_is_enabled()){
         debug_fs = 1;
     }
@@ -461,10 +461,10 @@ int get_file_size(block_read_func rd_block, const char*fn, const char*en)
     }
     if(g_fp->sclust==INVALID_CLUSTER){
         g_fp->sclust = get_file_start_cluster(fn, en);
+        lprintf("file start clust 0x%x size %d\n", (DWORD)g_fp->sclust, g_fp->fsize);
     }
     if(g_fp->sclust!=INVALID_CLUSTER){
         //find root dir sec
-        lprintf("file start clust 0x%x size %d\n", (DWORD)g_fp->sclust, g_fp->fsize);
         return g_fp->fsize;
     }
     else{
@@ -475,7 +475,7 @@ int get_file_size(block_read_func rd_block, const char*fn, const char*en)
 int get_file_content(char* buf, const char*filename, const char*extname, uint32_t file_offset, uint32_t len, block_read_func rd_block)
 {
     int ret;
-    lprintf("get_file_content: fileoff %d len %d\n", file_offset, len);
+    //lprintf("get_file_content: fileoff %d len %d\n", file_offset, len);
     slprintf(buf, "fn:%s off:%d len:%d under developing", filename, file_offset, len);
     ret = get_file_size(rd_block,filename,extname);
     if(0 < ret){
