@@ -39,11 +39,13 @@ char * str_to_hex(char *s, uint32_t * result);
 void main_init(void);
 void enable_sound(int en);
 int get_sound_sta();
+int get_sound_mode();
 uint add_with_limit(uint a, uint b, uint limit);
 void Dac1_Init(void);
 void Dac1_Set_Vol(u32 vol);
 void Dac1_wave(u32 type, u32 para2);
 void Dac1_DeInit(void);
+void dac_set_freq(uint32_t freq);
 
 #define LED_R_C 0x1
 #define LED_Y_C 0x2

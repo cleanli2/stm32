@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdint.h>
 #include "sd/stm32_eval_spi_sd.h"
+#include "wave_data.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
@@ -115,7 +116,9 @@ void TIM2_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
         g_10ms_count++;
 	}
-    sound_execute();
+    if(SOUND_BEEP_MODE==get_sound_mode()){
+        sound_execute();
+    }
 }
 
 /*low 4 bit: Pin14Value | Pin13Value | ToCtlPin14 | ToCtlPin13*/
@@ -343,12 +346,19 @@ void TIM3_IRQHandler(void)
     //if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
     TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
     if(sound_enable){
-        if(tog++&0x1){
-            GPIO_SetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
+        if(SOUND_BEEP_MODE==get_sound_mode()){
+            if(tog++&0x1){
+                GPIO_SetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
+            }
+            else{
+                GPIO_ResetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
+            }
         }
-        else{
-            GPIO_ResetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
+#ifdef DAC_SUPPORT
+        else if(SOUND_DAC_MODE==get_sound_mode()){
+            sound_execute_dac();
         }
+#endif
     }
 }
 
@@ -870,6 +880,20 @@ uint add_with_limit(uint a, uint b, uint limit)
 }
 
 /*DAC code*/
+static int global_sound_mode = SOUND_BEEP_MODE;
+int get_sound_mode()
+{
+    return global_sound_mode;
+}
+
+#ifdef DAC_SUPPORT
+static uint32_t dac_freq = 5500;//11k
+void dac_set_freq(uint32_t freq)
+{
+    lprintf("set dac freq=%u cur=%u\n", freq, dac_freq);
+    dac_freq = freq;
+    beep_by_timer(dac_freq);//11k
+}
 void Dac1_Init(void)
 {
 
@@ -888,13 +912,15 @@ void Dac1_Init(void)
 	DAC_InitType.DAC_Trigger=DAC_Trigger_None;	//no trigger
 	DAC_InitType.DAC_WaveGeneration=DAC_WaveGeneration_None;//no wave
 	DAC_InitType.DAC_LFSRUnmask_TriangleAmplitude=DAC_LFSRUnmask_Bit0;//mask ampitude
-	DAC_InitType.DAC_OutputBuffer=DAC_OutputBuffer_Enable ;	//DAC1 output buf close, BOFF1=1
+	DAC_InitType.DAC_OutputBuffer=DAC_OutputBuffer_Enable ;	//DAC1 output buf open, BOFF1=0
 	DAC_Init(DAC_Channel_1,&DAC_InitType);	 //init DAC1
 
 	DAC_Cmd(DAC_Channel_1, ENABLE);  //enable DAC1
 
 	DAC_SetChannel1Data(DAC_Align_12b_R, 0);  //12bit right align
 
+    dac_set_freq(5500);//11k
+    global_sound_mode = SOUND_DAC_MODE;
     lprintf("dac1 init done\n");
 }
 
@@ -938,24 +964,33 @@ void Dac1_wave(u32 type, u32 para2)
     switch(type){
         case 0:
             for(va=0;va<0x1000;va+=40){
-                Dac1_Set_Vol(va);
+                while(sound_pool_full());
+                put_sound(va, 100);
             }
             break;
         case 1:
             for(i=0;i<4*n*(SIN_SIZE-1);i++){
                 va=i;
                 if(va<=(SIN_SIZE-1)*n){
-                    Dac1_Set_Vol(get_sin_value(va, n)/2+2048);
+                    va=get_sin_value(va, n)/2+2048;
                 }
                 else if(va<(SIN_SIZE-1)*n*2){
-                    Dac1_Set_Vol(get_sin_value(2*(SIN_SIZE-1)*n-va, n)/2+2048);
+                    va=(get_sin_value(2*(SIN_SIZE-1)*n-va, n)/2+2048);
                 }
                 else if(va<(SIN_SIZE-1)*n*3){
-                    Dac1_Set_Vol(2048-get_sin_value(va-2*(SIN_SIZE-1)*n, n)/2);
+                    va=(2048-get_sin_value(va-2*(SIN_SIZE-1)*n, n)/2);
                 }
                 else{
-                    Dac1_Set_Vol(2048-get_sin_value(4*(SIN_SIZE-1)*n-va, n)/2);
+                    va=(2048-get_sin_value(4*(SIN_SIZE-1)*n-va, n)/2);
                 }
+                while(sound_pool_full());
+                put_sound(va, 100);
+            }
+            break;
+        case 2:
+            for(va=0;va<pcm_wav_len;va++){
+                while(sound_pool_full());
+                put_sound(pcm_wav[va]<<4, 100);
             }
             break;
         default:
@@ -968,5 +1003,8 @@ void Dac1_DeInit(void)
 	DAC_Cmd(DAC_Channel_1, DISABLE);
     DAC_DeInit();
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, DISABLE);
+    beep_by_timer_100(0);
+    global_sound_mode = SOUND_BEEP_MODE;
     lprintf("dac1 deinit done\n");
 }
+#endif

@@ -139,6 +139,8 @@
 #elif defined SUNRISE
 /////////////////////////////////////SUNRISE//////////////////////////////////////////////
 
+#define DAC_SUPPORT
+
 #define POWER_MONITOR
 #define GPIO_ADC_VREF_PIN GPIO_Pin_5
 #define GPIO_ADC_V4_2_PIN GPIO_Pin_2

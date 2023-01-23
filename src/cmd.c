@@ -1142,6 +1142,7 @@ void gpiotest(char *p)
 
 }
 
+#ifdef DAC_SUPPORT
 void dac(char *p)
 {
     uint32_t tmp, data, type=1, para2=9;
@@ -1165,11 +1166,18 @@ void dac(char *p)
         lprintf("dac on\n");
         Dac1_DeInit();
     }
+    else if(!strcmp(para, "freq")){
+        if(tmp>=2){
+            p = str_to_hex(p, &para2);
+            lprintf("dac freq set %dHz\n", para2);
+            dac_set_freq(para2);
+        }
+    }
     else if(!strcmp(para, "wave")){
         lprintf("dac wave\n");
         if(tmp>=2){
             p = str_to_hex(p, &type);
-            if(type>1)type=1;
+            if(type>2)type=1;
         }
         if(tmp>=3){
             p = str_to_hex(p, &para2);
@@ -1187,6 +1195,7 @@ void dac(char *p)
 
     return;
 }
+#endif
 
 void f2erm(char *p)
 {
@@ -1278,7 +1287,9 @@ static const struct command cmd_list[]=
     //{"dwb",dispwb},
     {"adc",adc},
     {"bz",buzztest},
+#ifdef DAC_SUPPORT
     {"dac",dac},
+#endif
     {"exit",cmd_exit},
     {"envset",envset},
     {"envget",envget},

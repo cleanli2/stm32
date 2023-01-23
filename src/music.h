@@ -19,6 +19,9 @@ enum MUSIC_STATUS {
 
 #define NO_DIVERT 0xffff
 #define DEFAULT_MUSIC_NOTE_PERIOD 312
+
+#define SOUND_BEEP_MODE 1
+#define SOUND_DAC_MODE 2
 struct music_play_info{
     const signed char*pu;
     uint pu_index;
@@ -60,4 +63,6 @@ int get_music_lst_size();
 sound_info* get_sound();
 int put_sound();
 void sound_execute();
+void sound_execute_dac();
+int sound_pool_full();
 #endif

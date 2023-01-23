@@ -435,6 +435,18 @@ void sound_execute()
     sound_time_ct = si->stc;
 }
 
+#ifdef DAC_SUPPORT
+void sound_execute_dac()
+{
+    sound_info* si;
+    si = get_sound();
+    if(NULL == si){
+        return;
+    }
+    Dac1_Set_Vol(si->mrv);
+}
+#endif
+
 void enable_power_save(bool en)
 {
     save_power_mode = en;
