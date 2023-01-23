@@ -290,8 +290,8 @@ void beep_by_timer_100(uint32_t hz_100)
         TIM_DeInit(TIM3);
         TIM_InternalClockConfig(TIM3);
         /* Time base configuration */
-        TIM_TimeBaseStructure.TIM_Period = 4000000/hz_100/2;
-        TIM_TimeBaseStructure.TIM_Prescaler = 1800;
+        TIM_TimeBaseStructure.TIM_Period = 2000000/hz_100-1;
+        TIM_TimeBaseStructure.TIM_Prescaler = 1800-1;
         TIM_TimeBaseStructure.TIM_ClockDivision = 0;
         TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 
@@ -546,7 +546,7 @@ void main_init(void)
   //Touch_Test();
 
   //72M/72=1M, 1us/count
-  timer_init(10000, 72-1);
+  timer_init(10000-1, 72-1);
 
   GPIO_InitTypeDef GPIO_InitStructure;
   //led
