@@ -1177,13 +1177,47 @@ void dac(char *p)
         lprintf("dac wave\n");
         if(tmp>=2){
             p = str_to_hex(p, &type);
-            if(type>2)type=1;
+            if(type>3)type=1;
         }
         if(tmp>=3){
             p = str_to_hex(p, &para2);
         }
-        while(!con_is_recved()){
-            Dac1_wave(type, para2);
+        if(3==type){
+            int ret, left_len, foffset=0;
+            const char* fname="MUSIC", *ename="WAV";
+            lprintf("fname:%s.%s\n", fname, ename);
+            memset(filebuf, 0xff, 512);
+            ret = get_file_size(SD_ReadBlock, fname, ename);
+            if( ret == FS_FILE_NOT_FOUND){
+                lprintf("file not found\n");
+                return;
+            }
+            lprintf("file len %d\n", ret);
+            left_len=ret;
+            while(1){
+                //lprintf("sd read offset: %X\n", foffset);
+                ret = get_file_content(filebuf, fname, ename, foffset, 512, SD_ReadBlock);
+                if(ret != FS_OK){
+                    lprintf("sd file read fail\n");
+                    return;
+                }
+                para2=(uint32_t)filebuf;
+                Dac1_wave(type, para2);
+                if(con_is_recved())return;
+                if(left_len>512){
+                    left_len-=512;
+                    foffset+=512;
+                }
+                else{
+                    lprintf("file play done\n");
+                    return;
+                }
+            }
+        }
+        else{
+            while(!con_is_recved()){
+                Dac1_wave(type, para2);
+            }
         }
     }
     else{

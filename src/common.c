@@ -960,6 +960,7 @@ u16 get_sin_value(u32 x, u32 n)
 void Dac1_wave(u32 type, u32 para2)
 {
     u32 va=0,i, n=para2;
+    uint8_t *wd;
     //lprintf("dac1 wave type %d\n", type);
     switch(type){
         case 0:
@@ -991,6 +992,13 @@ void Dac1_wave(u32 type, u32 para2)
             for(va=0;va<pcm_wav_len;va++){
                 while(sound_pool_full());
                 put_sound(pcm_wav[va]<<4, 100);
+            }
+            break;
+        case 3:
+            wd=(uint8_t*)para2;
+            for(va=0;va<512;va++){
+                while(sound_pool_full());
+                put_sound(wd[va]<<4, 100);
             }
             break;
         default:
