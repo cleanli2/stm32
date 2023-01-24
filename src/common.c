@@ -870,6 +870,16 @@ void assert_failed(uint8_t* file, uint32_t line)
 #endif
 
 /************************util***********************/
+uint sub_with_limit(uint a, uint b, uint limit)
+{
+    if(a >= b){
+        return a - b;
+    }
+    else{
+        return a + limit - b;
+    }
+}
+
 uint add_with_limit(uint a, uint b, uint limit)
 {
     uint ret = a + b;
@@ -959,7 +969,8 @@ u16 get_sin_value(u32 x, u32 n)
 
 void Dac1_wave(u32 type, u32 para2)
 {
-    u32 va=0,i, n=para2;
+    u32 va=0,i, n=para2, t_sbl;
+    static u32 dac_data_ct=0;
     uint8_t *wd;
     //lprintf("dac1 wave type %d\n", type);
     switch(type){
@@ -995,11 +1006,17 @@ void Dac1_wave(u32 type, u32 para2)
             }
             break;
         case 3:
+            t_sbl=get_sound_size();
             wd=(uint8_t*)para2;
             for(va=0;va<512;va++){
                 while(sound_pool_full());
                 put_sound(wd[va]<<4, 100);
             }
+            if(0==t_sbl || dac_data_ct++>20){
+                lprintf("S+%d\n", t_sbl);
+                dac_data_ct=0;
+            }
+            //lprintf_to("S-%d\n", get_sound_size());
             break;
         default:
             break;

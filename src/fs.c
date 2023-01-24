@@ -7,7 +7,7 @@ FATFS g_fat32={0};
 FIL g_file={0};
 FIL * g_fp=NULL;
 FATFS* g_fs;
-static int debug_fs = 0;
+static int debug_fs = -1;
 
 #define FAT_cache_SIZE 32
 
@@ -415,8 +415,13 @@ int get_file_size(block_read_func rd_block, const char*fn, const char*en)
 {
     int ret;
     //lprintf("get_file_size+\n");
-    if(fs_debug_is_enabled()){
-        debug_fs = 1;
+    if(-1 == debug_fs){
+        if(fs_debug_is_enabled()){
+            debug_fs = 1;
+        }
+        else{
+            debug_fs = 0;
+        }
     }
     if(!fs_buf){
         fs_buf = (char*)disk_buf;

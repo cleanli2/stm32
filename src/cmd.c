@@ -1195,7 +1195,7 @@ void dac(char *p)
             lprintf("file len %d\n", ret);
             left_len=ret;
             while(1){
-                //lprintf("sd read offset: %X\n", foffset);
+                //lprintf_to("foff:%x\n", foffset);
                 ret = get_file_content(filebuf, fname, ename, foffset, 512, SD_ReadBlock);
                 if(ret != FS_OK){
                     lprintf("sd file read fail\n");

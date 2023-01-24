@@ -376,7 +376,11 @@ void task_music(struct task*vp)
     */
 }
 
+#ifdef DAC_SUPPORT
+#define SOUND_POOL_SIZE 50
+#else
 #define SOUND_POOL_SIZE 4
+#endif
 static sound_info si_pool[SOUND_POOL_SIZE];
 static u32 si_wi = 0;
 static u32 si_ri = 0;
@@ -394,6 +398,11 @@ u32 filled_sound_size()
     return ret;
 }
 */
+
+int get_sound_size()
+{
+    return sub_with_limit(si_wi, si_ri, SOUND_POOL_SIZE);
+}
 
 sound_info* get_sound()
 {

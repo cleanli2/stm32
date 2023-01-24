@@ -338,7 +338,7 @@ SD_Error SD_Init(void)
   /*!< SD chip select high */
   SD_CS_HIGH();
 
-  lprintf("send SD dummy bytes\n");
+  lprintf("send SD dummy bytes. bak speed %X\n", speed);
   /*!< Send dummy byte 0xFF, 10 times with CS high */
   /*!< Rise CS and MOSI for 80 clocks cycles */
   for (i = 0; i <= 9; i++)
@@ -540,7 +540,7 @@ SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
 u8 SD_ReadDisk(u8*buf,u32 sector,u8 cnt)
 {
 	u8 r1;
-    //lprintf("R sec %x, n %d\n", sector, cnt);
+    //lprintf_to("SDR@%x:%d\n", sector, cnt);
 	if(SD_Type!=SD_TYPE_V2HC)sector <<= 9;//转换为字节地址
 	if(cnt==1)
 	{
@@ -560,6 +560,7 @@ u8 SD_ReadDisk(u8*buf,u32 sector,u8 cnt)
 		SD_SendCmd(CMD12,0,0X01);	//发送停止命令
 	}   
 	SD_DisSelect();//取消片选
+    //lprintf_to("SDRdone\n");
 	return r1;//
 }
 

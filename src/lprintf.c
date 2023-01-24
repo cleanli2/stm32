@@ -369,6 +369,22 @@ void log_to_buf(const char* log)
     }
 }
 
+void lprintf_to(const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap,fmt);
+#ifdef NO_PRINT_WITH_TIME
+    print_with_time = 0;
+#else
+    print_with_time = 1;
+#endif
+    vslprintf(lprintf_buf,fmt,ap);
+    print_with_time = 0;
+    putchars(lprintf_buf);
+    va_end(ap);
+}
+
 void lprintf_time(const char *fmt, ...)
 {
     va_list ap;
