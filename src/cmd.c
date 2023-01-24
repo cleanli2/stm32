@@ -1183,33 +1183,37 @@ void dac(char *p)
             p = str_to_hex(p, &para2);
         }
         if(3==type){
-            int ret, left_len, foffset=0;
+            int fd, ret, left_len, foffset=0;
             const char* fname="MUSIC", *ename="WAV";
             lprintf("fname:%s.%s\n", fname, ename);
             memset(filebuf, 0xff, 512);
-            ret = get_file_size(SD_ReadBlock, fname, ename);
-            if( ret == FS_FILE_NOT_FOUND){
-                lprintf("file not found\n");
+            fd = open_file(SD_ReadBlock, fname, ename, &left_len);
+            if(fd < 0){
+                lprintf("file open fail %d\n", fd);
                 return;
             }
-            lprintf("file len %d\n", ret);
-            left_len=ret;
+            lprintf("file len %d\n", left_len);
             while(1){
                 //lprintf_to("foff:%x\n", foffset);
-                ret = get_file_content(filebuf, fname, ename, foffset, 512, SD_ReadBlock);
+                ret = read_file(fd, filebuf, foffset, 512);
                 if(ret != FS_OK){
                     lprintf("sd file read fail\n");
+                    close_file(fd);
                     return;
                 }
                 para2=(uint32_t)filebuf;
                 Dac1_wave(type, para2);
-                if(con_is_recved())return;
+                if(con_is_recved()){
+                    close_file(fd);
+                    return;
+                }
                 if(left_len>512){
                     left_len-=512;
                     foffset+=512;
                 }
                 else{
                     lprintf("file play done\n");
+                    close_file(fd);
                     return;
                 }
             }
@@ -1233,7 +1237,7 @@ void dac(char *p)
 
 void f2erm(char *p)
 {
-    int ret, left_len, foffset=0;
+    int ret, left_len, foffset=0, fd;
     uint32_t tmp, eaddr;
     char* fname, *ename;
     tmp = get_howmany_para(p);
@@ -1248,19 +1252,19 @@ void f2erm(char *p)
     p = str_to_hex(p, &eaddr);
     lprintf("erom addr:%X\n", eaddr);
     memset(filebuf, 0xff, 512);
-    ret = get_file_size(SD_ReadBlock, fname, ename);
-    if( ret == FS_FILE_NOT_FOUND){
-        lprintf("file not found\n");
+    fd = open_file(SD_ReadBlock, fname, ename, &left_len);
+    if(fd < 0){
+        lprintf("file open fail %d\n", fd);
         return;
     }
-    lprintf("file len %d\n", ret);
-    left_len=ret;
+    lprintf("file len %d\n", left_len);
     while(left_len){
         memset(filebuf, 0xff, 512);
         lprintf("sd read offset: %X\n", foffset);
-        ret = get_file_content(filebuf, fname, ename, foffset, 512, SD_ReadBlock);
+        ret = read_file(fd, filebuf, foffset, 512);
         if(ret != FS_OK){
             lprintf("sd file read fail\n");
+            close_file(fd);
             return;
         }
         lprintf("ee write: %X\n", eaddr);
@@ -1272,6 +1276,7 @@ void f2erm(char *p)
         }
         else{
             lprintf("file copy done\n");
+            close_file(fd);
             return;
         }
     }

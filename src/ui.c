@@ -962,6 +962,7 @@ void sd_ui_init(void*vp)
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     lprintf("sd ui\n");
+    ui_buf[0]=0xffffffff;
     common_ui_init(vp);
     lcd_lprintf(0, 20, "Version:%s%s", VERSION, GIT_SHA1);
     page_start_offset = get_env_uint("book_posi", 0);
@@ -971,6 +972,9 @@ void sd_ui_init(void*vp)
 }
 void sd_ui_uninit(void*vp)
 {
+    if(0xffffffff!=ui_buf[0]){
+        close_file(ui_buf[0]);
+    }
     common_ui_uninit(vp);
     lprintf("setenv page_start_offset %d\n", page_start_offset);
     set_env_uint("book_posi", page_start_offset);
@@ -1027,22 +1031,27 @@ int init_sd(int is_dummy)
 
 uint32_t get_percentage()
 {
-    int filesize = get_file_size(SD_ReadBlock, "BOOK", "TXT");
-    if(filesize == FS_DISK_ERR){
-        init_sd(0);
-        filesize = get_file_size(SD_ReadBlock, "BOOK", "TXT");
+    int filesize, fd;
+    if(0xffffffff==ui_buf[0]){
+        fd = open_file(SD_ReadBlock, "BOOK", "TXT", &filesize);
+        if(fd == FS_DISK_ERR){
+            init_sd(0);
+            fd = open_file(SD_ReadBlock, "BOOK", "TXT", &filesize);
+        }
     }
-    if(filesize < 0){
+    if(fd<0){
         lprintf("get file size error %x\n", filesize);
         return 0xffffffff;
     }
+    ui_buf[0]=fd;
+    ui_buf[1]=filesize;
     uint32_t ptg = (page_start_offset+5)*1000 / filesize / 10;
     return ptg;
 }
 
 int show_book(int flag)
 {
-    int ret, showed_chars;
+    int ret, showed_chars, fd;
     int is_dummy = flag & LCD_SHOW_DUMMY;
     memset(book_buf, 0, 512);
     if(-1 == update_percentage())
@@ -1050,14 +1059,15 @@ int show_book(int flag)
         lprintf("update percentage fail\n");
         return -1;
     }
-    ret = get_file_content(book_buf, SHOW_FILE_NAME, "TXT", book_file_offset, 511, SD_ReadBlock);
+    fd=ui_buf[0];
+    ret = read_file(fd, book_buf, book_file_offset, 511);
     lprintf("----get file ret %d dummy %x bfo %d\n", ret, is_dummy, book_file_offset);
     if(ret != FS_OK){
         if(-1==init_sd(is_dummy))
         {
             return -1;
         }
-        ret = get_file_content(book_buf, SHOW_FILE_NAME, "TXT", book_file_offset, 511, SD_ReadBlock);
+        ret = read_file(fd, book_buf, book_file_offset, 511);
         lprintf("retry after init sd:get file ret %d\n", ret);
     }
     if(ret == FS_OK){
@@ -1083,7 +1093,7 @@ int show_book(int flag)
             if(showed_chars <510) break;
             book_file_offset += showed_chars;
             memset(book_buf, 0, 512);
-            ret = get_file_content(book_buf, SHOW_FILE_NAME, "TXT", book_file_offset, 511, SD_ReadBlock);
+            ret = read_file(fd, book_buf, book_file_offset, 511);
             if(ret != FS_OK){
                 lprintf("sd read fail\n");
                 return -1;
@@ -1187,8 +1197,22 @@ void last_page(){
 
 void percentage_page()
 {
-    uint64_t filesize = get_file_size(SD_ReadBlock, "BOOK", "TXT");
-    uint32_t ptg = page_start_offset*100 / filesize;
+    int filesize, fd;
+    if(0xffffffff==ui_buf[0]){
+        fd = open_file(SD_ReadBlock, "BOOK", "TXT", &filesize);
+        if(fd == FS_DISK_ERR){
+            init_sd(0);
+            fd = open_file(SD_ReadBlock, "BOOK", "TXT", &filesize);
+        }
+        if(fd < 0){
+            lprintf("open book.txt failed\n");
+            return;
+        }
+        ui_buf[0]=fd;
+        ui_buf[1]=filesize;
+    }
+    filesize=ui_buf[1];
+    uint32_t ptg = page_start_offset*100 / (int64_t)filesize;
     ptg = (ptg +5)/10*10;
     if(ptg == 100){
         ptg = 0;

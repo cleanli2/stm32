@@ -8,6 +8,7 @@ FIL g_file={0};
 FIL * g_fp=NULL;
 FATFS* g_fs;
 static int debug_fs = -1;
+static int file_opened_no = 9;
 
 #define FAT_cache_SIZE 32
 
@@ -427,6 +428,9 @@ int get_file_size(block_read_func rd_block, const char*fn, const char*en)
         fs_buf = (char*)disk_buf;
     }
     if(NULL == g_fs || g_fs->fs_type != FS_FAT32){
+        if(NULL==rd_block){
+            return FS_FILE_PARA_ERR;
+        }
         ret = init_fs(rd_block);
         if(FS_OK != ret){
             return ret;
@@ -439,6 +443,9 @@ int get_file_size(block_read_func rd_block, const char*fn, const char*en)
         g_fp->fs = g_fs;
     }
     if(g_fp->sclust==INVALID_CLUSTER){
+        if(NULL==fn || NULL==en){
+            return FS_FILE_PARA_ERR;
+        }
         g_fp->sclust = get_file_start_cluster(fn, en);
         lprintf("file start clust 0x%x size %d\n", (DWORD)g_fp->sclust, g_fp->fsize);
     }
@@ -468,4 +475,55 @@ int get_file_content(char* buf, const char*filename, const char*extname, uint32_
     else{
         return ret;
     }
+}
+
+int open_file(block_read_func rd_block, const char*fn, const char*en, int*filesize)
+{
+    int ret;
+    if(NULL!=g_fp && g_fp->sclust!=INVALID_CLUSTER){
+        return FS_FILE_NOT_CLOSE;
+    }
+    ret = get_file_size(rd_block, fn, en);
+    if( ret == FS_FILE_NOT_FOUND){
+        lprintf("file not found\n");
+        return ret;
+    }
+    if(filesize){
+        *filesize=ret;
+    }
+    file_opened_no++;
+    return file_opened_no;
+}
+
+int close_file(int fd)
+{
+    if(file_opened_no!=fd){
+        return FS_FILE_NOT_OPEN;
+    }
+    g_fp->sclust=INVALID_CLUSTER;
+    return file_opened_no;
+}
+
+int read_file(int fd, char*buf, uint32_t file_offset, uint32_t len)
+{
+    int ret;
+    if(file_opened_no!=fd){
+        return FS_FILE_NOT_OPEN;
+    }
+    if(g_fp->sclust==INVALID_CLUSTER){
+        return FS_FILE_NOT_OPEN;
+    }
+    if(file_offset> g_fp->fsize){
+        return FS_FILE_PARA_ERR;
+    }
+    if(file_offset+len > g_fp->fsize){
+        lprintf("Warning:read_file len exceed file, fixed\n");
+        len = g_fp->fsize-file_offset;
+    }
+    ret = get_file_content(buf, NULL, NULL, file_offset, len, NULL);
+    if(ret != FS_OK){
+        lprintf("sd file read fail\n");
+        return ret;
+    }
+    return ret;
 }

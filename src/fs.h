@@ -13,6 +13,9 @@ typedef uint32_t DWORD;
 #define FS_NOT_FAT32 (-4)
 #define FS_NO_FILESYSTEM (-5)
 #define FS_FILE_NOT_FOUND (-6)
+#define FS_FILE_NOT_CLOSE (-7)
+#define FS_FILE_NOT_OPEN (-8)
+#define FS_FILE_PARA_ERR (-9)
 
 #define INVALID_CLUSTER 0xffffffff
 
@@ -149,6 +152,7 @@ typedef struct {
 
 } FIL;
 
-int get_file_content(char* buf, const char*filename, const char*extname, uint32_t file_offset, uint32_t len, block_read_func SD_ReadBlock);
-int get_file_size(block_read_func rd_block, const char*filename, const char*extname);
+int open_file(block_read_func rd_block, const char*fn, const char*en, int*filesize);
+int close_file(int fd);
+int read_file(int fd, char*buf, uint32_t file_offset, uint32_t len);
 #endif
