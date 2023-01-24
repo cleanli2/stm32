@@ -9,11 +9,13 @@ FIL * g_fp=NULL;
 FATFS* g_fs;
 static int debug_fs = 0;
 
-#define FAT_cache_N 2
-#define FAT_cache_SIZE 8
+#define FAT_cache_SIZE 32
 
 #define CDB lprintf("line %d\n", __LINE__)
-uint32_t FAT_cache[2][8];
+uint32_t file_fat_cach_start_clno = 0xffffffff;
+uint32_t file_fat_cach_base = -1;
+uint32_t FAT_cache[FAT_cache_SIZE];
+uint32_t get_next_cluster(uint32_t cluster_no);
 
 int fs_debug_is_enabled()
 {
@@ -55,83 +57,50 @@ char* disk_read_sector(uint32_t sector_no)
         return NULL;
     }
     current_sector_no = sector_no;
-    //lprintf("read 0x%x sector OK\n", sector_no);
+    if(debug_fs) lprintf("read 0x%x sector OK\n", sector_no);
     if(debug_fs)mem_print(disk_buf, 512*sector_no, 512);
     return disk_buf;
 }
 
-uint32_t find_in_fat_cach(uint32_t cn)
+void save_fat_cache(uint32_t cl_base, uint32_t cn, uint32_t cn_cl)
 {
-    int i, j;
-    uint32_t ret = INVALID_CLUSTER;
-    if(debug_fs)lprintf("find_in_fat_cach %X\n", cn);
-    if(debug_fs)mem_print((const char*)FAT_cache, 0, 2*8*4);
-    for(i = 0; i < FAT_cache_N; i++){
-        for(j = 0; j < FAT_cache_SIZE; j++){
-            if(debug_fs)lprintf("%X ", FAT_cache[i][j]);
-            if(FAT_cache[i][j] == 0){
-                break;
-            }
-            if(FAT_cache[i][j] == cn){
-                ret = (i<<16)+j;
-                if(debug_fs)lprintf("ret1:%X\n", ret);
-                return ret;
-            }
+    uint32_t*fat_ch_p=FAT_cache;
+    uint32_t next_cluster = cn_cl;
+    uint32_t cach_clusters_count=FAT_cache_SIZE;
+    memset((unsigned char*)FAT_cache, 0xff, FAT_cache_SIZE*4);
+    file_fat_cach_base = cl_base;
+    file_fat_cach_start_clno = cn;
+    *fat_ch_p++=next_cluster;
+    cach_clusters_count--;
+    while(cach_clusters_count--){
+        if(debug_fs)lprintf("next:%x->", next_cluster);
+        next_cluster = get_next_cluster(next_cluster);
+        if(debug_fs)lprintf("%x\n", next_cluster);
+        if(next_cluster > MIN_EOF){
+            lprintf("End cluster\n");
+            break;
         }
-        if(debug_fs)lprintf("\n");
+        *fat_ch_p++=next_cluster;
+    }
+    if(debug_fs)lprintf("save fatcache start from 0x:%x done\n", cn);
+}
+
+uint32_t get_fat_cache(uint32_t cache_cl_base, uint32_t cn)
+{
+    uint32_t ret = INVALID_CLUSTER;
+    if(cache_cl_base!=file_fat_cach_base){
+        return ret;
+    }
+
+    if(0xffffffff==file_fat_cach_start_clno){
+        if(debug_fs)lprintf("no fat_cach\n");
+        return ret;
+    }
+    if(debug_fs)mem_print((const char*)FAT_cache, 0, FAT_cache_SIZE*4);
+    if(FAT_cache_SIZE>cn-file_fat_cach_start_clno){
+        ret = FAT_cache[cn-file_fat_cach_start_clno];
     }
     if(debug_fs)lprintf("ret2:%X\n", ret);
-    return ret;
-}
-
-void save_fat_cache(uint32_t cn, uint32_t next)
-{
-    uint32_t ret = INVALID_CLUSTER;
-    int i, j;
-    ret = find_in_fat_cach(cn);
-    if(ret == INVALID_CLUSTER){
-        for(i = 0; i < FAT_cache_N; i++){
-            if(FAT_cache[i][0] == 0){
-                FAT_cache[i][0] = cn;
-                FAT_cache[i][1] = next;
-                if(debug_fs)lprintf("save fatcache 0x:%x %x@head %x OK\n",
-                        cn, next, i);
-                return;
-            }
-        }
-    }
-    else{
-        j = ret&0xffff;
-        if(j<FAT_cache_SIZE-1){
-            i = (ret&0xffff0000)>>16;
-            FAT_cache[i][j+1] = next;
-            if(debug_fs)lprintf("save fatcache 0x:%x %x@%x %x OK\n",
-                    cn, next, i, j+1);
-            return;
-        }
-    }
-    if(debug_fs)lprintf("save fatcache 0x:%x %x fail\n",
-                    cn, next);
-}
-
-uint32_t get_fat_cache(uint32_t cn)
-{
-    int i, j;
-    uint32_t ret = INVALID_CLUSTER;
-    uint32_t find;
-    find = find_in_fat_cach(cn);
-    if(debug_fs)lprintf("find %X\n", find);
-    if(find != INVALID_CLUSTER){
-        j = find&0xffff;
-        if(debug_fs)lprintf("j %X\n", j);
-        if(j<FAT_cache_SIZE-1){
-            i = (find&0xffff0000)>>16;
-            if(debug_fs)lprintf("i %X\n", i);
-            ret = FAT_cache[i][j+1];
-            if(debug_fs)lprintf("found fatcache:0x%x->0x%x\n",
-                    cn, ret);
-        }
-    }
     return ret;
 }
 
@@ -139,10 +108,6 @@ uint32_t get_next_cluster(uint32_t cluster_no)
 {
     void*p;
     uint32_t next;
-    next = get_fat_cache(cluster_no);
-    if(next != INVALID_CLUSTER && next != 0){
-        return next;
-    }
     uint32_t cluster_fat_offset = SZ_FAT_CLUSTER*cluster_no;
     uint32_t sectors_ct = cluster_fat_offset/g_fs->ssize;
     uint32_t sector_offset = cluster_fat_offset%g_fs->ssize;
@@ -150,7 +115,6 @@ uint32_t get_next_cluster(uint32_t cluster_no)
     p = disk_read_sector(g_fs->fatbase+sectors_ct);
     if(p != NULL){
         next = *(uint32_t*)(p+sector_offset);
-        save_fat_cache(cluster_no, next);
         return next;
     }
     else{
@@ -234,11 +198,21 @@ char* get_file_offset_buf(uint32_t start_clust_no, uint64_t offset, char*cp_buf,
     uint32_t clust_bytes = g_fp->fs->csize * g_fs->ssize;
     uint32_t off_clusters =  offset / clust_bytes;
     uint32_t cluster_off = offset % clust_bytes;
-    uint32_t target_cluster_no = get_later_cluster(start_clust_no, off_clusters);
-    if(debug_fs)lprintf("tcn %d st %d offcl %d cloff %d\n",
-            target_cluster_no, start_clust_no, off_clusters, cluster_off);
-    if(target_cluster_no > MIN_EOF){
-        return NULL;
+
+    uint32_t target_cluster_no = get_fat_cache(start_clust_no, off_clusters);
+    if(target_cluster_no != INVALID_CLUSTER && ret != 0){
+        //OK, do nothing
+    }
+    else{
+        target_cluster_no = get_later_cluster(start_clust_no, off_clusters);
+        if(debug_fs)lprintf("tcn %d st %d offcl %d cloff %d\n",
+                target_cluster_no, start_clust_no, off_clusters, cluster_off);
+        if(target_cluster_no > MIN_EOF){
+            return NULL;
+        }
+        if(NULL!=cp_buf){//find file name no need save fat cache
+            save_fat_cache(start_clust_no, off_clusters, target_cluster_no);
+        }
     }
     if(cp_buf==NULL){
         return get_clust_offset_buf(target_cluster_no, cluster_off, NULL, len);
@@ -318,7 +292,7 @@ int init_fs(block_read_func rd_block)
     lprintf("init fs\n");
     g_fs = &g_fat32;
     g_fs->rd_block = rd_block;
-    memset(&FAT_cache[0][0], 0, FAT_cache_N*FAT_cache_SIZE);
+    memset(&FAT_cache[0], 0xff, 4*FAT_cache_SIZE);
     if(NULL == disk_read_sector(bsect)){
         lprintf("read disk err\n");
         return FS_DISK_ERR;
