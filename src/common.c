@@ -976,8 +976,8 @@ void Dac1_wave(u32 type, u32 para2)
     switch(type){
         case 0:
             for(va=0;va<0x1000;va+=40){
-                while(sound_pool_full());
-                put_sound(va, 100);
+                while(dac_sound_pool_full());
+                dac_put_sound(va);
             }
             break;
         case 1:
@@ -995,28 +995,28 @@ void Dac1_wave(u32 type, u32 para2)
                 else{
                     va=(2048-get_sin_value(4*(SIN_SIZE-1)*n-va, n)/2);
                 }
-                while(sound_pool_full());
-                put_sound(va, 100);
+                while(dac_sound_pool_full());
+                dac_put_sound(va);
             }
             break;
         case 2:
             for(va=0;va<pcm_wav_len;va++){
-                while(sound_pool_full());
-                put_sound(pcm_wav[va]<<4, 100);
+                while(dac_sound_pool_full());
+                dac_put_sound(pcm_wav[va]<<4);
             }
             break;
         case 3:
-            t_sbl=get_sound_size();
+            t_sbl=dac_get_sound_size();
             wd=(uint8_t*)para2;
             for(va=0;va<512;va++){
-                while(sound_pool_full());
-                put_sound(wd[va]<<4, 100);
+                while(dac_sound_pool_full());
+                dac_put_sound(wd[va]<<4);
             }
             if(0==t_sbl || dac_data_ct++>20){
                 lprintf("S+%d\n", t_sbl);
                 dac_data_ct=0;
             }
-            //lprintf_to("S-%d\n", get_sound_size());
+            //lprintf_to("S-%d\n", dac_get_sound_size());
             break;
         default:
             break;

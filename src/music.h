@@ -60,9 +60,14 @@ extern const signed char * music_lst[];
 
 uint8 get_note_index(signed char value);
 int get_music_lst_size();
-sound_info* get_sound();
-int put_sound();
+void* get_sound();
+void* dac_get_sound();
+int put_sound(u32, u32);
+int dac_put_sound(uint16_t);
 void sound_execute();
 void sound_execute_dac();
 int sound_pool_full();
+int dac_sound_pool_full();
+int dac_get_sound_size();
+int get_sound_size();
 #endif

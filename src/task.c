@@ -376,11 +376,7 @@ void task_music(struct task*vp)
     */
 }
 
-#ifdef DAC_SUPPORT
-#define SOUND_POOL_SIZE 50
-#else
 #define SOUND_POOL_SIZE 4
-#endif
 static sound_info si_pool[SOUND_POOL_SIZE];
 static u32 si_wi = 0;
 static u32 si_ri = 0;
@@ -404,9 +400,9 @@ int get_sound_size()
     return sub_with_limit(si_wi, si_ri, SOUND_POOL_SIZE);
 }
 
-sound_info* get_sound()
+void* get_sound()
 {
-    sound_info*ret;
+    void*ret;
     if(si_wi == si_ri){
         return NULL;
     }
@@ -435,7 +431,7 @@ void sound_execute()
         sound_time_ct--;
         return;
     }
-    si = get_sound();
+    si =(sound_info*) get_sound();
     if(NULL == si){
         beep_by_timer_100(0);
         return;
@@ -445,14 +441,46 @@ void sound_execute()
 }
 
 #ifdef DAC_SUPPORT
+#define DAC_POOL_SIZE 384
+static uint16_t dac_data_pool[DAC_POOL_SIZE];
+static u32 dac_si_wi = 0;
+static u32 dac_si_ri = 0;
+int dac_get_sound_size()
+{
+    return sub_with_limit(dac_si_wi, dac_si_ri, DAC_POOL_SIZE);
+}
+
+void* dac_get_sound()
+{
+    void*ret;
+    if(dac_si_wi == dac_si_ri){
+        return NULL;
+    }
+    ret = &dac_data_pool[dac_si_ri];
+    dac_si_ri = add_with_limit(dac_si_ri, 1, DAC_POOL_SIZE);
+    return ret;
+}
+
+int dac_put_sound(u16 data)
+{
+    dac_data_pool[dac_si_wi] = data;
+    dac_si_wi = add_with_limit(dac_si_wi, 1, DAC_POOL_SIZE);
+    return 0;
+}
+
+int dac_sound_pool_full()
+{
+    return add_with_limit(dac_si_wi, 1, DAC_POOL_SIZE) == dac_si_ri;
+}
+
 void sound_execute_dac()
 {
-    sound_info* si;
-    si = get_sound();
+    uint16_t* si;
+    si = (uint16_t*)dac_get_sound();
     if(NULL == si){
         return;
     }
-    Dac1_Set_Vol(si->mrv);
+    Dac1_Set_Vol(*si);
 }
 #endif
 
