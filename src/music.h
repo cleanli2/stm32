@@ -70,4 +70,21 @@ int sound_pool_full();
 int dac_sound_pool_full();
 int dac_get_sound_size();
 int get_sound_size();
+
+struct wave_header{
+    uint32_t ChunkID;
+    uint32_t ChunkSize;
+    uint32_t Format;
+    uint32_t SubChunk1ID;
+    uint32_t SubChunk1Size;
+    uint16_t AudioFormat;
+    uint16_t NumChannels;
+    uint32_t SampleRate;
+    uint32_t ByteRate;
+    uint16_t BlockAlign;
+    uint16_t BitsPerSample;
+    uint32_t SubChunk2ID;
+    uint32_t SubChunk2Size;
+    uint8_t data;
+};
 #endif

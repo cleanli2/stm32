@@ -898,6 +898,8 @@ int get_sound_mode()
 
 #ifdef DAC_SUPPORT
 static uint32_t dac_freq = 5500;//11k
+static uint32_t pack_index = 0;
+struct wave_header g_whd;
 void dac_set_freq(uint32_t freq)
 {
     lprintf("set dac freq=%u cur=%u\n", freq, dac_freq);
@@ -931,6 +933,7 @@ void Dac1_Init(void)
 
     dac_set_freq(5500);//11k
     global_sound_mode = SOUND_DAC_MODE;
+    pack_index = 0;
     lprintf("dac1 init done\n");
 }
 
@@ -972,6 +975,7 @@ void Dac1_wave(u32 type, u32 para2)
     u32 va=0,i, n=para2, t_sbl;
     static u32 dac_data_ct=0;
     uint8_t *wd;
+    uint16_t *wd16b;
     //lprintf("dac1 wave type %d\n", type);
     switch(type){
         case 0:
@@ -1008,14 +1012,57 @@ void Dac1_wave(u32 type, u32 para2)
         case 3:
             t_sbl=dac_get_sound_size();
             wd=(uint8_t*)para2;
+            wd16b=(uint16_t*)para2;
+            if(0==pack_index){
+                struct wave_header*whd=(struct wave_header*)wd;
+                g_whd=*whd;
+                lprintf("wave file info:\n");
+                lprintf("ChunkID:      0x%x\n", whd->ChunkID      );
+                lprintf("ChunkSize:      %d\n", whd->ChunkSize    );
+                lprintf("Format:       0x%x\n", whd->Format       );
+                lprintf("SubChunk1ID:  0x%x\n", whd->SubChunk1ID  );
+                lprintf("SubChunk1Size:  %d\n", whd->SubChunk1Size);
+                lprintf("AudioFormat:  0x%x\n", whd->AudioFormat  );
+                lprintf("NumChannels:  0x%x\n", whd->NumChannels  );
+                lprintf("SampleRate:     %d\n", whd->SampleRate   );
+                lprintf("ByteRate:       %d\n", whd->ByteRate     );
+                lprintf("BlockAlign:   0x%x\n", whd->BlockAlign   );
+                lprintf("BitsPerSample:0x%x\n", whd->BitsPerSample);
+                lprintf("SubChunk2ID:  0x%x\n", whd->SubChunk2ID  );
+                lprintf("SubChunk2Size:  %d\n", whd->SubChunk2Size);
+                if(0x46464952!=whd->ChunkID //'RIFF'
+                        ||0x45564157!=whd->Format //'WAVE'
+                        ||0x20746D66!=whd->SubChunk1ID  //'fmt '
+                        ||0x1!=whd->AudioFormat  //PCM = 1
+                        ){
+                    lprintf("WARNING:not support wave file\n");
+                }
+                if(1!=whd->NumChannels){
+                    lprintf("WARNING:not single channel wave file\n");
+                }
+                if(11025!=whd->SampleRate){
+                    lprintf("WARNING:not 11025Hz\n");
+                }
+                wd=&whd->data;
+                wd16b=(uint16_t*)&whd->data;
+            }
             for(va=0;va<512;va++){
                 while(dac_sound_pool_full());
-                dac_put_sound(wd[va]<<4);
+                if(16==g_whd.BitsPerSample){
+                    dac_put_sound((wd16b[va]+0x7fff)>>4);
+                    if(255<=va){
+                        break;
+                    }
+                }
+                else{
+                    dac_put_sound(wd[va]<<4);
+                }
             }
             if(0==t_sbl || dac_data_ct++>20){
                 lprintf("S+%d\n", t_sbl);
                 dac_data_ct=0;
             }
+            pack_index++;
             //lprintf_to("S-%d\n", dac_get_sound_size());
             break;
         default:
