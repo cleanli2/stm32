@@ -257,6 +257,7 @@ button_t main_menu_button[]={
     {130,460,200, 60, f3mins_timer, -1, 0, "3x1mins TIMER", 0, _3x1mins_timer_cch_str},
     {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
+    {350,250,80, 60, NULL, UI_WAV, 0, "WavFile", 0, NULL},
     {350,460,80, 60, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
     {350,390,80, 60, NULL, UI_RANDOM, 0, "Random", 0, NULL},
     {350,320,80, 60, NULL, UI_SET, 0, "Settings", 0, NULL},
@@ -272,6 +273,7 @@ button_t main_menu_button[]={
     {20,210,120, 20, f3mins_timer, -1, 0, "3x1mins TIMER", 0, _3x1mins_timer_cch_str},
     {20,240,120, 20, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {20,270,120, 20, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
+    {150,120,80, 20, NULL, UI_WAV, 0, "WavFile", 0, NULL},
     {150,210,80, 20, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
     {150,180,80, 20, NULL, UI_RANDOM, 0, "Random", 0, NULL},
     {150,150,80, 20, NULL, UI_SET, 0, "Settings", 0, NULL},
@@ -1424,6 +1426,153 @@ button_t ui_set_button[]={
 };
 /****end of set ui*****/
 
+#ifdef DAC_SUPPORT
+/****start of wave file ui*****/
+
+void wav_ui_init(void*vp)
+{
+    int fd, file_len;
+    const char* fname="MUSIC", *ename="WAV";
+
+    ui_buf[0]=0xffffffff;
+
+    lprintf("wav_ui:dac on\n");
+    Dac1_Init();
+
+    lprintf("wav_ui:open fname:%s.%s\n", fname, ename);
+    memset(book_buf, 0xff, 512);
+    fd = open_file(SD_ReadBlock, fname, ename, &file_len);
+    if(fd < 0){
+        lprintf("file open fail %d\n", fd);
+        return;
+    }
+    ui_buf[0]=fd;
+    ui_buf[1]=file_len;
+    ui_buf[2]=0;//file offset
+    ui_buf[3]=0;//dac data buf size
+    ui_buf[4]=8;//BitsPerSample;
+    ui_buf[5]=0;//dac data pointer
+    lprintf("file len %d\n", file_len);
+    dac_set_freq(5500);//11k
+    common_ui_init(vp);
+}
+
+void wav_ui_process_event(void*vp)
+{
+    int rlen, t_sbl, ret;
+    uint8_t *wd;
+    uint32_t buf_limit;
+    uint16_t *wd16b;
+
+    if(0xffffffff!=ui_buf[0]){
+        t_sbl=dac_get_sound_size();
+        wd=(uint8_t*)ui_buf[5];
+        wd16b=(uint16_t*)ui_buf[5];
+        while(!dac_sound_pool_full()){
+            buf_limit=(uint32_t)book_buf+ui_buf[3];
+            if(0==ui_buf[5] ||
+                    (uint32_t)wd16b>buf_limit || (uint32_t)wd>buf_limit){//read from file
+                rlen =ui_buf[1]-ui_buf[2];
+                if(rlen>512){
+                    rlen=512;
+                }
+                ret = read_file(ui_buf[0], book_buf, ui_buf[2], rlen);
+                if(ret != FS_OK){
+                    lprintf("sd wave file read fail\n");
+                    close_file(ui_buf[0]);
+                    ui_buf[0]=0xffffffff;
+                    return;
+                }
+                if(0==ui_buf[2]){//file start
+                    struct wave_header*whd=(struct wave_header*)book_buf;
+                    lprintf("wave file info:\n");
+                    lprintf("ChunkID:      0x%x\n", whd->ChunkID      );
+                    lprintf("ChunkSize:      %d\n", whd->ChunkSize    );
+                    lprintf("Format:       0x%x\n", whd->Format       );
+                    lprintf("SubChunk1ID:  0x%x\n", whd->SubChunk1ID  );
+                    lprintf("SubChunk1Size:  %d\n", whd->SubChunk1Size);
+                    lprintf("AudioFormat:  0x%x\n", whd->AudioFormat  );
+                    lprintf("NumChannels:  0x%x\n", whd->NumChannels  );
+                    lprintf("SampleRate:     %d\n", whd->SampleRate   );
+                    lprintf("ByteRate:       %d\n", whd->ByteRate     );
+                    lprintf("BlockAlign:   0x%x\n", whd->BlockAlign   );
+                    lprintf("BitsPerSample:0x%x\n", whd->BitsPerSample);
+                    lprintf("SubChunk2ID:  0x%x\n", whd->SubChunk2ID  );
+                    lprintf("SubChunk2Size:  %d\n", whd->SubChunk2Size);
+                    if(0x46464952!=whd->ChunkID //'RIFF'
+                            ||0x45564157!=whd->Format //'WAVE'
+                            ||0x20746D66!=whd->SubChunk1ID  //'fmt '
+                            ||0x1!=whd->AudioFormat  //PCM = 1
+                      ){
+                        lprintf("WARNING:not support wave file\n");
+                    }
+                    if(1!=whd->NumChannels){
+                        lprintf("WARNING:not single channel wave file\n");
+                    }
+                    if(11025!=whd->SampleRate){
+                        lprintf("WARNING:not 11025Hz\n");
+                    }
+                    ui_buf[4]=whd->BitsPerSample;
+                    ui_buf[5]=(uint32_t)&whd->data;
+                }
+                else{
+                    ui_buf[5]=(uint32_t)book_buf;
+                }
+                wd=(uint8_t*)ui_buf[5];
+                wd16b=(uint16_t*)ui_buf[5];
+                ui_buf[2]+=rlen;//file offset
+                if(ui_buf[2]>=ui_buf[1]){//play end
+                    ui_buf[2]=0;//restart play
+                }
+                ui_buf[3]=rlen;//dac data buf size
+            }
+            if(16==ui_buf[4]){
+                dac_put_sound((*wd16b+0x7fff)>>4);
+                wd16b++;
+            }
+            else{
+                dac_put_sound(*wd<<4);
+                wd++;
+            }
+        }
+        if(16==ui_buf[4]){
+            ui_buf[5]=(uint32_t)wd16b;
+        }
+        else{
+            ui_buf[5]=(uint32_t)wd;
+        }
+        if(0==t_sbl || g_flag_1s){
+            lprintf("S+%d\n", t_sbl);
+        }
+    }
+    common_process_event(vp);
+}
+
+void wav_ui_uninit(void*vp)
+{
+    if(0xffffffff!=ui_buf[0]){
+        close_file(ui_buf[0]);
+    }
+    Dac1_DeInit();
+    dac_set_freq(0);//11k
+    common_ui_init(vp);
+}
+void wav_control()
+{
+}
+
+button_t wav_button[]={
+#ifdef LARGE_SCREEN
+    {275, 460, 180,  40, wav_control, -1, 0, "Pause/Play", 0, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+#else
+    {205, 180, 30,  20, wav_control, -1, 0, "Pause/Play", 0, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+#endif
+};
+/****end of wav file ui*****/
+#endif
+
 ui_t ui_list[]={
     {
         main_ui_init,
@@ -1545,6 +1694,20 @@ ui_t ui_list[]={
         NULL,
         ui_set_nedt,
     },
+#ifdef DAC_SUPPORT
+    {
+        wav_ui_init,
+        wav_ui_process_event,
+        wav_ui_uninit,
+        wav_button,
+        UI_WAV,
+        220, //timeout
+        0,
+        NULL,//char*timeout_music;
+        NULL,
+        NULL,
+    },
+#endif
     {
         NULL,//uiinit
         NULL,//uiprocess

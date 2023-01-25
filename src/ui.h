@@ -29,6 +29,9 @@ enum UI_NAME_INDEX {
     UI_DATE_SET,
     UI_RANDOM,
     UI_SET,
+#ifdef DAC_SUPPORT
+    UI_WAV,
+#endif
     UI_LAST,
     UI_MAX
 };
