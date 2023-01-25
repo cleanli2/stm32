@@ -1460,6 +1460,7 @@ void wav_ui_init(void*vp)
     lcd_lprintf(20,100,"%s.%s", fname, ename);
 }
 
+void wav_next_file();
 void wav_ui_process_event(void*vp)
 {
     int rlen, t_sbl, ret;
@@ -1475,6 +1476,11 @@ void wav_ui_process_event(void*vp)
         while(!dac_sound_pool_full()){
             if(0==ui_buf[5] ||
                     (uint32_t)wd16b>=buf_limit || (uint32_t)wd>=buf_limit){//read from file
+                if(ui_buf[2]>=ui_buf[1]){//play end
+                    //ui_buf[2]=0;//restart play
+                    wav_next_file();
+                    break;
+                }
                 rlen =ui_buf[1]-ui_buf[2];
                 if(rlen>512){
                     rlen=512;
@@ -1524,9 +1530,6 @@ void wav_ui_process_event(void*vp)
                 wd=(uint8_t*)ui_buf[5];
                 wd16b=(uint16_t*)ui_buf[5];
                 ui_buf[2]+=rlen;//file offset
-                if(ui_buf[2]>=ui_buf[1]){//play end
-                    ui_buf[2]=0;//restart play
-                }
                 ui_buf[3]=rlen;//dac data buf size
                 buf_limit=(uint32_t)book_buf+ui_buf[3];
             }
