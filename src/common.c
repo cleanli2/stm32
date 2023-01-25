@@ -1077,6 +1077,11 @@ void Dac1_DeInit(void)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, DISABLE);
     beep_by_timer_100(0);
     global_sound_mode = SOUND_BEEP_MODE;
+    GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
+    GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
     lprintf("dac1 deinit done\n");
 }
 #endif
