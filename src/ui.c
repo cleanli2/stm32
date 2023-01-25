@@ -1452,6 +1452,7 @@ void wav_ui_init(void*vp)
     ui_buf[3]=0;//dac data buf size
     ui_buf[4]=8;//BitsPerSample;
     ui_buf[5]=0;//dac data pointer
+    ui_buf[6]=0;//pause
     lprintf("file len %d\n", file_len);
     dac_set_freq(5500);//11k
     common_ui_init(vp);
@@ -1464,7 +1465,7 @@ void wav_ui_process_event(void*vp)
     uint32_t buf_limit;
     uint16_t *wd16b;
 
-    if(0xffffffff!=ui_buf[0]){
+    if(0xffffffff!=ui_buf[0]&&0==ui_buf[6]){
         t_sbl=dac_get_sound_size();
         wd=(uint8_t*)ui_buf[5];
         wd16b=(uint16_t*)ui_buf[5];
@@ -1559,6 +1560,7 @@ void wav_ui_uninit(void*vp)
 }
 void wav_control()
 {
+    ui_buf[6]=1-ui_buf[6];
 }
 
 button_t wav_button[]={
