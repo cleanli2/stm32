@@ -1453,9 +1453,11 @@ void wav_ui_init(void*vp)
     ui_buf[4]=8;//BitsPerSample;
     ui_buf[5]=0;//dac data pointer
     ui_buf[6]=0;//pause
+    ui_buf[7]=0;//file name index
     lprintf("file len %d\n", file_len);
     dac_set_freq(5500);//11k
     common_ui_init(vp);
+    lcd_lprintf(20,100,"%s.%s", fname, ename);
 }
 
 void wav_ui_process_event(void*vp)
@@ -1564,11 +1566,53 @@ void wav_control()
     ui_buf[6]=1-ui_buf[6];
 }
 
+void wav_next_file()
+{
+    const char* fname="MUSIC", *ename="WAV";
+    char on[8];
+    int l=9, fd, file_len;
+    ui_buf[6]=1;//pause play
+    if(0xffffffff!=ui_buf[0]){
+        close_file(ui_buf[0]);
+        ui_buf[0]=0xffffffff;
+    }
+    while(l--){
+        slprintf(on, "%s%d", fname, ui_buf[7]++);
+        if(ui_buf[7]>9){
+            ui_buf[7]=0;
+        }
+        lprintf("wav_ui:open fname:%s.%s\n", on, ename);
+        fd = open_file(SD_ReadBlock, on, ename, &file_len);
+        if(fd < 0){
+            lprintf("file open fail %d\n", fd);
+        }
+        else{
+            break;
+        }
+    }
+    if(fd>0){
+        ui_buf[0]=fd;
+        ui_buf[1]=file_len;
+        ui_buf[2]=0;//file offset
+        ui_buf[3]=0;//dac data buf size
+        ui_buf[4]=8;//BitsPerSample;
+        ui_buf[5]=0;//dac data pointer
+        ui_buf[6]=0;//pause
+        lprintf("file len %d\n", file_len);
+        lcd_lprintf(20,100,"%s.%s      ", on, ename);
+    }
+    else{
+        lcd_lprintf(20,100,"No file playing   ");
+    }
+}
+
 button_t wav_button[]={
 #ifdef LARGE_SCREEN
-    {275, 460, 180,  40, wav_control, -1, 0, "Pause/Play", 0, NULL},
+    {175, 260, 180,  40, wav_next_file, -1, 0, "Next", 0, NULL},
+    {175, 460, 180,  40, wav_control, -1, 0, "Pause/Play", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #else
+    {205, 90, 30,  20, wav_next_file, -1, 0, "Next", 0, NULL},
     {205, 180, 30,  20, wav_control, -1, 0, "Pause/Play", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #endif
