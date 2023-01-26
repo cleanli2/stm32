@@ -208,7 +208,16 @@ char* get_file_offset_buf(uint32_t start_clust_no, uint64_t offset, char*cp_buf,
         //OK, do nothing
     }
     else{
-        target_cluster_no = get_later_cluster(start_clust_no, off_clusters);
+        if(file_fat_cach_start_clno != 0xffffffff
+                && start_clust_no==file_fat_cach_base
+                && target_cluster_no>=file_fat_cach_start_clno+FAT_cache_SIZE){
+            target_cluster_no = get_later_cluster(FAT_cache[FAT_cache_SIZE-1],
+                    off_clusters-(file_fat_cach_start_clno+FAT_cache_SIZE-1));
+
+        }
+        else{
+            target_cluster_no = get_later_cluster(start_clust_no, off_clusters);
+        }
         if(debug_fs)lprintf("tcn %d st %d offcl %d cloff %d\n",
                 target_cluster_no, start_clust_no, off_clusters, cluster_off);
         if(target_cluster_no > MIN_EOF){
