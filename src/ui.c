@@ -257,7 +257,9 @@ button_t main_menu_button[]={
     {130,460,200, 60, f3mins_timer, -1, 0, "3x1mins TIMER", 0, _3x1mins_timer_cch_str},
     {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
+#ifdef DAC_SUPPORT
     {350,250,80, 60, NULL, UI_WAV, 0, "WavFile", 0, NULL},
+#endif
     {350,460,80, 60, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
     {350,390,80, 60, NULL, UI_RANDOM, 0, "Random", 0, NULL},
     {350,320,80, 60, NULL, UI_SET, 0, "Settings", 0, NULL},
@@ -273,7 +275,9 @@ button_t main_menu_button[]={
     {20,210,120, 20, f3mins_timer, -1, 0, "3x1mins TIMER", 0, _3x1mins_timer_cch_str},
     {20,240,120, 20, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {20,270,120, 20, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
+#ifdef DAC_SUPPORT
     {150,120,80, 20, NULL, UI_WAV, 0, "WavFile", 0, NULL},
+#endif
     {150,210,80, 20, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
     {150,180,80, 20, NULL, UI_RANDOM, 0, "Random", 0, NULL},
     {150,150,80, 20, NULL, UI_SET, 0, "Settings", 0, NULL},
