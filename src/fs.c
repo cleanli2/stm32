@@ -101,6 +101,9 @@ uint32_t get_fat_cache(uint32_t cache_cl_base, uint32_t cn)
     if(FAT_cache_SIZE>cn-file_fat_cach_start_clno){
         ret = FAT_cache[cn-file_fat_cach_start_clno];
     }
+    else{
+        lprintf("NinCach\n");
+    }
     if(debug_fs)lprintf("ret2:%X\n", ret);
     return ret;
 }
@@ -484,8 +487,8 @@ int open_file(block_read_func rd_block, const char*fn, const char*en, int*filesi
         return FS_FILE_NOT_CLOSE;
     }
     ret = get_file_size(rd_block, fn, en);
-    if( ret == FS_FILE_NOT_FOUND){
-        lprintf("file not found\n");
+    if( ret < 0){
+        lprintf("file open failed\n");
         return ret;
     }
     if(filesize){
