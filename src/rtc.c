@@ -660,7 +660,7 @@ void do_time_correct()
     lprintf_time("cur time sec  %d\n", t_s);
     t_s += time_need_correct_s;
     if(t_s > 2 && t_s < 58){
-        if(rtc_write_reg(SECOND_REG, t_s)){
+        if(rtc_write_reg(SECOND_REG, bcd2hex(t_s))){
             //write OK
             reset_time_offset();
             lprintf_time("time fix OK %d\n", t_s);
