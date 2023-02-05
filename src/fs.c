@@ -10,7 +10,7 @@ FATFS* g_fs;
 static int debug_fs = -1;
 static int file_opened_no = 9;
 
-#define FAT_cache_SIZE 32
+#define FAT_cache_SIZE 64
 
 #define CDB lprintf("line %d\n", __LINE__)
 uint32_t file_fat_cach_start_clno = 0xffffffff;

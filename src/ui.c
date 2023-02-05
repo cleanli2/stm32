@@ -1512,6 +1512,10 @@ void wav_ui_process_event(void*vp)
                     lprintf("BitsPerSample:0x%x\n", whd->BitsPerSample);
                     lprintf("SubChunk2ID:  0x%x\n", whd->SubChunk2ID  );
                     lprintf("SubChunk2Size:  %d\n", whd->SubChunk2Size);
+                    lcd_lprintf(20,120,"%s", "wave file info:");
+                    lcd_lprintf(20,140,"NumChannels:  0x%x     ", whd->NumChannels  );
+                    lcd_lprintf(20,160,"SampleRate:     %d     ", whd->SampleRate   );
+                    lcd_lprintf(20,180,"BitsPerSample:0x%x     ", whd->BitsPerSample);
                     if(0x46464952!=whd->ChunkID //'RIFF'
                             ||0x45564157!=whd->Format //'WAVE'
                             ||0x20746D66!=whd->SubChunk1ID  //'fmt '
@@ -1525,6 +1529,7 @@ void wav_ui_process_event(void*vp)
                     if(11025!=whd->SampleRate){
                         lprintf("WARNING:not 11025Hz\n");
                     }
+                    dac_set_freq(whd->SampleRate/2);
                     ui_buf[4]=whd->BitsPerSample;
                     ui_buf[5]=(uint32_t)&whd->data;
                 }
@@ -1615,8 +1620,8 @@ void wav_next_file()
 
 button_t wav_button[]={
 #ifdef LARGE_SCREEN
-    {175, 260, 180,  40, wav_next_file, -1, 0, "Next", 0, NULL},
-    {175, 460, 180,  40, wav_control, -1, 0, "Pause/Play", 0, NULL},
+    {175, 620, 180,  40, wav_next_file, -1, 0, "Next", 0, NULL},
+    {175, 660, 180,  40, wav_control, -1, 0, "Pause/Play", 0, NULL},
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 #else
     {205, 90, 30,  20, wav_next_file, -1, 0, "Next", 0, NULL},

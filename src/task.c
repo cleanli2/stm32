@@ -441,7 +441,7 @@ void sound_execute()
 }
 
 #ifdef DAC_SUPPORT
-#define DAC_POOL_SIZE 384
+#define DAC_POOL_SIZE (512*2+256)
 static uint16_t dac_data_pool[DAC_POOL_SIZE];
 static u32 dac_si_wi = 0;
 static u32 dac_si_ri = 0;
