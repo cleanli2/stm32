@@ -29,4 +29,5 @@ uint16_t spi_speed(uint32_t speed);
 void gpio_spi_LowLevel_Init(void);
 uint8_t gpio_spi_ReadByte(void);
 uint8_t gpio_spi_WriteByte(uint8_t num);
+int spi_is_stm32_type();
 #endif

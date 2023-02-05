@@ -7,6 +7,11 @@
 #define NO_SPI_INITED 0
 static uint32_t stm32_spi_choose = 1;
 static uint32_t spi_inited = NO_SPI_INITED;
+
+int spi_is_stm32_type()
+{
+    return stm32_spi_choose;
+}
 /**
   * @brief  DeInitializes the SD/SD communication.
   * @param  None

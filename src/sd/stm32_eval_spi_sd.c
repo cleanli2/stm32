@@ -234,10 +234,24 @@ SD_Error SD_GetResponse(uint8_t Response)
 u8 SD_RecvData(u8*buf,u16 len)
 {			  	  
 	if(SD_GetResponse(0xFE))return 1;//等待SD卡发回数据起始令牌0xFE
-    while(len--)//开始接收数据
-    {
-        *buf=SPI1_ReadWriteByte(0xFF);
-        buf++;
+    if(1==spi_is_stm32_type()){//soc spi
+        while(len--)//开始接收数据
+        {
+            while(!(SD_SPI->SR & SPI_I2S_FLAG_TXE));//wait tx buf empty
+            /*!< Send the byte */
+            SD_SPI->DR = 0xff;
+            /*!< Wait to receive a byte*/
+            while(!(SD_SPI->SR & SPI_I2S_FLAG_RXNE));//wait rx buf ready
+            *buf = SD_SPI->DR;
+            buf++;
+        }
+    }
+    else{
+        while(len--)//开始接收数据
+        {
+            *buf=SPI1_ReadWriteByte(0xFF);
+            buf++;
+        }
     }
     //下面是2个伪CRC（dummy CRC）
     SD_SPI_ReadWriteByte(0xFF);
