@@ -84,6 +84,24 @@ void Enable_BL(int en)//点亮背光
 	}
 }
 
+#define CAM_GPIO_GROUP GPIOC
+#define CAM_PWN GPIO_Pin_9
+#define CAM_RST GPIO_Pin_8
+
+void cam_init()
+{
+    GPIO_InitTypeDef  GPIO_InitStructure;
+
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Pin = CAM_RST|CAM_PWN;
+    GPIO_Init(CAM_GPIO_GROUP, &GPIO_InitStructure); //GPIOB
+    lprintf("cam pwn=0\n");
+    GPIO_ResetBits(CAM_GPIO_GROUP,CAM_PWN);
+    lprintf("cam rst=1\n");
+    GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST);
+}
+
 void LCD_BUS_To_write(int write)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -1441,6 +1459,10 @@ void lcd_sueb_init(int testitem)
   LCD_direction(USE_HORIZONTAL);//设置LCD显示方向
     set_BL_value(DEFAULT_BL);//quater bright
 	LCD_Clear(WHITE);//清全屏白色
+
+    //camera init
+    cam_init();
+
 #endif
 }
  
