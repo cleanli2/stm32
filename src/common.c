@@ -672,6 +672,7 @@ void main_init(void)
 #ifdef RTC_SOC
   RTC_Init();
 #endif
+  lprintf("~~~~~~\n");
 #ifdef ALIENTEK_MINI
   lprintf_time("\n\n================ALIENTEK_MINI board start================\n");
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);

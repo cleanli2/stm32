@@ -455,6 +455,7 @@ void putchars_buf(const char *s)
     irq_restore(flag);
 }
 
+#if 0
 void lprintf_time(const char *fmt, ...)
 {
     va_list ap;
@@ -472,6 +473,7 @@ void lprintf_time(const char *fmt, ...)
     putchars_buf(fmt);
     os_unlock(&oslk_lprintf);
 }
+#endif
 
 void lprintf(const char *fmt, ...)
 {
