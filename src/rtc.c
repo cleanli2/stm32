@@ -605,9 +605,9 @@ void i2c_init()
     rtc_inited = 1;
 }
 
-void cam_w_reg(uint8_t addr, uint8_t data)
+int cam_w_reg(uint8_t addr, uint8_t data)
 {
-    uint8_t ret;
+    int ret;
     Start();
     ret=writebyte(0x42); /*写命令*/
     if(ret==0)goto err;
@@ -615,11 +615,11 @@ void cam_w_reg(uint8_t addr, uint8_t data)
     if(ret==0)goto err;
     ret=writebyte(data); /*写数据*/
     Stop();
-    //return ret;
+    return ret;
 err:
     Stop();
     lprintf("cam writeData addr %b data %b error\n", addr, data);
-    //return ret;
+    return ret;
 }
 uint8_t cam_r_regn(uchar addr,uchar n,uchar * buf) /*多字节*/
 {  
@@ -630,6 +630,7 @@ uint8_t cam_r_regn(uchar addr,uchar n,uchar * buf) /*多字节*/
     if(ret==0)goto err;
     ret=writebyte(addr); /*写地址*/
     if(ret==0)goto err;
+    Stop();
     Start();
     ret=writebyte(0x43); /*读命令*/
     if(ret==0)goto err;

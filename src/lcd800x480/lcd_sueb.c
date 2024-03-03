@@ -90,7 +90,7 @@ void Enable_BL(int en)//µ„¡¡±≥π‚
 
 void i2c_init();
 uint8_t cam_r_reg(uint8_t addr);
-void cam_w_reg(uint8_t addr, uint8_t data);
+int cam_w_reg(uint8_t addr, uint8_t data);
 void cam_init()
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -105,11 +105,17 @@ void cam_init()
     GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST);
 
     i2c_init();
-    lprintf("cam read 0x12=%b\n", cam_r_reg(0x12));
-    //while(1){
-    //    lprintf("cam write test\n");
-    cam_w_reg(0x12, 0x80);
-    //}
+    //read cam id
+    while(1){
+        if(0x76==cam_r_reg(0x0A)){
+            break;
+        }
+        lprintf("cam read 0x0A=%b\n", cam_r_reg(0x0A));
+        delay_ms(10);
+    }
+    lprintf("cam read 0x0A=%b\n", cam_r_reg(0x0A));
+    lprintf("cam read 0x0B=%b\n", cam_r_reg(0x0B));
+    lprintf("cam reset return %x\n", cam_w_reg(0x12, 0x80));
 }
 
 void LCD_BUS_To_write(int write)
