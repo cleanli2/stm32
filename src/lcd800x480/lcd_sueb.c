@@ -931,8 +931,8 @@ void lcd_sueb_basicinit()
  	LCD_RESET(); //LCD ¸´Î»
 }
 
-//PWM freq=72000/(0x9000)/2=976hz
-#define BLPWM_ARR (0x9000-1)
+//PWM freq=72000/(18000)/2=2Mhz
+#define BLPWM_ARR (18000-1)
 #define BLPWM_PSC 1
 void BL_PWM_init()
 {
@@ -1013,7 +1013,7 @@ void set_BL_value(uint16_t v)
     }
     cur_bl_value = v;
     if(v>0){
-        comp_v = 0x9000/100*(100-v);
+        comp_v = 18000/100*(100-v);
         lprintf("comp_v=%x\n", comp_v);
         TIM_SetCompare1(TIM1,comp_v);
         if(!BL_PWM_inited){
