@@ -669,7 +669,7 @@ void main_init(void)
 
   GPIO_InitTypeDef GPIO_InitStructure;
   //led
-#ifndef RTC_SOC
+#ifdef RTC_SOC
   RTC_Init();
 #endif
 #ifdef ALIENTEK_MINI
