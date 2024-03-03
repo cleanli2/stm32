@@ -106,7 +106,10 @@ void cam_init()
 
     i2c_init();
     lprintf("cam read 0x12=%b\n", cam_r_reg(0x12));
+    //while(1){
+    //    lprintf("cam write test\n");
     cam_w_reg(0x12, 0x80);
+    //}
 }
 
 void LCD_BUS_To_write(int write)
@@ -956,8 +959,9 @@ void lcd_sueb_basicinit()
  	LCD_RESET(); //LCD ¸´Î»
 }
 
-//PWM freq=72000/(18000)/2=2Mhz
-#define BLPWM_ARR (18000-1)
+#define PWMV 18
+//PWM freq=72000/(PWMV)/2=2Mhz
+#define BLPWM_ARR (PWMV-1)
 #define BLPWM_PSC 1
 void BL_PWM_init()
 {
@@ -1038,7 +1042,7 @@ void set_BL_value(uint16_t v)
     }
     cur_bl_value = v;
     if(v>0){
-        comp_v = 18000/100*(100-v);
+        comp_v = PWMV*(100-v)/100;
         lprintf("comp_v=%x\n", comp_v);
         TIM_SetCompare1(TIM1,comp_v);
         if(!BL_PWM_inited){
