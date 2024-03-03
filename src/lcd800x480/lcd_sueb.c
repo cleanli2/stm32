@@ -1006,7 +1006,7 @@ void set_BL_value(uint16_t v)
 {
     static int BL_PWM_inited = 0;
     uint16_t comp_v;
-    lprintf("v=%d\n", v);
+    lprintf("-----------------------------------v=%d\n", v);
     if(v>100){
         lprintf("err:BL v>100\n");
         return;

@@ -137,8 +137,8 @@ extern u16  BACK_COLOR; //背景颜色.默认为白色
 #define LGRAYBLUE      	0XA651 //浅灰蓝色(中间层颜色)
 #define LBBLUE          0X2B12 //浅棕蓝色(选择条目的反色)
 
-#define DEFAULT_BL 15
-#define DEFAULT_IDLE_BL 5
+#define DEFAULT_BL 50
+#define DEFAULT_IDLE_BL 50
 #define LCD_HW_GPIO_TEST 1
 #define LCD_HW_WRITE_TEST 2
 #define LCD_HW_READ_TEST 3
