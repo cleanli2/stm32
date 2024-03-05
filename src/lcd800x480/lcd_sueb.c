@@ -63,6 +63,8 @@
 #ifdef ALIENTEK_MINI
 void LCD_Set_Window(u16 sx,u16 sy,u16 width,u16 height);
 #endif
+void cam_xclk_off();
+void cam_xclk_on();
 
 //管理LCD重要参数
 //默认为竖屏
@@ -85,14 +87,212 @@ void Enable_BL(int en)//点亮背光
 }
 
 #define CAM_GPIO_GROUP GPIOC
+#define CAM_VSYN GPIO_Pin_7
 #define CAM_PWN GPIO_Pin_9
 #define CAM_RST GPIO_Pin_8
+#define CAM_PCLK GPIO_Pin_10
 
 void i2c_init();
 uint8_t cam_r_reg(uint8_t addr);
 int cam_w_reg(uint8_t addr, uint8_t data);
+void OV7670_config_window(unsigned int startx,unsigned int starty,unsigned int width, unsigned int height)
+{
+	unsigned int endx;
+	unsigned int endy;// "v*2"必须
+	unsigned char temp_reg1, temp_reg2;
+	unsigned char temp=0;
+	
+	endx=(startx+width);
+	endy=(starty+height+height);// "v*2"必须
+    //rdOV7670Reg(0x03, &temp_reg1 );
+    temp_reg1=cam_r_reg(0x03);
+    temp_reg1 &= 0xf0;
+    //rdOV7670Reg(0x32, &temp_reg2 );
+    temp_reg2=cam_r_reg(0x32);
+    temp_reg2 &= 0xc0;
+	
+	// Horizontal
+	temp = temp_reg2|((endx&0x7)<<3)|(startx&0x7);
+	cam_w_reg(0x32, temp );
+	temp = (startx&0x7F8)>>3;
+	cam_w_reg(0x17, temp );
+	temp = (endx&0x7F8)>>3;
+	cam_w_reg(0x18, temp );
+	
+	// Vertical
+	temp =temp_reg1|((endy&0x3)<<2)|(starty&0x3);
+	cam_w_reg(0x03, temp );
+	temp = starty>>2;
+	cam_w_reg(0x19, temp );
+	temp = endy>>2;
+	cam_w_reg(0x1A, temp );
+}
+
+void set_OV7670reg(void)
+{
+	cam_w_reg(0x8c, 0x00);
+	cam_w_reg(0x3a, 0x04);
+	cam_w_reg(0x40, 0xd0);
+	cam_w_reg(0x8c, 0x00);
+	cam_w_reg(0x12, 0x14);
+	cam_w_reg(0x32, 0x80);
+	cam_w_reg(0x17, 0x16);
+	cam_w_reg(0x18, 0x04);
+	cam_w_reg(0x19, 0x02);
+	cam_w_reg(0x1a, 0x7b);
+	cam_w_reg(0x03, 0x06);
+	cam_w_reg(0x0c, 0x04);
+	cam_w_reg(0x3e, 0x00);
+	cam_w_reg(0x70, 0x3a);
+	cam_w_reg(0x71, 0x35); 
+	cam_w_reg(0x72, 0x11); 
+	cam_w_reg(0x73, 0x00);
+	cam_w_reg(0xa2, 0x00);
+	cam_w_reg(0x11, 0xff); 
+	//cam_w_reg(0x15 , 0x31);
+	cam_w_reg(0x7a, 0x20); 
+	cam_w_reg(0x7b, 0x1c); 
+	cam_w_reg(0x7c, 0x28); 
+	cam_w_reg(0x7d, 0x3c);
+	cam_w_reg(0x7e, 0x55); 
+	cam_w_reg(0x7f, 0x68); 
+	cam_w_reg(0x80, 0x76);
+	cam_w_reg(0x81, 0x80); 
+	cam_w_reg(0x82, 0x88);
+	cam_w_reg(0x83, 0x8f);
+	cam_w_reg(0x84, 0x96); 
+	cam_w_reg(0x85, 0xa3);
+	cam_w_reg(0x86, 0xaf);
+	cam_w_reg(0x87, 0xc4); 
+	cam_w_reg(0x88, 0xd7);
+	cam_w_reg(0x89, 0xe8);
+	 
+	cam_w_reg(0x32,0xb6);
+	
+	cam_w_reg(0x13, 0xff); 
+	cam_w_reg(0x00, 0x00);
+	cam_w_reg(0x10, 0x00);
+	cam_w_reg(0x0d, 0x00);
+	cam_w_reg(0x14, 0x4e);
+	cam_w_reg(0xa5, 0x05);
+	cam_w_reg(0xab, 0x07); 
+	cam_w_reg(0x24, 0x75);
+	cam_w_reg(0x25, 0x63);
+	cam_w_reg(0x26, 0xA5);
+	cam_w_reg(0x9f, 0x78);
+	cam_w_reg(0xa0, 0x68);
+//	cam_w_reg(0xa1, 0x03);//0x0b,
+	cam_w_reg(0xa6, 0xdf);
+	cam_w_reg(0xa7, 0xdf);
+	cam_w_reg(0xa8, 0xf0); 
+	cam_w_reg(0xa9, 0x90); 
+	cam_w_reg(0xaa, 0x94); 
+	//cam_w_reg(0x13, 0xe5); 
+	cam_w_reg(0x0e, 0x61);
+	cam_w_reg(0x0f, 0x43);
+	cam_w_reg(0x16, 0x02); 
+	cam_w_reg(0x1e, 0x37);
+	cam_w_reg(0x21, 0x02);
+	cam_w_reg(0x22, 0x91);
+	cam_w_reg(0x29, 0x07);
+	cam_w_reg(0x33, 0x0b);
+	cam_w_reg(0x35, 0x0b);
+	cam_w_reg(0x37, 0x3f);
+	cam_w_reg(0x38, 0x01);
+	cam_w_reg(0x39, 0x00);
+	cam_w_reg(0x3c, 0x78);
+	cam_w_reg(0x4d, 0x40);
+	cam_w_reg(0x4e, 0x20);
+	cam_w_reg(0x69, 0x00);
+	cam_w_reg(0x6b, 0x4a);
+	cam_w_reg(0x74, 0x19);
+	cam_w_reg(0x8d, 0x4f);
+	cam_w_reg(0x8e, 0x00);
+	cam_w_reg(0x8f, 0x00);
+	cam_w_reg(0x90, 0x00);
+	cam_w_reg(0x91, 0x00);
+	cam_w_reg(0x92, 0x00);
+	cam_w_reg(0x96, 0x00);
+	cam_w_reg(0x9a, 0x80);
+	cam_w_reg(0xb0, 0x84);
+	cam_w_reg(0xb1, 0x0c);
+	cam_w_reg(0xb2, 0x0e);
+	cam_w_reg(0xb3, 0x82);
+	cam_w_reg(0xb8, 0x0a);
+	cam_w_reg(0x43, 0x14);
+	cam_w_reg(0x44, 0xf0);
+	cam_w_reg(0x45, 0x34);
+	cam_w_reg(0x46, 0x58);
+	cam_w_reg(0x47, 0x28);
+	cam_w_reg(0x48, 0x3a);
+	
+	cam_w_reg(0x59, 0x88);
+	cam_w_reg(0x5a, 0x88);
+	cam_w_reg(0x5b, 0x44);
+	cam_w_reg(0x5c, 0x67);
+	cam_w_reg(0x5d, 0x49);
+	cam_w_reg(0x5e, 0x0e);
+	
+	cam_w_reg(0x64, 0x04);
+	cam_w_reg(0x65, 0x20);
+	cam_w_reg(0x66, 0x05);
+
+	cam_w_reg(0x94, 0x04);
+	cam_w_reg(0x95, 0x08);	 
+
+	cam_w_reg(0x6c, 0x0a);
+	cam_w_reg(0x6d, 0x55);
+	cam_w_reg(0x6e, 0x11);
+	cam_w_reg(0x6f, 0x9f); 
+
+	cam_w_reg(0x6a, 0x40);
+	cam_w_reg(0x01, 0x40);
+	cam_w_reg(0x02, 0x40);
+	
+	//cam_w_reg(0x13, 0xe7);
+	cam_w_reg(0x15, 0x00);
+	cam_w_reg(0x4f, 0x80);
+	cam_w_reg(0x50, 0x80);
+	cam_w_reg(0x51, 0x00);
+	cam_w_reg(0x52, 0x22);
+	cam_w_reg(0x53, 0x5e);
+	cam_w_reg(0x54, 0x80);
+	cam_w_reg(0x58, 0x9e);
+
+	cam_w_reg(0x41, 0x08);
+	cam_w_reg(0x3f, 0x00);
+	cam_w_reg(0x75, 0x05);
+	cam_w_reg(0x76, 0xe1);
+
+	cam_w_reg(0x4c, 0x00);
+	cam_w_reg(0x77, 0x01);
+	
+	cam_w_reg(0x3d, 0xc1);
+	cam_w_reg(0x4b, 0x09);
+	cam_w_reg(0xc9, 0x60);
+	//cam_w_reg(0x41, 0x38);	
+	cam_w_reg(0x56, 0x40);
+	cam_w_reg(0x34, 0x11);
+	cam_w_reg(0x3b, 0x02);
+	cam_w_reg(0xa4, 0x89);
+	
+	cam_w_reg(0x96, 0x00);
+	cam_w_reg(0x97, 0x30);
+	cam_w_reg(0x98, 0x20);
+	cam_w_reg(0x99, 0x30);
+	cam_w_reg(0x9a, 0x84);
+	cam_w_reg(0x9b, 0x29);
+	cam_w_reg(0x9c, 0x03);
+	cam_w_reg(0x9d, 0x4c);
+	cam_w_reg(0x9e, 0x3f);	
+
+	cam_w_reg(0x09, 0x00);
+	cam_w_reg(0x3b, 0xc2);
+
+}
 void cam_init()
 {
+    int count=0;
     GPIO_InitTypeDef  GPIO_InitStructure;
 
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -104,6 +304,10 @@ void cam_init()
     lprintf("cam rst=1\n");
     GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST);
 
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10|GPIO_Pin_7;
+        GPIO_Init(GPIOC, &GPIO_InitStructure); //GPIOB
+        GPIO_SetBits(GPIOC,GPIO_Pin_10|GPIO_Pin_7);
     i2c_init();
     //read cam id
     while(1){
@@ -116,6 +320,23 @@ void cam_init()
     lprintf("cam read 0x0A=%b\n", cam_r_reg(0x0A));
     lprintf("cam read 0x0B=%b\n", cam_r_reg(0x0B));
     lprintf("cam reset return %x\n", cam_w_reg(0x12, 0x80));
+    delay_ms(2);
+
+    set_OV7670reg();
+    OV7670_config_window(272,12,320,240);//
+
+    while(1){
+        while(GPIOC->IDR & CAM_VSYN);
+        while(!(GPIOC->IDR & CAM_VSYN)){
+            cam_xclk_off();
+            GPIO_ResetBits(GPIOA, GPIO_Pin_8);
+            GPIO_SetBits(GPIOA, GPIO_Pin_8);
+            count++;
+        }
+        lprintf("count %d\n", count);
+        count=0;
+        cam_xclk_on();
+    }
 }
 
 void LCD_BUS_To_write(int write)
@@ -980,7 +1201,6 @@ void BL_PWM_init()
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA , ENABLE);
 
-
     //设置该引脚为复用输出功能,输出TIM1 CH1的PWM脉冲波形
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8; //TIM_CH1
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;  //复用推挽输出
@@ -1012,6 +1232,30 @@ void BL_PWM_init()
     TIM_ARRPreloadConfig(TIM1, ENABLE); //使能TIMx在ARR上的预装载寄存器
 
     TIM_Cmd(TIM1, ENABLE);  //使能TIM1
+}
+
+void cam_xclk_on()
+{
+    GPIO_InitTypeDef GPIO_InitS_xclk_on;
+    //RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA , ENABLE);
+
+    GPIO_InitS_xclk_on.GPIO_Pin = GPIO_Pin_8; //TIM_CH1
+    GPIO_InitS_xclk_on.GPIO_Mode = GPIO_Mode_AF_PP;  //复用推挽输出
+    GPIO_InitS_xclk_on.GPIO_Speed = GPIO_Speed_50MHz;
+
+    GPIO_Init(GPIOA, &GPIO_InitS_xclk_on);
+}
+
+void cam_xclk_off()
+{
+    GPIO_InitTypeDef GPIO_InitS_xclk_off;
+    //RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA , ENABLE);
+
+    GPIO_InitS_xclk_off.GPIO_Pin = GPIO_Pin_8;
+    GPIO_InitS_xclk_off.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitS_xclk_off.GPIO_Speed = GPIO_Speed_50MHz;
+
+    GPIO_Init(GPIOA, &GPIO_InitS_xclk_off);
 }
 
 void BL_PWM_deinit()
