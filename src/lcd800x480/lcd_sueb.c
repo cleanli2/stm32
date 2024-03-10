@@ -307,9 +307,9 @@ void cam_init()
     GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST);
 
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10|GPIO_Pin_7|GPIO_Pin_6;
+        GPIO_InitStructure.GPIO_Pin = CAM_PCLK|CAM_VSYN|CAM_HREF;
         GPIO_Init(GPIOC, &GPIO_InitStructure); //GPIOB
-        GPIO_SetBits(GPIOC,GPIO_Pin_10|GPIO_Pin_7|GPIO_Pin_6);
+        GPIO_SetBits(GPIOC,CAM_PCLK|CAM_VSYN|CAM_HREF);
 
         GPIO_InitStructure.GPIO_Pin = 0xffff;//PB high 8bit
         GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
@@ -334,11 +334,11 @@ void cam_init()
 #if 1
     while(1){
         while(GPIOC->IDR & CAM_VSYN);
-        GPIOA->BRR = GPIO_Pin_8;
+        GPIOA->BRR = GPIO_Pin_8;//XCLK = 0
         cam_xclk_off();
         while(!(GPIOC->IDR & CAM_VSYN)){
-            GPIO_ResetBits(GPIOA, GPIO_Pin_8);
-            GPIO_SetBits(GPIOA, GPIO_Pin_8);
+            GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
+            GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
             if(GPIOC->IDR & CAM_HREF){
                 if(count<640*2)
                 vbf[count]=GPIOB->IDR>>8;
