@@ -91,6 +91,7 @@ void Enable_BL(int en)//µãÁÁ±³¹â
 #define CAM_PWN GPIO_Pin_9
 #define CAM_RST GPIO_Pin_8
 #define CAM_PCLK GPIO_Pin_10
+#define CAM_HREF GPIO_Pin_6
 
 void i2c_init();
 uint8_t cam_r_reg(uint8_t addr);
@@ -290,6 +291,7 @@ void set_OV7670reg(void)
 	cam_w_reg(0x3b, 0xc2);
 
 }
+char vbf[640*2];
 void cam_init()
 {
     int count=0;
@@ -305,9 +307,13 @@ void cam_init()
     GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST);
 
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10|GPIO_Pin_7;
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10|GPIO_Pin_7|GPIO_Pin_6;
         GPIO_Init(GPIOC, &GPIO_InitStructure); //GPIOB
-        GPIO_SetBits(GPIOC,GPIO_Pin_10|GPIO_Pin_7);
+        GPIO_SetBits(GPIOC,GPIO_Pin_10|GPIO_Pin_7|GPIO_Pin_6);
+
+        GPIO_InitStructure.GPIO_Pin = 0xffff;//PB high 8bit
+        GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
+        GPIO_SetBits(GPIOB,0xffff);
     i2c_init();
     //read cam id
     while(1){
@@ -322,21 +328,34 @@ void cam_init()
     lprintf("cam reset return %x\n", cam_w_reg(0x12, 0x80));
     delay_ms(2);
 
-    set_OV7670reg();
-    OV7670_config_window(272,12,320,240);//
+    //set_OV7670reg();
+    //OV7670_config_window(272,12,320,240);//
 
+#if 1
     while(1){
         while(GPIOC->IDR & CAM_VSYN);
+        GPIOA->BRR = GPIO_Pin_8;
+        cam_xclk_off();
         while(!(GPIOC->IDR & CAM_VSYN)){
-            cam_xclk_off();
             GPIO_ResetBits(GPIOA, GPIO_Pin_8);
             GPIO_SetBits(GPIOA, GPIO_Pin_8);
-            count++;
+            if(GPIOC->IDR & CAM_HREF){
+                if(count<640*2)
+                vbf[count]=GPIOB->IDR>>8;
+                count++;
+            }
         }
         lprintf("count %d\n", count);
+        if(count==614400){
+            lprintf("vbf get OK\n");
+            mem_print(vbf, 0, 640*2);
+        }
+        else lprintf("vbf get fail\n");
         count=0;
         cam_xclk_on();
+        GPIOA->BRR = GPIO_Pin_8;
     }
+#endif
 }
 
 void LCD_BUS_To_write(int write)
@@ -1256,6 +1275,7 @@ void cam_xclk_off()
     GPIO_InitS_xclk_off.GPIO_Speed = GPIO_Speed_50MHz;
 
     GPIO_Init(GPIOA, &GPIO_InitS_xclk_off);
+    GPIOA->BRR = GPIO_Pin_8;
 }
 
 void BL_PWM_deinit()
