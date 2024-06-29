@@ -722,6 +722,7 @@ void main_init(void)
 
 #endif
   //led end
+  led8s_init();
 
   //power off pin set low
   RCC_APB2PeriphClockCmd(POWEROFF_GPIO_PERIPH, ENABLE);

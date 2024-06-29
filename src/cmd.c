@@ -452,38 +452,15 @@ void buzztest(char *p)
 {
     uint para = 1, tmp;
 
-#if 0
     tmp = get_howmany_para(p);
     if(tmp>=1){
 	    p = str_to_hex(p, &para);
     }
     lprintf("para %x %d\n", para, para);
-    RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
 
-    GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
-    GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
-  //led end
+    led8s_write(0, para);
 
-    while(!con_is_recved()){
-	    /* Set*/
-        if(para > 200){
-            lprintf("Set PB5\n");
-        }
-	    GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
-	    delay_ms(para);
-	    /* ReSet */
-        if(para > 200){
-            lprintf("Reset PB5\n");
-        }
-	    GPIO_SetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
-	    delay_ms(para);
-    }
     con_send('\n');
-#endif
 
     return;
 

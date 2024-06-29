@@ -170,6 +170,8 @@ uint16_t get_BL_value();
 void LCD_RESET();
 void lcd_sueb_test();
 void lcd_sueb_basicinit();
+void led8s_init();
+void led8s_write(u32 idx, u32 d);
 
 //如果仍然觉得速度不够快，可以使用下面的宏定义,提高速度.
 //注意要去掉lcd.c中void LCD_WR_DATA(u16 data)函数定义哦
