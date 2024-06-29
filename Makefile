@@ -130,7 +130,7 @@ all:$(C_OBJ) src/asm.o
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).hex -Oihex
 	cp $(TARGET).hex $(TARGET)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 	rm $(TARGET)_*.hex
-	cp $(TARGET).hex $(TARGET)_$(board)_$(type)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
+	cp $(TARGET).hex $(TARGET)_$(board)_led8s_$(type)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 	$(OBJDUMP) -d -S $(TARGET).elf > $(TARGET).asm
 
 $(C_OBJ):%.o:%.c
