@@ -452,6 +452,7 @@ void buzztest(char *p)
 {
     uint para = 1, tmp;
 
+#if 0
     tmp = get_howmany_para(p);
     if(tmp>=1){
 	    p = str_to_hex(p, &para);
@@ -482,6 +483,7 @@ void buzztest(char *p)
 	    delay_ms(para);
     }
     con_send('\n');
+#endif
 
     return;
 

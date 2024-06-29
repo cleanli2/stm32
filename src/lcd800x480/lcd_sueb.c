@@ -1672,3 +1672,25 @@ u16 LCD_Read_ID(void)
 	return (val[2]<<8)|val[3];
 #endif
 }
+
+void led_init()
+{
+  GPIO_InitTypeDef GPIO_InitStructure;
+  RCC_APB2PeriphClockCmd(LED8S0_GPIO_PERIPH, ENABLE);
+
+  GPIO_InitStructure.GPIO_Pin = LED8S0_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(LED8S0_GPIO_GROUP, &GPIO_InitStructure);
+
+  //ready to write data
+  GPIO_SetBits(LED8S0_GPIO_GROUP, LED8S0_GPIO_PIN);
+
+  LCD_BUS_To_write(1);
+  delay_ms(5);
+  //wirte 0xff to LEDS0
+  DATAOUT(0xffff);
+  delay_ms(5);
+
+  GPIO_ResetBits(LED8S0_GPIO_GROUP, LED8S0_GPIO_PIN);
+}

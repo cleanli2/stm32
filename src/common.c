@@ -471,10 +471,10 @@ u32*TIM3_IRQHandler_local(u32*stack_data)
     TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
     if(sound_enable){
         if(tog++&0x1){
-            GPIO_SetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
+            //GPIO_SetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
         }
         else{
-            GPIO_ResetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
+            //GPIO_ResetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
         }
     }
 #if 0
@@ -484,38 +484,12 @@ u32*TIM3_IRQHandler_local(u32*stack_data)
     return stack_data;
 }
 
-void beep(uint32_t hz, uint32_t t_ms)
-{
-    uint32_t pd, ct;
-    if(hz > 1000000)return;
-    if(!sound_enable)return;
-
-    pd = 1000000/hz/2;
-    ct = hz*t_ms/1000;
-    RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
-
-    GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
-    GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
-    while(ct--){
-	    GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
-	    delay_us(pd);
-	    GPIO_SetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
-	    delay_us(pd);
-    }
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
-}
-
 void power_off()
 {
     Show_Str(20, 630,RED,0xffff,"Power off in 3 seconds",24,0,1);
     lprintf_time("power off in 3 secs\n");
     foce_save_log_func();
-    beep(600, 100);
+    //beep(600, 100);
 #ifdef RTC_8563
     check_rtc_alert_and_clear();
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, -1, -1);
@@ -683,6 +657,7 @@ void main_init(void)
   GPIO_ResetBits(GPIOA,GPIO_Pin_8);
   GPIO_ResetBits(GPIOA,GPIO_Pin_13);
 
+/*
   RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
 
   GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
@@ -690,6 +665,7 @@ void main_init(void)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
   GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
+*/
 
   RCC_APB2PeriphClockCmd(LED0_GPIO_PERIPH, ENABLE);
 
@@ -723,13 +699,6 @@ void main_init(void)
   GPIO_ResetBits(GPIOC,GPIO_Pin_0);	
   GPIO_SetBits(GPIOC,GPIO_Pin_4);//spi flash cs =1
 
-  RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
-
-  GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
-  GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
 #else
   lprintf_time("\n\n================Hamer board start================\n");
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
@@ -751,13 +720,6 @@ void main_init(void)
   GPIO_ResetBits(GPIOB,GPIO_Pin_0);	
   GPIO_SetBits(GPIOB,GPIO_Pin_4);//spi flash cs =1
 
-  RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
-
-  GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
-  GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
 #endif
   //led end
 
@@ -794,7 +756,7 @@ void main_init(void)
   {
       led_flash(0x3, 100);
   }
-  beep_by_timer_100(0);
+  //beep_by_timer_100(0);
   os_task_add(os_task_log, task_log_stack, "log", STACK_SIZE_LOCAL, 5);
   os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 0);
   os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LARGE*2, 1);
@@ -901,7 +863,7 @@ void reboot_download()
 {
     lprintf_time("reboot download\n");
     GPIO_SetBits(GPIOA,GPIO_Pin_13);
-    beep(100, 500);
+    //beep(100, 500);
     lprintf_time("reboot download\n");
     foce_save_log_func();
     soft_reset_system();
