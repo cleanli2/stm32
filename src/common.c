@@ -602,6 +602,16 @@ void main_init(void)
   //uint32_t ict;
   RCC_ClocksTypeDef RCC_ClocksStatus;
 
+  //power off pin set low
+  RCC_APB2PeriphClockCmd(POWEROFF_GPIO_PERIPH, ENABLE);
+
+  GPIO_InitStructure.GPIO_Pin = POWEROFF_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(POWEROFF_GPIO_GROUP, &GPIO_InitStructure);
+  GPIO_ResetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
+  //power off pin end
+
   USART_InitStructure.USART_BaudRate = 115200;
   USART_InitStructure.USART_WordLength = USART_WordLength_8b;
   USART_InitStructure.USART_StopBits = USART_StopBits_1;
@@ -723,16 +733,6 @@ void main_init(void)
 #endif
   //led end
   led8s_init();
-
-  //power off pin set low
-  RCC_APB2PeriphClockCmd(POWEROFF_GPIO_PERIPH, ENABLE);
-
-  GPIO_InitStructure.GPIO_Pin = POWEROFF_GPIO_PIN;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(POWEROFF_GPIO_GROUP, &GPIO_InitStructure);
-  GPIO_ResetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
-  //power off pin end
 
   RCC_GetClocksFreq(&RCC_ClocksStatus);
   lprintf_time("Version %s%s\n", VERSION, GIT_SHA1);

@@ -1683,7 +1683,7 @@ void led8s_init()
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(LED8S0_GPIO_GROUP, &GPIO_InitStructure);
 
-  led8s_write(0, 0xffff);
+  led8s_write(0, 0xff00);
   lprintf("led8s init.\r\n");
 }
 
