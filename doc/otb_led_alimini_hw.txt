@@ -1,0 +1,5 @@
+Beep gpio->led 0 enable:
+0 -> keep data
+1 -> write data
+
+PB0-7 -> data bus
