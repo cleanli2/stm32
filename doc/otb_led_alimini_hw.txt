@@ -1,4 +1,7 @@
-Beep gpio->led 0 enable:
+Beep gpio->led8s 0 enable:
+USB PA11->led8s 1 enable:
+USB PA12->led8s 2 enable:
+
 0 -> keep data
 1 -> write data
 
