@@ -139,6 +139,8 @@ void task_power(struct task*vp)
     }
 }
 
+static uint date_pos_led8s=0;
+static uint date_ct_led8s=0;
 void task_timer(struct task*vp)
 {
     (void)vp;//fix unused variable warning
@@ -156,7 +158,15 @@ void task_timer(struct task*vp)
         char*date = get_rtc_time(&g_cur_date);
         //g_flag_1s = true;
         lcd_lprintf(1, 0,0,date);
-        lcd_lprintf(1, 0x10000,0,date+14);
+
+        /*led8s display*/
+        if(date_ct_led8s++>4){
+            date_ct_led8s=0;
+            if(date_pos_led8s++>15)
+                date_pos_led8s=0;
+        }
+        lcd_lprintf(1, 0x10000,0,date+date_pos_led8s);
+        /*led8s display end*/
         //
         os_lock(&oslk_evt);
         evt *dtw=RB_W_GET_wait(evt, rb_evt);

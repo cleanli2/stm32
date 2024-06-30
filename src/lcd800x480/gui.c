@@ -459,8 +459,7 @@ void led8s_show_str(const char*str, u32 size)
     char tbf[3];
     u8 ep[3];
     u32 i=0, j=0;
-    u32 len=strlen(str);
-    while(i<3 && j<len){
+    while(i<3 && j<size){
        if(str[j]=='.'||str[j]==':'){
            if(i==0){
                tbf[i]=' ';
