@@ -421,23 +421,23 @@ void set_LCD_Char_scale(u16 scale)
 u8 LED8S_CODE[]={
     0xa0,//0
     0xf3,
-    0x11,
-    0x11,
-    0x11,
+    0x64,
+    0x62,
+    0x33,
     0x2a,//5
-    0x11,
-    0x11,
-    0x11,
-    0x11,//9
+    0x28,
+    0xe3,
+    0x20,
+    0x22,//9
 };
 
 void led8s_show_char(u32 idx, char ch)
 {
     if(ch<'0'||ch>'9'){
-        led8s_write(idx, LED8S_CODE[ch-'0']);
+        led8s_write(idx, 0xff);
     }
     else{
-        led8s_write(idx, 0xff);
+        led8s_write(idx, LED8S_CODE[ch-'0']);
     }
 }
 
