@@ -431,24 +431,54 @@ u8 LED8S_CODE[]={
     0x22,//9
 };
 
-void led8s_show_char(u32 idx, char ch)
+void led8s_show_char(u32 idx, char ch, u32 en_pt)
 {
+    u8 d;
     if(ch<'0'||ch>'9'){
-        led8s_write(idx, 0xff);
+        d=0xff;
     }
     else{
-        led8s_write(idx, LED8S_CODE[ch-'0']);
+        d=LED8S_CODE[ch-'0'];
     }
+    if(en_pt)d&=~0x20;
+    led8s_write(idx, d);
 }
 
-void led8s_show_str(const char*str, u32 size)
+void led8s_show_str_raw(const char*str, u8 * ep, u32 size)
 {
     u32 led_idx=0;
     while(led_idx<size){
-        led8s_show_char(led_idx, *str);
+        led8s_show_char(led_idx, *str, *ep);
         led_idx++;
         str++;
+        ep++;
     }
+}
+void led8s_show_str(const char*str, u32 size)
+{
+    char tbf[3];
+    u8 ep[3];
+    u32 i=0, j=0;
+    u32 len=strlen(str);
+    while(i<3 && j<len){
+       if(str[j]=='.'||str[j]==':'){
+           if(i==0){
+               tbf[i]=' ';
+               ep[i]=1;
+               i++;
+           }
+           else{
+               ep[i-1]=1;
+           }
+       }
+       else{
+           tbf[i]=str[j];
+           ep[i]=0;
+           i++;
+       }
+       j++;
+    }
+    led8s_show_str_raw(tbf, ep, i);
 }
 /*****************************************************************************
  * @name       :void LCD_ShowChar(u16 x,u16 y,u16 fc, u16 bc, u8 num,u8 size,u8 mode)
@@ -994,7 +1024,6 @@ void led8s_str(const char *str)
 {
     u32 x=0x10000,y=0;
     u32 size=strlen(str);
-    if(size>3)size=3;
     if(os_is_running){
         Proxy_Show_Str_win_raw(&x, &y, 0, 0, str, size, 0, NULL, 0);
     }
