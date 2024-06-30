@@ -127,6 +127,7 @@ const char* Proxy_Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char 
     rbdpp->data.win_str_para.str=os_lcd_printf_buf;
     rbdpp->data.win_str_para.size=size;
     rbdpp->data.win_str_para.mode=mode;
+    if(wd)//led8s' wd = NULL
     rbdpp->data.win_str_para.df_win=*wd;
     /*
     rbdpp->data.win_str_para->df_win.x=wd->x;
@@ -160,7 +161,10 @@ void os_task_display(void*p)
                 str=rbdpp->data.win_str_para.str;
                 size=rbdpp->data.win_str_para.size;
                 mode=rbdpp->data.win_str_para.mode;
-                wd=&rbdpp->data.win_str_para.df_win;
+                if(*xp!=0x10000)
+                    wd=&rbdpp->data.win_str_para.df_win;
+                else//led8s
+                    wd=NULL;
                 Show_Str_win_raw(xp, yp, fc, bc, str, size, mode, wd, 0);
                 os_unlock(&oslk_os_lcd_printf_buf);
                 break;

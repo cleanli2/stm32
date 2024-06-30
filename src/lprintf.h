@@ -23,4 +23,6 @@ void puthexch(char c);
 void log_to_buf(const char* log);
 void os_task_log(void*p);
 
+#define prt_hex(a) lprintf(#a"=0x%x\r\n", a)
+
 #endif

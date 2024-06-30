@@ -461,7 +461,10 @@ void buzztest(char *p)
     }
     lprintf("para 0x%x 0x%x\n", para, para1);
 
-    led8s_write(para, para1);
+    if(para>=3)
+        lcd_lprintf(1, 0x10000,0,"015");
+    else
+        led8s_write(para, para1);
 
     con_send('\n');
 

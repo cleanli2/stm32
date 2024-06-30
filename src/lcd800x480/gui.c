@@ -992,13 +992,14 @@ const char* area_show_str(win_pt wdp, u32 *xp, u32 *yp, const char*string, int i
 
 void led8s_str(const char *str)
 {
+    u32 x=0x10000,y=0;
     u32 size=strlen(str);
     if(size>3)size=3;
     if(os_is_running){
-        Proxy_Show_Str_win_raw(NULL, NULL, 0, 0, str, size, 0, NULL, 0);
+        Proxy_Show_Str_win_raw(&x, &y, 0, 0, str, size, 0, NULL, 0);
     }
     else{
-        Show_Str_win_raw(NULL, NULL, 0, 0, str, size, 0, NULL, 0);
+        Show_Str_win_raw(&x, &y, 0, 0, str, size, 0, NULL, 0);
     }
 }
 /*****************************************************************************

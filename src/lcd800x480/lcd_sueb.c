@@ -1703,6 +1703,8 @@ void led8s_init()
 
 void led8s_write(u32 idx, u32 d)
 {
+  prt_hex(idx);
+  prt_hex(d);
   //ready to write data
   switch(idx){
       case 0:
