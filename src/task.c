@@ -156,7 +156,7 @@ void task_timer(struct task*vp)
         char*date = get_rtc_time(&g_cur_date);
         //g_flag_1s = true;
         lcd_lprintf(1, 0,0,date);
-        //lcd_lprintf(1, 0x10000,0,"015");
+        lcd_lprintf(1, 0x10000,0,date+16);
         //
         os_lock(&oslk_evt);
         evt *dtw=RB_W_GET_wait(evt, rb_evt);
