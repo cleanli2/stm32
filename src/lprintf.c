@@ -518,7 +518,12 @@ void lcd_lprintf(uint32_t chscale, uint32_t x, uint32_t y, const char *fmt, ...)
     va_start(ap,fmt);
     vslprintf(0, lcdprintf_buf,fmt,ap);
     va_end(ap);
+    if(x==0x10000){
+    led8s_str(lcdprintf_buf);
+    }
+    else{
     Show_Str(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lcdprintf_buf,16,0, chscale);
+    }
     os_unlock(&oslk_lcdpt);
 }
 

@@ -417,6 +417,39 @@ void set_LCD_Char_scale(u16 scale)
     //lprintf("set lcd char scale %d\n", scale);
     LCD_Char_scale = scale;
 }
+
+u8 LED8S_CODE[]={
+    0xa0,//0
+    0xf3,
+    0x11,
+    0x11,
+    0x11,
+    0x2a,//5
+    0x11,
+    0x11,
+    0x11,
+    0x11,//9
+};
+
+void led8s_show_char(u32 idx, char ch)
+{
+    if(ch<'0'||ch>'9'){
+        led8s_write(idx, LED8S_CODE[ch-'0']);
+    }
+    else{
+        led8s_write(idx, 0xff);
+    }
+}
+
+void led8s_show_str(const char*str, u32 size)
+{
+    u32 led_idx=0;
+    while(led_idx<size){
+        led8s_show_char(led_idx, *str);
+        led_idx++;
+        str++;
+    }
+}
 /*****************************************************************************
  * @name       :void LCD_ShowChar(u16 x,u16 y,u16 fc, u16 bc, u8 num,u8 size,u8 mode)
  * @date       :2018-08-09 
@@ -844,6 +877,10 @@ void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 
 const char* Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, u32 size, u32 mode, win_pt wd, int is_dummy)
 {
+    if(wd==NULL){
+        if(!is_dummy)led8s_show_str(str, size);
+        return str;
+    }
     u32 bHz=0, xmax=wd->x+wd->w, ymax=wd->y+wd->h;
     u32 x=*xp, y=*yp, dx=wd->dx, dy=wd->dy;
     LCD_Char_scale=wd->char_scale;
@@ -953,6 +990,17 @@ const char* area_show_str(win_pt wdp, u32 *xp, u32 *yp, const char*string, int i
     return ret;
 }
 
+void led8s_str(const char *str)
+{
+    u32 size=strlen(str);
+    if(size>3)size=3;
+    if(os_is_running){
+        Proxy_Show_Str_win_raw(NULL, NULL, 0, 0, str, size, 0, NULL, 0);
+    }
+    else{
+        Show_Str_win_raw(NULL, NULL, 0, 0, str, size, 0, NULL, 0);
+    }
+}
 /*****************************************************************************
  * @name       :void Show_Str(u16 x, u16 y, u16 fc, u16 bc, u8 *str,u8 size,u8 mode)
  * @date       :2018-08-09 
