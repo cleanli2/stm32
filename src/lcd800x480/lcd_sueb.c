@@ -1677,20 +1677,46 @@ void led8s_init()
 {
   GPIO_InitTypeDef GPIO_InitStructure;
   RCC_APB2PeriphClockCmd(LED8S0_GPIO_PERIPH, ENABLE);
+  RCC_APB2PeriphClockCmd(LED8S1_GPIO_PERIPH, ENABLE);
+  RCC_APB2PeriphClockCmd(LED8S2_GPIO_PERIPH, ENABLE);
 
   GPIO_InitStructure.GPIO_Pin = LED8S0_GPIO_PIN;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(LED8S0_GPIO_GROUP, &GPIO_InitStructure);
 
+  GPIO_InitStructure.GPIO_Pin = LED8S1_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(LED8S1_GPIO_GROUP, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = LED8S2_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(LED8S2_GPIO_GROUP, &GPIO_InitStructure);
+
   led8s_write(0, 0xff00);
+  led8s_write(1, 0xff2a);
+  led8s_write(2, 0xff0a);
   lprintf("led8s init.\r\n");
 }
 
 void led8s_write(u32 idx, u32 d)
 {
   //ready to write data
-  GPIO_SetBits(LED8S0_GPIO_GROUP, LED8S0_GPIO_PIN);
+  switch(idx){
+      case 0:
+          GPIO_SetBits(LED8S0_GPIO_GROUP, LED8S0_GPIO_PIN);
+          break;
+      case 1:
+          GPIO_SetBits(LED8S1_GPIO_GROUP, LED8S1_GPIO_PIN);
+          break;
+      case 2:
+          GPIO_SetBits(LED8S2_GPIO_GROUP, LED8S2_GPIO_PIN);
+          break;
+      default:
+          return;
+  }
 
   LCD_BUS_To_write(1);
   delay_ms(5);
@@ -1698,5 +1724,17 @@ void led8s_write(u32 idx, u32 d)
   DATAOUT(d);
   delay_ms(5);
 
-  GPIO_ResetBits(LED8S0_GPIO_GROUP, LED8S0_GPIO_PIN);
+  switch(idx){
+      case 0:
+          GPIO_ResetBits(LED8S0_GPIO_GROUP, LED8S0_GPIO_PIN);
+          break;
+      case 1:
+          GPIO_ResetBits(LED8S1_GPIO_GROUP, LED8S1_GPIO_PIN);
+          break;
+      case 2:
+          GPIO_ResetBits(LED8S2_GPIO_GROUP, LED8S2_GPIO_PIN);
+          break;
+      default:
+          return;
+  }
 }

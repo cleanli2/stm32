@@ -450,15 +450,18 @@ error:
 
 void buzztest(char *p)
 {
-    uint para = 1, tmp;
+    uint para = 1, para1=2, tmp;
 
     tmp = get_howmany_para(p);
     if(tmp>=1){
 	    p = str_to_hex(p, &para);
     }
-    lprintf("para %x %d\n", para, para);
+    if(tmp>=2){
+	    p = str_to_hex(p, &para1);
+    }
+    lprintf("para 0x%x 0x%x\n", para, para1);
 
-    led8s_write(0, para);
+    led8s_write(para, para1);
 
     con_send('\n');
 
