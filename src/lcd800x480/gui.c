@@ -477,6 +477,12 @@ void led8s_show_str(const char*str, u32 size)
        }
        j++;
     }
+    //if next is '.' or ':', set last ep to true
+    if(j<size){
+       if(str[j]=='.'||str[j]==':'){
+           ep[i-1]=1;
+       }
+    }
     led8s_show_str_raw(tbf, ep, i);
 }
 /*****************************************************************************
