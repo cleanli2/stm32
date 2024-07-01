@@ -160,8 +160,11 @@ void task_timer(struct task*vp)
         lcd_lprintf(1, 0,0,date);
 
         /*led8s display*/
-        if(date_ct_led8s++>4){
+        if(date_ct_led8s++>2){
             date_ct_led8s=0;
+            if(date[date_pos_led8s]=='.' ||
+                    date[date_pos_led8s]==':')
+                date_pos_led8s++;
             if(date_pos_led8s++>15)
                 date_pos_led8s=0;
         }

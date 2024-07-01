@@ -1721,10 +1721,10 @@ void led8s_write(u32 idx, u32 d)
   }
 
   LCD_BUS_To_write(1);
-  delay_ms(5);
+  delay_us(50);
   //wirte 0xff to LEDS0
   DATAOUT(d);
-  delay_ms(5);
+  delay_us(50);
 
   switch(idx){
       case 0:
