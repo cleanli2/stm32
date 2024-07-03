@@ -830,6 +830,7 @@ void os_task2(void*p)
         GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
         os_10ms_delay(teset_td);
         //putchars("--0 1\n");
+        task_timer(NULL);
         GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
         os_10ms_delay(teset_td);
         //lprintf("other task %d\n", *rtet);

@@ -148,17 +148,10 @@ void task_timer(struct task*vp)
     //g_flag_10ms = false;
     uint64_t systime = get_system_us();
     count_1s = systime/1000000;
-#if 0
-    count_10ms = (systime - 1000000*count_1s)/10000;
-    if(count_10ms != last_count_10ms){
-        g_flag_10ms = true;
-    }
-#endif
-    if(count_1s != last_count_1s){
+#if 1
+    {
+        //g_flag_10ms = true;
         char*date = get_rtc_time(&g_cur_date);
-        //g_flag_1s = true;
-        lcd_lprintf(1, 0,0,date);
-
         /*led8s display*/
         if(date_ct_led8s++>0){
             date_ct_led8s=0;
@@ -167,9 +160,16 @@ void task_timer(struct task*vp)
             if(date[date_pos_led8s]=='.' ||
                     date[date_pos_led8s]==':')
                 date_pos_led8s++;
+            lcd_lprintf(1, 0x10000,0,date+date_pos_led8s);
         }
-        lcd_lprintf(1, 0x10000,0,date+date_pos_led8s);
         /*led8s display end*/
+    }
+#endif
+    if(count_1s != last_count_1s){
+        char*date = get_rtc_time(&g_cur_date);
+        //g_flag_1s = true;
+        lcd_lprintf(1, 0,0,date);
+
         //
         os_lock(&oslk_evt);
         evt *dtw=RB_W_GET_wait(evt, rb_evt);
@@ -208,7 +208,7 @@ void task_timer(struct task*vp)
         }
     }
     last_count_1s = count_1s;
-    //last_count_10ms = count_10ms;
+    last_count_10ms = count_10ms;
 }
 
 void task_disp(struct task*vp)
