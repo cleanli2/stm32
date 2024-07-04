@@ -431,14 +431,33 @@ u8 LED8S_CODE[]={
     0x22,//9
 };
 
+/*******************
+ *
+ *
+ * ----4----
+ * |       |
+ * 6       3
+ * |       |
+ * ----7----
+ * |       |
+ * 1       2
+ * |       |
+ * ----0---- (5)
+ *
+ *
+ *******************/
+
 void led8s_show_char(u32 idx, char ch, u32 en_pt)
 {
     u8 d;
-    if(ch<'0'||ch>'9'){
-        d=0xff;
+    if(ch=='-'){
+        d=0x7f;
+    }
+    else if(ch>='0'&&ch<='9'){
+        d=LED8S_CODE[ch-'0'];
     }
     else{
-        d=LED8S_CODE[ch-'0'];
+        d=0xff;
     }
     if(en_pt)d&=~0x20;
     led8s_write(idx, d);
