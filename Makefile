@@ -2,6 +2,7 @@ TARGET = stm32lcd
 GIT_SHA1="$(shell git log --format='_%h' -1)"
 DIRTY="$(shell git diff --quiet || echo 'dirty')"
 CLEAN="$(shell git diff --quiet && echo 'clean')"
+BRANCH="$(shell git symbolic-ref --short HEAD)"
 
 export CC             = arm-none-eabi-gcc           
 export AS             = arm-none-eabi-as
@@ -61,7 +62,8 @@ all:$(C_OBJ)
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).hex -Oihex
 	cp $(TARGET).hex $(TARGET)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
 	rm $(TARGET)_*.hex
-	cp $(TARGET).hex $(TARGET)_$(board)_main_$(type)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
+	cp $(TARGET).hex $(TARGET)-$(board)-$(BRANCH)-$(type)-$(GIT_SHA1)-$(DIRTY)$(CLEAN).hex
+	$(OBJDUMP) -d -S $(TARGET).elf > $(TARGET).asm
 
 $(C_OBJ):%.o:%.c
 	$(CC) -c $(CFLAGS) -o $@ $<
