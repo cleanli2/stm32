@@ -139,8 +139,10 @@ void task_power(struct task*vp)
     }
 }
 
+#define LED8S_LASTDELAY 4
 static uint date_pos_led8s=0;
 static uint date_ct_led8s=0;
+static uint date_ct_led8s_lastdelay=LED8S_LASTDELAY;
 void task_timer(struct task*vp)
 {
     (void)vp;//fix unused variable warning
@@ -155,8 +157,13 @@ void task_timer(struct task*vp)
         /*led8s display*/
         if(date_ct_led8s++>0){
             date_ct_led8s=0;
-            if(date_pos_led8s++>15)
-                date_pos_led8s=0;
+            if(date_pos_led8s++>15){
+                date_pos_led8s=16;
+                if(date_ct_led8s_lastdelay--==0){
+                    date_ct_led8s_lastdelay=LED8S_LASTDELAY;
+                    date_pos_led8s=0;
+                }
+            }
             if(date[date_pos_led8s]=='.' ||
                     date[date_pos_led8s]==':')
                 date_pos_led8s++;
