@@ -60,6 +60,7 @@
 #include "gui.h"	    
 #include "common.h"	    
 
+#ifdef LCD_DISBLE
 static int tp_inited = 0;
 _m_tp_dev tp_dev=
 {
@@ -697,3 +698,20 @@ void set_touch_need_reinit()
 {
     tp_inited = 0;
 }
+#else
+u8 get_TP_point(uint16_t * x, uint16_t * y)
+{
+    (void)x;
+    (void)y;
+    return 0;
+}
+void TP_Draw_Big_Point(u16 x,u16 y,u16 color)
+{
+    (void)x;
+    (void)y;
+    (void)color;
+}
+void set_touch_need_reinit()
+{
+}
+#endif

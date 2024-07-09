@@ -7,7 +7,6 @@ u16 PROXY_POINT_COLOR = 0x0000;
 DECLARE_OS_LOCK(oslk_disp_para, DISP_RB_LOCK);
 DECLARE_OS_LOCK(oslk_os_lcd_printf_buf, OS_LCD_PRT_BUF_LOCK);
 DECLARE_RB_DATA(disp_func_para, rb_disp_para, 2)
-
 void draw_sq(int x1, int y1, int x2, int y2, int color);
 
 void Proxy_TP_Draw_Big_Point(u16 xc,u16 yc,u16 color)

@@ -145,6 +145,7 @@
 #elif defined SUNRISE
 /////////////////////////////////////SUNRISE//////////////////////////////////////////////
 
+#define LCD_DISABLE
 
 #define POWER_MONITOR
 #define GPIO_ADC_VREF_PIN GPIO_Pin_5
@@ -158,6 +159,16 @@
 #define CURRENT_MEASUREMENT_CALIBRATION 1025/1000
 #define V4_2_RATIO 2
 #define ADC_DEBUG
+
+#define LED8S0_GPIO_PERIPH RCC_APB2Periph_GPIOC
+#define LED8S0_GPIO_GROUP GPIOC
+#define LED8S0_GPIO_PIN GPIO_Pin_2
+#define LED8S1_GPIO_PERIPH RCC_APB2Periph_GPIOA
+#define LED8S1_GPIO_GROUP GPIOA
+#define LED8S1_GPIO_PIN GPIO_Pin_8
+#define LED8S2_GPIO_PERIPH RCC_APB2Periph_GPIOC
+#define LED8S2_GPIO_GROUP GPIOC
+#define LED8S2_GPIO_PIN GPIO_Pin_3
 
 
 #define BEEP_GPIO_PERIPH RCC_APB2Periph_GPIOA
@@ -242,11 +253,13 @@ static inline uint16_t DATAIN()
 
 //touch screen
 //与触摸屏芯片连接引脚	   
-#define PEN_GG GPIOC
+//LED8S use this pin
+//#define PEN_GG GPIOC
 #define DOUT_GG GPIOA
 #define TDIN_GG GPIOA
 #define TCLK_GG GPIOA
-#define TCS_GG GPIOC
+//LED8S use this pin
+//#define TCS_GG GPIOC
 
 #define PEN_PIN GPIO_Pin_3
 #define DOUT_PIN GPIO_Pin_6
@@ -426,8 +439,9 @@ static inline uint16_t DATAIN()
 
 //////////////////////////////common//////////////////////////////////
 //touch
-#define PEN  GPIO_ReadInputDataBit(PEN_GG, PEN_PIN)    //PA1  INT
-#define TCS(x)  GPIO_WriteBit(TCS_GG, TCS_PIN, x)   //PA0 CS
+//LED8S use this pin
+//#define PEN  GPIO_ReadInputDataBit(PEN_GG, PEN_PIN)    //PA1  INT
+//#define TCS(x)  GPIO_WriteBit(TCS_GG, TCS_PIN, x)   //PA0 CS
 
 //gpio spi
 #define DOUT GPIO_ReadInputDataBit(DOUT_GG, DOUT_PIN)     //PA6  MISO

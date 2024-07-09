@@ -59,31 +59,6 @@
 #include "test.h"	 
 #include "display.h"
 
-	   
-#ifdef ALIENTEK_MINI
-void LCD_Set_Window(u16 sx,u16 sy,u16 width,u16 height);
-#endif
-
-//管理LCD重要参数
-//默认为竖屏
-_lcd_dev lcddev;
-
-//画笔颜色,背景颜色
-u16 POINT_COLOR = 0x0000,BACK_COLOR = 0xFFFF;  
-u16 DeviceCode;	 
-
-void Enable_BL(int en)//点亮背光	 
-{
-	if(en){
-	    LCD_LED_SET;     
-	    //GPIOC->BSRR = 0x00002000;
-	}
-	else{
-	    LCD_LED_CLR;     
-	    //GPIOC->BRR = 0x00002000;
-	}
-}
-
 void LCD_BUS_To_write(int write)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -101,6 +76,32 @@ void LCD_BUS_To_write(int write)
         GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
         GPIO_SetBits(GPIOB,LCD_PORT_GPIO_Pins);
     }
+}
+
+	   
+#ifdef ALIENTEK_MINI
+void LCD_Set_Window(u16 sx,u16 sy,u16 width,u16 height);
+#endif
+
+//管理LCD重要参数
+//默认为竖屏
+_lcd_dev lcddev;
+
+//画笔颜色,背景颜色
+u16 POINT_COLOR = 0x0000,BACK_COLOR = 0xFFFF;  
+u16 DeviceCode;	 
+
+#ifndef LCD_DISABLE
+void Enable_BL(int en)//点亮背光	 
+{
+	if(en){
+	    LCD_LED_SET;     
+	    //GPIOC->BSRR = 0x00002000;
+	}
+	else{
+	    LCD_LED_CLR;     
+	    //GPIOC->BRR = 0x00002000;
+	}
 }
 
 void LCD_write(u16 VAL)
@@ -931,6 +932,7 @@ void lcd_sueb_basicinit()
  	LCD_RESET(); //LCD 复位
 }
 
+
 //PWM freq=72000/(0x9000)/2=976hz
 #define BLPWM_ARR (0x9000-1)
 #define BLPWM_PSC 1
@@ -1672,6 +1674,65 @@ u16 LCD_Read_ID(void)
 	return (val[2]<<8)|val[3];
 #endif
 }
+
+#else  //LCD_DISABLE
+void lcd_sueb_init(int testitem)
+{
+    (void)testitem;
+}
+void set_BL_value(uint16_t v)
+{
+    (void)v;
+}
+void lcd_sueb_test()
+{
+}
+void lcd_sueb_basicinit()
+{
+}
+void lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye)
+{
+    (void)xs;
+    (void)ys;
+    (void)color;
+    (void)xe;
+    (void)ye;
+}
+void LCD_DrawPoint(u16 x,u16 y)
+{
+    (void)x;
+    (void)y;
+}
+void LCD_SetWindows(u16 xStar, u16 yStar,u16 xEnd,u16 yEnd)
+{
+    (void)xStar;
+    (void)yStar;
+    (void)xEnd;
+    (void)yEnd;
+}
+void Lcd_WriteData_16Bit(u16 Data)
+{
+    (void)Data;
+}
+void LCD_Clear(u16 Color)
+{
+    (void)Color;
+}
+void LCD_DrawPoint_Color(u16 x,u16 y,u16 color)
+{
+    (void)x;
+    (void)y;
+    (void)color;
+}
+void LCD_SetCursor(u16 Xpos, u16 Ypos)
+{
+    (void)Xpos;
+    (void)Ypos;
+}
+#endif
+
+
+
 
 void led8s_init()
 {

@@ -406,6 +406,7 @@ void lcdsuebinit(char *p)
 //    lprint("Err!\ndispcchar [x] [y]\n");
 }
 
+#if 0
 void lcdsuebtest(char *p)
 {
     (void)p;
@@ -418,7 +419,6 @@ void lcdsuebtest(char *p)
 //    lprint("Err!\ndispcchar [x] [y]\n");
 }
 
-#if 0
 void lcd19264init(char *p)
 {
   lcd_init();
@@ -588,7 +588,6 @@ void show_ziku(char *p)
 
     return;
 }
-#endif
 void lcdsuebstep(char *p)
 {
     uint32_t para1 = 0, para2=0, para3 = 0, para4 = 0, color = 0,tmp, cmdindex;
@@ -724,6 +723,7 @@ void lcdsuebstep(char *p)
 error:
     lprint("Err!\ndispcchar [x] [y]\n");
 }
+#endif
 void poweroff(char *p)
 {
     (void)p;
@@ -1150,6 +1150,7 @@ void m_p(char *p)
     play_music(music_lst[i], 0);
     return;
 }
+#if 0
 struct point stress_pts[] = {
     {225, 305}
 };
@@ -1177,6 +1178,7 @@ void stress(char *p)
     gftp->pts = stress_pts;
     return;
 }
+#endif
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 void bflog(char *p)
 {
@@ -1248,8 +1250,8 @@ static const struct command cmd_list[]=
     {"led",ledtest},
     {"logf",logflag},
     {"lst",lcdsuebinit},
-    {"lstep",lcdsuebstep},
-    {"lstest",lcdsuebtest},
+    //{"lstep",lcdsuebstep},
+    //{"lstest",lcdsuebtest},
     {"music",m_p},
 #endif
     {"pm",print_mem},
@@ -1262,7 +1264,7 @@ static const struct command cmd_list[]=
     {"rtcf",rtcf},
     {"rtcs",rtcs},
     {"sd",sd},
-    {"stress",stress},
+    //{"stress",stress},
 #ifndef WRITE_W25F
     //{"sdcmds",sd_cmds},
     {"test",test},
