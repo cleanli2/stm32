@@ -867,6 +867,7 @@ void reboot_download()
 {
     lprintf_time("reboot download\n");
     GPIO_SetBits(GPIOA,GPIO_Pin_13);
+    delay_ms(100);
     //beep(100, 500);
     lprintf_time("reboot download\n");
     foce_save_log_func();
