@@ -169,6 +169,15 @@
 #define LED8S2_GPIO_PERIPH RCC_APB2Periph_GPIOA
 #define LED8S2_GPIO_GROUP GPIOA
 #define LED8S2_GPIO_PIN GPIO_Pin_8
+#define LED8S3_GPIO_PERIPH RCC_APB2Periph_GPIOB
+#define LED8S3_GPIO_GROUP GPIOB
+#define LED8S3_GPIO_PIN GPIO_Pin_15
+#define LED8S4_GPIO_PERIPH RCC_APB2Periph_GPIOB
+#define LED8S4_GPIO_GROUP GPIOB
+#define LED8S4_GPIO_PIN GPIO_Pin_14
+#define LED8S5_GPIO_PERIPH RCC_APB2Periph_GPIOB
+#define LED8S5_GPIO_GROUP GPIOB
+#define LED8S5_GPIO_PIN GPIO_Pin_13
 
 
 #define BEEP_GPIO_PERIPH RCC_APB2Periph_GPIOA
@@ -225,14 +234,14 @@
 #define LCD_RD_CLR  GPIOC->BRR=1<<LCD_RD     //读	  		  
 #define LCD_LED_CLR  GPIOA->BRR=1<<LED      //读		  
 
-#define LCD_PORT_GPIO_Pins               ((uint16_t)0xFFFF)  /*!< High 8 pins selected */
+#define LCD_PORT_GPIO_Pins               ((uint16_t)0xFF)  /*!< High 8 pins selected */
 //PB0~15,作为数据线
 //注意：如果使用8位模式数据总线，则液晶屏的数据高8位是接到MCU的高8位总线上
 //举例：如果接8位模式则本示例接线为液晶屏DB10-DB17对应接至单片机GPIOB_Pin8-GPIOB_Pin15
 //举例：如果是16位模式：DB0-DB7分别接GPIOB_Pin0-GPIOB_Pin7,DB10-DB17对应接至单片机GPIOB_Pin8-GPIOB_Pin15
 //Note:DB4<->A3 DB3<->A2 for HW problem
 //NOTE:the HW problem above is not problem, it's caused by error config
-#define DATAOUT(x) (GPIOB->ODR = x)
+#define DATAOUT(x) (GPIOB->ODR=((GPIOB->ODR)&0xff00)+(0xff & x))
 #define DATAIN()     (GPIOB->IDR)
 /*
 static inline uint16_t DATAIN()

@@ -1740,6 +1740,8 @@ void led8s_init()
   RCC_APB2PeriphClockCmd(LED8S0_GPIO_PERIPH, ENABLE);
   RCC_APB2PeriphClockCmd(LED8S1_GPIO_PERIPH, ENABLE);
   RCC_APB2PeriphClockCmd(LED8S2_GPIO_PERIPH, ENABLE);
+  RCC_APB2PeriphClockCmd(LED8S3_GPIO_PERIPH, ENABLE);
+  RCC_APB2PeriphClockCmd(LED8S4_GPIO_PERIPH, ENABLE);
 
   GPIO_InitStructure.GPIO_Pin = LED8S0_GPIO_PIN;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -1756,9 +1758,21 @@ void led8s_init()
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(LED8S2_GPIO_GROUP, &GPIO_InitStructure);
 
+  GPIO_InitStructure.GPIO_Pin = LED8S3_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(LED8S3_GPIO_GROUP, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = LED8S4_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(LED8S4_GPIO_GROUP, &GPIO_InitStructure);
+
   led8s_write(0, 0xff00);
   led8s_write(1, 0xff2a);
   led8s_write(2, 0xff0a);
+  led8s_write(3, 0x0);
+  led8s_write(4, 0x0);
   lprintf("led8s init.\r\n");
 }
 
@@ -1776,6 +1790,12 @@ void led8s_write(u32 idx, u32 d)
           break;
       case 2:
           GPIO_SetBits(LED8S2_GPIO_GROUP, LED8S2_GPIO_PIN);
+          break;
+      case 3:
+          GPIO_SetBits(LED8S3_GPIO_GROUP, LED8S3_GPIO_PIN);
+          break;
+      case 4:
+          GPIO_SetBits(LED8S4_GPIO_GROUP, LED8S4_GPIO_PIN);
           break;
       default:
           return;
@@ -1796,6 +1816,12 @@ void led8s_write(u32 idx, u32 d)
           break;
       case 2:
           GPIO_ResetBits(LED8S2_GPIO_GROUP, LED8S2_GPIO_PIN);
+          break;
+      case 3:
+          GPIO_ResetBits(LED8S3_GPIO_GROUP, LED8S3_GPIO_PIN);
+          break;
+      case 4:
+          GPIO_ResetBits(LED8S4_GPIO_GROUP, LED8S4_GPIO_PIN);
           break;
       default:
           return;
