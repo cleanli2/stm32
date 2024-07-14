@@ -412,7 +412,7 @@ void Fill_Triangel(u16 x0,u16 y0,u16 x1,u16 y1,u16 x2,u16 y2)
 }
 
 
-#define N_LED8S 5
+#define N_LED8S 8
 
 static u16 LCD_Char_scale = 1;
 void set_LCD_Char_scale(u16 scale)
