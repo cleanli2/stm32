@@ -157,8 +157,8 @@ void task_timer(struct task*vp)
         /*led8s display*/
         if(date_ct_led8s++>0){
             date_ct_led8s=0;
-            if(date_pos_led8s++>10){
-                date_pos_led8s=11;
+            if(date_pos_led8s++>8){
+                date_pos_led8s=9;
                 if(date_ct_led8s_lastdelay--==0){
                     date_ct_led8s_lastdelay=LED8S_LASTDELAY;
                     date_pos_led8s=0;
