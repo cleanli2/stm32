@@ -439,7 +439,7 @@ void auto_time_correct_raw(int adj_type)
     char ch_t[ENV_MAX_VALUE_LEN], *p=&ch_t[0];
     date_info_t dt, dt_lastadj;
     uint32_t hours_adj_1min, diff_hours, v_tmp;
-    lprintf_time("auto_time_correct +\n");
+    lprintf_time("auto_time_correct + type=%d\n", adj_type);
     if(ENV_OK != get_env("LastTimeAdj", ch_t)){
         lprintf_time("skip ATC 1\n");
         return;
