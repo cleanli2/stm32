@@ -86,6 +86,9 @@ void led8s_task(void*p)
                         date_ct_led8s_lastdelay=LED8S_LASTDELAY;
                         date_move_direction_led8s=!date_move_direction_led8s;
                         GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
+                        if(min_zero()){
+                            auto_time_correct_10s();
+                        }
                     }
                 }
                 if(date[date_pos_led8s]=='.' ||
@@ -786,7 +789,7 @@ void main_init(void)
   //beep_by_timer_100(0);
   os_task_add(os_task_log, task_log_stack, "log", STACK_SIZE_LOCAL, 5);
   os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 1);
-  os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LARGE*2, 2);
+  //os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LARGE*2, 2);
   os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 4);
   //os_task_add(os_touch, touch_stack, "touch", STACK_SIZE_LARGE, 2);
   os_task_add(os_task_display, display_stack, "display", STACK_SIZE_LARGE*2, 7);
@@ -851,9 +854,6 @@ void os_task2(void*p)
     (void)p;
     while(1){
         os_10ms_delay(1000);
-        if(min_zero()){
-            auto_time_correct_10s();
-        }
     }
 }
 void soft_reset_system()
