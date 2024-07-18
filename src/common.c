@@ -51,7 +51,7 @@ void compute_cpu_occp();
 /*led8s display*/
 extern date_info_t g_cur_date;
 #define LED8S_LASTDELAY (LED8S_INTV_PER_SECOND*3) //delay when move to end
-#define LED8S_INTV 2 //interval between each move
+#define LED8S_INTV 1 //interval between each move
 #define LED8S_INTV_PER_SECOND 5 //interval between each move
 static uint date_move_direction_led8s=1;//1-to right 0-to left
 static int date_pos_led8s=0;
@@ -79,7 +79,7 @@ void led8s_task(void*p)
                     date_pos_led8s++;
             }
             else{
-                if(date_pos_led8s--<0){
+                if(date_pos_led8s--<=0){
                     date_pos_led8s=0;
                     if(date_ct_led8s_lastdelay--==0){
                         date_ct_led8s_lastdelay=LED8S_LASTDELAY;
@@ -91,6 +91,8 @@ void led8s_task(void*p)
                     if(date_pos_led8s!=0)
                         date_pos_led8s--;
             }
+            //prt_hex(date_move_direction_led8s);
+            //prt_hex(date_ct_led8s_lastdelay);
             lcd_lprintf(1, 0x10000,0,date+date_pos_led8s);
         }
     }
