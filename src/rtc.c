@@ -342,7 +342,7 @@ char* get_rtc_time(date_info_t*dit)
             dit->year = 2000 + bcd2hex(time_date[6]);
         }
     }
-    slprintf(&t_d[2], "%b.%b.%b-%b:%b:%b W%x",
+    slprintf(&t_d[2], "%b.%b.%b %b:%b:%b W%x",
             time_date[6], time_date[5]&0x1f, time_date[3],
             time_date[2], time_date[1], time_date[0], time_date[4]);
     if(dit!=0){
@@ -424,7 +424,7 @@ void auto_time_correct_raw(int adj_type)
     char ch_t[ENV_MAX_VALUE_LEN], *p=&ch_t[0];
     date_info_t dt, dt_lastadj;
     uint32_t hours_adj_1min, diff_hours, v_tmp;
-    lprintf_time("auto_time_correct +\n");
+    lprintf_time("auto_time_correct + type=%d\n", adj_type);
     if(ENV_OK != get_env("LastTimeAdj", ch_t)){
         lprintf_time("skip ATC 1\n");
         return;
