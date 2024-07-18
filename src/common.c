@@ -814,8 +814,8 @@ void main_init(void)
         run_cmd_interface();
     }
   os_task_add(os_task_log, task_log_stack, "log", STACK_SIZE_LOCAL, 5);
-  os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 0);
-  os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LARGE*2, 1);
+  os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 1);
+  os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LARGE*2, 2);
   os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 4);
   os_task_add(os_touch, touch_stack, "touch", STACK_SIZE_LARGE, 2);
   os_task_add(os_task_display, display_stack, "display", STACK_SIZE_LARGE*2, 7);
@@ -876,7 +876,6 @@ void os_task3(void*p)
         run_cmd_interface();
     }
 }
-u32 teset_td = 495;
 void os_task2(void*p)
 {
     (void)p;

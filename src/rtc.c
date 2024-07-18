@@ -434,7 +434,7 @@ void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y)
     }
 }
 
-void auto_time_correct()
+void auto_time_correct_raw(int adj_type)
 {
     char ch_t[ENV_MAX_VALUE_LEN], *p=&ch_t[0];
     date_info_t dt, dt_lastadj;
@@ -503,21 +503,58 @@ void auto_time_correct()
     lprintf_time("diff hours %d\n", diff_hours);
     lcd_lprintf(1, 340, 610, "HoursPass:%d", diff_hours);
 
-    if(diff_hours>hours_adj_1min){
-        if(ch_t[0]=='+'){
-            lprintf_time("try faster 1min\n");
-        }
-        else{
-            lprintf_time("try slower 1min\n");
-        }
-        if(RTC_OK==adjust_1min(ch_t[0]=='+')){
-            set_env("LastTimeAdj", get_rtc_time(NULL));
-            lprintf_time("adj OK\n");
-        }
-        else{
-            lprintf_time("adj fail\n");
-        }
+    //do adjust
+    switch(adj_type){
+        case ADJ_10SECS:
+            {
+                if(diff_hours>hours_adj_1min/6){
+                    if(ch_t[0]=='+'){
+                        lprintf_time("try faster 10 seconds\n");
+                    }
+                    else{
+                        lprintf_time("try slower 10 seconds\n");
+                    }
+                    if(RTC_OK==adjust_10s(ch_t[0]=='+')){
+                        set_env("LastTimeAdj", get_rtc_time(NULL));
+                        lprintf_time("adj OK\n");
+                    }
+                    else{
+                        lprintf_time("adj fail\n");
+                    }
+                }
+            }
+            break;
+        case ADJ_MINUTE:
+        default:
+            {
+                if(diff_hours>hours_adj_1min){
+                    if(ch_t[0]=='+'){
+                        lprintf_time("try faster 1min\n");
+                    }
+                    else{
+                        lprintf_time("try slower 1min\n");
+                    }
+                    if(RTC_OK==adjust_1min(ch_t[0]=='+')){
+                        set_env("LastTimeAdj", get_rtc_time(NULL));
+                        lprintf_time("adj OK\n");
+                    }
+                    else{
+                        lprintf_time("adj fail\n");
+                    }
+                }
+            }
+            break;
     }
+}
+
+void auto_time_correct_10s()
+{
+    auto_time_correct_raw(ADJ_10SECS);
+}
+
+void auto_time_correct()
+{
+    auto_time_correct_raw(ADJ_MINUTE);
 }
 
 uint8_t check_rtc_alert_and_clear()
@@ -531,6 +568,46 @@ uint8_t check_rtc_alert_and_clear()
         rtc_write_reg(1,0x12);//clear rtc int pin
     }
     return ret;
+}
+
+uint adjust_10s(uint faster)
+{
+#ifndef RTC_8563
+    uint ret;
+    lprintf("adj10s faster %d\n", faster);
+    uint8_t scd = bcd2hex(rtc_read_reg(SECOND_REG));
+    if(scd != bcd2hex(rtc_read_reg(SECOND_REG))){
+        lprintf("read rtc reg 'second' fail\n");
+        return RTC_FAIL;
+    }
+    if(scd>=45 && faster){
+        lprintf("second=%d\n", scd);
+        lprintf(">=45 fail\n");
+        return RTC_FAIL;
+    }
+    if(scd<=15 && !faster){
+        lprintf("second=%d\n", scd);
+        lprintf("<=15 fail\n");
+        return RTC_FAIL;
+    }
+    if(scd%10>7){
+        lprintf("second=%d\n", scd);
+        lprintf(">7 fail\n");
+        return RTC_FAIL;
+    }
+    if(faster){
+        scd+=10;
+    }
+    else{
+        scd-=10;
+    }
+    ret = rtc_write_reg(SECOND_REG, hex2bcd(scd));
+    lprintf("W:sec=%d 0x%b\n", scd, hex2bcd(scd));
+    return ret;
+#else
+    adjust_second(faster?10:-10);
+    return RTC_OK;
+#endif
 }
 
 uint adjust_1min(uint faster_1min)
@@ -602,3 +679,7 @@ void i2c_init()
     rtc_inited = 1;
 }
 
+int min_zero()
+{
+    return 0==bcd2hex(rtc_read_reg(MINUTE_REG));
+}
