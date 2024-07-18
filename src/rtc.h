@@ -17,6 +17,9 @@
 #define RTC_FAIL 0
 #define RTC_OK 1
 
+#define ADJ_MINUTE 0
+#define ADJ_10SECS 1
+
 void rtc_read(uint8_t*);
 void rtc_write(uint8_t*);
 char* get_rtc_time(date_info_t*);
@@ -24,10 +27,13 @@ uint8_t rtc_read_reg(uint8_t addr);
 uint8_t rtc_write_reg(uint8_t addr, uint8_t data);
 void auto_time_alert_set(uint32_t time_step_minutes, int show_x, int show_y);
 void auto_time_correct();
+void auto_time_correct_10s();
 uint8_t check_rtc_alert_and_clear();
 uint adjust_1min(uint faster_1min);
+uint adjust_10s(uint faster);
 void clear_second();
 uint8_t hex2bcd(uint8_t ipt);
 void get_date(date_info_t*dit);
+int min_zero();
 
 #endif

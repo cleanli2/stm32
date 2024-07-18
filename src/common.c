@@ -786,7 +786,7 @@ void main_init(void)
   //beep_by_timer_100(0);
   os_task_add(os_task_log, task_log_stack, "log", STACK_SIZE_LOCAL, 5);
   os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 1);
-  //os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LARGE*2, 2);
+  os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LARGE*2, 2);
   os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 4);
   //os_task_add(os_touch, touch_stack, "touch", STACK_SIZE_LARGE, 2);
   os_task_add(os_task_display, display_stack, "display", STACK_SIZE_LARGE*2, 7);
@@ -846,35 +846,14 @@ void os_task3(void*p)
         run_cmd_interface();
     }
 }
-u32 teset_td = 495;
 void os_task2(void*p)
 {
     (void)p;
     while(1){
-        //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
-        //putchars("--0 0\n");
-        GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-        os_10ms_delay(teset_td);
-        //putchars("--0 1\n");
-        task_timer(NULL);
-        GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-        os_10ms_delay(teset_td);
-        //lprintf("other task %d\n", *rtet);
-#if 0
-            {
-                struct point pt_cache;
-                os_lock(&oslk_evt);
-                evt *dtw=RB_W_GET_wait(evt, rb_evt);
-                //do work
-                dtw->type = EVT_SCRN_TOUCH_UP;
-                pt_cache.px=220;
-                pt_cache.py=310;
-                memcpy(dtw->pkg, &pt_cache, sizeof(struct point));
-                RB_W_SET(evt, rb_evt);
-                os_unlock(&oslk_evt);
-            }
-#endif
-        task_timer(NULL);
+        os_10ms_delay(1000);
+        if(min_zero()){
+            auto_time_correct_10s();
+        }
     }
 }
 void soft_reset_system()

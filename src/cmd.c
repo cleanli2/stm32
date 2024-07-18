@@ -1202,6 +1202,7 @@ void rtc_cmd(char *p)
         p = str_to_hex(p, (uint*)&d[4]);
         p = str_to_hex(p, (uint*)&d[5]);
         rtc_write(d);
+        set_env("LastTimeAdj", get_rtc_time(NULL));
     }
     else if(tmp==0){
         lprintf("%s\n", get_rtc_time(0));
