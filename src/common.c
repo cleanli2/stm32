@@ -50,7 +50,7 @@ void compute_cpu_occp();
 
 /*led8s display*/
 extern date_info_t g_cur_date;
-#define LED8S_LASTDELAY (LED8S_INTV_PER_SECOND*3) //delay when move to end
+#define LED8S_LASTDELAY (LED8S_INTV_PER_SECOND*2) //delay when move to end
 #define LED8S_INTV 1 //interval between each move
 #define LED8S_INTV_PER_SECOND 5 //interval between each move
 static uint date_move_direction_led8s=1;//1-to right 0-to left
@@ -72,6 +72,7 @@ void led8s_task(void*p)
                     if(date_ct_led8s_lastdelay--==0){
                         date_ct_led8s_lastdelay=LED8S_LASTDELAY;
                         date_move_direction_led8s=!date_move_direction_led8s;
+                        GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
                     }
                 }
                 if(date[date_pos_led8s]=='.' ||
@@ -84,6 +85,7 @@ void led8s_task(void*p)
                     if(date_ct_led8s_lastdelay--==0){
                         date_ct_led8s_lastdelay=LED8S_LASTDELAY;
                         date_move_direction_led8s=!date_move_direction_led8s;
+                        GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
                     }
                 }
                 if(date[date_pos_led8s]=='.' ||
@@ -784,7 +786,7 @@ void main_init(void)
   //beep_by_timer_100(0);
   os_task_add(os_task_log, task_log_stack, "log", STACK_SIZE_LOCAL, 5);
   os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 1);
-  os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LARGE*2, 2);
+  //os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LARGE*2, 2);
   os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 4);
   //os_task_add(os_touch, touch_stack, "touch", STACK_SIZE_LARGE, 2);
   os_task_add(os_task_display, display_stack, "display", STACK_SIZE_LARGE*2, 7);
