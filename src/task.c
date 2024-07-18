@@ -139,10 +139,6 @@ void task_power(struct task*vp)
     }
 }
 
-#define LED8S_LASTDELAY 4
-static uint date_pos_led8s=0;
-static uint date_ct_led8s=0;
-static uint date_ct_led8s_lastdelay=LED8S_LASTDELAY;
 void task_timer(struct task*vp)
 {
     (void)vp;//fix unused variable warning
@@ -150,28 +146,6 @@ void task_timer(struct task*vp)
     //g_flag_10ms = false;
     uint64_t systime = get_system_us();
     count_1s = systime/1000000;
-#if 1
-    {
-        //g_flag_10ms = true;
-        char*date = get_rtc_time(&g_cur_date);
-        /*led8s display*/
-        if(date_ct_led8s++>0){
-            date_ct_led8s=0;
-            if(date_pos_led8s++>8){
-                date_pos_led8s=9;
-                if(date_ct_led8s_lastdelay--==0){
-                    date_ct_led8s_lastdelay=LED8S_LASTDELAY;
-                    date_pos_led8s=0;
-                }
-            }
-            if(date[date_pos_led8s]=='.' ||
-                    date[date_pos_led8s]==':')
-                date_pos_led8s++;
-            lcd_lprintf(1, 0x10000,0,date+date_pos_led8s);
-        }
-        /*led8s display end*/
-    }
-#endif
     if(count_1s != last_count_1s){
         char*date = get_rtc_time(&g_cur_date);
         //g_flag_1s = true;

@@ -45,39 +45,58 @@ void os_task1(void*);
 void os_task2(void*);
 void os_task3(void*);
 void compute_cpu_occp();
-void os_ui(void*p)
-{
-    (void)p;
-    struct point* ppt;
-    struct point last_pt = {0xffff, 0xffff};;
-    evt *dtw;
 
-    ui_start();
+
+
+/*led8s display*/
+extern date_info_t g_cur_date;
+#define LED8S_LASTDELAY 3 //delay when move to end
+#define LED8S_INTV 5 //interval between each move
+static uint date_move_direction_led8s=1;//1-to right 0-to left
+static int date_pos_led8s=0;
+static uint date_ct_led8s=0;
+static uint date_ct_led8s_lastdelay=LED8S_LASTDELAY;
+void led8s_task(void*p)
+{
+    char*date;
+    (void)p;
     while(1){
-        g_flag_1s = false;
-        dtw=RB_R_GET_wait(evt, rb_evt);
-        switch(dtw->type){
-            case EVT_SCRN_TOUCH_UP:
-                ppt = (struct point*)dtw->pkg;
-                if(last_pt.px != 0xffff){
-                    Proxy_TP_Draw_Big_Point(last_pt.px, last_pt.py, WHITE);
+        os_10ms_delay(100);
+        date = get_rtc_time(&g_cur_date);
+        if(date_ct_led8s++>LED8S_INTV){
+            date_ct_led8s=0;
+            if(date_move_direction_led8s){
+                if(date_pos_led8s++>8){
+                    date_pos_led8s=9;
+                    if(date_ct_led8s_lastdelay--==0){
+                        date_ct_led8s_lastdelay=LED8S_LASTDELAY;
+                        date_move_direction_led8s=!date_move_direction_led8s;
+                    }
                 }
-                Proxy_TP_Draw_Big_Point(ppt->px, ppt->py, BLACK);
-                last_pt = *ppt;
-                cur_task_event_flag |= 1<<EVENT_TOUCH_UP;
-                cached_touch_x = ppt->px;
-                cached_touch_y = ppt->py;
-                break;
-            case EVT_ONE_SECOND:
-                g_flag_1s = true;
-                break;
-            default:
-                lprintf("unknow evt type\n");
-        };
-        RB_R_SET(evt, rb_evt);
-        task_ui(NULL);
+                if(date[date_pos_led8s]=='.' ||
+                        date[date_pos_led8s]==':')
+                    date_pos_led8s++;
+            }
+            else{
+                if(date_pos_led8s--<0){
+                    date_pos_led8s=0;
+                    if(date_ct_led8s_lastdelay--==0){
+                        date_ct_led8s_lastdelay=LED8S_LASTDELAY;
+                        date_move_direction_led8s=!date_move_direction_led8s;
+                    }
+                }
+                if(date[date_pos_led8s]=='.' ||
+                        date[date_pos_led8s]==':')
+                    if(date_pos_led8s!=0)
+                        date_pos_led8s--;
+            }
+            lcd_lprintf(1, 0x10000,0,date+date_pos_led8s);
+        }
     }
 }
+/*led8s display end*/
+
+
 #if 0
 struct emulate_touch g_fake_touch = {0};
 struct emulate_touch *gftp=&g_fake_touch;
@@ -590,7 +609,7 @@ u32 task_log_stack[STACK_SIZE_LOCAL];
 u32 touch_stack[STACK_SIZE_LARGE];
 u32 display_stack[STACK_SIZE_LARGE*2];
 u32 cmd_stack[STACK_SIZE_LARGE];
-u32 ui_stack[STACK_SIZE_LARGE*2];
+u32 led8s_stack[STACK_SIZE_LARGE*2];
 u32 music_stack[STACK_SIZE_LARGE];
 void main_init(void)
 {
@@ -767,7 +786,7 @@ void main_init(void)
   //os_task_add(os_touch, touch_stack, "touch", STACK_SIZE_LARGE, 2);
   os_task_add(os_task_display, display_stack, "display", STACK_SIZE_LARGE*2, 7);
   os_task_add(task_music, music_stack, "music", STACK_SIZE_LARGE, 6);
-  os_task_add(os_ui, ui_stack, "ui", STACK_SIZE_LOCAL*2, 3);
+  os_task_add(led8s_task, led8s_stack, "led8s", STACK_SIZE_LOCAL*2, 3);
   while(1){
   }
 }
