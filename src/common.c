@@ -62,7 +62,7 @@ void led8s_task(void*p)
     char*date;
     (void)p;
     while(1){
-        os_10ms_delay(100);
+        os_ms_delay(100);
         date = get_rtc_time(&g_cur_date);
         if(date_ct_led8s++>LED8S_INTV){
             date_ct_led8s=0;
@@ -154,7 +154,7 @@ void os_touch(void*p)
             }
             touch_pressed = 0;
         }
-        os_10ms_delay(20);
+        os_ms_delay(20);
     }
 }
 #endif
@@ -806,7 +806,7 @@ void os_lock_test()
     lprintf("task %s wait lock\n", cur_os_task->name);
     os_lock(&oslktest);
     lprintf("task %s in\n", cur_os_task->name);
-    os_10ms_delay(200);
+    os_ms_delay(200);
     lprintf("task %s out\n", cur_os_task->name);
     os_unlock(&oslktest);
     lprintf("task %s release lock\n", cur_os_task->name);
@@ -820,10 +820,10 @@ void os_task1(void*p)
     (void)p;
     while(1){
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
-        os_10ms_delay(td/2);
+        os_ms_delay(td/2);
         //putchars("1 1\n");
         GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
-        os_10ms_delay(20-td/2+1);
+        os_ms_delay(20-td/2+1);
         //putchars("1 0\n");
         GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
 #if 1
@@ -853,7 +853,7 @@ void os_task2(void*p)
 {
     (void)p;
     while(1){
-        os_10ms_delay(1000);
+        os_ms_delay(1000);
     }
 }
 void soft_reset_system()

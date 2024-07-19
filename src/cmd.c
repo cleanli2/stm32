@@ -1131,7 +1131,7 @@ void ps(char *p)
     while(!con_is_recved()){
         lprintf("===============\n");
         showtasks();
-        os_10ms_delay(1000);
+        os_ms_delay(1000);
     }
   }
   else{
@@ -1472,7 +1472,7 @@ void run_cmd_interface()
   if(os_is_running){
     while(timeout--){
         if(os_is_running){
-            os_10ms_delay(1000);
+            os_ms_delay(1000);
         }
         else{
             w10ms_delay(100);

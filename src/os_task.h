@@ -95,7 +95,7 @@ void spin_lock_init(u32 lockno);
 void spin_lock(u32 lockno);
 void spin_unlock(u32 lockno);
 u32 atomic_inc(u32*);
-void os_10ms_delay(u32);
+void os_ms_delay(u32);
 void check_os_timer();
 void os_switch_trigger();
 uint16_t os_con_recv();

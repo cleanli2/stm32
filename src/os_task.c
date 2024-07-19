@@ -93,7 +93,7 @@ error_handle:
     return 0;
 }
 
-void os_10ms_delay(u32 timeout)
+void os_ms_delay(u32 timeout)
 {
     u32 irqsv;
     os_task_timer* g_tt;
