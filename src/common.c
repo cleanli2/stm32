@@ -52,7 +52,7 @@ void compute_cpu_occp();
 extern date_info_t g_cur_date;
 #define LED8S_LASTDELAY (LED8S_INTV_PER_SECOND*2) //delay when move to end
 #define LED8S_INTV 1 //interval between each move
-#define LED8S_INTV_PER_SECOND 5 //interval between each move
+#define LED8S_INTV_PER_SECOND 9 //interval between each move
 static uint date_move_direction_led8s=1;//1-to right 0-to left
 static int date_pos_led8s=0;
 static uint date_ct_led8s=0;
@@ -62,7 +62,7 @@ void led8s_task(void*p)
     char*date;
     (void)p;
     while(1){
-        os_ms_delay(100);
+        os_ms_delay(50);
         date = get_rtc_time(&g_cur_date);
         if(date_ct_led8s++>LED8S_INTV){
             date_ct_led8s=0;
