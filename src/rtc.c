@@ -284,6 +284,8 @@ void P8563_init()
 }
 void rtc_write(uint8_t*ip)
 {
+    lprintf_time("rtc settime:%b %b %b %b %b %b\n",
+            ip[0], ip[1],ip[2], ip[3],ip[4], ip[5]);
     P8563_init();
     P8563_settime(ip);
 }
@@ -439,9 +441,8 @@ void auto_time_correct_raw(int adj_type)
     char ch_t[ENV_MAX_VALUE_LEN], *p=&ch_t[0];
     date_info_t dt, dt_lastadj;
     uint32_t hours_adj_1min, diff_hours, v_tmp;
-    lprintf_time("auto_time_correct + type=%d\n", adj_type);
     if(ENV_OK != get_env("LastTimeAdj", ch_t)){
-        lprintf_time("skip ATC 1\n");
+        lprintf_time("ATC:t=%d skip 1\n", adj_type);
         return;
     }
     //replace '.' & ':' with space
@@ -468,7 +469,7 @@ void auto_time_correct_raw(int adj_type)
 
     if(ENV_OK != get_env("HsAdj1Min", ch_t) ||
             (ch_t[0]!='+' && ch_t[0]!='-') ){
-        lprintf_time("skip ATC 2\n");
+        lprintf_time("ATC:t=%d skip 2\n", adj_type);
         return;
     }
     //'-169' means slower 1 min or '+169' faster
@@ -496,7 +497,7 @@ void auto_time_correct_raw(int adj_type)
 
     lprintf_time("curtime:%s\n",get_rtc_time(&dt));
     if(!is_later_than(&dt, &dt_lastadj)){
-        lprintf("skip ATC 3\n");
+        lprintf_time("ATC:t=%d skip 3\n", adj_type);
         return;
     }
     diff_hours = time_diff_hours(&dt, &dt_lastadj);
