@@ -1217,6 +1217,9 @@ void rtc_cmd(char *p)
         lprintf("write reg %b->%b\n", d[0], d[1]);
         rtc_write_reg(d[0], d[1]);
     }
+    else if(tmp==3){
+        auto_time_correct_10s();
+    }
     else{
         lprintf("error \n");
     }
