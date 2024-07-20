@@ -484,31 +484,31 @@ void auto_time_correct_raw(int adj_type)
     dt_lastadj.minute = bcd2hex(dt_lastadj.minute );
     dt_lastadj.second = bcd2hex(dt_lastadj.second );
     dt_lastadj.weekday= bcd2hex(dt_lastadj.weekday);
-    lprintf_time("get last adj:%d %d %d %d %d %d %d\n",
-        dt_lastadj.year,
-        dt_lastadj.month,
-        dt_lastadj.day  ,
-        dt_lastadj.hour ,
-        dt_lastadj.minute,
-        dt_lastadj.second,
-        dt_lastadj.weekday);
     hours_adj_1min = bcd2hex_32(hours_adj_1min);
-    lprintf_time("hours adj %c%d\n", ch_t[0], hours_adj_1min);
 
-    lprintf_time("curtime:%s\n",get_rtc_time(&dt));
+    lprintf("ATC:curtime:%s\n",get_rtc_time(&dt));
     if(!is_later_than(&dt, &dt_lastadj)){
         lprintf_time("ATC:t=%d skip 3\n", adj_type);
         return;
     }
     diff_hours = time_diff_hours(&dt, &dt_lastadj);
-    lprintf_time("diff hours %d\n", diff_hours);
-    lcd_lprintf(1, 340, 610, "HoursPass:%d", diff_hours);
+    //lcd_lprintf(1, 340, 610, "HoursPass:%d", diff_hours);
 
     //do adjust
     switch(adj_type){
         case ADJ_10SECS:
             {
                 if(diff_hours>hours_adj_1min/6){
+                    lprintf_time("get last adj:%d %d %d %d %d %d %d\n",
+                            dt_lastadj.year,
+                            dt_lastadj.month,
+                            dt_lastadj.day  ,
+                            dt_lastadj.hour ,
+                            dt_lastadj.minute,
+                            dt_lastadj.second,
+                            dt_lastadj.weekday);
+                    lprintf_time("hours adj %c%d\n", ch_t[0], hours_adj_1min);
+                    lprintf_time("diff hours %d\n", diff_hours);
                     if(ch_t[0]=='+'){
                         lprintf_time("try faster 10 seconds\n");
                     }
