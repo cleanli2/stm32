@@ -558,7 +558,7 @@ uint8_t check_rtc_alert_and_clear()
 
 uint adjust_10s(uint faster)
 {
-#ifndef RTC_8563
+#ifdef RTC_8563
     uint ret;
     lprintf("adj10s faster %d\n", faster);
     uint8_t scd = bcd2hex(rtc_read_reg(SECOND_REG));
@@ -598,7 +598,7 @@ uint adjust_10s(uint faster)
 
 uint adjust_1min(uint faster_1min)
 {
-#ifndef RTC_8563
+#ifdef RTC_8563
     lprintf("ad1min %d\n", faster_1min);
     uint8_t scd = bcd2hex(rtc_read_reg(SECOND_REG));
     if(scd != bcd2hex(rtc_read_reg(SECOND_REG))){
