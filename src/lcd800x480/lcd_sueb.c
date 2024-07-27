@@ -299,6 +299,7 @@ void cam_read_frame()
     u32 last_href_lvl  = 0;
     u32 linect = 0;
     u32 count = 0;
+    u32 rec_count = 0;
     while(1){
         while(GPIOC->IDR & CAM_VSYN)ct_bf_vsyn++;
         GPIOA->BRR = GPIO_Pin_8;//XCLK = 0
@@ -307,7 +308,7 @@ void cam_read_frame()
             GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
             GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
             if(GPIOC->IDR & CAM_HREF){
-                //if(count<640*2) vbf[count]=GPIOB->IDR>>8;
+                if(linect>=50&&rec_count<640*2) vbf[rec_count++]=GPIOB->IDR>>8;
                 count++;
                 last_href_lvl  = 1;
             }
@@ -320,23 +321,19 @@ void cam_read_frame()
         lprintf("count %d linecount %d bfv %d bfh %d w %d left %d\n",
                 count, linect, ct_bf_vsyn, ct_bf_href,
                 count/linect, count%linect);
-        if(count==614400){
-            lprintf("vbf get OK\n");
-            //mem_print(vbf, 0, 640*2);
-        }
-        else lprintf("vbf get fail\n");
+        mem_print(vbf, 0, 640*2);
         count=0;
         cam_xclk_on();
         GPIOA->BRR = GPIO_Pin_8;
         ct_bf_vsyn  = 0;
         ct_bf_href=0;
         linect=0;
+        rec_count = 0;
     }
 }
 
 void cam_init()
 {
-    int count=0;
     GPIO_InitTypeDef  GPIO_InitStructure;
 
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -371,7 +368,7 @@ void cam_init()
     delay_ms(2);
 
     //set_OV7670reg();
-    //OV7670_config_window(272,12,320,240);//
+    OV7670_config_window(272,12,320,240);//
 
 }
 
