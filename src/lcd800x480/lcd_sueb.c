@@ -354,6 +354,9 @@ void cam_init()
         GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
         GPIO_SetBits(GPIOB,0xffff);
     i2c_init();
+    cam_xclk_on();
+    lprintf("cam reset return %x\n", cam_w_reg(0x12, 0x80));
+    delay_ms(2);
     //read cam id
     while(1){
         if(0x76==cam_r_reg(0x0A)){
@@ -364,10 +367,8 @@ void cam_init()
     }
     lprintf("cam read 0x0A=%b\n", cam_r_reg(0x0A));
     lprintf("cam read 0x0B=%b\n", cam_r_reg(0x0B));
-    lprintf("cam reset return %x\n", cam_w_reg(0x12, 0x80));
-    delay_ms(2);
 
-    //set_OV7670reg();
+    set_OV7670reg();
     OV7670_config_window(272,12,320,240);//
 
 }
