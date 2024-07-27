@@ -292,6 +292,48 @@ void set_OV7670reg(void)
 
 }
 char vbf[640*2];
+void cam_read_frame()
+{
+    u32 ct_bf_vsyn  = 0;
+    u32 ct_bf_href  = 0;
+    u32 last_href_lvl  = 0;
+    u32 linect = 0;
+    u32 count = 0;
+    while(1){
+        while(GPIOC->IDR & CAM_VSYN)ct_bf_vsyn++;
+        GPIOA->BRR = GPIO_Pin_8;//XCLK = 0
+        cam_xclk_off();
+        while(!(GPIOC->IDR & CAM_VSYN)){
+            GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
+            GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
+            if(GPIOC->IDR & CAM_HREF){
+                //if(count<640*2) vbf[count]=GPIOB->IDR>>8;
+                count++;
+                last_href_lvl  = 1;
+            }
+            else{
+                if(count==0)ct_bf_href++;
+                if(last_href_lvl)linect++;
+                last_href_lvl  = 0;
+            }
+        }
+        lprintf("count %d linecount %d bfv %d bfh %d w %d left %d\n",
+                count, linect, ct_bf_vsyn, ct_bf_href,
+                count/linect, count%linect);
+        if(count==614400){
+            lprintf("vbf get OK\n");
+            //mem_print(vbf, 0, 640*2);
+        }
+        else lprintf("vbf get fail\n");
+        count=0;
+        cam_xclk_on();
+        GPIOA->BRR = GPIO_Pin_8;
+        ct_bf_vsyn  = 0;
+        ct_bf_href=0;
+        linect=0;
+    }
+}
+
 void cam_init()
 {
     int count=0;
@@ -331,31 +373,6 @@ void cam_init()
     //set_OV7670reg();
     //OV7670_config_window(272,12,320,240);//
 
-#if 1
-    while(1){
-        while(GPIOC->IDR & CAM_VSYN);
-        GPIOA->BRR = GPIO_Pin_8;//XCLK = 0
-        cam_xclk_off();
-        while(!(GPIOC->IDR & CAM_VSYN)){
-            GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
-            GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
-            if(GPIOC->IDR & CAM_HREF){
-                if(count<640*2)
-                vbf[count]=GPIOB->IDR>>8;
-                count++;
-            }
-        }
-        lprintf("count %d\n", count);
-        if(count==614400){
-            lprintf("vbf get OK\n");
-            mem_print(vbf, 0, 640*2);
-        }
-        else lprintf("vbf get fail\n");
-        count=0;
-        cam_xclk_on();
-        GPIOA->BRR = GPIO_Pin_8;
-    }
-#endif
 }
 
 void LCD_BUS_To_write(int write)
@@ -1743,6 +1760,7 @@ void lcd_sueb_init(int testitem)
 
     //camera init
     cam_init();
+    cam_read_frame();
 
 #endif
 }
