@@ -946,7 +946,7 @@ void cam_init()
     //init_rgb565_qvga_25fps_new();
     //init_rgb565_qvga_25fps();
     //init_yuv_25fps();
-    lprintf("cam w 0x70 return %x\n", cam_w_reg(0x70, 0x80|cam_r_reg(0x70)));
+    //lprintf("cam w 0x70 return %x\n", cam_w_reg(0x70, 0x80|cam_r_reg(0x70)));
     lprintf("cam w 0x71 return %x\n", cam_w_reg(0x71, 0x80|cam_r_reg(0x71)));
     lprintf("cam read 0x12=%b\n", cam_r_reg(0x12));
 }
