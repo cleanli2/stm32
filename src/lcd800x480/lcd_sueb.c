@@ -855,10 +855,11 @@ void cam_read_frame()
     while(1){
         //while(GPIOC->IDR & CAM_VSYN);
         lprintf("================start of frame==========\r\n");
-        while(!(GPIOC->IDR & CAM_VSYN))ct_bf_vsyn++;
+        //while(!(GPIOC->IDR & CAM_VSYN))ct_bf_vsyn++;
+        while((GPIOC->IDR & CAM_VSYN))ct_bf_vsyn++;
         cam_xclk_off();
-        //while(!(GPIOC->IDR & CAM_VSYN)){
-        while(GPIOC->IDR & CAM_VSYN){
+        while(!(GPIOC->IDR & CAM_VSYN)){
+        //while(GPIOC->IDR & CAM_VSYN){
             GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
             GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
             if(GPIOC->IDR & CAM_HREF){
@@ -938,7 +939,7 @@ void cam_init()
     //init_rgb565_qvga_12fps();
     //init_rgb565_qvga_25fps_new();
     //init_rgb565_qvga_25fps();
-    init_yuv_25fps();
+    //init_yuv_25fps();
     lprintf("cam read 0x12=%b\n", cam_r_reg(0x12));
 }
 
