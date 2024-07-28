@@ -852,11 +852,17 @@ void cam_read_frame()
     u32 count = 0;
     u32 rec_count = 0;
     u32 w_count = 0;
+    u32 frames_skip= 100;
     while(1){
         //while(GPIOC->IDR & CAM_VSYN);
-        lprintf("================start of frame==========\r\n");
-        //while(!(GPIOC->IDR & CAM_VSYN))ct_bf_vsyn++;
+        while(!(GPIOC->IDR & CAM_VSYN));
         while((GPIOC->IDR & CAM_VSYN))ct_bf_vsyn++;
+        if(frames_skip--){
+            prt_hex(frames_skip);
+            continue;
+        }
+        else frames_skip=100;
+        lprintf("================start of frame==========\r\n");
         cam_xclk_off();
         while(!(GPIOC->IDR & CAM_VSYN)){
         //while(GPIOC->IDR & CAM_VSYN){
