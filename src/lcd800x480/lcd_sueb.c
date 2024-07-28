@@ -854,6 +854,7 @@ void cam_read_frame()
     u32 w_count = 0;
     while(1){
         //while(GPIOC->IDR & CAM_VSYN);
+        lprintf("================start of frame==========\r\n");
         while(!(GPIOC->IDR & CAM_VSYN))ct_bf_vsyn++;
         cam_xclk_off();
         //while(!(GPIOC->IDR & CAM_VSYN)){
@@ -861,7 +862,7 @@ void cam_read_frame()
             GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
             GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
             if(GPIOC->IDR & CAM_HREF){
-                if(linect>=50&&rec_count<640*2) vbf[rec_count++]=GPIOB->IDR>>8;
+                vbf[rec_count++]=GPIOB->IDR>>8;
                 w_count++;
                 count++;
                 last_href_lvl  = 1;
@@ -869,9 +870,11 @@ void cam_read_frame()
             else{
                 if(count==0)ct_bf_href++;
                 if(last_href_lvl){
+                    mem_print(vbf, 640*2*linect, 640*2);
                     ws[linect]=w_count;
                     w_count=0;
                     linect++;
+                    rec_count = 0;
                 }
                 last_href_lvl  = 0;
             }
@@ -879,17 +882,16 @@ void cam_read_frame()
         for(int i=480-1;i>=0;i--){
             lprintf("ws[%d]=%d\r\n", i, ws[i]);
         }
-        mem_print(vbf, 0, 640*2);
         lprintf("count %d linecount %d bfv %d bfh %d w %d left %d\n",
                 count, linect, ct_bf_vsyn, ct_bf_href,
                 count/linect, count%linect);
+        lprintf("================end of frame==========\r\n");
         count=0;
         cam_xclk_on();
         GPIOA->BRR = GPIO_Pin_8;
         ct_bf_vsyn  = 0;
         ct_bf_href=0;
         linect=0;
-        rec_count = 0;
     }
 }
 
