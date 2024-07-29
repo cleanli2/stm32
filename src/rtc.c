@@ -484,6 +484,7 @@ void auto_time_correct_raw(int adj_type)
         case ADJ_10SECS:
             {
                 if(diff_hours>hours_adj_1min/6){
+                    lprintf_time("ATC:curtime:%s\n",get_rtc_time(NULL));
                     lprintf_time("get last adj:%d %d %d %d %d %d %d\n",
                             dt_lastadj.year,
                             dt_lastadj.month,
