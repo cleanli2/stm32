@@ -782,12 +782,12 @@ void main_init(void)
 		  RCC_ClocksStatus.PCLK1_Frequency,
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
-  lprintf_time("lcd init\n");
-  lcd_sueb_init(0);
-  lprintf_time("lcd init done.\n");
   lprintf_time("SD init\n");
   SD_Init();
   lprintf_time("SD init done\n");
+  lprintf_time("lcd init\n");
+  lcd_sueb_init(0);
+  lprintf_time("lcd init done.\n");
   //SD_LowLevel_Init();
 
   /*1us/timer_count, 10ms/timer_intrpt*/
