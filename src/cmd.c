@@ -1215,6 +1215,10 @@ void cam(char *p)
             p = str_to_hex(p, &p2);
             lprintf("p2=%d\n", p2);
         }
+        if(np>=3){
+            p = str_to_hex(p, &p3);
+            lprintf("p3=%d\n", p3);
+        }
         //if(FS_OK==open_file_for_write(file_name, "bin", SD_ReadBlock, SD_WriteBlock)){
         if(FS_OK==open_file_for_write("YUV2", "bin", SD_ReadBlock, SD_WriteBlock)){
             uint32_t write_secs=0;
