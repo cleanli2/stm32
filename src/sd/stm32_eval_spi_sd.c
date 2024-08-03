@@ -121,7 +121,7 @@ uint8_t SD_SPI_ReadWriteByte(uint8_t data)
 //返回值:0,成功;1,失败;
 u8 SD_Select(void)
 {
-    lprintf("sd select\n");
+    //lprintf("sd select\n");
 	SD_CS_LOW();
 	if(SD_WaitReady()==0)return 0;//等待成功
 	SD_DisSelect();
@@ -130,7 +130,7 @@ u8 SD_Select(void)
 
 void SD_DisSelect(void)
 {
-    lprintf("sd deselect\n");
+    //lprintf("sd deselect\n");
 	SD_CS_HIGH();
  	SD_SPI_ReadWriteByte(0xff);//Ìá¹©¶îÍâµÄ8¸öÊ±ÖÓ
 }
@@ -142,7 +142,7 @@ uint8_t SD_WaitReady(void)
     do
     {
         if(SD_SPI_ReadWriteByte(0XFF)==0XFF){
-            lprintf("rdy@%x\n", t);
+            //lprintf("rdy@%x\n", t);
             return 0;//OK
         }
         t++;
@@ -192,7 +192,7 @@ u8 SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc)
       r1=SD_SPI_ReadWriteByte(0xFF);
   }while((r1&0X80) && Retry--);
   //返回状态值
-  lprintf("SD_SendCmd %b %X %b\n", Cmd, Arg, Crc);
+  //lprintf("SD_SendCmd %b %X %b\n", Cmd, Arg, Crc);
   return r1;
 }
 
@@ -664,7 +664,7 @@ u32 SD_GetSectorCount(void)
   */
 SD_Error SD_ReadBlock(uint8_t* pBuffer, uint32_t ReadBlockNo, uint16_t Size)
 {
-    lprintf("R addr %X, len %d\n", ReadBlockNo, (u32)Size);
+    //lprintf("R addr %X, len %d\n", ReadBlockNo, (u32)Size);
     return SD_ReadDisk(pBuffer, ReadBlockNo, Size>>9);
 #if 0
   uint32_t i = 0;
@@ -863,7 +863,7 @@ SD_Error SD_ReadMultiBlocks(uint8_t* pBuffer, uint64_t ReadAddr, uint16_t BlockS
   */
 SD_Error SD_WriteBlock(uint8_t* w_buf, uint32_t WriteBlockNo, uint16_t Size)
 {
-    lprintf("W addr %X, len %d\n", WriteBlockNo, (u32)Size);
+    //lprintf("W addr %X, len %d\n", WriteBlockNo, (u32)Size);
     return SD_WriteDisk(w_buf, WriteBlockNo, Size>>9);
 #if 0
   uint32_t i = 0, rtry = 5;
