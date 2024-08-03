@@ -1197,12 +1197,12 @@ void cam_init();
 void cam_read_frame();
 void cam(char *p)
 {
-
-        //camera init
-        cam_init();
-        prtline;
-        cam_read_frame();
-        prtline;
+    (void)p;
+    //camera init
+    cam_init();
+    prtline;
+    cam_read_frame();
+    prtline;
 
 }
 
