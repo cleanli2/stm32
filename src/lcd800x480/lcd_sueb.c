@@ -845,7 +845,35 @@ void set_OV7670reg(void)
 }
 #endif
 char vbf[640*2];
+char fbf[512];
+u32 fbfs=0;
 u16 ws[480];
+
+int wtf(char*bf, u32 len, u32 ss)
+{
+    u32 llt = len;
+    if(fbfs>0){//left last time
+        memcpy(fbf+fbfs, bf, ss-fbfs);
+        llt-=ss-fbfs;
+        bf+=ss-fbfs;
+        if(0>write_sec_to_file((const char*)fbf)){
+            return -1;
+        }
+    }
+    while(llt > ss){
+        memcpy(fbf, bf, ss);
+        llt-=ss;
+        bf+=ss;
+        if(0>write_sec_to_file((const char*)fbf)){
+            return -1;
+        }
+    }
+    fbfs = llt;
+    if(fbfs>0){//left for next
+        memcpy(fbf, bf, llt);
+    }
+    return fbfs;
+}
 void cam_read_frame()
 {
     u32 ct_bf_vsyn  = 0;
@@ -880,7 +908,11 @@ void cam_read_frame()
             else{
                 if(count==0)ct_bf_href++;
                 if(last_href_lvl){
-                    mem_print(vbf, 640*2*linect, 640*2);
+                    //mem_print(vbf, 640*2*linect, 640*2);
+                    if(0>wtf(vbf, 640*2, 512)){
+                        lprintf("cam write to file error, linect %d\n", linect);
+                        return;
+                    }
                     ws[linect]=w_count;
                     w_count=0;
                     linect++;
@@ -902,6 +934,7 @@ void cam_read_frame()
         ct_bf_vsyn  = 0;
         ct_bf_href=0;
         linect=0;
+        return;
     }
 }
 

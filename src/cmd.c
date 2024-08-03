@@ -1279,13 +1279,19 @@ void cam(char *p)
             lprintf("disk retry=%d\n", disk_retry);
         }
     }
-#if 0
-    //camera init
-    cam_init();
-    prtline;
-    cam_read_frame();
-    prtline;
-#endif
+    if(!strcmp(p1, "camw")){
+        //camera init
+        if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
+            cam_init();
+            prtline;
+            cam_read_frame();
+            prtline;
+            close_file();
+        }
+        else{
+            lprintf("open file fail\n");
+        }
+    }
 }
 
 void bflog(char *p)
