@@ -884,15 +884,18 @@ void cam_read_frame()
     u32 rec_count = 0;
     u32 w_count = 0;
     u32 frames_skip= 100;
+    int frames_wsize;
     while(1){
         //while(GPIOC->IDR & CAM_VSYN);
         while(!(GPIOC->IDR & CAM_VSYN));
         while((GPIOC->IDR & CAM_VSYN))ct_bf_vsyn++;
+#if 0
         if(frames_skip--){
             prt_hex(frames_skip);
             continue;
         }
         else frames_skip=100;
+#endif
         lprintf("================start of frame==========\r\n");
         cam_xclk_off();
         while(!(GPIOC->IDR & CAM_VSYN)){
@@ -909,7 +912,8 @@ void cam_read_frame()
                 if(count==0)ct_bf_href++;
                 if(last_href_lvl){
                     //mem_print(vbf, 640*2*linect, 640*2);
-                    if(0>wtf(vbf, 640*2, 512)){
+                    frames_wsize=wtf(vbf, 640*2, 512);
+                    if(frames_wsize<0){
                         lprintf("cam write to file error, linect %d\n", linect);
                         return;
                     }
@@ -921,12 +925,15 @@ void cam_read_frame()
                 last_href_lvl  = 0;
             }
         }
+        memset(vbf, 0xff, 512);
+        if(fbfs)frames_wsize=wtf(vbf, 512-fbfs, 512);
         for(int i=480-1;i>=0;i--){
             lprintf("ws[%d]=%d\r\n", i, ws[i]);
         }
         lprintf("count %d linecount %d bfv %d bfh %d w %d left %d\n",
                 count, linect, ct_bf_vsyn, ct_bf_href,
                 count/linect, count%linect);
+        lprintf("frame file size:%d(0x%x)\n", frames_wsize, frames_wsize);
         lprintf("================end of frame==========\r\n");
         count=0;
         cam_xclk_on();

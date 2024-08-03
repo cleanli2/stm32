@@ -1280,16 +1280,31 @@ void cam(char *p)
         }
     }
     if(!strcmp(p1, "camw")){
+        lprintf("open %s.BIN\n", file_name);
         //camera init
         if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
-            cam_init();
-            prtline;
             cam_read_frame();
-            prtline;
             close_file();
         }
         else{
             lprintf("open file fail\n");
+        }
+    }
+    if(!strcmp(p1, "init")){
+        cam_init();
+    }
+    if(!strcmp(p1, "i2c")){
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+            lprintf("p2=%d\n", p2);
+        }
+        if(np>=3){
+            p = str_to_hex(p, &p3);
+            lprintf("p3=%d\n", p3);
+            lprintf("cam w %b->%b return %x\n", p3, p2, cam_w_reg(p2, p3));
+        }
+        else{
+            lprintf("cam read %b=%b\n", p2, cam_r_reg(p2));
         }
     }
 }
