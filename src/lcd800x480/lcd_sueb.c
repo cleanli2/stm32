@@ -2334,11 +2334,42 @@ void lcd_sueb_init(int testitem)
     set_BL_value(DEFAULT_BL);//quater bright
 	LCD_Clear(WHITE);//ÇåÈ«ÆÁ°×É«
 
+    prtline;
+    //sd init
+    do
+    {
+        SD_CardInfo mycard;
+        lprintf("Detecting sd card...");
+        if(SD_Init() != SD_OK )
+        {
+            lprintf("retry once\r\n");
+            if(SD_Init() != SD_OK){
+                lprintf("Fail\n");
+                break;
+            }
+            lprintf("retry OK\r\n");
+        }
+        else{
+            lprintf("OK\n");
+        }
+        if(SD_GetCardInfo(&mycard) != SD_OK)
+        {
+            lprintf("get card info Fail\n");
+            break;
+        }
+        else{
+            lprintf("block size %d\n", mycard.CardBlockSize);
+            lprintf("block capacity %d\n", mycard.CardCapacity);
+        }
+        lprintf("filesize %d\r\n", get_file_size(SD_ReadBlock));
+    }
+    while(0);
+    //sd init end
+
+        //camera init
+        cam_init();
         prtline;
-    //camera init
-    cam_init();
-        prtline;
-    cam_read_frame();
+        cam_read_frame();
         prtline;
 
 #endif
