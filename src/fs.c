@@ -17,6 +17,8 @@ uint32_t FAT_cache[2][8];
 
 int fs_debug_is_enabled()
 {
+    return 0;
+#if 0
     char t[ENV_MAX_VALUE_LEN];
     if(ENV_OK == get_env("fs_debug", t)){
         //lprintf("getenv fs_debug %s\n", t);
@@ -30,6 +32,7 @@ int fs_debug_is_enabled()
     else{
             return 0;
     }
+#endif
 }
 
 uint32_t get_uint_offset(char* buf_base, uint32_t off, uint32_t num)
