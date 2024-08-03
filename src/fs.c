@@ -17,7 +17,7 @@ uint32_t FAT_cache[2][8];
 
 int fs_debug_is_enabled()
 {
-    return 0;
+    return 1;
 #if 0
     char t[ENV_MAX_VALUE_LEN];
     if(ENV_OK == get_env("fs_debug", t)){
@@ -78,7 +78,7 @@ char* disk_read_sector(uint32_t sector_no)
         else{
             break;
         }
-        if(retry==0){
+        if(retry--==0){
             lprintf("FATAL:!!!!!!!!!!!!read disk err secno:%d 0x%x\n", sector_no, sector_no);
             return NULL;
         }
