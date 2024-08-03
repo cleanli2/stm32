@@ -1193,6 +1193,7 @@ void stress(char *p)
     gftp->pts = stress_pts;
     return;
 }
+extern int debug_fs;
 char file_name[16];
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 void cam_init();
@@ -1258,6 +1259,13 @@ void cam(char *p)
             p = str_to_str(p, &ps);
             lprintf("ps=%s\n", ps);
             strcpy(file_name, ps);
+        }
+    }
+    if(!strcmp(p1, "dbg")){
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+            lprintf("p2=%d\n", p2);
+            debug_fs = p2;
         }
     }
 #if 0
