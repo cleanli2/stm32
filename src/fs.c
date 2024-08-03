@@ -57,18 +57,28 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
             lprintf("write disk err retry=%d\n", retry);
         }
     }
+    lprintf("FATAL:!!!!!!!!!!!!write disk err secno:%d 0x%x\n", sector_no, sector_no);
     return NULL;
 }
 
 char* disk_read_sector(uint32_t sector_no)
 {
+    int retry = 8;
     if(current_sector_no == sector_no){
         lprintf("just read\n");
         return disk_buf;
     }
-    if(SD_RESPONSE_NO_ERROR != g_fs->rd_block((u8*)disk_buf, sector_no, FS_BUF_SIZE)){
-        lprintf("read disk err\n");
-        return NULL;
+    while(1){
+        if(SD_RESPONSE_NO_ERROR != g_fs->rd_block((u8*)disk_buf, sector_no, FS_BUF_SIZE)){
+            lprintf("read disk err, retry=%d\n", retry);
+        }
+        else{
+            break;
+        }
+        if(retry==0){
+            lprintf("FATAL:!!!!!!!!!!!!read disk err secno:%d 0x%x\n", sector_no, sector_no);
+            return NULL;
+        }
     }
     current_sector_no = sector_no;
     lprintf("read 0x%x sector OK\n", sector_no);
