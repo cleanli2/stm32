@@ -1198,18 +1198,46 @@ void cam_init();
 void cam_read_frame();
 void cam(char *p)
 {
-    (void)p;
-    memset((char*)read_buf, 0x53, 512);
-    if(FS_OK==open_file_for_write("yuv1", "bin", SD_ReadBlock, SD_WriteBlock)){
-        write_sec_to_file((const char*)read_buf);
-        close_file();
+    char*p1;
+    uint32_t np, p2=0x53, p3;
+    np = get_howmany_para(p);
+    lprintf("number of para=%d\n", np);
+    if(np>=1){
+        p = str_to_str(p, &p1);
+        lprintf("p1=%s\n", p1);
     }
+    if(np>=2){
+        p = str_to_hex(p, &p2);
+        lprintf("p2=%d\n", p2);
+    }
+    if(np>=3){
+        p = str_to_hex(p, &p3);
+        lprintf("p3=%d\n", p3);
+    }
+    if(!strcmp(p1, "fwrite")){
+        lprintf("memset %x\n", p2);
+        memset((char*)read_buf, p2, 512);
+        if(FS_OK==open_file_for_write("yuv1", "bin", SD_ReadBlock, SD_WriteBlock)){
+            write_sec_to_file((const char*)read_buf);
+            memset((char*)read_buf, 0x54, 512);
+            write_sec_to_file((const char*)read_buf);
+            memset((char*)read_buf, 0x55, 512);
+            write_sec_to_file((const char*)read_buf);
+            close_file();
+        }
+    }
+    if(!strcmp(p1, "fread")){
+        lprintf("file offset %d\n", p2);
+        get_file_content((char*)read_buf, "yuv1", "bin", p2, 512, SD_ReadBlock);
+        mem_print((const char*)read_buf, (uint32_t)p3, 512);
+    }
+#if 0
     //camera init
     cam_init();
     prtline;
     cam_read_frame();
     prtline;
-
+#endif
 }
 
 void bflog(char *p)
