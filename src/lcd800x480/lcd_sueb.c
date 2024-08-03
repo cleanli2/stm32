@@ -99,6 +99,7 @@ uint8_t cam_r_reg(uint8_t addr);
 int cam_w_reg(uint8_t addr, uint8_t data);
 #define sensor_write_reg cam_w_reg
 #define udelay delay_us
+#if 0
 void OV7670_config_window(unsigned int startx,unsigned int starty,unsigned int width, unsigned int height)
 {
 	unsigned int endx;
@@ -842,6 +843,7 @@ void set_OV7670reg(void)
 	cam_w_reg(0x3b, 0xc2);
 
 }
+#endif
 char vbf[640*2];
 u16 ws[480];
 void cam_read_frame()

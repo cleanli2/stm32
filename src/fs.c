@@ -44,6 +44,15 @@ uint32_t get_uint_offset(char* buf_base, uint32_t off, uint32_t num)
     return ret;
 }
 
+const char* disk_write_sector(const char*buf, uint32_t sector_no)
+{
+    if(SD_RESPONSE_NO_ERROR != g_fs->wt_block((u8*)buf, sector_no, FS_BUF_SIZE)){
+        lprintf("write disk err\n");
+        return NULL;
+    }
+    return buf;
+}
+
 char* disk_read_sector(uint32_t sector_no)
 {
     static uint32_t current_sector_no = 0xffffffff;
@@ -318,6 +327,7 @@ int init_fs(block_read_func rd_block)
     lprintf("init fs\n");
     g_fs = &g_fat32;
     g_fs->rd_block = rd_block;
+    g_fs->wt_block = NULL;
     memset(&FAT_cache[0][0], 0, FAT_cache_N*FAT_cache_SIZE);
     if(NULL == disk_read_sector(bsect)){
         lprintf("read disk err\n");
@@ -440,7 +450,7 @@ int init_fs(block_read_func rd_block)
 int get_file_size(const char*filename, const char*ext_filename, block_read_func rd_block)
 {
     int ret;
-    lprintf("get_file_size+\n");
+    //lprintf("get_file_size+\n");
     if(fs_debug_is_enabled()){
         debug_fs = 1;
     }
@@ -465,6 +475,8 @@ int get_file_size(const char*filename, const char*ext_filename, block_read_func 
     if(g_fp->sclust!=INVALID_CLUSTER){
         //find root dir sec
         lprintf("file start clust 0x%x size %d\n", (DWORD)g_fp->sclust, g_fp->fsize);
+        g_fp->in_writing = 0;
+        g_fp->fptr = 0;
         return g_fp->fsize;
     }
     else{
@@ -489,4 +501,47 @@ int get_file_content(char* buf, const char*filename, const char*extfn, uint32_t 
     else{
         return ret;
     }
+}
+
+int open_file_for_write(const char*fn, const char*ext, block_read_func rd_block, block_write_func wt_block)
+{
+    int ret;
+    ret = get_file_size(fn, ext, rd_block);
+    if(0 < ret){
+        g_fp->clust = g_fp->sclust;
+        g_fp->clust_sec_offset = 0;
+        g_fp->in_writing = 1;
+        g_fs->wt_block = wt_block;
+        return FS_OK;
+    }
+    else{
+        return ret;
+    }
+}
+
+void close_file()
+{ 
+    g_fp->clust = 0;
+    g_fp->clust_sec_offset = 0;
+    g_fp->in_writing = 0;
+}
+
+int write_sec_to_file(const char*buf)
+{
+    if(!g_fp->in_writing){
+        lprintf("try write not opened file\r\n");
+        return -1;
+    }
+    lprintf("clust %d sec_off %d\r\n", g_fp->clust, g_fp->clust_sec_offset);
+    uint32_t target_sector_no = g_fp->fs->database + (g_fp->clust - 2) * g_fs->csize;
+    target_sector_no += g_fp->clust_sec_offset;
+    disk_write_sector(buf, target_sector_no);
+    g_fp->clust_sec_offset++;
+    if(g_fp->clust_sec_offset >=g_fp->fs->csize)
+    {
+        g_fp->clust = get_next_cluster(g_fp->clust);
+        g_fp->clust_sec_offset = 0;
+    }
+    g_fp->fptr += g_fs->ssize;
+    return g_fp->fptr;
 }

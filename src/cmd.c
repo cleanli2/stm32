@@ -1,3 +1,4 @@
+#include "fs.h"
 #include "cmd.h"
 #include "common.h"
 #include "lprintf.h"
@@ -1198,6 +1199,11 @@ void cam_read_frame();
 void cam(char *p)
 {
     (void)p;
+    memset((char*)read_buf, 0x53, 512);
+    if(FS_OK==open_file_for_write("yuv1", "bin", SD_ReadBlock, SD_WriteBlock)){
+        write_sec_to_file((const char*)read_buf);
+        close_file();
+    }
     //camera init
     cam_init();
     prtline;

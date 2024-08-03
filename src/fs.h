@@ -101,6 +101,7 @@ typedef uint32_t DWORD;
 #define FS_FAT32	3
 #define MIN_EOF	0x0FFFFFF8
 typedef SD_Error (*block_read_func)(uint8_t* pBuffer, uint32_t block_n, uint16_t BlockSize);
+typedef SD_Error (*block_write_func)(uint8_t* pBuffer, uint32_t block_n, uint16_t BlockSize);
 
 typedef struct {
 	BYTE	fs_type;		/* FAT sub-type (0:Not mounted) */
@@ -129,6 +130,7 @@ typedef struct {
 	DWORD	tsect;		    /* Total sectors */
 	WORD	nrsv;		    /* reserv sectors */
     block_read_func rd_block;
+    block_write_func wt_block;
 
 } FATFS;
 
@@ -137,10 +139,12 @@ typedef struct {
 	WORD	id;				/* Owner file system mount ID (**do not change order**) */
 	BYTE	flag;			/* Status flags */
 	BYTE	err;			/* Abort flag (error code) */
+	BYTE	in_writing;		/* flag of writing*/
 	DWORD	fptr;			/* File read/write pointer (Zeroed on file open) */
 	DWORD	fsize;			/* File size */
 	DWORD	sclust;			/* File start cluster (0:no cluster chain, always 0 when fsize is 0) */
 	DWORD	clust;			/* Current cluster of fpter (not valid when fprt is 0) */
+	DWORD	clust_sec_offset;	/* offset of Current cluster*/
 	DWORD	dsect;			/* Sector number appearing in buf[] (0:invalid) */
 #if _FS_WRITE
 	DWORD	dir_sect;		/* Sector number containing the directory entry */
@@ -151,4 +155,7 @@ typedef struct {
 
 int get_file_content(char* buf, const char*filename, const char*ext_name, uint32_t file_offset, uint32_t len, block_read_func SD_ReadBlock);
 int get_file_size(const char*flnm, const char*ext, block_read_func rd_block);
+int open_file_for_write(const char*fn, const char*ext, block_read_func rd_block, block_write_func wt_block);
+int write_sec_to_file(const char*buf);
+void close_file();
 #endif
