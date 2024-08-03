@@ -541,10 +541,12 @@ int open_file_for_write(const char*fn, const char*ext, block_read_func rd_block,
 
 void close_file()
 { 
-    g_fp->clust = 0;
-    g_fp->clust_sec_offset = 0;
-    g_fp->in_writing = 0;
-    g_fp->sclust=INVALID_CLUSTER;
+    if(g_fp != NULL){
+        g_fp->clust = 0;
+        g_fp->clust_sec_offset = 0;
+        g_fp->in_writing = 0;
+        g_fp->sclust=INVALID_CLUSTER;
+    }
 }
 
 int write_sec_to_file(const char*buf)
