@@ -796,6 +796,9 @@ void main_init(void)
       led_flash(0x3, 100);
   }
   beep_by_timer_100(0);
+    while(1){
+        run_cmd_interface();
+    }
   os_task_add(os_task_log, task_log_stack, "log", STACK_SIZE_LOCAL, 5);
   os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 0);
   os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LARGE*2, 1);

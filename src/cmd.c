@@ -1193,6 +1193,19 @@ void stress(char *p)
     return;
 }
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
+void cam_init();
+void cam_read_frame();
+void cam(char *p)
+{
+
+        //camera init
+        cam_init();
+        prtline;
+        cam_read_frame();
+        prtline;
+
+}
+
 void bflog(char *p)
 {
     (void)p;
@@ -1243,6 +1256,7 @@ static const struct command cmd_list[]=
     {"adc",adc},
     {"bz",buzztest},
     {"bflog",bflog},
+    {"cam",cam},
     {"exit",cmd_exit},
     {"envset",envset},
     {"envget",envget},

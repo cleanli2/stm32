@@ -2365,13 +2365,6 @@ void lcd_sueb_init(int testitem)
     }
     while(0);
     //sd init end
-
-        //camera init
-        cam_init();
-        prtline;
-        cam_read_frame();
-        prtline;
-
 #endif
 }
  
