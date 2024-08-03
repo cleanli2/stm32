@@ -340,6 +340,8 @@ uint32_t get_file_start_cluster(const char* filename, const char*fileextname)
     return file_start_cluster;
 }
 
+#define MBR_FS_TYPE 0x1c2
+#define MBR_FIRST_PART_OFFSET 0x1c6
 int init_fs(block_read_func rd_block)
 {
     BYTE fmt;
@@ -353,6 +355,7 @@ int init_fs(block_read_func rd_block)
         lprintf("read disk err\n");
         return FS_DISK_ERR;
     }
+dbr_check:
     /* Check boot record signature (always placed at offset 510 even if the sector size is >512) */
     if (get_uint_offset(fs_buf, BS_55AA, 2) != 0xAA55){
         lprintf("last is not AA55\n");
@@ -360,9 +363,19 @@ int init_fs(block_read_func rd_block)
     }
     /* Check boot record signature (always placed at offset 510 even if the sector size is >512) */
     if (get_uint_offset(fs_buf, BS_FilSysType32, 3) != 0x544146){
-        lprintf("not fat32\n");
-        return FS_NOT_FAT32;
+        lprintf("MBR\n");
+        if(get_uint_offset(fs_buf, MBR_FS_TYPE, 1) == 0x0c){
+            lprintf("Win95 FAT32\n");
+        }
+        bsect += get_uint_offset(fs_buf, MBR_FIRST_PART_OFFSET, 4);
+        lprintf("Read DBR\n");
+        if(NULL == disk_read_sector(bsect)){
+            lprintf("read disk err\n");
+            return FS_DISK_ERR;
+        }
+        goto dbr_check;
     }
+    lprintf("DBR\n");
     g_fs->ssize=get_uint_offset(fs_buf, BPB_BytsPerSec, 2);
     lprintf("sector size %x\n", (DWORD)g_fp->fs->ssize);
     g_fs->fsize=get_uint_offset(fs_buf, BPB_FATSz32, 2);
