@@ -467,7 +467,7 @@ int init_fs(block_read_func rd_block)
 int get_file_size(const char*filename, const char*ext_filename, block_read_func rd_block)
 {
     int ret;
-    //lprintf("get_file_size+\n");
+    lprintf("get_file_size %s.%s\n", filename, ext_filename);
     if(fs_debug_is_enabled()){
         debug_fs = 1;
     }

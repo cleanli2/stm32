@@ -1201,7 +1201,7 @@ void cam(char *p)
 {
     char*p1, *ps;
     uint32_t np, p2=0x53, p3=3;
-    if(!file_name[0])strcpy(file_name, "yuv1");
+    if(!file_name[0])strcpy(file_name, "YUV1");
     lprintf("filename:%s\n", file_name);
     np = get_howmany_para(p);
     lprintf("number of para=%d\n", np);
