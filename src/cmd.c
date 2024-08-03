@@ -1193,30 +1193,29 @@ void stress(char *p)
     gftp->pts = stress_pts;
     return;
 }
+char file_name[16];
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 void cam_init();
 void cam_read_frame();
 void cam(char *p)
 {
-    char*p1;
+    char*p1, *ps;
     uint32_t np, p2=0x53, p3=3;
+    if(!file_name[0])strcpy(file_name, "yuv1");
+    lprintf("filename:%s\n", file_name);
     np = get_howmany_para(p);
     lprintf("number of para=%d\n", np);
     if(np>=1){
         p = str_to_str(p, &p1);
         lprintf("p1=%s\n", p1);
     }
-    if(np>=2){
-        p = str_to_hex(p, &p2);
-        lprintf("p2=%d\n", p2);
-    }
-    if(np>=3){
-        p = str_to_hex(p, &p3);
-        lprintf("p3=%d\n", p3);
-    }
     if(!strcmp(p1, "fwrite")){
         lprintf("memset %x\n", p2);
-        if(FS_OK==open_file_for_write("yuv1", "bin", SD_ReadBlock, SD_WriteBlock)){
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+            lprintf("p2=%d\n", p2);
+        }
+        if(FS_OK==open_file_for_write(file_name, "bin", SD_ReadBlock, SD_WriteBlock)){
             uint32_t write_secs=0;
             while(p3--){
                 memset((char*)read_buf, p2++, 512);
@@ -1233,12 +1232,27 @@ void cam(char *p)
         }
     }
     if(!strcmp(p1, "fread")){
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+            lprintf("p2=%d\n", p2);
+        }
+        if(np>=3){
+            p = str_to_hex(p, &p3);
+            lprintf("p3=%d\n", p3);
+        }
         lprintf("file offset %d\n", p2);
-        if(get_file_content((char*)read_buf, "yuv1", "bin", p2, 512, SD_ReadBlock)>=0){
+        if(get_file_content((char*)read_buf, file_name, "bin", p2, 512, SD_ReadBlock)>=0){
             mem_print((const char*)read_buf, (uint32_t)p3, 512);
         }
         else{
             lprintf("read file fail\n");
+        }
+    }
+    if(!strcmp(p1, "name")){
+        if(np>=2){
+            p = str_to_str(p, &ps);
+            lprintf("ps=%s\n", ps);
+            strcpy(file_name, ps);
         }
     }
 #if 0
