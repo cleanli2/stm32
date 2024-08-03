@@ -1194,6 +1194,7 @@ void stress(char *p)
     return;
 }
 extern int debug_fs;
+extern int disk_retry;
 char file_name[16];
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 void cam_init();
@@ -1266,6 +1267,16 @@ void cam(char *p)
             p = str_to_hex(p, &p2);
             lprintf("p2=%d\n", p2);
             debug_fs = p2;
+        }
+    }
+    if(!strcmp(p1, "retry")){
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+            lprintf("p2=%d\n", p2);
+            disk_retry = p2;
+        }
+        else{
+            lprintf("disk retry=%d\n", disk_retry);
         }
     }
 #if 0

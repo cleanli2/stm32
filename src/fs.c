@@ -8,6 +8,7 @@ FIL g_file={0};
 FIL * g_fp=NULL;
 FATFS* g_fs;
 int debug_fs = 0;
+int disk_retry = 8;
 
 #define FAT_cache_N 2
 #define FAT_cache_SIZE 8
@@ -50,7 +51,7 @@ uint32_t get_uint_offset(char* buf_base, uint32_t off, uint32_t num)
 static uint32_t current_sector_no = 0xffffffff;
 const char* disk_write_sector(const char*buf, uint32_t sector_no)
 {
-    int retry = 8;
+    int retry = disk_retry;
     current_sector_no = 0xffffffff;
     while(retry--){
         if(SD_RESPONSE_NO_ERROR == g_fs->wt_block((u8*)buf, sector_no, FS_BUF_SIZE)){
@@ -66,7 +67,7 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
 
 char* disk_read_sector(uint32_t sector_no)
 {
-    int retry = 8;
+    int retry = disk_retry;
     if(current_sector_no == sector_no){
         lprintf("just read\n");
         return disk_buf;
