@@ -44,9 +44,11 @@ uint32_t get_uint_offset(char* buf_base, uint32_t off, uint32_t num)
     return ret;
 }
 
+static uint32_t current_sector_no = 0xffffffff;
 const char* disk_write_sector(const char*buf, uint32_t sector_no)
 {
     int retry = 8;
+    current_sector_no = 0xffffffff;
     while(retry--){
         if(SD_RESPONSE_NO_ERROR == g_fs->wt_block((u8*)buf, sector_no, FS_BUF_SIZE)){
             return buf;
@@ -60,8 +62,8 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
 
 char* disk_read_sector(uint32_t sector_no)
 {
-    static uint32_t current_sector_no = 0xffffffff;
     if(current_sector_no == sector_no){
+        lprintf("just read\n");
         return disk_buf;
     }
     if(SD_RESPONSE_NO_ERROR != g_fs->rd_block((u8*)disk_buf, sector_no, FS_BUF_SIZE)){
