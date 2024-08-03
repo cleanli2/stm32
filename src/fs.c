@@ -541,6 +541,7 @@ void close_file()
     g_fp->clust = 0;
     g_fp->clust_sec_offset = 0;
     g_fp->in_writing = 0;
+    g_fp->sclust=INVALID_CLUSTER;
 }
 
 int write_sec_to_file(const char*buf)

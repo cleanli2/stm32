@@ -1247,6 +1247,7 @@ void cam(char *p)
         else{
             lprintf("read file fail\n");
         }
+        close_file();
     }
     if(!strcmp(p1, "name")){
         if(np>=2){
