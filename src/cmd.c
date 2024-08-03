@@ -1201,7 +1201,7 @@ void cam(char *p)
 {
     char*p1, *ps;
     uint32_t np, p2=0x53, p3=3;
-    if(!file_name[0])strcpy(file_name, "YUV2");
+    if(!file_name[0])strcpy(file_name, "yuv1");
     lprintf("filename:%s\n", file_name);
     np = get_howmany_para(p);
     lprintf("number of para=%d\n", np);
@@ -1219,8 +1219,7 @@ void cam(char *p)
             p = str_to_hex(p, &p3);
             lprintf("p3=%d\n", p3);
         }
-        //if(FS_OK==open_file_for_write(file_name, "bin", SD_ReadBlock, SD_WriteBlock)){
-        if(FS_OK==open_file_for_write("YUV2", "bin", SD_ReadBlock, SD_WriteBlock)){
+        if(FS_OK==open_file_for_write(file_name, "bin", SD_ReadBlock, SD_WriteBlock)){
             uint32_t write_secs=0;
             while(p3--){
                 memset((char*)read_buf, p2++, 512);
