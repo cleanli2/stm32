@@ -1217,17 +1217,29 @@ void cam(char *p)
     if(!strcmp(p1, "fwrite")){
         lprintf("memset %x\n", p2);
         if(FS_OK==open_file_for_write("yuv1", "bin", SD_ReadBlock, SD_WriteBlock)){
+            uint32_t write_secs=0;
             while(p3--){
                 memset((char*)read_buf, p2++, 512);
-                write_sec_to_file((const char*)read_buf);
+                if(0>write_sec_to_file((const char*)read_buf)){
+                    break;
+                }
+                write_secs++;
             }
+            lprintf("write_secs=%d\n", write_secs);
             close_file();
+        }
+        else{
+            lprintf("open file fail\n");
         }
     }
     if(!strcmp(p1, "fread")){
         lprintf("file offset %d\n", p2);
-        get_file_content((char*)read_buf, "yuv1", "bin", p2, 512, SD_ReadBlock);
-        mem_print((const char*)read_buf, (uint32_t)p3, 512);
+        if(get_file_content((char*)read_buf, "yuv1", "bin", p2, 512, SD_ReadBlock)>=0){
+            mem_print((const char*)read_buf, (uint32_t)p3, 512);
+        }
+        else{
+            lprintf("read file fail\n");
+        }
     }
 #if 0
     //camera init

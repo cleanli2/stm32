@@ -535,7 +535,9 @@ int write_sec_to_file(const char*buf)
     lprintf("clust %d sec_off %d\r\n", g_fp->clust, g_fp->clust_sec_offset);
     uint32_t target_sector_no = g_fp->fs->database + (g_fp->clust - 2) * g_fs->csize;
     target_sector_no += g_fp->clust_sec_offset;
-    disk_write_sector(buf, target_sector_no);
+    if(NULL==disk_write_sector(buf, target_sector_no)){
+        return -1;
+    }
     g_fp->clust_sec_offset++;
     if(g_fp->clust_sec_offset >=g_fp->fs->csize)
     {
