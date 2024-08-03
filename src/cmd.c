@@ -1199,7 +1199,7 @@ void cam_read_frame();
 void cam(char *p)
 {
     char*p1;
-    uint32_t np, p2=0x53, p3;
+    uint32_t np, p2=0x53, p3=3;
     np = get_howmany_para(p);
     lprintf("number of para=%d\n", np);
     if(np>=1){
@@ -1216,13 +1216,11 @@ void cam(char *p)
     }
     if(!strcmp(p1, "fwrite")){
         lprintf("memset %x\n", p2);
-        memset((char*)read_buf, p2, 512);
         if(FS_OK==open_file_for_write("yuv1", "bin", SD_ReadBlock, SD_WriteBlock)){
-            write_sec_to_file((const char*)read_buf);
-            memset((char*)read_buf, 0x54, 512);
-            write_sec_to_file((const char*)read_buf);
-            memset((char*)read_buf, 0x55, 512);
-            write_sec_to_file((const char*)read_buf);
+            while(p3--){
+                memset((char*)read_buf, p2++, 512);
+                write_sec_to_file((const char*)read_buf);
+            }
             close_file();
         }
     }
