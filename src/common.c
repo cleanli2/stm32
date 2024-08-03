@@ -642,6 +642,7 @@ void main_init(void)
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.  */
 
+#if 0
   //lprintf("debug_enable %X@%X vs %X\n", debug_enable, &debug_enable, 0xdeb49eab);
   if(0xdeb49eab==debug_enable){
       debug_mode = 1;
@@ -655,13 +656,14 @@ void main_init(void)
       lprintf("prepare debug\n");
       debug_enable = 0xdeb49eab;
   }
+#endif
   systick_init();
 
   //PB3 PB4 PA15 PA13 PA14 set to gpio instead of SWJ
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
   //Touch_Test();
 
-  os_task_init();
+  //os_task_init();
 
   //72M/72=1M, 1us/count
   //72M/12=6M, 1/6us / count
