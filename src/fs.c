@@ -46,11 +46,16 @@ uint32_t get_uint_offset(char* buf_base, uint32_t off, uint32_t num)
 
 const char* disk_write_sector(const char*buf, uint32_t sector_no)
 {
-    if(SD_RESPONSE_NO_ERROR != g_fs->wt_block((u8*)buf, sector_no, FS_BUF_SIZE)){
-        lprintf("write disk err\n");
-        return NULL;
+    int retry = 8;
+    while(retry--){
+        if(SD_RESPONSE_NO_ERROR == g_fs->wt_block((u8*)buf, sector_no, FS_BUF_SIZE)){
+            return buf;
+        }
+        else{
+            lprintf("write disk err retry=%d\n", retry);
+        }
     }
-    return buf;
+    return NULL;
 }
 
 char* disk_read_sector(uint32_t sector_no)
