@@ -849,24 +849,30 @@ char fbf[512];
 u32 fbfs=0;
 u16 ws[480];
 
+int frames_wsize = 0;
 int wtf(char*bf, u32 len, u32 ss)
 {
     u32 llt = len;
+    int wl;
     if(fbfs>0){//left last time
         memcpy(fbf+fbfs, bf, ss-fbfs);
         llt-=ss-fbfs;
         bf+=ss-fbfs;
-        if(0>write_sec_to_file((const char*)fbf)){
+        wl = write_sec_to_file((const char*)fbf);
+        if(wl<0){
             return -1;
         }
+        frames_wsize = wl;
     }
     while(llt > ss){
         memcpy(fbf, bf, ss);
         llt-=ss;
         bf+=ss;
-        if(0>write_sec_to_file((const char*)fbf)){
+        wl = write_sec_to_file((const char*)fbf);
+        if(wl<0){
             return -1;
         }
+        frames_wsize = wl;
     }
     fbfs = llt;
     if(fbfs>0){//left for next
@@ -874,7 +880,7 @@ int wtf(char*bf, u32 len, u32 ss)
     }
     return fbfs;
 }
-void cam_read_frame()
+void cam_read_frame(int dump_line)
 {
     u32 ct_bf_vsyn  = 0;
     u32 ct_bf_href  = 0;
@@ -883,8 +889,8 @@ void cam_read_frame()
     u32 count = 0;
     u32 rec_count = 0;
     u32 w_count = 0;
-    u32 frames_skip= 100;
-    int frames_wsize;
+    //u32 frames_skip= 100;
+    frames_wsize = 0;
     while(1){
         //while(GPIOC->IDR & CAM_VSYN);
         while(!(GPIOC->IDR & CAM_VSYN));
@@ -911,11 +917,16 @@ void cam_read_frame()
             else{
                 if(count==0)ct_bf_href++;
                 if(last_href_lvl){
-                    //mem_print(vbf, 640*2*linect, 640*2);
-                    frames_wsize=wtf(vbf, 640*2, 512);
-                    if(frames_wsize<0){
-                        lprintf("cam write to file error, linect %d\n", linect);
-                        return;
+                    if(dump_line>=0){
+                        if((uint32_t)dump_line==linect){
+                            mem_print(vbf, 640*2*linect, 640*2);
+                        }
+                    }
+                    else{
+                        if(wtf(vbf, 640*2, 512)<0){
+                            lprintf("cam write to file error, linect %d\n", linect);
+                            return;
+                        }
                     }
                     ws[linect]=w_count;
                     w_count=0;
@@ -926,10 +937,7 @@ void cam_read_frame()
             }
         }
         memset(vbf, 0xff, 512);
-        if(fbfs)frames_wsize=wtf(vbf, 512-fbfs, 512);
-        for(int i=480-1;i>=0;i--){
-            lprintf("ws[%d]=%d\r\n", i, ws[i]);
-        }
+        mem_print((const char*)ws, 0, 480*2);
         lprintf("count %d linecount %d bfv %d bfh %d w %d left %d\n",
                 count, linect, ct_bf_vsyn, ct_bf_href,
                 count/linect, count%linect);

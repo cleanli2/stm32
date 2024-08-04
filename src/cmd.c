@@ -1280,10 +1280,16 @@ void cam(char *p)
         }
     }
     if(!strcmp(p1, "camw")){
+        p2 = 0xffffffff;
         lprintf("open %s.BIN\n", file_name);
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+            lprintf("p2=%d\n", p2);
+            disk_retry = p2;
+        }
         //camera init
         if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
-            cam_read_frame();
+            cam_read_frame((int)p2);
             close_file();
         }
         else{
