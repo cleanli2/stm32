@@ -99,7 +99,7 @@ uint8_t cam_r_reg(uint8_t addr);
 int cam_w_reg(uint8_t addr, uint8_t data);
 #define sensor_write_reg cam_w_reg
 #define udelay delay_us
-#if 0
+#if 1
 void OV7670_config_window(unsigned int startx,unsigned int starty,unsigned int width, unsigned int height)
 {
 	unsigned int endx;
@@ -953,7 +953,7 @@ void cam_read_frame(int dump_line)
     }
 }
 
-void cam_init()
+void cam_init(int choose)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
 
@@ -990,15 +990,37 @@ void cam_init()
     lprintf("cam read 0x0A=%b\n", cam_r_reg(0x0A));
     lprintf("cam read 0x0B=%b\n", cam_r_reg(0x0B));
 
-    //set_OV7670reg();
-    //OV7670_config_window(272,12,320,240);//
-
-    //init_rgb565_qvga_12fps();
-    //init_rgb565_qvga_25fps_new();
-    //init_rgb565_qvga_25fps();
-    //init_yuv_25fps();
+    switch(choose){
+        case 1:
+            lprintf("set_OV7670reg\n");
+            set_OV7670reg();
+            break;
+            //OV7670_config_window(272,12,320,240);//
+        case 2:
+            lprintf("init_rgb565_qvga_12fps\n");
+            init_rgb565_qvga_12fps();
+            break;
+        case 3:
+            lprintf("init_rgb565_qvga_25fps_new\n");
+            init_rgb565_qvga_25fps_new();
+            break;
+        case 4:
+            lprintf("init_rgb565_qvga_25fps\n");
+            init_rgb565_qvga_25fps();
+            break;
+        case 5:
+            lprintf("init_yuv_25fps\n");
+            init_yuv_25fps();
+            break;
+        case 6:
+            lprintf("init_yuv_12fps\n");
+            init_yuv_12fps();
+            break;
+        default:
+            lprintf("no init regs\n");
+    }
     //lprintf("cam w 0x70 return %x\n", cam_w_reg(0x70, 0x80|cam_r_reg(0x70)));
-    lprintf("cam w 0x71 return %x\n", cam_w_reg(0x71, 0x80|cam_r_reg(0x71)));
+    //lprintf("cam w 0x71 return %x\n", cam_w_reg(0x71, 0x80|cam_r_reg(0x71)));
     lprintf("cam read 0x12=%b\n", cam_r_reg(0x12));
 }
 

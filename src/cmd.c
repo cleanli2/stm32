@@ -1197,8 +1197,10 @@ extern int debug_fs;
 extern int disk_retry;
 char file_name[16];
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
-void cam_init();
-void cam_read_frame();
+void cam_init(int);
+void cam_read_frame(int);
+uint8_t cam_r_reg(uint8_t addr);
+int cam_w_reg(uint8_t addr, uint8_t data);
 void cam(char *p)
 {
     char*p1, *ps;
@@ -1297,7 +1299,12 @@ void cam(char *p)
         }
     }
     if(!strcmp(p1, "init")){
-        cam_init();
+        p2 = 0;
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+        }
+        lprintf("p2=%d\n", p2);
+        cam_init(p2);
     }
     if(!strcmp(p1, "i2c")){
         if(np>=2){
