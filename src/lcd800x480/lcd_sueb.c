@@ -423,8 +423,6 @@ static void init_rgb565_qvga_12fps(void)
 
 static void init_yuv_12fps(void)
 {
-	sensor_write_reg(0x12, 0x80);
-	udelay(20000);
 	sensor_write_reg(0x11, 0x00);
 	sensor_write_reg(0x92, 0x66);
 	sensor_write_reg(0x93, 0x00);
@@ -547,7 +545,7 @@ static void init_yuv_12fps(void)
 	sensor_write_reg(0x66, 0x05);
 	sensor_write_reg(0x94, 0x18);
 	sensor_write_reg(0x95, 0x1c);
-	udelay(8000);
+	udelay(5000);
 	sensor_write_reg(0x13, 0xf7);
 }
 
@@ -684,7 +682,7 @@ static void init_yuv_25fps(void)
 void set_OV7670reg_M(void)
 {
 	cam_w_reg(0x8c, 0x00);
-	cam_w_reg(0x3a, 0x05);//--------uyvy
+	cam_w_reg(0x3a, 0x0c);//--------uyvy
 	cam_w_reg(0x40, 0xc0);
 	cam_w_reg(0x8c, 0x00);
 	cam_w_reg(0x12, 0x00);//-----------------
