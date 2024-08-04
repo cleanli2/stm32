@@ -1317,7 +1317,15 @@ void cam(char *p)
             lprintf("cam w %b->%b return %x\n", p3, p2, cam_w_reg(p2, p3));
         }
         else{
-            lprintf("cam read %b=%b\n", p2, cam_r_reg(p2));
+            if(p2<0x100)
+                lprintf("cam read %b=%b\n", p2, cam_r_reg(p2));
+            else{
+                lprintf("start of cam i2c dump----------------\n");
+                for(uint16_t i=0;i<=0xff;i++){
+                    lprintf("cam_w_reg(0x%b, 0x%b)\n",  i, cam_r_reg(i));
+                }
+                lprintf("end of cam i2c dump----------------\n");
+            }
         }
     }
 }
