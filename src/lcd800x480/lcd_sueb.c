@@ -2035,7 +2035,7 @@ void lcd_sueb_basicinit()
  	LCD_RESET(); //LCD ¸´Î»
 }
 
-#define PWMV 18
+#define PWMV 9
 //PWM freq=72000/(PWMV)/2=2Mhz
 #define BLPWM_ARR (PWMV-1)
 #define BLPWM_PSC 1
