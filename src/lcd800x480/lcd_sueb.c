@@ -66,6 +66,8 @@ void LCD_Set_Window(u16 sx,u16 sy,u16 width,u16 height);
 #endif
 void cam_xclk_off();
 void cam_xclk_on();
+void BL_PWM_init();
+void BL_PWM_deinit();
 
 //管理LCD重要参数
 //默认为竖屏
@@ -1046,12 +1048,14 @@ void cam_read_line(int dump_line)
     while(!(GPIOC->IDR & CAM_VSYN));
     while((GPIOC->IDR & CAM_VSYN));//start of frame
 
-    while(!(GPIOC->IDR & CAM_VSYN)){
-        while(!(GPIOC->IDR & CAM_HREF));
-        while((GPIOC->IDR & CAM_HREF));
+    while(1){
+        while((!(GPIOC->IDR & CAM_VSYN))&&(!(GPIOC->IDR & CAM_HREF)));
+        while((!(GPIOC->IDR & CAM_VSYN))&&(GPIOC->IDR & CAM_HREF));
+        if(GPIOC->IDR & CAM_VSYN)break;
         if(linect++>1000)break;
     }
     lprintf("linect %d\n", linect);
+    
 }
 void cam_read_frame(int dump_line)
 {
@@ -2127,6 +2131,8 @@ void set_xclk(uint32_t fct)
     BL_PWM_deinit();
     BL_PWM_init();
     lprintf("xclk=%dM\n", 36/fct);
+    cam_xclk_off();
+    cam_xclk_on();
 }
 
 void BL_PWM_deinit()
