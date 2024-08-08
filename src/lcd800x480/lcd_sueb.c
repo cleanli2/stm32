@@ -1040,6 +1040,19 @@ int wtf(char*bf, u32 len, u32 ss)
     }
     return fbfs;
 }
+void cam_read_line(int dump_line)
+{
+    u32 linect = 0;
+    while(!(GPIOC->IDR & CAM_VSYN));
+    while((GPIOC->IDR & CAM_VSYN));//start of frame
+
+    while(!(GPIOC->IDR & CAM_VSYN)){
+        while(!(GPIOC->IDR & CAM_HREF));
+        while((GPIOC->IDR & CAM_HREF));
+        if(linect++>1000)break;
+    }
+    lprintf("linect %d\n", linect);
+}
 void cam_read_frame(int dump_line)
 {
     u32 ct_bf_vsyn  = 0;
@@ -2034,7 +2047,8 @@ void lcd_sueb_basicinit()
  	LCD_RESET(); //LCD ¸´Î»
 }
 
-#define PWMV 2
+//#define PWMV 2
+uint32_t PWMV = 2;
 //PWM freq=72000/(PWMV)/2=2Mhz
 #define BLPWM_ARR (PWMV-1)
 #define BLPWM_PSC 1
@@ -2105,6 +2119,14 @@ void cam_xclk_off()
 
     GPIO_Init(GPIOA, &GPIO_InitS_xclk_off);
     GPIOA->BRR = GPIO_Pin_8;
+}
+
+void set_xclk(uint32_t fct)
+{
+    PWMV = fct;
+    BL_PWM_deinit();
+    BL_PWM_init();
+    lprintf("xclk=%dM\n", 36/fct);
 }
 
 void BL_PWM_deinit()

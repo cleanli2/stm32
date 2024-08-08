@@ -1199,6 +1199,8 @@ char file_name[16];
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 void cam_init(int);
 void cam_read_frame(int);
+void cam_read_line(int);
+void set_xclk(uint32_t fct);
 uint8_t cam_r_reg(uint8_t addr);
 int cam_w_reg(uint8_t addr, uint8_t data);
 void cam(char *p)
@@ -1299,6 +1301,34 @@ void cam(char *p)
         }
         else{
             cam_read_frame((int)p2);
+        }
+    }
+    if(!strcmp(p1, "xclk")){
+        p2 = 2;
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+        }
+        lprintf("p2=%d\n", p2);
+        set_xclk(p2);
+    }
+    if(!strcmp(p1, "w")){
+        p2 = 0xffffffff;
+        lprintf("open %s.BIN\n", file_name);
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+            lprintf("p2=%d\n", p2);
+        }
+        if(p2 == 0xffffffff){//write to file
+            if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
+                cam_read_line((int)p2);
+                close_file();
+            }
+            else{
+                lprintf("open file fail\n");
+            }
+        }
+        else{
+            cam_read_line((int)p2);
         }
     }
     if(!strcmp(p1, "init")){
