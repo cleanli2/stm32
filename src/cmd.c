@@ -1287,15 +1287,18 @@ void cam(char *p)
         if(np>=2){
             p = str_to_hex(p, &p2);
             lprintf("p2=%d\n", p2);
-            disk_retry = p2;
         }
-        //camera init
-        if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
-            cam_read_frame((int)p2);
-            close_file();
+        if(p2 == 0xffffffff){//write to file
+            if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
+                cam_read_frame((int)p2);
+                close_file();
+            }
+            else{
+                lprintf("open file fail\n");
+            }
         }
         else{
-            lprintf("open file fail\n");
+            cam_read_frame((int)p2);
         }
     }
     if(!strcmp(p1, "init")){
