@@ -1062,7 +1062,6 @@ void cam_read_frame(int dump_line)
         }
         else frames_skip=100;
 #endif
-        lprintf("================start of frame==========\r\n");
         cam_xclk_off();
         while(!(GPIOC->IDR & CAM_VSYN)){
         //while(GPIOC->IDR & CAM_VSYN){
