@@ -1076,7 +1076,8 @@ void cam_read_line(int dump_line)
             while((!(GPIOC->IDR & CAM_VSYN))&&(GPIOC->IDR & CAM_HREF)){
                 GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
                 GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
-                vbf[rec_count++]=GPIOB->IDR>>8;
+                if(rec_count<640*2)vbf[rec_count++]=GPIOB->IDR>>8;
+                else lprintf("err:rec_count>1280\n");
             }
             lprintf("recct %d in line %d\n", rec_count, linect);
             if(!need_w_t_f){
@@ -1096,10 +1097,10 @@ void cam_read_line(int dump_line)
             }
         }
         else{
-            lprintf("freerunning\n");
             while((!(GPIOC->IDR & CAM_VSYN))&&(!(GPIOC->IDR & CAM_HREF)));
             while((!(GPIOC->IDR & CAM_VSYN))&&(GPIOC->IDR & CAM_HREF));
         }
+        rec_count = 0;
         if(GPIOC->IDR & CAM_VSYN)break;
         if(linect++>1000)break;
     }
