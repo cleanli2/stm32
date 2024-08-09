@@ -1201,6 +1201,7 @@ void cam_init(int);
 void cam_read_frame(int);
 void cam_read_line(int);
 void set_xclk(uint32_t fct);
+void cam_set_rfn(u32 irn, u32 ifn);
 uint8_t cam_r_reg(uint8_t addr);
 int cam_w_reg(uint8_t addr, uint8_t data);
 void cam(char *p)
@@ -1330,6 +1331,19 @@ void cam(char *p)
         else{
             cam_read_line((int)p2);
         }
+    }
+    if(!strcmp(p1, "srfn")){
+        p2 = 2;
+        p3 = 2;
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+        }
+        if(np>=3){
+            p = str_to_hex(p, &p3);
+        }
+        lprintf("p2=%d\n", p2);
+        lprintf("p3=%d\n", p3);
+        cam_set_rfn(p2, p3);
     }
     if(!strcmp(p1, "init")){
         p2 = 0;

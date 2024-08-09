@@ -1012,6 +1012,8 @@ u32 fbfs=0;
 u16 ws[480];
 
 int frames_wsize = 0;
+u32 rn = 2;
+u32 fn = 2;
 int wtf(char*bf, u32 len, u32 ss)
 {
     u32 llt = len;
@@ -1046,29 +1048,58 @@ int wtf(char*bf, u32 len, u32 ss)
     lprintf("wtf-O\n");
     return fbfs;
 }
-void cam_read_line(int dump_line)
+void cam_set_rfn(u32 irn, u32 ifn)
+{
+    rn = irn;
+    fn = ifn;
+    lprintf("set:rn=%d, fn=%d\n", rn, fn);
+}
+#define READ_MODE 0
+#define FREE_MODE 1
+void cam_read_line(int in_dump_line)
 {
 
     frames_wsize = 0;
     fbfs=0;
 
+    u32 mode = FREE_MODE;
+    u32 next_read_line;
+    u32 next_free_line;
     u32 need_w_t_f = 0;
     u32 linect = 0;
-    u32 dumped_linect = 0;
     u32 rec_count = 0;
     memset(vbf, 0xff, 640*2);
-    if(dump_line<0){
+    if(in_dump_line<0){
         need_w_t_f = 1;
-        dump_line = -dump_line;
-        lprintf("write to file, start line %d\n", dump_line);
+        next_read_line = (u32)(-in_dump_line);
+        lprintf("write to file");
     }
+    else{
+        need_w_t_f = 0;
+        next_read_line = (u32)(in_dump_line);
+        lprintf("no write to file");
+    }
+    lprintf("start line %d\n", next_read_line);
+    next_free_line = next_read_line+rn;
     while(!(GPIOC->IDR & CAM_VSYN));
     while((GPIOC->IDR & CAM_VSYN));//start of frame
 
     while(1){
-        lprintf("lp+\n");
-        if((uint32_t)dump_line==linect || dumped_linect){
-            if((uint32_t)dump_line==linect)cam_xclk_off();
+        if(mode==FREE_MODE){
+            if(linect==next_read_line){
+                cam_xclk_off();
+                mode=READ_MODE;
+                next_read_line+=rn+fn;
+            }
+        }
+        else{
+            if(linect==next_free_line){
+                cam_xclk_on();
+                mode=FREE_MODE;
+                next_free_line+=rn+fn;
+            }
+        }
+        if(mode==READ_MODE){
             while((!(GPIOC->IDR & CAM_VSYN))&&(!(GPIOC->IDR & CAM_HREF))){
                 GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
                 GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
@@ -1082,18 +1113,15 @@ void cam_read_line(int dump_line)
             lprintf("recct %d in line %d\n", rec_count, linect);
             if(!need_w_t_f){
                 mem_print(vbf, 640*2*linect, 640*2);
-                if(dumped_linect++>=16){
-                    dumped_linect=0;
-                    cam_xclk_on();
-                }
             }
             else{
+#if 0
                 if(wtf(vbf, 640*2, 512)<0){
                     lprintf("cam write to file error, linect %d\n", linect);
                     cam_xclk_on();
                     return;
                 }
-                dumped_linect++;
+#endif
             }
         }
         else{
