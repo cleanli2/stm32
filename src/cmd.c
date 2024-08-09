@@ -1203,6 +1203,7 @@ void cam_read_line(int);
 void set_xclk(uint32_t fct);
 void cam_set_rfn(u32 irn, u32 ifn);
 uint8_t cam_r_reg(uint8_t addr);
+void cam_save_1_frame(u32 only_uart_dump);
 int cam_w_reg(uint8_t addr, uint8_t data);
 void cam(char *p)
 {
@@ -1311,6 +1312,22 @@ void cam(char *p)
         }
         lprintf("p2=%d\n", p2);
         set_xclk(p2);
+    }
+    if(!strcmp(p1, "framesave")){
+        if(np>=2){
+            lprintf("save frame to file %s.bin\n", file_name);
+            if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
+                cam_save_1_frame(0);
+                close_file();
+            }
+            else{
+                lprintf("open file fail\n");
+            }
+        }
+        else{
+            lprintf("just dump frame with uart\n");
+            cam_save_1_frame(1);
+        }
     }
     if(!strcmp(p1, "w")){
         p2 = 0xffffffff;

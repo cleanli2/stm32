@@ -1059,9 +1059,6 @@ void cam_set_rfn(u32 irn, u32 ifn)
 void cam_read_line(int in_dump_line)
 {
 
-    frames_wsize = 0;
-    fbfs=0;
-
     u32 mode = FREE_MODE;
     u32 next_read_line;
     u32 next_free_line;
@@ -1115,13 +1112,11 @@ void cam_read_line(int in_dump_line)
                 mem_print(vbf, 640*2*linect, 640*2);
             }
             else{
-#if 0
                 if(wtf(vbf, 640*2, 512)<0){
                     lprintf("cam write to file error, linect %d\n", linect);
                     cam_xclk_on();
                     return;
                 }
-#endif
             }
         }
         else{
@@ -1134,6 +1129,17 @@ void cam_read_line(int in_dump_line)
     }
     lprintf("linect %d\n", linect);
     
+}
+void cam_save_1_frame(u32 only_uart_dump)
+{
+    int w_start_line;
+    frames_wsize = 0;
+    fbfs=0;
+    for(w_start_line = 1; w_start_line < 478; w_start_line+=2){
+        if(only_uart_dump) cam_read_line(w_start_line);
+        else cam_read_line(-w_start_line);
+    }
+
 }
 void cam_read_frame(int dump_line)
 {
