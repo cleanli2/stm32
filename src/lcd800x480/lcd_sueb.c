@@ -1013,7 +1013,7 @@ u16 ws[480];
 
 int frames_wsize = 0;
 u32 rn = 2;
-u32 fn = 2;
+u32 fn = 480;
 int wtf(char*bf, u32 len, u32 ss)
 {
     u32 llt = len;
