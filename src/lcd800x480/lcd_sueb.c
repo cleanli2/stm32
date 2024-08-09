@@ -1044,6 +1044,10 @@ int wtf(char*bf, u32 len, u32 ss)
 }
 void cam_read_line(int dump_line)
 {
+
+    frames_wsize = 0;
+    fbfs=0;
+
     u32 need_w_t_f = 0;
     u32 linect = 0;
     u32 dumped_linect = 0;
@@ -1083,6 +1087,7 @@ void cam_read_line(int dump_line)
                     cam_xclk_on();
                     return;
                 }
+                dumped_linect++;
             }
         }
         else{
