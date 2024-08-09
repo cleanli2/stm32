@@ -1016,12 +1016,14 @@ int wtf(char*bf, u32 len, u32 ss)
 {
     u32 llt = len;
     int wl;
+    lprintf("wtf+\n");
     if(fbfs>0){//left last time
         memcpy(fbf+fbfs, bf, ss-fbfs);
         llt-=ss-fbfs;
         bf+=ss-fbfs;
         wl = write_sec_to_file((const char*)fbf);
         if(wl<0){
+            lprintf("wtf-1\n");
             return -1;
         }
         frames_wsize = wl;
@@ -1032,6 +1034,7 @@ int wtf(char*bf, u32 len, u32 ss)
         bf+=ss;
         wl = write_sec_to_file((const char*)fbf);
         if(wl<0){
+            lprintf("wtf-2\n");
             return -1;
         }
         frames_wsize = wl;
@@ -1040,6 +1043,7 @@ int wtf(char*bf, u32 len, u32 ss)
     if(fbfs>0){//left for next
         memcpy(fbf, bf, llt);
     }
+    lprintf("wtf-O\n");
     return fbfs;
 }
 void cam_read_line(int dump_line)
@@ -1062,6 +1066,7 @@ void cam_read_line(int dump_line)
     while((GPIOC->IDR & CAM_VSYN));//start of frame
 
     while(1){
+        lprintf("lp+\n");
         if((uint32_t)dump_line==linect || dumped_linect){
             if((uint32_t)dump_line==linect)cam_xclk_off();
             while((!(GPIOC->IDR & CAM_VSYN))&&(!(GPIOC->IDR & CAM_HREF))){
@@ -1091,6 +1096,7 @@ void cam_read_line(int dump_line)
             }
         }
         else{
+            lprintf("freerunning\n");
             while((!(GPIOC->IDR & CAM_VSYN))&&(!(GPIOC->IDR & CAM_HREF)));
             while((!(GPIOC->IDR & CAM_VSYN))&&(GPIOC->IDR & CAM_HREF));
         }
