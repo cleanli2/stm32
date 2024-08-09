@@ -1045,12 +1045,31 @@ int wtf(char*bf, u32 len, u32 ss)
 void cam_read_line(int dump_line)
 {
     u32 linect = 0;
+    u32 rec_count = 0;
+    memset(vbf, 0xff, 640*2);
     while(!(GPIOC->IDR & CAM_VSYN));
     while((GPIOC->IDR & CAM_VSYN));//start of frame
 
     while(1){
-        while((!(GPIOC->IDR & CAM_VSYN))&&(!(GPIOC->IDR & CAM_HREF)));
-        while((!(GPIOC->IDR & CAM_VSYN))&&(GPIOC->IDR & CAM_HREF));
+        if(dump_line==linect){
+            cam_xclk_off();
+            while((!(GPIOC->IDR & CAM_VSYN))&&(!(GPIOC->IDR & CAM_HREF))){
+                GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
+                GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
+            }
+            while((!(GPIOC->IDR & CAM_VSYN))&&(GPIOC->IDR & CAM_HREF)){
+                GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
+                GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
+                vbf[rec_count++]=GPIOB->IDR>>8;
+            }
+            lprintf("recct %d in line %d\n", rec_count, linect);
+            mem_print(vbf, 640*2*linect, 640*2);
+            cam_xclk_on();
+        }
+        else{
+            while((!(GPIOC->IDR & CAM_VSYN))&&(!(GPIOC->IDR & CAM_HREF)));
+            while((!(GPIOC->IDR & CAM_VSYN))&&(GPIOC->IDR & CAM_HREF));
+        }
         if(GPIOC->IDR & CAM_VSYN)break;
         if(linect++>1000)break;
     }
