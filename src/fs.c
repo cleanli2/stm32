@@ -54,7 +54,29 @@ uint32_t get_uint_offset(char* buf_base, uint32_t off, uint32_t num)
     return ret;
 }
 
+int recover_sd()
+{
+    lprintf("try re init sd\n");
+    if(SD_OK != g_fs->disk_init()){
+        lprintf("fail, try repower\n");
+        SD_repower();
+        if(SD_OK != g_fs->disk_init()){
+            lprintf("fail, abandon\n");
+            return 0;
+        }
+        else{
+            lprintf("OK, retry\n");
+            return 1;
+        }
+    }
+    else{
+        lprintf("OK, retry\n");
+        return 1;
+    }
+}
+
 static uint32_t current_r_sector_no = 0xffffffff;
+
 const char* disk_write_sector(const char*buf, uint32_t sector_no)
 {
     int retry = disk_retry;
@@ -70,15 +92,14 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
         }
         if(retry--==0){
             lprintf("FATAL:!!!!!!!!!!!!write disk err secno:%d 0x%x\n", sector_no, sector_no);
-            lprintf("try re init sd\n");
 
-            if(SD_OK != g_fs->disk_init()){
-                lprintf("fail, abandon\n");
-                return NULL;
-            }
-            else{
+            if(recover_sd()){
                 lprintf("OK, retry\n");
                 retry = disk_retry;
+            }
+            else{
+                lprintf("fail, abandon\n");
+                return NULL;
             }
         }
     }
@@ -101,15 +122,13 @@ char* disk_read_sector(uint32_t sector_no)
         }
         if(retry--==0){
             lprintf("FATAL:!!!!!!!!!!!!read disk err secno:%d 0x%x\n", sector_no, sector_no);
-            lprintf("try re init sd\n");
-
-            if(SD_OK != g_fs->disk_init()){
-                lprintf("fail, abandon\n");
-                return NULL;
-            }
-            else{
+            if(recover_sd()){
                 lprintf("OK, retry\n");
                 retry = disk_retry;
+            }
+            else{
+                lprintf("fail, abandon\n");
+                return NULL;
             }
         }
     }

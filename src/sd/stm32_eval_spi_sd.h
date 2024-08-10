@@ -292,6 +292,7 @@ u32 SD_GetSectorCount(void);
 
 SD_Error get_sd_hw_err(void);
 void sf_read_id();
+void SD_repower();
 
 #ifdef __cplusplus
 }
