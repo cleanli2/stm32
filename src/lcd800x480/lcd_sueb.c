@@ -1126,6 +1126,7 @@ void cam_read_line(int in_dump_line)
         if(linect++>1000)break;
     }
     if(linect!=480)lprintf("linect %d\n", linect);
+    lprintf(">");
     
 }
 void cam_save_1_frame(u32 only_uart_dump)

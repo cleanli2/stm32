@@ -110,7 +110,7 @@ char* disk_read_sector(uint32_t sector_no)
 {
     int retry = disk_retry;
     if(current_r_sector_no == sector_no){
-        lprintf("just read\n");
+        //lprintf("just read\n");
         return disk_buf;
     }
     while(1){
@@ -366,7 +366,7 @@ uint32_t get_file_start_cluster(const char* filename, const char*fileextname)
     //find filename
     DWORD items = 0;
     while(1){
-        lprintf("dir items 0x%x\n", items);
+        //lprintf("dir items 0x%x\n", items);
         item_buf=get_root_item_buf(items);
         if(item_buf == 0 || *item_buf == 0){
             lprintf("end of root, not found file!\n");

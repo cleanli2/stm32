@@ -1430,7 +1430,7 @@ SD_Error SD_GoIdleState(void)
 {
 	uint8_t r1;
     //SD_Error ret;
-	int retry = 100;
+	int retry = 40;
   lprintf("%s:%d\n", __func__, __LINE__);
   
   os_lock(&oslk_spibus);
