@@ -1196,6 +1196,7 @@ void stress(char *p)
 extern int debug_fs;
 extern int disk_retry;
 char file_name[16];
+u32 fnn=0;
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 void cam_init(int);
 void cam_read_frame(int);
@@ -1260,6 +1261,9 @@ void cam(char *p)
             lprintf("read file fail\n");
         }
         close_file();
+    }
+    if(!strcmp(p1, "nn")){
+        slprintf(file_name, "YUV%x.BIN", ++fnn);
     }
     if(!strcmp(p1, "name")){
         if(np>=2){

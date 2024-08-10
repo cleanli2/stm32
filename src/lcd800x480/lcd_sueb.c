@@ -1133,7 +1133,7 @@ void cam_save_1_frame(u32 only_uart_dump)
     int w_start_line;
     frames_wsize = 0;
     fbfs=0;
-    for(w_start_line = 1; w_start_line < 480-rn; w_start_line+=rn){
+    for(w_start_line = 1; (u32)w_start_line < 480-rn; w_start_line+=rn){
         if(only_uart_dump) cam_read_line(w_start_line);
         else cam_read_line(-w_start_line);
     }
