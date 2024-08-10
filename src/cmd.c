@@ -1220,6 +1220,20 @@ void cam(char *p)
         p = str_to_str(p, &p1);
         lprintf("p1=%s\n", p1);
     }
+    if(!strcmp(p1, "sdp")){
+        //PC0 is used for sd power control
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+            lprintf("p2=%d\n", p2);
+            if(!p2){
+                GPIO_ResetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
+            }
+            else{
+                GPIO_SetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
+            }
+        }
+        else lprintf("need para\n");
+    }
     if(!strcmp(p1, "sd")){
 	    lprintf("sd_init\n");
 	    if((Status = SD_Init()) != SD_OK)
