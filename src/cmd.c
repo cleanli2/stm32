@@ -1368,6 +1368,10 @@ void cam(char *p)
             }
             else{
                 lprintf("open file fail:%s.BIN\n", file_name);
+                if(get_sd_hw_err()){
+                    lprintf("SD hw error, stop fsc cmd\n");
+                    return;
+                }
             }
         }
     }
