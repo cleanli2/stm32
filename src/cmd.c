@@ -1263,7 +1263,8 @@ void cam(char *p)
         close_file();
     }
     if(!strcmp(p1, "nn")){
-        slprintf(file_name, "YUV%x.BIN", ++fnn);
+        slprintf(file_name, "YUV%x", ++fnn);
+        lprintf("current is %s.BIN\n", file_name);
     }
     if(!strcmp(p1, "name")){
         if(np>=2){
@@ -1327,6 +1328,8 @@ void cam(char *p)
             if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
                 cam_save_1_frame(0);
                 close_file();
+                slprintf(file_name, "YUV%x", ++fnn);
+                lprintf("current is %s.BIN\n", file_name);
             }
             else{
                 lprintf("open file fail\n");
