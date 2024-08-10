@@ -1313,8 +1313,12 @@ void cam(char *p)
         lprintf("p2=%d\n", p2);
         set_xclk(p2);
     }
-    if(!strcmp(p1, "framesave")){
+    if(!strcmp(p1, "fs")){
         if(np>=2){
+            lprintf("just dump frame with uart\n");
+            cam_save_1_frame(1);
+        }
+        else{
             lprintf("save frame to file %s.bin\n", file_name);
             if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
                 cam_save_1_frame(0);
@@ -1323,10 +1327,6 @@ void cam(char *p)
             else{
                 lprintf("open file fail\n");
             }
-        }
-        else{
-            lprintf("just dump frame with uart\n");
-            cam_save_1_frame(1);
         }
     }
     if(!strcmp(p1, "w")){

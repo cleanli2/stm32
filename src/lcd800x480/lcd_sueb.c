@@ -1018,7 +1018,6 @@ int wtf(char*bf, u32 len, u32 ss)
 {
     u32 llt = len;
     int wl;
-    lprintf("wtf+\n");
     if(fbfs>0){//left last time
         memcpy(fbf+fbfs, bf, ss-fbfs);
         llt-=ss-fbfs;
@@ -1045,7 +1044,6 @@ int wtf(char*bf, u32 len, u32 ss)
     if(fbfs>0){//left for next
         memcpy(fbf, bf, llt);
     }
-    lprintf("wtf-O\n");
     return fbfs;
 }
 void cam_set_rfn(u32 irn, u32 ifn)
@@ -1069,14 +1067,14 @@ void cam_read_line(int in_dump_line)
     if(in_dump_line<0){
         need_w_t_f = 1;
         next_read_line = (u32)(-in_dump_line);
-        lprintf("write to file");
+        //lprintf("write to file");
     }
     else{
         need_w_t_f = 0;
         next_read_line = (u32)(in_dump_line);
         lprintf("no write to file");
     }
-    lprintf("start line %d\n", next_read_line);
+    //lprintf("start line %d\n", next_read_line);
     next_free_line = next_read_line+rn;
     while(!(GPIOC->IDR & CAM_VSYN));
     while((GPIOC->IDR & CAM_VSYN));//start of frame
@@ -1107,7 +1105,7 @@ void cam_read_line(int in_dump_line)
                 if(rec_count<640*2)vbf[rec_count++]=GPIOB->IDR>>8;
                 else lprintf("err:rec_count>1280\n");
             }
-            lprintf("recct %d in line %d\n", rec_count, linect);
+            if(rec_count!=1280)lprintf("recct %d in line %d\n", rec_count, linect);
             if(!need_w_t_f){
                 mem_print(vbf, 640*2*linect, 640*2);
             }
@@ -1127,7 +1125,7 @@ void cam_read_line(int in_dump_line)
         if(GPIOC->IDR & CAM_VSYN)break;
         if(linect++>1000)break;
     }
-    lprintf("linect %d\n", linect);
+    if(linect!=480)lprintf("linect %d\n", linect);
     
 }
 void cam_save_1_frame(u32 only_uart_dump)
@@ -1135,7 +1133,7 @@ void cam_save_1_frame(u32 only_uart_dump)
     int w_start_line;
     frames_wsize = 0;
     fbfs=0;
-    for(w_start_line = 1; w_start_line < 478; w_start_line+=2){
+    for(w_start_line = 1; w_start_line < 480-rn; w_start_line+=rn){
         if(only_uart_dump) cam_read_line(w_start_line);
         else cam_read_line(-w_start_line);
     }
