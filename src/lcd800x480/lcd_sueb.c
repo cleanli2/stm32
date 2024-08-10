@@ -1137,6 +1137,10 @@ void cam_save_1_frame(u32 only_uart_dump)
     for(w_start_line = 1; (u32)w_start_line < 480-rn; w_start_line+=rn){
         if(only_uart_dump) cam_read_line(w_start_line);
         else cam_read_line(-w_start_line);
+        if(get_sd_hw_err()){
+            lprintf("SD hw error\n");
+            return;
+        }
     }
 
 }
@@ -1280,6 +1284,7 @@ void cam_init(int choose)
             set_OV7670reg_M();
             break;
         default:
+            lprintf("cam w 0x1e return %x\n", cam_w_reg(0x1e, 0x30|cam_r_reg(0x1e)));
             lprintf("no init regs\n");
     }
     //lprintf("cam w 0x70 return %x\n", cam_w_reg(0x70, 0x80|cam_r_reg(0x70)));

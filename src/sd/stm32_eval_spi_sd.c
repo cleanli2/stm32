@@ -108,6 +108,7 @@
   */ 
 
 uint32_t logv = 0;
+uint32_t sd_hw_err = 0;
 uint8_t  SD_Type = 0;//no card
 uint8_t SD_WaitReady(void);
 void SD_DisSelect(void);
@@ -322,6 +323,12 @@ void SD_DeInit(void)
   SD_LowLevel_DeInit();
 }
 
+
+SD_Error get_sd_hw_err(void)
+{
+    if(  sd_hw_err)return SD_ERROR;
+    else return SD_OK;
+}
 /**
   * @brief  Initializes the SD/SD communication.
   * @param  None
@@ -368,6 +375,12 @@ SD_Error SD_Init(void)
         lprintf("block capacity %d\n", mycard.CardCapacity);
         lprintf("total capacity %dM\n", mycard.CardCapacity/1000000*mycard.CardBlockSize);
     }
+  }
+  if(ret != SD_OK){
+      sd_hw_err = 1;
+  }
+  else{
+      sd_hw_err = 0;
   }
   return ret;
 }

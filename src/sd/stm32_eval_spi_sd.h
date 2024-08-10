@@ -290,6 +290,7 @@ uint8_t SD_ReadByte(void);
 uint8_t SD_GetRes(void);
 u32 SD_GetSectorCount(void);
 
+SD_Error get_sd_hw_err(void);
 void sf_read_id();
 
 #ifdef __cplusplus
