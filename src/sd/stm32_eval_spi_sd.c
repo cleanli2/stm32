@@ -332,6 +332,7 @@ void SD_DeInit(void)
 SD_Error SD_Init(void)
 {
   uint32_t i = 0;
+  SD_CardInfo mycard;
   SD_Error ret;
 
   lprintf("SD_LowLevel_Init()\n");
@@ -357,6 +358,17 @@ SD_Error SD_Init(void)
   ret = SD_GoIdleState();
   //recover the spi speed
   spi_speed(speed);
+  if(ret == SD_OK){
+    if((ret = SD_GetCardInfo(&mycard)) != SD_OK)
+    {
+        lprintf("get card info Fail\n");
+    }
+    else{
+        lprintf("block size %d\n", mycard.CardBlockSize);
+        lprintf("block capacity %d\n", mycard.CardCapacity);
+        lprintf("total capacity %dM\n", mycard.CardCapacity/1000000*mycard.CardBlockSize);
+    }
+  }
   return ret;
 }
 
