@@ -558,7 +558,7 @@ SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
 u8 SD_ReadDisk(u8*buf,u32 sector,u8 cnt)
 {
 	u8 r1;
-    lprintf("R sec %x, n %d\n", sector, cnt);
+    //lprintf("R sec %x, n %d\n", sector, cnt);
 	if(SD_Type!=SD_TYPE_V2HC)sector <<= 9;//转换为字节地址
     os_lock(&oslk_spibus);
 	if(cnt==1)
@@ -764,7 +764,7 @@ u8 SD_SendBlock(u8*buf,u8 cmd)
 u8 SD_WriteDisk(u8*buf,u32 sector,u8 cnt)
 {
 	u8 r1;
-    lprintf("W sec %x, n %d\n", sector, cnt);
+    //lprintf("W sec %x, n %d\n", sector, cnt);
 	if(SD_Type!=SD_TYPE_V2HC)sector *= 512;//转换为字节地址
     os_lock(&oslk_spibus);
 	if(cnt==1)
