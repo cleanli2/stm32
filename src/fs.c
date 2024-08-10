@@ -48,11 +48,13 @@ uint32_t get_uint_offset(char* buf_base, uint32_t off, uint32_t num)
     return ret;
 }
 
-static uint32_t current_sector_no = 0xffffffff;
+static uint32_t current_r_sector_no = 0xffffffff;
 const char* disk_write_sector(const char*buf, uint32_t sector_no)
 {
     int retry = disk_retry;
-    current_sector_no = 0xffffffff;
+    if(current_r_sector_no == sector_no){
+        current_r_sector_no = 0xffffffff;
+    }
     while(retry--){
         if(SD_RESPONSE_NO_ERROR == g_fs->wt_block((u8*)buf, sector_no, FS_BUF_SIZE)){
             return buf;
@@ -68,7 +70,7 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
 char* disk_read_sector(uint32_t sector_no)
 {
     int retry = disk_retry;
-    if(current_sector_no == sector_no){
+    if(current_r_sector_no == sector_no){
         lprintf("just read\n");
         return disk_buf;
     }
@@ -84,8 +86,8 @@ char* disk_read_sector(uint32_t sector_no)
             return NULL;
         }
     }
-    current_sector_no = sector_no;
-    lprintf("read 0x%x sector OK\n", sector_no);
+    current_r_sector_no = sector_no;
+    //lprintf("read 0x%x sector OK\n", sector_no);
     if(debug_fs)mem_print(disk_buf, 512*sector_no, 512);
     return disk_buf;
 }
@@ -571,7 +573,7 @@ int write_sec_to_file(const char*buf)
         lprintf("try write not opened file\r\n");
         return -1;
     }
-    lprintf("clust %d sec_off %d\r\n", g_fp->clust, g_fp->clust_sec_offset);
+    //lprintf("clust %d sec_off %d\r\n", g_fp->clust, g_fp->clust_sec_offset);
     uint32_t target_sector_no = g_fp->fs->database + (g_fp->clust - 2) * g_fs->csize;
     target_sector_no += g_fp->clust_sec_offset;
     if(NULL==disk_write_sector(buf, target_sector_no)){

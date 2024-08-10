@@ -1208,6 +1208,8 @@ void cam_save_1_frame(u32 only_uart_dump);
 int cam_w_reg(uint8_t addr, uint8_t data);
 void cam(char *p)
 {
+    SD_Error Status = SD_OK;
+    SD_CardInfo mycard;
     char*p1, *ps;
     uint32_t np, p2=0x53, p3=3;
     if(!file_name[0])strcpy(file_name, "YUV2");
@@ -1217,6 +1219,24 @@ void cam(char *p)
     if(np>=1){
         p = str_to_str(p, &p1);
         lprintf("p1=%s\n", p1);
+    }
+    if(!strcmp(p1, "sd")){
+	    lprintf("sd_init\n");
+	    if((Status = SD_Init()) != SD_OK)
+	    {
+		    lprintf("Fail\n");
+	    }
+	    else{
+		    lprintf("OK\n");
+		    if((Status = SD_GetCardInfo(&mycard)) != SD_OK)
+		    {
+			    lprintf("get card info Fail\n");
+		    }
+		    else{
+			    lprintf("block size %d\n", mycard.CardBlockSize);
+			    lprintf("block capacity %d\n", mycard.CardCapacity);
+		    }
+	    }
     }
     if(!strcmp(p1, "fwrite")){
         lprintf("memset %x\n", p2);
