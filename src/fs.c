@@ -10,11 +10,17 @@ FATFS* g_fs;
 int debug_fs = 0;
 int disk_retry = 8;
 
+disk_opers g_dops;
 #define FAT_cache_N 2
 #define FAT_cache_SIZE 8
 
 #define CDB lprintf("line %d\n", __LINE__)
 uint32_t FAT_cache[2][8];
+
+void fs_hw_init(disk_opers * in_)
+{
+    g_dops = *in_;
+}
 
 int fs_debug_is_enabled()
 {
@@ -55,15 +61,27 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
     if(current_r_sector_no == sector_no){
         current_r_sector_no = 0xffffffff;
     }
-    while(retry--){
+    while(1){
         if(SD_RESPONSE_NO_ERROR == g_fs->wt_block((u8*)buf, sector_no, FS_BUF_SIZE)){
             return buf;
         }
         else{
             lprintf("write disk err retry=%d\n", retry);
         }
+        if(retry--==0){
+            lprintf("FATAL:!!!!!!!!!!!!write disk err secno:%d 0x%x\n", sector_no, sector_no);
+            lprintf("try re init sd\n");
+
+            if(SD_OK != g_fs->disk_init()){
+                lprintf("fail, abandon\n");
+                return NULL;
+            }
+            else{
+                lprintf("OK, retry\n");
+                retry = disk_retry;
+            }
+        }
     }
-    lprintf("FATAL:!!!!!!!!!!!!write disk err secno:%d 0x%x\n", sector_no, sector_no);
     return NULL;
 }
 
@@ -83,7 +101,16 @@ char* disk_read_sector(uint32_t sector_no)
         }
         if(retry--==0){
             lprintf("FATAL:!!!!!!!!!!!!read disk err secno:%d 0x%x\n", sector_no, sector_no);
-            return NULL;
+            lprintf("try re init sd\n");
+
+            if(SD_OK != g_fs->disk_init()){
+                lprintf("fail, abandon\n");
+                return NULL;
+            }
+            else{
+                lprintf("OK, retry\n");
+                retry = disk_retry;
+            }
         }
     }
     current_r_sector_no = sector_no;
@@ -345,14 +372,20 @@ uint32_t get_file_start_cluster(const char* filename, const char*fileextname)
 
 #define MBR_FS_TYPE 0x1c2
 #define MBR_FIRST_PART_OFFSET 0x1c6
-int init_fs(block_read_func rd_block)
+int init_fs()
 {
     BYTE fmt;
     DWORD bsect=0, sysect, nclst, szbfat;
     lprintf("init fs\n");
     g_fs = &g_fat32;
-    g_fs->rd_block = rd_block;
-    g_fs->wt_block = NULL;
+    if(g_dops.disk_hw_inited==FS_HW_INITED){
+        g_fs->rd_block = g_dops.rd_block;
+        g_fs->wt_block = g_dops.wt_block;
+        g_fs->disk_init = g_dops.disk_init;
+    }
+    else{
+        return FS_DISK_ERR;
+    }
     memset(&FAT_cache[0][0], 0, FAT_cache_N*FAT_cache_SIZE);
     if(NULL == disk_read_sector(bsect)){
         lprintf("read disk err\n");
@@ -483,7 +516,7 @@ dbr_check:
     return FS_OK;
 }
 
-int get_file_size(const char*filename, const char*ext_filename, block_read_func rd_block)
+int get_file_size(const char*filename, const char*ext_filename)
 {
     int ret;
     lprintf("get_file_size %s.%s\n", filename, ext_filename);
@@ -496,7 +529,7 @@ int get_file_size(const char*filename, const char*ext_filename, block_read_func 
         fs_buf = (char*)disk_buf;
     }
     if(NULL == g_fs || g_fs->fs_type != FS_FAT32){
-        ret = init_fs(rd_block);
+        ret = init_fs();
         if(FS_OK != ret){
             return ret;
         }
@@ -522,12 +555,12 @@ int get_file_size(const char*filename, const char*ext_filename, block_read_func 
     }
 }
 
-int get_file_content(char* buf, const char*filename, const char*extfn, uint32_t file_offset, uint32_t len, block_read_func rd_block)
+int get_file_content(char* buf, const char*filename, const char*extfn, uint32_t file_offset, uint32_t len)
 {
     int ret;
     lprintf("get_file_content: fileoff %d len %d\n", file_offset, len);
     slprintf(buf, "fn:%s off:%d len:%d under developing", filename, file_offset, len);
-    ret = get_file_size(filename, extfn, rd_block);
+    ret = get_file_size(filename, extfn);
     if(0 < ret){
         if(NULL == get_file_offset_buf(g_fp->sclust, file_offset, buf, len)){
             return FS_FILE_NOT_FOUND;
@@ -541,15 +574,14 @@ int get_file_content(char* buf, const char*filename, const char*extfn, uint32_t 
     }
 }
 
-int open_file_for_write(const char*fn, const char*ext, block_read_func rd_block, block_write_func wt_block)
+int open_file_for_write(const char*fn, const char*ext)
 {
     int ret;
-    ret = get_file_size(fn, ext, rd_block);
+    ret = get_file_size(fn, ext);
     if(0 < ret){
         g_fp->clust = g_fp->sclust;
         g_fp->clust_sec_offset = 0;
         g_fp->in_writing = 1;
-        g_fs->wt_block = wt_block;
         return FS_OK;
     }
     else{

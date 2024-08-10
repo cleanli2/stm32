@@ -1248,7 +1248,7 @@ void cam(char *p)
             p = str_to_hex(p, &p3);
             lprintf("p3=%d\n", p3);
         }
-        if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
+        if(FS_OK==open_file_for_write(file_name, "BIN")){
             uint32_t write_secs=0;
             while(p3--){
                 memset((char*)read_buf, p2++, 512);
@@ -1274,7 +1274,7 @@ void cam(char *p)
             lprintf("p3=%d\n", p3);
         }
         lprintf("file offset %d\n", p2);
-        if(get_file_content((char*)read_buf, file_name, "BIN", p2, 512, SD_ReadBlock)>=0){
+        if(get_file_content((char*)read_buf, file_name, "BIN", p2, 512)>=0){
             mem_print((const char*)read_buf, (uint32_t)p3, 512);
         }
         else{
@@ -1318,7 +1318,7 @@ void cam(char *p)
             lprintf("p2=%d\n", p2);
         }
         if(p2 == 0xffffffff){//write to file
-            if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
+            if(FS_OK==open_file_for_write(file_name, "BIN")){
                 cam_read_frame((int)p2);
                 close_file();
             }
@@ -1345,7 +1345,7 @@ void cam(char *p)
         }
         else{
             lprintf("save frame to file %s.bin\n", file_name);
-            if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
+            if(FS_OK==open_file_for_write(file_name, "BIN")){
                 cam_save_1_frame(0);
                 close_file();
                 slprintf(file_name, "YUV%x", ++fnn);
@@ -1364,7 +1364,7 @@ void cam(char *p)
             lprintf("p2=%d\n", p2);
         }
         if(p2 == 0xffffffff){//write to file
-            if(FS_OK==open_file_for_write(file_name, "BIN", SD_ReadBlock, SD_WriteBlock)){
+            if(FS_OK==open_file_for_write(file_name, "BIN")){
                 cam_read_line((int)p2);
                 close_file();
             }

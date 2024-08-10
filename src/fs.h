@@ -6,6 +6,8 @@ typedef uint8_t BYTE;
 typedef uint16_t WORD;
 typedef uint32_t DWORD;
 
+#define FS_HW_INITED 0xf54711ed
+
 #define FS_OK 0
 #define FS_FAIL (-1)
 #define FS_DISK_ERR (-2)
@@ -102,6 +104,7 @@ typedef uint32_t DWORD;
 #define MIN_EOF	0x0FFFFFF8
 typedef SD_Error (*block_read_func)(uint8_t* pBuffer, uint32_t block_n, uint16_t BlockSize);
 typedef SD_Error (*block_write_func)(uint8_t* pBuffer, uint32_t block_n, uint16_t BlockSize);
+typedef SD_Error (*disk_init_func)(void);
 
 typedef struct {
 	BYTE	fs_type;		/* FAT sub-type (0:Not mounted) */
@@ -131,8 +134,16 @@ typedef struct {
 	WORD	nrsv;		    /* reserv sectors */
     block_read_func rd_block;
     block_write_func wt_block;
+    disk_init_func disk_init;
 
 } FATFS;
+
+typedef struct {
+    block_read_func rd_block;
+    block_write_func wt_block;
+    disk_init_func disk_init;
+    uint32_t disk_hw_inited;
+} disk_opers;
 
 typedef struct {
 	FATFS*	fs;				/* Pointer to the related file system object (**do not change order**) */
@@ -153,9 +164,10 @@ typedef struct {
 
 } FIL;
 
-int get_file_content(char* buf, const char*filename, const char*ext_name, uint32_t file_offset, uint32_t len, block_read_func SD_ReadBlock);
-int get_file_size(const char*flnm, const char*ext, block_read_func rd_block);
-int open_file_for_write(const char*fn, const char*ext, block_read_func rd_block, block_write_func wt_block);
+int get_file_content(char* buf, const char*filename, const char*ext_name, uint32_t file_offset, uint32_t len);
+int get_file_size(const char*flnm, const char*ext);
+int open_file_for_write(const char*fn, const char*ext);
+void fs_hw_init(disk_opers*dops);
 int write_sec_to_file(const char*buf);
 void close_file();
 #endif

@@ -2707,7 +2707,7 @@ void lcd_sueb_init(int testitem)
             lprintf("block size %d\n", mycard.CardBlockSize);
             lprintf("block capacity %d\n", mycard.CardCapacity);
         }
-        lprintf("filesize 0x%x\r\n", get_file_size("YUV1", "BIN", SD_ReadBlock));
+        lprintf("filesize 0x%x\r\n", get_file_size("YUV1", "BIN"));
         close_file();
     }
     while(0);

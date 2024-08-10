@@ -2,6 +2,7 @@
 #include "board.h"
 #include "common.h"
 #include "cmd.h"
+#include "fs.h"
 #include "lprintf.h"
 #include <stdio.h>
 #include <string.h>
@@ -786,6 +787,16 @@ void main_init(void)
 		  RCC_ClocksStatus.ADCCLK_Frequency);
   lprintf_time("SD init\n");
   SD_Init();
+  {
+      disk_opers tmpso;
+
+      tmpso.rd_block=SD_ReadBlock;
+      tmpso.wt_block=SD_WriteBlock;
+      tmpso.disk_init=SD_Init;
+      tmpso.disk_hw_inited=FS_HW_INITED ;
+      fs_hw_init(&tmpso);
+      lprintf_time("fs hw inited\n");
+  }
   lprintf_time("SD init done\n");
   lprintf_time("lcd init\n");
   lcd_sueb_init(0);
