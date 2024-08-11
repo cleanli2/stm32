@@ -206,17 +206,9 @@ uint8_t gpio_spi_WriteByte(uint8_t num)
         }
         num<<=1;    
         TCLK(0); 	 
-#ifdef ALIENTEK_MINI
         TCLK(0);
-#else
-        delay_us(10);
-#endif
         TCLK(1);		//上升沿有效	        
-#ifdef ALIENTEK_MINI
         TCLK(1);
-#else
-        delay_us(10);
-#endif
         if(DOUT)ret++; 		 
     }		 			    
     return ret;
