@@ -199,17 +199,16 @@ uint8_t gpio_spi_WriteByte(uint8_t num)
     { 	  
         ret<<=1; 	 
         if(num&0x80){
-            TDIN(1);  
+            TDIN_GG->BSRR = TDIN_PIN;
         }
         else{
-            TDIN(0);   
+            TDIN_GG->BRR = TDIN_PIN;
         }
+        TCLK_GG->BRR = TCLK_PIN;
+        TCLK_GG->BRR = TCLK_PIN;
         num<<=1;    
-        TCLK(0); 	 
-        TCLK(0);
-        TCLK(1);		//上升沿有效	        
-        TCLK(1);
-        if(DOUT)ret++; 		 
+        TCLK_GG->BSRR = TCLK_PIN;
+        if(DOUT_GG->IDR&DOUT_PIN)ret++;
     }		 			    
     return ret;
 }
