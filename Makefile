@@ -49,6 +49,7 @@ src/os_task.c                                                                   
 src/sd/sd_lowlevel.c                                                                                  \
 src/sd/stm32_eval_spi_sd.c                                                                            \
 src/sd/w25flash.c                                                                                     \
+src/cl_sd.c                                                                                     \
 src/soc_rtc.c                                                                                         \
 src/stm32f10x_it.c                                                                                    \
 src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c  \
