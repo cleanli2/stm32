@@ -1106,6 +1106,7 @@ SD_Error SD_GetCSDRegister(SD_CSD* SD_csd)
 
   /*!< Byte 3 */
   SD_csd->MaxBusClkFrec = CSD_Tab[3];
+  lprintf("MaxBusClkFrec=%x\n", SD_csd->MaxBusClkFrec);
 
   /*!< Byte 4 */
   SD_csd->CardComdClasses = CSD_Tab[4] << 4;
