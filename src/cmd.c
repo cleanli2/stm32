@@ -1371,14 +1371,15 @@ void cam(char *p)
         }
     }
     if(!strcmp(p1, "fsc")){
-        p2=16;
+        p2=1600;
         fnn=0;
         while(p2--){
-            slprintf(file_name, "YUV%x", ++fnn);
+            slprintf(file_name, "YUV%d", ++fnn);
             lprintf("save frame to file %s.bin\n", file_name);
             if(FS_OK==open_file_for_write(file_name, "BIN")){
                 cam_save_1_frame(0);
                 close_file();
+                lprintf("===============save frame to file %s.bin done\n", file_name);
             }
             else{
                 lprintf("open file fail:%s.BIN\n", file_name);
