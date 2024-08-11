@@ -372,6 +372,7 @@ SD_Error SD_Init(void)
   /*!< SD initialized and set to SPI mode properly */
   ret = SD_GoIdleState();
   //recover the spi speed
+  lprintf("recover spid speed %x\n", speed);
   spi_speed(speed);
   if(ret == SD_OK){
     if((ret = SD_GetCardInfo(&mycard)) != SD_OK)
