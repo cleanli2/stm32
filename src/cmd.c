@@ -1371,7 +1371,7 @@ void cam(char *p)
         }
     }
     if(!strcmp(p1, "fsc")){
-        p2=1600;
+        p2=5600;
         fnn=0;
         while(p2--){
             slprintf(file_name, "YUV%d", ++fnn);
