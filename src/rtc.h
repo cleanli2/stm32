@@ -2,12 +2,11 @@
 #define _RTC_H
 #include "date.h"
 
-extern int use_SCL_1;
 
 #define SDA_HIGH GPIO_WriteBit(SDA_GG, SDA_PIN, 1)
-#define SCL_HIGH GPIO_WriteBit(SCL_GG, use_SCL_1?SCL_PIN1:SCL_PIN2, 1)
+#define SCL_HIGH GPIO_WriteBit(SCL_GG, SCL_PIN, 1)
 #define SDA_LOW GPIO_WriteBit(SDA_GG, SDA_PIN, 0)
-#define SCL_LOW GPIO_WriteBit(SCL_GG, use_SCL_1?SCL_PIN1:SCL_PIN2, 0)
+#define SCL_LOW GPIO_WriteBit(SCL_GG, SCL_PIN, 0)
 #define GET_SDA GPIO_ReadInputDataBit(SDA_GG, SDA_PIN)
 
 #define AUTO_TIME_ALERT_INC_MINS (60*6)
