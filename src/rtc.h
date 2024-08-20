@@ -2,6 +2,7 @@
 #define _RTC_H
 #include "date.h"
 
+extern int use_SCL_1;
 
 #define SDA_HIGH GPIO_WriteBit(SDA_GG, SDA_PIN, 1)
 #define SCL_HIGH GPIO_WriteBit(SCL_GG, SCL_PIN, 1)
