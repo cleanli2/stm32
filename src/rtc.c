@@ -3,6 +3,7 @@
 
 #define uchar unsigned char
 
+int use_SCL_1=0;
 uchar g8563_Store[6]; /*时间交换区,全局变量声明*/
 uchar c8563_Store[6]={0x13,0x09,0x22,0x10,0x40,0x00}; /*写入时间初值：星期一 07:59:00*/
 
@@ -276,16 +277,47 @@ void P8563_init()
     if(rtc_inited)return;
 
     GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
-    
+    RCC_APB2PeriphClockCmd(I2C_GPIO_PERIPH, ENABLE);
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+    //detect SCL1 or SCL2 start
+    GPIO_InitStructure.GPIO_Pin = SCL_PIN1|SCL_PIN2;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //
+    GPIO_Init(I2C_GROUP, &GPIO_InitStructure);
+
+    if(GPIO_ReadInputDataBit(I2C_GROUP, SCL_PIN1)
+            &&
+       (!GPIO_ReadInputDataBit(I2C_GROUP, SCL_PIN2)))
+    {
+        lprintf("SCL=SCL1 PC10\r\n");
+        use_SCL_1=1;
+    }
+    else if(GPIO_ReadInputDataBit(I2C_GROUP, SCL_PIN2)
+            &&
+       (!GPIO_ReadInputDataBit(I2C_GROUP, SCL_PIN1)))
+    {
+        lprintf("SCL=SCL2 PC12\r\n");
+        use_SCL_1=0;
+    }
+    else{
+        lprintf("error: can't detect SCL pin\r\n");
+    }
+    //detect SCL1 or SCL2 end
+
         //注意,时钟使能之后,对GPIO的操作才有效
         //所以上拉之前,必须使能时钟.才能实现真正的上拉输出
-        RCC_APB2PeriphClockCmd(I2C_GPIO_PERIPH, ENABLE);
-        
-        GPIO_InitStructure.GPIO_Pin = SDA_PIN|SCL_PIN;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    if(use_SCL_1){
+        GPIO_InitStructure.GPIO_Pin = SDA_PIN|SCL_PIN1;
         GPIO_Init(I2C_GROUP, &GPIO_InitStructure);
-    GPIO_SetBits(I2C_GROUP,SDA_PIN|SCL_PIN);
+        GPIO_SetBits(I2C_GROUP,SDA_PIN|SCL_PIN1);
+    }
+    else{
+        GPIO_InitStructure.GPIO_Pin = SDA_PIN|SCL_PIN2;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
+        GPIO_Init(I2C_GROUP, &GPIO_InitStructure);
+        GPIO_SetBits(I2C_GROUP,SDA_PIN|SCL_PIN2);
+    }
     
         // P8563_settime();
 #if 0
