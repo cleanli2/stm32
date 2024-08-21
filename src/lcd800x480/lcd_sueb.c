@@ -1294,6 +1294,7 @@ void cam_init(int choose)
 
 void LCD_BUS_To_write(int write)
 {
+#ifndef NO_LCD
     GPIO_InitTypeDef  GPIO_InitStructure;
 
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -1309,20 +1310,24 @@ void LCD_BUS_To_write(int write)
         GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
         GPIO_SetBits(GPIOB,LCD_PORT_GPIO_Pins);
     }
+#endif
 }
 
 void LCD_write(u16 VAL)
 {
+#ifndef NO_LCD
 	LCD_CS_CLR;  
 	DATAOUT(VAL);
 	LCD_WR_CLR; 
 	LCD_WR_SET; 
 	LCD_CS_SET;
+#endif
 }
 
 u16 LCD_read(void)
 {
-	u16 data;
+	u16 data=0;
+#ifndef NO_LCD
 	LCD_CS_CLR;
 	LCD_RD_CLR;
 #ifdef ALIENTEK_MINI
@@ -1331,6 +1336,7 @@ u16 LCD_read(void)
 	data = DATAIN();
 	LCD_RD_SET;
 	LCD_CS_SET;
+#endif
 	return data;
 }
 
@@ -1420,6 +1426,7 @@ void LCD_WriteReg(u16 LCD_Reg, u16 LCD_RegValue)
 ******************************************************************************/
 void LCD_ReadReg(u16 LCD_Reg,u8 *Rval,int n)
 {
+#ifndef NO_LCD
 	LCD_WR_REG(LCD_Reg); 
 	LCD_BUS_To_write(0);
 	/*
@@ -1440,6 +1447,7 @@ void LCD_ReadReg(u16 LCD_Reg,u8 *Rval,int n)
 	GPIOA->CRL|=0X00003300; //PA2-3
 	GPIOB->ODR=0XFFFF;    		//全部输出高  
 	*/
+#endif
 }
 
 /*****************************************************************************
@@ -1506,7 +1514,8 @@ u16 Color_To_565(u8 r, u8 g, u8 b)
 ******************************************************************************/	
 u16 Lcd_ReadData_16Bit(void)
 {
-	u16 r,g,b;
+	u16 r=0,g=0,b=0;
+#if 0
 	LCD_RS_SET;
 	LCD_CS_CLR;
 	
@@ -1542,6 +1551,7 @@ u16 Lcd_ReadData_16Bit(void)
 	r = r>>8;	
 	#endif
 	LCD_CS_SET;
+#endif
 	return Color_To_565(r, g, b);
 }
 
@@ -1938,7 +1948,8 @@ void LCD_Set_Window(u16 sx,u16 sy,u16 width,u16 height)
 ******************************************************************************/	
 u16 LCD_ReadPoint(u16 x,u16 y)
 {
-	u16 color;
+	u16 color=0;
+#ifndef NO_LCD
 	if(x>=lcddev.width||y>=lcddev.height)
 	{
 		return 0;	//超过了范围,直接返回	
@@ -1950,6 +1961,7 @@ u16 LCD_ReadPoint(u16 x,u16 y)
 	color = Lcd_ReadData_16Bit();
 	
 	LCD_BUS_To_write(1);
+#endif
 	return color;
 }
 
@@ -2013,6 +2025,7 @@ void LCD_GPIOInit(void)
 {
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	      
+#ifndef NO_LCD
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO,ENABLE);
 	
 #ifdef ALIENTEK_MINI
@@ -2035,6 +2048,7 @@ void LCD_GPIOInit(void)
 
 	LCD_BUS_To_write(1);
 	lprintf("LCD gpio init done\n");
+#endif
 }
 
 /*****************************************************************************
@@ -2046,6 +2060,7 @@ void LCD_GPIOInit(void)
 ******************************************************************************/	
 void LCD_RESET(void)
 {
+#ifndef NO_LCD
 #ifdef ALIENTEK_MINI
 #else
 	LCD_RST_CLR;
@@ -2053,11 +2068,13 @@ void LCD_RESET(void)
 	LCD_RST_SET;
 	delay_ms(50);
 #endif
+#endif
 }
 
 void LCD_hw_test(int testitem)
 {
 	u16 testdata = 1;
+#ifndef NO_LCD
 	int i = 0;
 	switch(testitem){
 		case LCD_HW_GPIO_TEST:
@@ -2130,6 +2147,7 @@ void LCD_hw_test(int testitem)
 		default:
 			lprintf("no HW test request\n");
 	}
+#endif
 }
 
 void lcd_sueb_basicinit()
@@ -2285,6 +2303,10 @@ uint16_t get_BL_value()
  * @parameters :None
  * @retvalue   :None
 ******************************************************************************/	 	 
+void lcd_sueb_init(int testitem)
+{
+}
+#if 0
 void lcd_sueb_init(int testitem)
 {  
 	u16 lcd_id;
@@ -2720,6 +2742,7 @@ void lcd_sueb_init(int testitem)
     //sd init end
 #endif
 }
+#endif
  
 void pure_lcd_sueb_test()
 {
