@@ -582,7 +582,6 @@ void clear_second()
 #endif
 }
 
-/*****************camera i2c******************/
 
 void i2c_init()
 {
@@ -591,63 +590,15 @@ void i2c_init()
         return;
     }
 
-    GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
-    
-        //注意,时钟使能之后,对GPIO的操作才有效
-        //所以上拉之前,必须使能时钟.才能实现真正的上拉输出
-        RCC_APB2PeriphClockCmd(I2C_GPIO_PERIPH, ENABLE);
-        
-        GPIO_InitStructure.GPIO_Pin = SDA_PIN|SCL_PIN;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
+    GPIO_InitTypeDef GPIO_InitStructure;       //GPIO
+
+    RCC_APB2PeriphClockCmd(I2C_GPIO_PERIPH, ENABLE);
+
+    GPIO_InitStructure.GPIO_Pin = SDA_PIN|SCL_PIN;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_Init(I2C_GROUP, &GPIO_InitStructure);
+    GPIO_Init(I2C_GROUP, &GPIO_InitStructure);
     GPIO_SetBits(I2C_GROUP,SDA_PIN|SCL_PIN);
     rtc_inited = 1;
 }
 
-int cam_w_reg(uint8_t addr, uint8_t data)
-{
-    int ret;
-    Start();
-    ret=writebyte(0x42); /*写命令*/
-    if(ret==0)goto err;
-    ret=writebyte(addr); /*写地址*/
-    if(ret==0)goto err;
-    ret=writebyte(data); /*写数据*/
-    Stop();
-    return ret;
-err:
-    Stop();
-    lprintf("cam writeData addr %b data %b error\n", addr, data);
-    return ret;
-}
-uint8_t cam_r_regn(uchar addr,uchar n,uchar * buf) /*多字节*/
-{  
-    uint8_t ret;
-    uchar i;
-    Start();
-    ret=writebyte(0x42); /*写命令*/
-    if(ret==0)goto err;
-    ret=writebyte(addr); /*写地址*/
-    if(ret==0)goto err;
-    Stop();
-    Start();
-    ret=writebyte(0x43); /*读命令*/
-    if(ret==0)goto err;
-    for(i=0;i<n;i++)
-    {
-        buf[i]=Readbyte();
-        if(i<n-1) 
-            WriteACK(0);
-    }
-    WriteACK(1);
-err:
-    Stop();
-    return ret;
-}  
-uint8_t cam_r_reg(uint8_t addr)
-{
-    uint8_t ret;
-    cam_r_regn(addr,1,&ret);
-    return ret;
-}

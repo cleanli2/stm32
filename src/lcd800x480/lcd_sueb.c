@@ -61,6 +61,7 @@
 #include "fs.h"
 
 	   
+typedef uint8_t uchar;
 #ifdef ALIENTEK_MINI
 void LCD_Set_Window(u16 sx,u16 sy,u16 width,u16 height);
 #endif
@@ -89,12 +90,13 @@ void Enable_BL(int en)//点亮背光
 	}
 }
 
-#define CAM_GPIO_GROUP GPIOC
-#define CAM_VSYN GPIO_Pin_7
-#define CAM_PWN GPIO_Pin_9
-#define CAM_RST GPIO_Pin_8
+#define CAM_GPIO_GROUP GPIOB
+#define CAM_PWN_GPIO_GROUP GPIOC
+#define CAM_VSYN GPIO_Pin_12
+#define CAM_PWN GPIO_Pin_13
+#define CAM_RST GPIO_Pin_0
 #define CAM_PCLK GPIO_Pin_10
-#define CAM_HREF GPIO_Pin_6
+#define CAM_HREF GPIO_Pin_11
 
 void i2c_init();
 uint8_t cam_r_reg(uint8_t addr);
@@ -1216,28 +1218,238 @@ void cam_read_frame(int dump_line)
     }
 }
 
+/*****************camera i2c******************/
+#define cam_SDA_PIN GPIO_Pin_13
+#define cam_SCL_PIN GPIO_Pin_14
+#define cam_I2C_GROUP GPIOB
+#define cam_SCL_GROUP GPIOB
+#define cam_SCL_GG GPIOB
+#define cam_SDA_GROUP GPIOB
+#define cam_SDA_GG GPIOB
+#define cam_SDA_HIGH GPIO_WriteBit(cam_SDA_GG, cam_SDA_PIN, 1)
+#define cam_SCL_HIGH GPIO_WriteBit(cam_SCL_GG, cam_SCL_PIN, 1)
+#define cam_SDA_LOW GPIO_WriteBit(cam_SDA_GG, cam_SDA_PIN, 0)
+#define cam_SCL_LOW GPIO_WriteBit(cam_SCL_GG, cam_SCL_PIN, 0)
+#define cam_GET_SDA GPIO_ReadInputDataBit(cam_SDA_GG, cam_SDA_PIN)
+void cam_SDA_set_input(uint8_t en)
+{
+    GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
+
+    GPIO_InitStructure.GPIO_Pin = cam_SDA_PIN;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        if(en){
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //上拉输入
+            GPIO_Init(cam_SDA_GG, &GPIO_InitStructure);
+        }
+        else{
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
+            GPIO_Init(cam_SDA_GG, &GPIO_InitStructure);
+        }
+    GPIO_SetBits(cam_SDA_GG, cam_SDA_PIN);	
+}
+
+/********************************************
+  内部函数，延时1
+ ********************************************/
+void cam_Delay()
+{
+    delay_us(1);
+}
+/********************************************
+  内部函数，I2C开始
+ ********************************************/
+void cam_Start()
+{ 
+    cam_SDA_HIGH;
+    cam_SCL_HIGH;
+    cam_Delay();
+    cam_SDA_LOW;
+    cam_Delay();
+    cam_SCL_LOW;
+}
+/********************************************
+  内部函数，I2C结束
+ ********************************************/
+void cam_Stop()
+{
+    cam_SDA_LOW;
+    cam_SCL_LOW;
+    cam_Delay();
+    cam_SCL_HIGH;
+    cam_Delay();
+    cam_SDA_HIGH;
+    cam_Delay();
+}
+/********************************************
+  内部函数，输出ACK ,每个字节传输完成，输出ack=0,结束读书据，ack=1;
+ ********************************************/
+void cam_WriteACK(uchar ack)
+{
+    if(ack)cam_SDA_HIGH;
+    else cam_SDA_LOW;
+    cam_Delay();
+    cam_SCL_HIGH;
+    cam_Delay();
+    cam_SCL_LOW;
+}   
+/********************************************
+  内部函数，等待ACK
+ ********************************************/
+uint8_t cam_WaitACK()
+{  
+    uint8_t ret = 1;
+    uchar errtime=20;
+    cam_SDA_HIGH;
+    cam_Delay(); /*读ACK*/
+    cam_SDA_set_input(1);
+    cam_SCL_HIGH;
+    cam_Delay();
+    while(cam_GET_SDA)
+    {  
+        errtime--;
+        if(!errtime){
+            lprintf("wait ack timeout\n");
+            ret = 0;
+            break;
+        }
+    }
+    cam_SCL_LOW;
+    cam_Delay();
+    cam_SDA_set_input(0);
+    return ret;
+}
+/********************************************
+  内部函数.输出数据字节
+  入口:B=数据
+ ********************************************/
+uint8_t cam_writebyte(uchar wdata)
+{
+    uchar i;
+    //lprintf("i2c write=%x\n", wdata);
+    for(i=0;i<8;i++)
+    {
+        if(wdata&0x80) 
+            cam_SDA_HIGH;
+        else 
+            cam_SDA_LOW;
+        wdata<<=1;
+        cam_SCL_HIGH;
+        cam_Delay();
+        cam_SCL_LOW;
+        cam_Delay();
+    }
+    return cam_WaitACK();     //I2C器件或通讯出错，将会退出I2C通讯
+}
+/********************************************
+  内部函数.输入数据
+  出口:B
+ ********************************************/
+uchar cam_Readbyte()
+{
+    uchar i,bytedata;
+    cam_SDA_HIGH;
+    cam_SDA_set_input(1);
+    for(i=0;i<8;i++)
+    {
+        cam_SCL_HIGH; 
+        cam_Delay();
+        bytedata<<=1;
+        bytedata|=cam_GET_SDA;
+        cam_SCL_LOW;
+        cam_Delay();
+    }
+    cam_SDA_set_input(0);
+    //lprintf("i2c read=%x\n", bytedata);
+    return(bytedata);
+}
+void cam_i2c_init()
+{
+    GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
+    RCC_APB2PeriphClockCmd(GPIOB, ENABLE);
+    GPIO_InitStructure.GPIO_Pin = cam_SDA_PIN|cam_SCL_PIN;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    GPIO_SetBits(cam_I2C_GROUP,cam_SDA_PIN|cam_SCL_PIN);
+}
+
+int cam_w_reg(uint8_t addr, uint8_t data)
+{
+    int ret;
+    cam_Start();
+    ret=cam_writebyte(0x42); /*写命令*/
+    if(ret==0)goto err;
+    ret=cam_writebyte(addr); /*写地址*/
+    if(ret==0)goto err;
+    ret=cam_writebyte(data); /*写数据*/
+    cam_Stop();
+    return ret;
+err:
+    cam_Stop();
+    lprintf("cam writeData addr %b data %b error\n", addr, data);
+    return ret;
+}
+uint8_t cam_r_regn(uchar addr,uchar n,uchar * buf) /*多字节*/
+{  
+    uint8_t ret;
+    uchar i;
+    cam_Start();
+    ret=cam_writebyte(0x42); /*写命令*/
+    if(ret==0)goto err;
+    ret=cam_writebyte(addr); /*写地址*/
+    if(ret==0)goto err;
+    cam_Stop();
+    cam_Start();
+    ret=cam_writebyte(0x43); /*读命令*/
+    if(ret==0)goto err;
+    for(i=0;i<n;i++)
+    {
+        buf[i]=cam_Readbyte();
+        if(i<n-1) 
+            cam_WriteACK(0);
+    }
+    cam_WriteACK(1);
+err:
+    cam_Stop();
+    return ret;
+}  
+uint8_t cam_r_reg(uint8_t addr)
+{
+    uint8_t ret;
+    cam_r_regn(addr,1,&ret);
+    return ret;
+}
+
+#define CAM_DATA_PORT_GPIO_Pins 0x1fe
 void cam_init(int choose)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
 
+    //cam data port
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_InitStructure.GPIO_Pin = CAM_DATA_PORT_GPIO_Pins;//D1-D8
+    GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
+    GPIO_SetBits(GPIOB,CAM_DATA_PORT_GPIO_Pins);
+    //cam data port end
+
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_InitStructure.GPIO_Pin = CAM_RST|CAM_PWN;
-    GPIO_Init(CAM_GPIO_GROUP, &GPIO_InitStructure); //GPIOB
+    GPIO_InitStructure.GPIO_Pin = CAM_PWN;
+    GPIO_Init(CAM_PWN_GPIO_GROUP, &GPIO_InitStructure);
     lprintf("cam pwn=0\n");
     GPIO_ResetBits(CAM_GPIO_GROUP,CAM_PWN);
+
+    GPIO_InitStructure.GPIO_Pin = CAM_RST;
+    GPIO_Init(CAM_GPIO_GROUP, &GPIO_InitStructure); //GPIOB
     lprintf("cam rst=1\n");
     GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST);
 
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
         GPIO_InitStructure.GPIO_Pin = CAM_PCLK|CAM_VSYN|CAM_HREF;
-        GPIO_Init(GPIOC, &GPIO_InitStructure); //GPIOB
-        GPIO_SetBits(GPIOC,CAM_PCLK|CAM_VSYN|CAM_HREF);
+        GPIO_Init(CAM_GPIO_GROUP, &GPIO_InitStructure); //GPIOB
+        GPIO_SetBits(CAM_GPIO_GROUP,CAM_PCLK|CAM_VSYN|CAM_HREF);
 
-        GPIO_InitStructure.GPIO_Pin = 0xffff;//PB high 8bit
-        GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
-        GPIO_SetBits(GPIOB,0xffff);
-    i2c_init();
+    cam_i2c_init();
     cam_xclk_on();
     delay_ms(2);
     lprintf("cam reset return %x\n", cam_w_reg(0x12, 0x80));
