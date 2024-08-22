@@ -89,7 +89,7 @@ void Enable_BL(int en)//µãÁÁ±³¹â
 	    //GPIOC->BRR = 0x00002000;
 	}
 }
-
+#define CAM_DATA_OFFSET 1
 #define CAM_GPIO_GROUP GPIOB
 #define CAM_PWN_GPIO_GROUP GPIOC
 #define CAM_VSYN GPIO_Pin_12
@@ -1104,7 +1104,7 @@ void cam_read_line(int in_dump_line)
             while((!(CAM_GPIO_GROUP->IDR & CAM_VSYN))&&(CAM_GPIO_GROUP->IDR & CAM_HREF)){
                 GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
                 GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
-                if(rec_count<640*2)vbf[rec_count++]=GPIOB->IDR>>8;
+                if(rec_count<640*2)vbf[rec_count++]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
                 else lprintf("err:rec_count>1280\n");
             }
             if(rec_count!=1280)lprintf("recct %d in line %d\n", rec_count, linect);
@@ -1174,7 +1174,7 @@ void cam_read_frame(int dump_line)
             GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
             GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
             if(CAM_GPIO_GROUP->IDR & CAM_HREF){
-                vbf[rec_count++]=GPIOB->IDR>>8;
+                vbf[rec_count++]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
                 w_count++;
                 count++;
                 last_href_lvl  = 1;
