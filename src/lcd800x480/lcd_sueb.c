@@ -1078,8 +1078,8 @@ void cam_read_line(int in_dump_line)
     }
     //lprintf("start line %d\n", next_read_line);
     next_free_line = next_read_line+rn;
-    while(!(GPIOC->IDR & CAM_VSYN));
-    while((GPIOC->IDR & CAM_VSYN));//start of frame
+    while(!(CAM_GPIO_GROUP->IDR & CAM_VSYN));
+    while((CAM_GPIO_GROUP->IDR & CAM_VSYN));//start of frame
 
     while(1){
         if(mode==FREE_MODE){
@@ -1097,11 +1097,11 @@ void cam_read_line(int in_dump_line)
             }
         }
         if(mode==READ_MODE){
-            while((!(GPIOC->IDR & CAM_VSYN))&&(!(GPIOC->IDR & CAM_HREF))){
+            while((!(CAM_GPIO_GROUP->IDR & CAM_VSYN))&&(!(CAM_GPIO_GROUP->IDR & CAM_HREF))){
                 GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
                 GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
             }
-            while((!(GPIOC->IDR & CAM_VSYN))&&(GPIOC->IDR & CAM_HREF)){
+            while((!(CAM_GPIO_GROUP->IDR & CAM_VSYN))&&(CAM_GPIO_GROUP->IDR & CAM_HREF)){
                 GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
                 GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
                 if(rec_count<640*2)vbf[rec_count++]=GPIOB->IDR>>8;
@@ -1120,11 +1120,11 @@ void cam_read_line(int in_dump_line)
             }
         }
         else{
-            while((!(GPIOC->IDR & CAM_VSYN))&&(!(GPIOC->IDR & CAM_HREF)));
-            while((!(GPIOC->IDR & CAM_VSYN))&&(GPIOC->IDR & CAM_HREF));
+            while((!(CAM_GPIO_GROUP->IDR & CAM_VSYN))&&(!(CAM_GPIO_GROUP->IDR & CAM_HREF)));
+            while((!(CAM_GPIO_GROUP->IDR & CAM_VSYN))&&(CAM_GPIO_GROUP->IDR & CAM_HREF));
         }
         rec_count = 0;
-        if(GPIOC->IDR & CAM_VSYN)break;
+        if(CAM_GPIO_GROUP->IDR & CAM_VSYN)break;
         if(linect++>1000)break;
     }
     if(linect!=480)lprintf("linect %d\n", linect);
@@ -1158,9 +1158,9 @@ void cam_read_frame(int dump_line)
     //u32 frames_skip= 100;
     frames_wsize = 0;
     while(1){
-        //while(GPIOC->IDR & CAM_VSYN);
-        while(!(GPIOC->IDR & CAM_VSYN));
-        while((GPIOC->IDR & CAM_VSYN))ct_bf_vsyn++;
+        //while(CAM_GPIO_GROUP->IDR & CAM_VSYN);
+        while(!(CAM_GPIO_GROUP->IDR & CAM_VSYN));
+        while((CAM_GPIO_GROUP->IDR & CAM_VSYN))ct_bf_vsyn++;
 #if 0
         if(frames_skip--){
             prt_hex(frames_skip);
@@ -1169,11 +1169,11 @@ void cam_read_frame(int dump_line)
         else frames_skip=100;
 #endif
         cam_xclk_off();
-        while(!(GPIOC->IDR & CAM_VSYN)){
-        //while(GPIOC->IDR & CAM_VSYN){
+        while(!(CAM_GPIO_GROUP->IDR & CAM_VSYN)){
+        //while(CAM_GPIO_GROUP->IDR & CAM_VSYN){
             GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
             GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
-            if(GPIOC->IDR & CAM_HREF){
+            if(CAM_GPIO_GROUP->IDR & CAM_HREF){
                 vbf[rec_count++]=GPIOB->IDR>>8;
                 w_count++;
                 count++;
