@@ -1365,7 +1365,7 @@ uchar cam_Readbyte()
 void cam_i2c_init()
 {
     GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
-    RCC_APB2PeriphClockCmd(GPIOB, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
     GPIO_InitStructure.GPIO_Pin = cam_SDA_PIN|cam_SCL_PIN;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //ÍÆÍìÊä³ö 
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
