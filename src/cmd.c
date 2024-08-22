@@ -1226,10 +1226,10 @@ void cam(char *p)
             p = str_to_hex(p, &p2);
             lprintf("p2=%d\n", p2);
             if(!p2){
-                GPIO_ResetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
+                GPIO_ResetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
             }
             else{
-                GPIO_SetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
+                GPIO_SetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
             }
         }
         else lprintf("need para\n");
