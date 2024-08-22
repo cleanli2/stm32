@@ -326,10 +326,10 @@ void SD_DeInit(void)
 void SD_repower()
 {
     lprintf("sd power off\n");
-    GPIO_SetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
+    GPIO_SetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
     delay_ms(100);
     lprintf("sd power on\n");
-    GPIO_ResetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
+    GPIO_ResetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
 }
 
 SD_Error get_sd_hw_err(void)
