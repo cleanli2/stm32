@@ -2517,6 +2517,7 @@ uint16_t get_BL_value()
 ******************************************************************************/	 	 
 void lcd_sueb_init(int testitem)
 {
+    set_BL_value(DEFAULT_BL);//quater bright
 }
 #if 0
 void lcd_sueb_init(int testitem)

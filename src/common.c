@@ -799,7 +799,7 @@ void main_init(void)
   }
   lprintf_time("SD init done\n");
   lprintf_time("lcd init\n");
-  //lcd_sueb_init(0);
+  lcd_sueb_init(0);
   lprintf_time("NO lcd init.\n");
   //SD_LowLevel_Init();
 
