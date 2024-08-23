@@ -56,23 +56,19 @@ uint32_t get_uint_offset(char* buf_base, uint32_t off, uint32_t num)
 
 int recover_sd()
 {
+    int rty = 1;
     lprintf("try re init sd\n");
-    if(SD_OK != g_fs->disk_init()){
-        lprintf("fail, try repower\n");
-        SD_repower();
-        if(SD_OK != g_fs->disk_init()){
+    while(SD_OK != g_fs->disk_init()){
+        lprintf("fail, try repower %d*100ms\n", rty);
+        SD_repower(rty);
+        rty*=2;
+        if(rty>32){
             lprintf("fail, abandon\n");
             return 0;
         }
-        else{
-            lprintf("OK, retry\n");
-            return 1;
-        }
     }
-    else{
-        lprintf("OK, retry\n");
-        return 1;
-    }
+    lprintf("OK, retry\n");
+    return 1;
 }
 
 static uint32_t current_r_sector_no = 0xffffffff;

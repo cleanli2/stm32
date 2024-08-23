@@ -358,10 +358,10 @@ void SD_power_off()
     SD_DeInit();
 }
 
-void SD_repower()
+void SD_repower(int n)
 {
     SD_power_on();
-    delay_ms(200);
+    delay_ms(100*n);
     SD_power_off();
 }
 
