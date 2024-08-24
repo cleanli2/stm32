@@ -1,0 +1,25 @@
+Add following Circuit to help SD re-power off/on without power drop(system
+will reset in such case)
+
+
+
+
+power+   ---------------------------------   ------------------------------  SD+
+                    |               \|/ |              |          | 
+                    |               -----              |          |
+                    |                 |                |          |
+                    |                 |to gpio to      |          |
+                    | 100uF               ctrl on/off  | -/|-/|   |  
+                    | prevent power drop               | /  /     |
+                  -----  when SD power up            -----        -
+                  |   |                               \|/        | | 2.2k
+                  -----                              --|--       | | to 
+                                                       |          - release 
+                  -----                                |          | power
+                    |                                  -          | in SD
+                    |                                 | |         | or it
+                    |                                 | |         | will
+                    |                                  -          | not reset
+                    |                                  |          |
+                    |                                  |          |
+power-   -------------------------------------------------------------------   SD-
