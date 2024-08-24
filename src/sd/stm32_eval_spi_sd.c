@@ -147,7 +147,7 @@ uint8_t SD_WaitReady(void)
         t++;
     }while(t<retrys);//
     lprintf("sms nord\n");
-    return 0;
+    return 1;
 }
 
 /**
