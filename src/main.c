@@ -62,7 +62,7 @@ int main()
         else{
             lprintf("open file fail:%s.BIN\n", file_name);
             if(fnn<MIN_YUV_FILES_NUM){
-                slprintf(stopreason, "%s\n", "Too less files=%d", fnn);
+                slprintf(stopreason, "Too less files=%d\n", fnn);
                 break;
             }
             else{
