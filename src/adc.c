@@ -77,6 +77,7 @@ int adc_test()
         lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     v_bat=ADC_GetConversionValue(ADC1);
+    lprintf("vbat = %x\n", v_bat);
     v_bat = 2500 * v_bat / v_ref;
     v_bat = v_bat * (330 + 680) / 330;
     lprintf("real vbat = %dmv\n", v_bat);
