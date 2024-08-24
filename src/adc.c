@@ -133,14 +133,7 @@ int adc_test()
     }
     Debug_LOG_ADC("real I = %dmA\n", i_currt);
     Debug_LOG_ADC("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, i_currt);
-#ifdef LARGE_SCREEN
-    lcd_lprintf(240, 0, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, i_currt);
-#else
-    lcd_lprintf(180, 30, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, i_currt);
-#endif
-    if(500000 > (get_system_us()%(1000*1000*200))){//200s
-        lprintf_time("v_core %dmv v_bat %dmv in_charge %c I %dmA\n", v_core, v_bat, in_charge, i_currt);
-    }
+    lprintf_time("v_core %dmv v_bat %dmv in_charge %c I %dmA\n", v_core, v_bat, in_charge, i_currt);
     if(v_bat < BATT_LOW_LIMIT){
         lprintf("battery is low\n");
         ret = 1;
