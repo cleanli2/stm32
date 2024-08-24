@@ -102,11 +102,11 @@ int adc_test()
     //mA/mv
 #define CURRENT_MEASUREMENT_CALIBRATION 1025/1000
     v_currt = 2500 * v_currt / v_ref;
-    //lprintf("real v_currt = %dmv\n", v_currt);
+    lprintf("real v_currt = %dmv\n", v_currt);
     v_currt = v_currt * CURRENT_MEASUREMENT_CALIBRATION;
-    //lprintf("real I = %dmA\n", v_currt);
-    //lprintf("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, v_currt);
-    lcd_lprintf(1, 240, 0, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
+    lprintf("real I = %dmA\n", v_currt);
+    lprintf("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, v_currt);
+    //lcd_lprintf(1, 240, 0, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, v_currt);
     if(500000 > (get_system_us()%(1000*1000*200))){//200s
         lprintf_time("v_core %dmv v_bat %dmv in_charge %c I %dmA\n", v_core, v_bat, in_charge, v_currt);
     }
