@@ -52,45 +52,45 @@ int adc_test()
         adc_inited = ADC_INITED;
     }
     else{
-        //lprintf("adc already inited\n");
+        lprintf("adc already inited\n");
     }
 
-    //lprintf("start adc1 PA3 convertion\n");
+    lprintf("start adc1 PA3 convertion\n");
     ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 1, ADC_SampleTime_28Cycles5);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     do
     {
         delay_us(5);
-        //lprintf("waiting convertion done...\n");
+        lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     v_ref=ADC_GetConversionValue(ADC1);
-    //lprintf("vref = %x\n", v_ref);
+    lprintf("vref = %x\n", v_ref);
     v_core = 2500 * 4096 / v_ref;
-    //lprintf("real vcore = %dmv\n", v_core);
+    lprintf("real vcore = %dmv\n", v_core);
 
-    //lprintf("start adc1 PA4 convertion\n");
+    lprintf("start adc1 PA4 convertion\n");
     ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 1, ADC_SampleTime_28Cycles5);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     do
     {
         delay_us(5);
-        //lprintf("waiting convertion done...\n");
+        lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     v_bat=ADC_GetConversionValue(ADC1);
     v_bat = 2500 * v_bat / v_ref;
     v_bat = v_bat * (330 + 680) / 330;
-    //lprintf("real vbat = %dmv\n", v_bat);
+    lprintf("real vbat = %dmv\n", v_bat);
 
-    //lprintf("start adc1 PA2 convertion\n");
+    lprintf("start adc1 PA2 convertion\n");
     ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_28Cycles5);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     do
     {
         delay_us(5);
-        //lprintf("waiting convertion done...\n");
+        lprintf("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     v_currt=ADC_GetConversionValue(ADC1);
-    //lprintf("vcur = %x\n", v_currt);
+    lprintf("vcur = %x\n", v_currt);
     if(v_currt>v_ref){
         in_charge = '+';
         v_currt = v_currt - v_ref;
