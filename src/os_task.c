@@ -312,6 +312,7 @@ void spin_unlock(u32 lockno)
 
 void os_lock(oslock_o* lock)
 {
+    (void)lock;
 #if 0
     u32 irqsv;
     int i;
@@ -344,6 +345,7 @@ void os_lock(oslock_o* lock)
 }
 void os_unlock(oslock_o* lock)
 {
+    (void)lock;
 #if 0
     u32 irqsv;
     int i;

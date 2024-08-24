@@ -1506,6 +1506,7 @@ void cam_init(int choose)
 
 void LCD_BUS_To_write(int write)
 {
+    (void)write;
 #ifndef NO_LCD
     GPIO_InitTypeDef  GPIO_InitStructure;
 
@@ -1527,6 +1528,7 @@ void LCD_BUS_To_write(int write)
 
 void LCD_write(u16 VAL)
 {
+    (void)VAL;
 #ifndef NO_LCD
 	LCD_CS_CLR;  
 	DATAOUT(VAL);
@@ -1638,6 +1640,9 @@ void LCD_WriteReg(u16 LCD_Reg, u16 LCD_RegValue)
 ******************************************************************************/
 void LCD_ReadReg(u16 LCD_Reg,u8 *Rval,int n)
 {
+    (void)LCD_Reg;
+    (void)Rval;
+    (void)n;
 #ifndef NO_LCD
 	LCD_WR_REG(LCD_Reg); 
 	LCD_BUS_To_write(0);
@@ -2161,6 +2166,8 @@ void LCD_Set_Window(u16 sx,u16 sy,u16 width,u16 height)
 u16 LCD_ReadPoint(u16 x,u16 y)
 {
 	u16 color=0;
+    (void)x;
+    (void)y;
 #ifndef NO_LCD
 	if(x>=lcddev.width||y>=lcddev.height)
 	{
@@ -2235,9 +2242,9 @@ void LCD_Clear(u16 Color)
 ******************************************************************************/	
 void LCD_GPIOInit(void)
 {
+#ifndef NO_LCD
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	      
-#ifndef NO_LCD
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO,ENABLE);
 	
 #ifdef ALIENTEK_MINI
@@ -2285,8 +2292,9 @@ void LCD_RESET(void)
 
 void LCD_hw_test(int testitem)
 {
-	u16 testdata = 1;
+    (void)testitem;
 #ifndef NO_LCD
+	u16 testdata = 1;
 	int i = 0;
 	switch(testitem){
 		case LCD_HW_GPIO_TEST:
@@ -2517,6 +2525,7 @@ uint16_t get_BL_value()
 ******************************************************************************/	 	 
 void lcd_sueb_init(int testitem)
 {
+    (void)testitem;
     set_BL_value(DEFAULT_BL);//quater bright
 }
 #if 0

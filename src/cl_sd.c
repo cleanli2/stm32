@@ -2,4 +2,5 @@
 
 uint32_t cl_sd_init()
 {
+    return 0;
 }
