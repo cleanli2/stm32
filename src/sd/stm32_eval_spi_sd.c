@@ -148,8 +148,8 @@ uint8_t SD_WaitReady(void)
         }
         t++;
     }while(t<retrys);//
-    lprintf("sms nord\n");
-    return 0;
+    lprintf("^sdwf^");
+    return 1;
 }
 
 /**
@@ -257,7 +257,7 @@ u8 SD_GetCXD(u8 *csd_data, u8 cmd)
     r1=SD_SendCmd(cmd,0,0x01);//发CMD9命令，读CSD
     if(r1==0)
 	{
-        lprintf("get data\n");
+        //lprintf("get data\n");
     	r1=SD_RecvData(csd_data, 16);//接收16个字节的数据 
     }
 	SD_DisSelect();//取消片选
@@ -267,7 +267,7 @@ u8 SD_GetCXD(u8 *csd_data, u8 cmd)
         return 1;
     }
 	else{
-        lprintf("read %b OK\n", cmd);
+        //lprintf("read %b OK\n", cmd);
         return 0;
     }
 }  
@@ -393,7 +393,7 @@ SD_Error SD_Init(void)
   /*!< SD chip select high */
   SD_CS_HIGH();
 
-  lprintf("send SD dummy bytes\n");
+  //lprintf("send SD dummy bytes\n");
   /*!< Send dummy byte 0xFF, 10 times with CS high */
   /*!< Rise CS and MOSI for 80 clocks cycles */
   for (i = 0; i <= 9; i++)
@@ -1466,7 +1466,7 @@ SD_Error SD_GoIdleState(void)
 	uint8_t r1;
     //SD_Error ret;
 	int retry = 40;
-  lprintf("%s:%d\n", __func__, __LINE__);
+  //lprintf("%s:%d\n", __func__, __LINE__);
   
   os_lock(&oslk_spibus);
   do{

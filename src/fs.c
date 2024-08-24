@@ -84,13 +84,14 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
             return buf;
         }
         else{
-            lprintf("write disk err retry=%d\n", retry);
+            //lprintf("write disk err retry=%d\n", retry);
+            lprintf("^wder=%d^", retry);
         }
         if(retry--==0){
             lprintf("FATAL:!!!!!!!!!!!!write disk err secno:%d 0x%x\n", sector_no, sector_no);
 
             if(recover_sd()){
-                lprintf("OK, retry\n");
+                lprintf("recover OK, retry write\n");
                 retry = disk_retry;
             }
             else{
@@ -119,7 +120,7 @@ char* disk_read_sector(uint32_t sector_no)
         if(retry--==0){
             lprintf("FATAL:!!!!!!!!!!!!read disk err secno:%d 0x%x\n", sector_no, sector_no);
             if(recover_sd()){
-                lprintf("OK, retry\n");
+                lprintf("recover OK, retry read\n");
                 retry = disk_retry;
             }
             else{
