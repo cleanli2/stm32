@@ -842,7 +842,7 @@ void set_OV7670reg_M(void)
 	cam_w_reg(0x9e, 0x3f);	
 
 	cam_w_reg(0x09, 0x00);
-	cam_w_reg(0x3b, 0xc2);
+	//cam_w_reg(0x3b, 0xc2);//night mode
 
 }
 void set_OV7670reg(void)
