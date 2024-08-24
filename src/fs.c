@@ -63,11 +63,9 @@ int recover_sd()
         SD_repower(rty);
         rty*=2;
         if(rty>32){
-            lprintf("fail, abandon\n");
             return 0;
         }
     }
-    lprintf("OK, retry\n");
     return 1;
 }
 
@@ -88,7 +86,7 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
             lprintf("^wder=%d^", retry);
         }
         if(retry--==0){
-            lprintf("FATAL:!!!!!!!!!!!!write disk err secno:%d 0x%x\n", sector_no, sector_no);
+            lprintf("\n!!Fwde-scno:%d-0x%x!!\n", sector_no, sector_no);
 
             if(recover_sd()){
                 lprintf("recover OK, retry write\n");
@@ -112,13 +110,13 @@ char* disk_read_sector(uint32_t sector_no)
     }
     while(1){
         if(SD_RESPONSE_NO_ERROR != g_fs->rd_block((u8*)disk_buf, sector_no, FS_BUF_SIZE)){
-            lprintf("read disk err, retry=%d\n", retry);
+            lprintf("^rder=%d^\n", retry);
         }
         else{
             break;
         }
         if(retry--==0){
-            lprintf("FATAL:!!!!!!!!!!!!read disk err secno:%d 0x%x\n", sector_no, sector_no);
+            lprintf("\n!!Frde-scno:%d-0x%x!!\n", sector_no, sector_no);
             if(recover_sd()){
                 lprintf("recover OK, retry read\n");
                 retry = disk_retry;
