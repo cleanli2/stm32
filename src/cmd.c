@@ -1297,7 +1297,12 @@ void cam(char *p)
         close_file();
     }
     if(!strcmp(p1, "nn")){
-        slprintf(file_name, "YUV%x", ++fnn);
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+            lprintf("p2=%d\n", p2);
+            fnn=p2;
+        }
+        slprintf(file_name, "YUV%x", fnn);
         lprintf("current is %s.BIN\n", file_name);
     }
     if(!strcmp(p1, "name")){
@@ -1371,9 +1376,7 @@ void cam(char *p)
         }
     }
     if(!strcmp(p1, "fsc")){
-        p2=5600;
-        fnn=0;
-        while(p2--){
+        while(1){
             slprintf(file_name, "YUV%d", ++fnn);
             lprintf("save frame to file %s.bin\n", file_name);
             if(FS_OK==open_file_for_write(file_name, "BIN")){
@@ -1383,10 +1386,8 @@ void cam(char *p)
             }
             else{
                 lprintf("open file fail:%s.BIN\n", file_name);
-                if(get_sd_hw_err()){
-                    lprintf("SD hw error, stop fsc cmd\n");
-                    return;
-                }
+                lprintf("Stop fsc cmd\n");
+                return;
             }
         }
     }

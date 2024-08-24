@@ -312,6 +312,7 @@ void spin_unlock(u32 lockno)
 
 void os_lock(oslock_o* lock)
 {
+#if 0
     u32 irqsv;
     int i;
     u32 atomic_ret = 1;
@@ -339,9 +340,11 @@ void os_lock(oslock_o* lock)
             os_switch_trigger();
         }
     }
+#endif
 }
 void os_unlock(oslock_o* lock)
 {
+#if 0
     u32 irqsv;
     int i;
     BIT_ACCESS(&spin_lock_base, lock->lockno) = 0;
@@ -356,6 +359,7 @@ void os_unlock(oslock_o* lock)
         }
     }
     irq_restore(irqsv);
+#endif
 }
 
 u32*PendSV_Handler_local(u32*stack_data)
