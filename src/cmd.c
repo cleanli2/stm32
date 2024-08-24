@@ -1745,24 +1745,15 @@ void run_cmd_interface()
     mrw_addr = (uint32_t*)0x20000000;
     lprintf("Version %s%s\n", VERSION, GIT_SHA1);
     lprint("\n\nclean_cmd. \n'c' key go cmd...\n");
-  if(os_is_running){
     while(timeout--){
-        if(os_is_running){
-            os_10ms_delay(1000);
-        }
-        else{
-            w10ms_delay(100);
-        }
+        delay_ms(100);
         if(con_is_recved() && (con_recv() == 'c'))break;
         lprintf("timeout %d\n", timeout);
         if(timeout == 1){
             lprintf("Timeout. Quit cmd\n");
-#ifndef ALIENTEK_MINI
             return;
-#endif
         }
     }
-  }
     lmemset(cmd_buf, 0, COM_MAX_LEN);
     memset(&cmd_caches[0][0], 0, CMD_CACHES_SIZE*COM_MAX_LEN);;
     cmd_buf_p = 0;
