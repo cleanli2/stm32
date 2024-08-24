@@ -809,6 +809,7 @@ void main_init(void)
       led_flash(0x3, 100);
   }
   beep_by_timer_100(0);
+#if 0
     while(1){
         run_cmd_interface();
     }
@@ -822,6 +823,7 @@ void main_init(void)
   os_task_add(os_ui, ui_stack, "ui", STACK_SIZE_LOCAL*2, 3);
   while(1){
   }
+#endif
 }
 
 #if 0
