@@ -359,28 +359,24 @@ void task_log(struct task*vp)
     if(0 == log_size){
         return;
     }
-    if(1000000 > (get_system_us()%(1000*1000*10))){//10s
-        set_save_log_flag();
-    }
-    if(log_size < SIZE_OF_START_WRITE_FLASH){
-        if(force_save_log){
-            force_save_log = 0;
-        }
-        else{
-            return;
-        }
-    }
     wi = write_index;
     log_to_flash(log_buf, read_index, log_size, LOG_BUF_SIZE);
     read_index =  wi;
 }
 
-void log_to_buf(const char* log)
+#define HINT_LOG_LOST "#LOST#\n"
+#define HINT_LOG_LOST_LEN (strlen(HINT_LOG_LOST))
+void log_to_buf(char* log)
 {
     u32 free_log_size, len, log_to_end_size, w_len;
     len = strlen(log);
-    free_log_size = LOG_BUF_SIZE - get_log_size();;
-    if(free_log_size>len){
+    free_log_size = LOG_BUF_SIZE - get_log_size() - HINT_LOG_LOST_LEN;
+    if(free_log_size<len){
+        slprintf(log+free_log_size, HINT_LOG_LOST);
+        len = free_log_size+HINT_LOG_LOST_LEN;
+    }
+    //if(free_log_size>len)
+    {
         log_to_end_size = LOG_BUF_SIZE - write_index;
         while(1){
             if(log_to_end_size < len){
@@ -396,23 +392,9 @@ void log_to_buf(const char* log)
             log+=w_len;
             len-=w_len;
             if(0==len){
-                goto end;
+                return;
             }
         }
-    }
-    else{
-        putchars("log to buf lost, len ");
-        print_hex(len);
-        putchars(" wi ");
-        print_hex(write_index);
-        putchars(" ri ");
-        print_hex(read_index);
-        putchars("\n");
-    }
-end:
-    if(log_wait_task != NULL){
-        log_wait_task->task_status = TASK_STATUS_RUNNING;
-        log_wait_task = NULL;
     }
 }
 
@@ -485,8 +467,6 @@ void lprintf_time(const char *fmt, ...)
     putchars(lprintf_buf);
     log_to_buf(lprintf_buf);
     va_end(ap);
-    putchars_buf(fmt);
-    os_unlock(&oslk_lprintf);
 }
 #endif
 

@@ -22,7 +22,7 @@ void task_log(struct task*vp);
 void foce_save_log_func();
 void puthexch(char c);
 void reset_time_offset();
-void log_to_buf(const char* log);
+void log_to_buf(char* log);
 void os_task_log(void*p);
 
 #define prtline lprintf("line:%d %s\r\n", __LINE__, __func__)

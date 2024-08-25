@@ -36,6 +36,7 @@ uint32_t task_mask = 0;
 
 #define MIN_YUV_FILES_NUM 100
 void cam_init(int);
+void cam_deinit();
 void cam_read_frame(int);
 void cam_read_line(int);
 void set_xclk(uint32_t fct);
@@ -49,6 +50,7 @@ int main()
     char file_name[32];
     char stopreason[64];
     main_init();
+    cam_deinit();
     run_cmd_interface();
     cam_init(7);
     while(1){
@@ -76,7 +78,10 @@ int main()
             power_off();
             break;
         }
+        //task log
+        task_log(NULL);
     }
+    cam_deinit();
     while(1){
         lprintf(stopreason);
         delay_ms(1000);
