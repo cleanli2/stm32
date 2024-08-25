@@ -91,10 +91,10 @@ int main()
     }
     cam_deinit();
     lprintf_time("end working loop.\n");
-    task_log(NULL);
+    //task_log(NULL);
     while(1){
         lprintf(stopreason);
-        delay_ms(1000);
+        run_cmd_interface();
     }
     return 0;
 }

@@ -173,6 +173,10 @@ void w25f(char *p)
         lprintf("print log in spi flash:\n");
         spi_flash_log_print();
     }
+    else if(cmdindex == 0xd){//
+        lprintf("run task log\n");
+        task_log(NULL);
+    }
     con_send('\n');
 
     return;
