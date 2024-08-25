@@ -5,7 +5,7 @@
 #include "common.h"
 #include "os_task.h"
 
-#define LOG_BUF_SIZE 512
+#define LOG_BUF_SIZE 1024
 char log_buf[LOG_BUF_SIZE];
 static u32 write_index = 0;
 static u32 read_index = 0;
