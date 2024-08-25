@@ -1423,6 +1423,7 @@ uint8_t cam_r_reg(uint8_t addr)
 #define CAM_DATA_PORT_GPIO_Pins 0x1fe
 void cam_deinit()
 {
+    lprintf_time("cam down\n");
     GPIO_SetBits(CAM_GPIO_GROUP,CAM_PWN);
     cam_xclk_off();
 }
@@ -1457,7 +1458,7 @@ void cam_init(int choose)
     cam_i2c_init();
     cam_xclk_on();
     delay_ms(2);
-    lprintf("cam reset return %x\n", cam_w_reg(0x12, 0x80));
+    lprintf_time("cam reset return %x\n", cam_w_reg(0x12, 0x80));
     delay_ms(20);
     //read cam id
     while(1){
@@ -1472,37 +1473,37 @@ void cam_init(int choose)
 
     switch(choose){
         case 1:
-            lprintf("set_OV7670reg\n");
+            lprintf_time("set_OV7670reg\n");
             set_OV7670reg();
             break;
             //OV7670_config_window(272,12,320,240);//
         case 2:
-            lprintf("init_rgb565_qvga_12fps\n");
+            lprintf_time("init_rgb565_qvga_12fps\n");
             init_rgb565_qvga_12fps();
             break;
         case 3:
-            lprintf("init_rgb565_qvga_25fps_new\n");
+            lprintf_time("init_rgb565_qvga_25fps_new\n");
             init_rgb565_qvga_25fps_new();
             break;
         case 4:
-            lprintf("init_rgb565_qvga_25fps\n");
+            lprintf_time("init_rgb565_qvga_25fps\n");
             init_rgb565_qvga_25fps();
             break;
         case 5:
-            lprintf("init_yuv_25fps\n");
+            lprintf_time("init_yuv_25fps\n");
             init_yuv_25fps();
             break;
         case 6:
-            lprintf("init_yuv_12fps\n");
+            lprintf_time("init_yuv_12fps\n");
             init_yuv_12fps();
             break;
         case 7:
-            lprintf("modified set_OV7670reg\n");
+            lprintf_time("modified set_OV7670reg\n");
             set_OV7670reg_M();
             break;
         default:
             lprintf("cam w 0x1e return %x\n", cam_w_reg(0x1e, 0x30|cam_r_reg(0x1e)));
-            lprintf("no init regs\n");
+            lprintf_time("no init regs\n");
     }
     //lprintf("cam w 0x70 return %x\n", cam_w_reg(0x70, 0x80|cam_r_reg(0x70)));
     //lprintf("cam w 0x71 return %x\n", cam_w_reg(0x71, 0x80|cam_r_reg(0x71)));

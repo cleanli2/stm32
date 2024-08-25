@@ -53,28 +53,30 @@ int main()
     cam_deinit();
     if(adc_test()){
         slprintf(stopreason, "%s\n", "Battery low, power off");
+        lprintf_time(stopreason);
         power_off();
     }
     run_cmd_interface();
     task_log(NULL);
-    lprintf_time("start camera.\n");
+    lprintf_time("start working loop.\n");
     cam_init(7);
     while(1){
         slprintf(file_name, "YUV%d", fnn);
-        lprintf("save frame to file %s.bin\n", file_name);
+        lprintf_time("open file %s.bin\n", file_name);
         if(FS_OK==open_file_for_write(file_name, "BIN")){
             cam_save_1_frame(0);
             close_file();
-            lprintf("\n===============save frame to file %s.bin done\n", file_name);
+            lprintf_time("\n===============save frame to file %s.bin done\n", file_name);
         }
         else{
-            lprintf("open file fail:%s.BIN\n", file_name);
+            lprintf_time("open file fail:%s.BIN\n", file_name);
             if(fnn<MIN_YUV_FILES_NUM){
                 slprintf(stopreason, "Too less files=%d\n", fnn);
+                lprintf_time(stopreason);
                 break;
             }
             else{
-                lprintf("end of files, restart from YUV0.bin\n");
+                lprintf_time("end of files, restart from YUV0.bin\n");
                 fnn=0;
             }
         }
