@@ -363,6 +363,7 @@ void SD_repower(int n)
     SD_power_off();
     delay_ms(100*n);
     SD_power_on();
+    SD_LowLevel_Init();
 }
 
 SD_Error get_sd_hw_err(void)
