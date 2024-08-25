@@ -90,6 +90,8 @@ int main()
         task_log(NULL);
     }
     cam_deinit();
+    lprintf_time("end working loop.\n");
+    task_log(NULL);
     while(1){
         lprintf(stopreason);
         delay_ms(1000);
