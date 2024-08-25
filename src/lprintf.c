@@ -376,6 +376,7 @@ void log_to_buf(char* log)
     len = strlen(log);
     free_log_size = LOG_BUF_SIZE - 1 - get_log_size() - HINT_LOG_LOST_LEN;
     if(free_log_size<len){
+        lprintf("err:%d bytes log lost\n", len-free_log_size);
         slprintf(log+free_log_size, HINT_LOG_LOST);
         len = free_log_size+HINT_LOG_LOST_LEN;
     }
