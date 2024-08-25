@@ -1747,7 +1747,7 @@ void run_cmd_interface()
     lprintf("Version %s%s\n", VERSION, GIT_SHA1);
     lprint("\n\nclean_cmd. \n'c' key go cmd...\n");
     while(timeout--){
-        delay_ms(100);
+        delay_ms(2000);
         if(con_is_recved() && (con_recv() == 'c'))break;
         lprintf("timeout %d\n", timeout);
         if(timeout == 1){
