@@ -1199,6 +1199,7 @@ char file_name[16];
 u32 fnn=0;
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 void cam_init(int);
+void cam_deinit();
 void cam_read_frame(int);
 void cam_read_line(int);
 void set_xclk(uint32_t fct);
@@ -1423,6 +1424,11 @@ void cam(char *p)
         lprintf("p2=%d\n", p2);
         lprintf("p3=%d\n", p3);
         cam_set_rfn(p2, p3);
+    }
+    if(!strcmp(p1, "camoff")){
+        lprintf("camera power down\n");
+        cam_deinit();
+        lprintf_time("camera power down\n");
     }
     if(!strcmp(p1, "init")){
         p2 = 0;
@@ -1741,13 +1747,13 @@ uint time_limit_recv_byte(uint limit, char * c);
 void run_cmd_interface()
 {
     char c = 0, last_c = 0;
-    int timeout = 3;
+    int timeout = 5;
 
     mrw_addr = (uint32_t*)0x20000000;
     lprintf("Version %s%s\n", VERSION, GIT_SHA1);
     lprint("\n\nclean_cmd. \n'c' key go cmd...\n");
     while(timeout--){
-        delay_ms(2000);
+        delay_ms(1000);
         if(con_is_recved() && (con_recv() == 'c'))break;
         lprintf("timeout %d\n", timeout);
         if(timeout == 1){

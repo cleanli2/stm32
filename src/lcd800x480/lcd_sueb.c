@@ -1421,6 +1421,11 @@ uint8_t cam_r_reg(uint8_t addr)
 }
 
 #define CAM_DATA_PORT_GPIO_Pins 0x1fe
+void cam_deinit()
+{
+    GPIO_SetBits(CAM_GPIO_GROUP,CAM_PWN);
+    cam_xclk_off();
+}
 void cam_init(int choose)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;

@@ -168,9 +168,13 @@ void print_binary(uint32_t num)
         putchars(nc);
 }
 char sys_hour[14];
+static u32 date_hour_offset = 0xffffffff;
+void reset_time_offset()
+{
+    date_hour_offset = 0xffffffff;
+}
 char*get_sys_hour()
 {
-    static u32 date_hour_offset = 0xffffffff;
     u32 ms_time;
     u32 t;//tmp variable
     if(date_hour_offset == 0xffffffff){
@@ -210,6 +214,7 @@ char*vslprintf(int print_with_time, char*s_buf, const char *fmt, va_list args)
 {
     const char *s;
     uint32_t d;
+    int32_t di;
     uint64_t u;
     va_list ap;
     char*sp = s_buf;
@@ -235,8 +240,18 @@ char*vslprintf(int print_with_time, char*s_buf, const char *fmt, va_list args)
                 sp += strlen(s);
                 break;
             case 'u':
-            case 'd':
                 d = va_arg(ap, uint32_t);
+                sp += sprint_uint(sp, d);
+                break;
+            case 'd':
+                di = va_arg(ap, int32_t);
+                if(di<0){
+                    d=-di;
+                    *sp++='-';
+                }
+                else{
+                    d=di;
+                }
                 sp += sprint_uint(sp, d);
                 break;
             case 'U':
@@ -455,7 +470,7 @@ void putchars_buf(const char *s)
     irq_restore(flag);
 }
 
-#if 0
+#if 1
 void lprintf_time(const char *fmt, ...)
 {
     va_list ap;
