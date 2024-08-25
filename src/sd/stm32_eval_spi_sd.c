@@ -325,7 +325,7 @@ void SD_DeInit(void)
 
 void SD_power_on()
 {
-    lprintf("sd power on\n");
+    lprintf_time("sd power on\n");
     SD_CS_HIGH();
     GPIO_ResetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
 }
@@ -335,7 +335,7 @@ void SD_power_off()
 {
     GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
 
-    lprintf("sd power off\n");
+    lprintf_time("sd power off\n");
 
     GPIO_InitStructure.GPIO_Pin = TCLK_PIN;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -360,9 +360,9 @@ void SD_power_off()
 
 void SD_repower(int n)
 {
-    SD_power_on();
-    delay_ms(100*n);
     SD_power_off();
+    delay_ms(100*n);
+    SD_power_on();
 }
 
 SD_Error get_sd_hw_err(void)

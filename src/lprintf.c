@@ -369,8 +369,12 @@ void task_log(struct task*vp)
 void log_to_buf(char* log)
 {
     u32 free_log_size, len, log_to_end_size, w_len;
+    if(LOG_BUF_SIZE-1 == get_log_size()){
+        lprintf("log buf full, log lost\n");
+        return;
+    }
     len = strlen(log);
-    free_log_size = LOG_BUF_SIZE - get_log_size() - HINT_LOG_LOST_LEN;
+    free_log_size = LOG_BUF_SIZE - 1 - get_log_size() - HINT_LOG_LOST_LEN;
     if(free_log_size<len){
         slprintf(log+free_log_size, HINT_LOG_LOST);
         len = free_log_size+HINT_LOG_LOST_LEN;
