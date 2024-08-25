@@ -259,11 +259,13 @@ void SDA_set_input(uint8_t en)
  ********************************************/
 void P8563_init()
 {
+    static int rtc_inited = 0;
     //uchar i;
+
+    if(rtc_inited)return;
 
     i2c_init();
     
-        // P8563_settime();
 #if 0
         for(i=0;i<=5;i++) g8563_Store[i]=c8563_Store[i]; /*初始化时间*/
     P8563_settime();  
@@ -291,20 +293,8 @@ void rtc_write(uint8_t*ip)
 }
 void rtc_read(uint8_t*ip)
 {
-#if 0
     P8563_init();
     P8563_gettime(ip);
-#else
-    //uint8_t time_date[7]={0,0,0,1,1,1,1};
-    ip[0]= 0;
-    ip[1]= 0;
-    ip[2]= 0;
-    ip[3]= 1;
-    ip[4]= 1;
-    ip[5]= 1;
-    ip[6]= 1;
-    ip[7]= 1;
-#endif
 }
 char t_d[24];
 uint8_t hex2bcd(uint8_t ipt)
@@ -366,7 +356,6 @@ char* get_rtc_time(date_info_t*dit)
 }
 void get_date(date_info_t*dit)
 {
-#if 0
     uint8_t time_date[7];
     if(dit){
         rtc_read(time_date);
@@ -377,21 +366,8 @@ void get_date(date_info_t*dit)
         dit->minute = bcd2hex(time_date[1]);
         dit->second = bcd2hex(time_date[0]);
     }
-#else
-    uint8_t time_date[7]={0,0,0,1,1,1,1};
-    if(dit){
-        //rtc_read(time_date);
-        dit->month = bcd2hex(time_date[5]&0x1f);
-        dit->day = bcd2hex(time_date[3]);
-        dit->weekday = time_date[4];
-        dit->hour = bcd2hex(time_date[2]);
-        dit->minute = bcd2hex(time_date[1]);
-        dit->second = bcd2hex(time_date[0]);
-    }
-#endif
 }
 #endif
-
 uint8_t rtc_read_reg(uint8_t addr)
 {
     uint8_t ret;

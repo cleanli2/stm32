@@ -880,6 +880,7 @@ void os_task2(void*p)
 {
     (void)p;
     while(1){
+#if 0
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
         //putchars("--0 0\n");
         GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
@@ -903,6 +904,7 @@ void os_task2(void*p)
             }
 #endif
         task_timer(NULL);
+#endif
     }
 }
 void soft_reset_system()
