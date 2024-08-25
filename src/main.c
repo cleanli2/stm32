@@ -51,7 +51,13 @@ int main()
     char stopreason[64];
     main_init();
     cam_deinit();
+    if(adc_test()){
+        slprintf(stopreason, "%s\n", "Battery low, power off");
+        power_off();
+    }
     run_cmd_interface();
+    task_log(NULL);
+    lprintf_time("start camera.\n");
     cam_init(7);
     while(1){
         slprintf(file_name, "YUV%d", fnn);
