@@ -86,14 +86,14 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
             lprintf("^wder=%d^", retry);
         }
         if(retry--==0){
-            lprintf("\n!!Fwde-scno:%d-0x%x!!\n", sector_no, sector_no);
+            lprintf_time("\n!!Fwde-scno:%d-0x%x!!\n", sector_no, sector_no);
 
             if(recover_sd()){
-                lprintf("recover OK, retry write\n");
+                lprintf_time("recover OK, retry write\n");
                 retry = disk_retry;
             }
             else{
-                lprintf("fail, abandon\n");
+                lprintf_time("fail, abandon\n");
                 return NULL;
             }
         }
@@ -116,13 +116,13 @@ char* disk_read_sector(uint32_t sector_no)
             break;
         }
         if(retry--==0){
-            lprintf("\n!!Frde-scno:%d-0x%x!!\n", sector_no, sector_no);
+            lprintf_time("\n!!Frde-scno:%d-0x%x!!\n", sector_no, sector_no);
             if(recover_sd()){
-                lprintf("recover OK, retry read\n");
+                lprintf_time("recover OK, retry read\n");
                 retry = disk_retry;
             }
             else{
-                lprintf("fail, abandon\n");
+                lprintf_time("fail, abandon\n");
                 return NULL;
             }
         }
