@@ -148,7 +148,7 @@ uint8_t SD_WaitReady(void)
         }
         t++;
     }while(t<retrys);//
-    lprintf("^Rf^");
+    lprintf("?");
     return 1;
 }
 

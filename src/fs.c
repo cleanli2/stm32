@@ -83,7 +83,8 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
         }
         else{
             //lprintf("write disk err retry=%d\n", retry);
-            lprintf("$%d", retry);
+            lprintf("~");
+            if(retry!=disk_retry) lprintf("%d", retry);
         }
         if(retry--==0){
             lprintf_time("\n!!Fwde-scno:%d-0x%x!!\n", sector_no, sector_no);
@@ -110,7 +111,8 @@ char* disk_read_sector(uint32_t sector_no)
     }
     while(1){
         if(SD_RESPONSE_NO_ERROR != g_fs->rd_block((u8*)disk_buf, sector_no, FS_BUF_SIZE)){
-            lprintf("~%d\n", retry);
+            lprintf("$");
+            if(retry!=disk_retry) lprintf("%d", retry);
         }
         else{
             break;
