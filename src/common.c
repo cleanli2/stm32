@@ -390,6 +390,16 @@ int __io_char_received()
 }
 
 static uint32_t beep_st = 0;
+u32 device_serial0, device_serial1, device_serial2;
+void get_mcu_id(void)
+{
+    device_serial0 = *(u32*)(0x1ffff7e8);
+    device_serial1 = *(u32*)(0x1ffff7ec);
+    device_serial2 = *(u32*)(0x1ffff7f0);
+    lprintf_time("MCU ID=%X %X %X\n",
+            device_serial0, device_serial1, device_serial2);
+}
+
 void beep_by_timer_100(uint32_t hz_100)
 {
     TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
@@ -678,6 +688,7 @@ void main_init(void)
   lprintf("~~~~~~\n");
 #ifdef ALIENTEK_MINI
   lprintf_time("\n\n================ALIENTEK_MINI board start================\n");
+  get_mcu_id();
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13;
