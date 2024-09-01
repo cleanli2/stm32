@@ -47,6 +47,7 @@ int cam_w_reg(uint8_t addr, uint8_t data);
 int main()
 {
     uint32_t fnn=0;
+    uint32_t end_loop=50;
     char file_name[32];
     char stopreason[64];
     main_init();
@@ -92,9 +93,12 @@ int main()
     cam_deinit();
     lprintf_time("end working loop.\n");
     task_log(NULL);
-    while(1){
+    while(end_loop--){
         lprintf(stopreason);
         run_cmd_interface();
     }
+    lprintf_time("Shut down\n");
+    power_off();
+    while(1);
     return 0;
 }
