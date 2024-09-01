@@ -688,7 +688,6 @@ void main_init(void)
   lprintf("~~~~~~\n");
 #ifdef ALIENTEK_MINI
   lprintf_time("\n\n================ALIENTEK_MINI board start================\n");
-  get_mcu_id();
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13;
@@ -787,6 +786,7 @@ void main_init(void)
   //power off pin end
 
   RCC_GetClocksFreq(&RCC_ClocksStatus);
+  get_mcu_id();
   lprintf_time("Version %s%s\n", VERSION, GIT_SHA1);
   get_rtc_time(0);
   lprintf_time("%s\n", get_rtc_time(0));
