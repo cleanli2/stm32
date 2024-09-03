@@ -527,7 +527,8 @@ void power_off()
     lprintf_time("power off in 3 secs\n");
     foce_save_log_func();
     beep(600, 100);
-#ifdef RTC_8563
+//#ifdef RTC_8563
+#if 0
     check_rtc_alert_and_clear();
     auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, -1, -1);
     auto_time_correct();
