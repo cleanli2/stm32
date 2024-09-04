@@ -1131,8 +1131,11 @@ void cam_read_line(int in_dump_line)
     lprintf(">");
     
 }
+extern int loop_stop;
 void cam_save_1_frame(u32 only_uart_dump)
 {
+    char ucbf[5]={0};
+    int ucbfi=0;
     int w_start_line;
     frames_wsize = 0;
     fbfs=0;
@@ -1140,8 +1143,22 @@ void cam_save_1_frame(u32 only_uart_dump)
         if(only_uart_dump) cam_read_line(w_start_line);
         else cam_read_line(-w_start_line);
         if(get_sd_hw_err()){
-            lprintf("SD hw error\n");
+            lprintf_time("SD hw error\n");
             return;
+        }
+        if(con_is_recved()){
+            ucbf[ucbfi++]=con_recv();
+        }
+        if(ucbfi==4){
+            if(!strcmp(ucbf, "quit")){
+                lprintf_time("Get cmd:quit\n");
+                loop_stop=1;
+                return;
+            }
+            else{
+                lprintf_time("X:%s\n", ucbf);
+                ucbfi=0;
+            }
         }
     }
 
