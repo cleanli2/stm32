@@ -64,11 +64,14 @@ int main()
     cam_init(7);
     while(!loop_stop){
         slprintf(file_name, "YUV%d", fnn);
+        if(fnn%20==0){
+            lprintf_time("%s\n", get_rtc_time(NULL));
+        }
         lprintf_time("open file %s.bin\n", file_name);
         if(FS_OK==open_file_for_write(file_name, "BIN")){
             cam_save_1_frame(0);
             close_file();
-            lprintf_time("\n===============save frame to file %s.bin done\n", file_name);
+            lprintf_time("\n===============file %s.bin done\n", file_name);
         }
         else{
             lprintf_time("open file fail:%s.BIN\n", file_name);
