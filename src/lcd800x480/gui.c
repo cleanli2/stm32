@@ -742,11 +742,12 @@ void yuv_line_buf_put_char(char*buf, u16 lct, u16 x_start, u16 y_start, char c)
     int w_len = FONT_W;
 
     if(y_i >=FONT_H || y_i < 0)return;
+    c-=' ';
     u8 dis_tmp = asc2_1608[(int)c][y_i];
 
     while(w_len--)
     {
-        if (dis_tmp&0x80)
+        if (dis_tmp&0x1)
         {
             buf[x_i]=0xff;
         }
@@ -754,7 +755,8 @@ void yuv_line_buf_put_char(char*buf, u16 lct, u16 x_start, u16 y_start, char c)
             buf[x_i]=0;
         }
         buf[x_i+1]=0x80;
-        dis_tmp<<=1;
+        dis_tmp>>=1;
+        x_i+=BPP/8;
     }
 }
 void yuv_line_buf_print_str(char*buf, u16 lct, u16 x_start, u16 y_start, const char *s)
