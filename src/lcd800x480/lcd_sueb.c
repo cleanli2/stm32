@@ -1056,6 +1056,7 @@ void cam_set_rfn(u32 irn, u32 ifn)
 }
 #define READ_MODE 0
 #define FREE_MODE 1
+char tmstp[24];
 void cam_read_line(int in_dump_line)
 {
 
@@ -1109,10 +1110,10 @@ void cam_read_line(int in_dump_line)
             }
             if(rec_count!=1280)lprintf_time("recct %d in line %d\n", rec_count, linect);
             if(!need_w_t_f){
-                yuv_line_buf_print_str(vbf, linect, 0, 0, "test hello");
                 mem_print(vbf, 640*2*linect, 640*2);
             }
             else{
+                yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
                 if(wtf(vbf, 640*2, 512)<0){
                     lprintf_time("cam write to file error, linect %d\n", linect);
                     cam_xclk_on();
@@ -1140,6 +1141,7 @@ void cam_save_1_frame(u32 only_uart_dump)
     int w_start_line;
     frames_wsize = 0;
     fbfs=0;
+    slprintf(tmstp, "%s", get_rtc_time(NULL));
     for(w_start_line = 1; (u32)w_start_line < 480-rn; w_start_line+=rn){
         if(only_uart_dump) cam_read_line(w_start_line);
         else cam_read_line(-w_start_line);
