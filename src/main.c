@@ -66,6 +66,7 @@ int main()
         slprintf(file_name, "YUV%d", fnn);
         if(fnn%20==0){
             lprintf_time("%s\n", get_rtc_time(NULL));
+            lprintf_time("Version %s%s\n", VERSION, GIT_SHA1);
         }
         lprintf_time("open file %s.bin\n", file_name);
         if(FS_OK==open_file_for_write(file_name, "BIN")){
