@@ -731,6 +731,46 @@ void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
     LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//»Ö¸´´°¿ÚÎªÈ«ÆÁ
 }
 
+#define FONT_H 16
+#define FONT_W 8
+#define BPP 16
+
+void yuv_line_buf_put_char(char*buf, u16 lct, u16 x_start, u16 y_start, char c)
+{
+    int y_i = lct - y_start;
+    int x_i = x_start*(BPP/8);
+    int w_len = FONT_W;
+
+    if(y_i >=FONT_H || y_i < 0)return;
+    u8 dis_tmp = asc2_1608[(int)c][y_i];
+
+    while(w_len--)
+    {
+        if (dis_tmp&0x80)
+        {
+            buf[x_i]=0xff;
+        }
+        else{
+            buf[x_i]=0;
+        }
+        buf[x_i+1]=0x80;
+        dis_tmp<<=1;
+    }
+}
+void yuv_line_buf_print_str(char*buf, u16 lct, u16 x_start, u16 y_start, const char *s)
+{
+    int y_i = lct - y_start;
+    u16 x=x_start;
+
+    if(y_i >=FONT_H || y_i < 0)return;
+    while(*s){
+        yuv_line_buf_put_char(buf, lct, x, y_start, *s);
+        x+=FONT_W;
+        s++;
+    }
+}
+
+
 /*****************************************************************************
  * @name       :void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, u8 *s,u8 mode)
  * @date       :2018-08-09 

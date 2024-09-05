@@ -1109,6 +1109,7 @@ void cam_read_line(int in_dump_line)
             }
             if(rec_count!=1280)lprintf_time("recct %d in line %d\n", rec_count, linect);
             if(!need_w_t_f){
+                yuv_line_buf_print_str(vbf, linect, 0, 0, "test hello");
                 mem_print(vbf, 640*2*linect, 640*2);
             }
             else{

@@ -92,5 +92,6 @@ void gui_circle(int xc, int yc,u16 c,int r, int fill);
 void Gui_StrCenter(u16 x, u16 y, u16 fc, u16 bc, char *str,u8 size,u8 mode);
 void LCD_DrawFillRectangle(u16 x1, u16 y1, u16 x2, u16 y2);
 const char* area_show_str(win_pt wdp, u32 *xp, u32 *yp, const char*string, int);
+void yuv_line_buf_print_str(char*buf, u16 lct, u16 x_start, u16 y_start, const char *s);
 #endif
 
