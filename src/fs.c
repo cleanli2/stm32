@@ -366,14 +366,17 @@ uint32_t get_file_start_cluster_from_cluster(uint32_t sc, const char* filename, 
         //lprintf("dir items 0x%x\n", items);
         item_buf=get_root_item_buf(sc, items);
         if(item_buf == 0 || *item_buf == 0){
-            lprintf("end of root, not found file!\n");
+            lprintf("not found %s", filename);
+            if(NULL!=fileextname){
+                lprintf(".%s", fileextname);
+            }
+            lprintf("\n");
             break;
         }
         if(debug_fs)mem_print(item_buf, 0, 32);
         if(!strncmp(item_buf, filename, namelen) &&
                 !strncmp(item_buf+namelen, "        ", 8-namelen) &&
                 (NULL==fileextname || !strncmp(item_buf+8, fileextname, extnamelen))){
-            lprintf("found %s.%s\n", filename, fileextname);
             g_fp->fsize = get_uint_offset(item_buf, DIR_FileSize, 4);
             lprintf("filesize %d\n", (DWORD)g_fp->fsize);
             file_start_cluster = get_uint_offset(item_buf, DIR_FstClusHI, 2);
