@@ -1154,12 +1154,12 @@ void cam_save_1_frame(u32 only_uart_dump)
         }
         if(ucbfi==4){
             if(!strcmp(ucbf, "quit")){
-                lprintf_time("Get cmd:quit\n");
+                lprintf_time("Get cmd:quit, abort!\n");
                 loop_stop=1;
                 return;
             }
             else{
-                lprintf_time("X:%s\n", ucbf);
+                lprintf("X:%s\n", ucbf);
                 ucbfi=0;
             }
         }
