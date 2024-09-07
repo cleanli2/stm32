@@ -182,7 +182,7 @@ void w25f(char *p)
         u32 ch_cnt = 0, i512_ct=0;
         char ch;
         u32 addr = SPI_FLASH_LOG_START;
-        if(FS_OK!=open_file_for_write("stm32_log", "TXT")){
+        if(FS_OK!=open_file_for_write("STM32_LOG", "TXT")){
             lprintf_time("open file fail:stm32_log.txt\n");
             return;
         }
@@ -197,6 +197,9 @@ void w25f(char *p)
                 read_buf[i512_ct++]='`';
             }
             ch_cnt++;
+            if(0==(ch_cnt%(SPI_FLASH_LOG_SIZE/100))){
+                lprintf("%d%%doing\n", ch_cnt*100/SPI_FLASH_LOG_SIZE);
+            }
             if(ch_cnt >= SPI_FLASH_LOG_SIZE){
                 write_sec_to_file((const char*)read_buf);
                 close_file();
