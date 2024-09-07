@@ -167,6 +167,7 @@ typedef struct {
 int get_file_content(char* buf, const char*filename, const char*ext_name, uint32_t file_offset, uint32_t len);
 int get_file_size(const char*flnm, const char*ext);
 int open_file_for_write(const char*fn, const char*ext);
+int open_file_w(const char*path);
 void fs_hw_init(disk_opers*dops);
 int write_sec_to_file(const char*buf);
 void close_file();

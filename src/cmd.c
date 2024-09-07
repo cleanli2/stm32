@@ -1554,6 +1554,30 @@ void rtc_cmd(char *p)
     return;
 
 }
+void file_op(char *p)
+{
+    uint32_t tmp;
+    char* path;
+    tmp = get_howmany_para(p);
+    lprintf("tmp=%d\n", tmp);
+    if(tmp<1){
+        lprintf("err\n");
+        return;
+    }
+    if(tmp>=1){
+        p = str_to_str(p, &path);
+        if(FS_OK==open_file_w(path)){
+            lprintf("Open %s OK\n", path);
+        }
+        else{
+            lprintf("Open %s fail\n", path);
+        }
+        close_file();
+    }
+    con_send('\n');
+
+    return;
+}
 static const struct command cmd_list[]=
 {
     //{"dwb",dispwb},
@@ -1565,6 +1589,7 @@ static const struct command cmd_list[]=
     {"envset",envset},
     {"envget",envget},
     {"envprint",envprint},
+    {"file",file_op},
 #ifndef WRITE_W25F
     {"fmerase",fmerase},
     {"fmrtest",fmrtest},
