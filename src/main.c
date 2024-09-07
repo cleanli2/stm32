@@ -63,19 +63,19 @@ int main()
     lprintf_time("start working loop.\n");
     cam_init(7);
     while(!loop_stop){
-        slprintf(file_name, "YUV%d", fnn);
+        slprintf(file_name, "V%d/YUV%d.BIN", fnn/100, fnn);
         if(fnn%20==0){
             lprintf_time("%s\n", get_rtc_time(NULL));
             lprintf_time("Version %s%s\n", VERSION, GIT_SHA1);
         }
-        lprintf_time("open %s.bin\n", file_name);
-        if(FS_OK==open_file_for_write(file_name, "BIN")){
+        lprintf_time("open %s\n", file_name);
+        if(FS_OK==open_file_w(file_name)){
             cam_save_1_frame(0);
             close_file();
-            lprintf_time("\n====file %s.bin done\n", file_name);
+            lprintf_time("\n====file %s done\n", file_name);
         }
         else{
-            lprintf_time("open file fail:%s.BIN\n", file_name);
+            lprintf_time("open file fail:%s\n", file_name);
             if(fnn<MIN_YUV_FILES_NUM){
                 slprintf(stopreason, "Too less files=%d\n", fnn);
                 lprintf_time(stopreason);
