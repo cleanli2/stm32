@@ -90,7 +90,7 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
             lprintf_time("\n!!Fwde-scno:%d-0x%x!!\n", sector_no, sector_no);
 
             if(recover_sd()){
-                lprintf_time("recover OK, retry write\n");
+                lprintf("recover OK, retry write\n");
                 retry = disk_retry;
             }
             else{
@@ -120,7 +120,7 @@ char* disk_read_sector(uint32_t sector_no)
         if(retry--==0){
             lprintf_time("\n!!Frde-scno:%d-0x%x!!\n", sector_no, sector_no);
             if(recover_sd()){
-                lprintf_time("recover OK, retry read\n");
+                lprintf("recover OK, retry read\n");
                 retry = disk_retry;
             }
             else{

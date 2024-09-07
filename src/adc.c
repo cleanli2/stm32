@@ -133,7 +133,7 @@ int adc_test()
     }
     Debug_LOG_ADC("real I = %dmA\n", i_currt);
     Debug_LOG_ADC("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, i_currt);
-    lprintf_time("v_core %dmv v_bat %dmv in_charge %c I %dmA\n", v_core, v_bat, in_charge, i_currt);
+    lprintf_time("%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, i_currt);
     if(v_bat < BATT_LOW_LIMIT){
         lprintf("battery is low\n");
         ret = 1;

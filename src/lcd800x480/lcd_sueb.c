@@ -1108,7 +1108,7 @@ void cam_read_line(int in_dump_line)
                 if(rec_count<640*2)vbf[rec_count++]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
                 else lprintf("err:rec_count>1280\n");
             }
-            if(rec_count!=1280)lprintf_time("recct %d in line %d\n", rec_count, linect);
+            if(rec_count!=1280)lprintf_time("%d>L%d\n", rec_count, linect);
             if(!need_w_t_f){
                 mem_print(vbf, 640*2*linect, 640*2);
             }
