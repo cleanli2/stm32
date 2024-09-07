@@ -349,12 +349,12 @@ char* get_file_offset_buf(uint32_t start_clust_no, uint64_t offset, char*cp_buf,
     }
 }
 
-char* get_root_item_buf(int n)
+char* get_root_item_buf(uint32_t sc, int n)
 {
-    return get_file_offset_buf(g_fs->dirbase, SZ_DIRE*n, NULL, SZ_DIRE);
+    return get_file_offset_buf(sc, SZ_DIRE*n, NULL, SZ_DIRE);
 }
 
-uint32_t get_file_start_cluster(const char* filename, const char*fileextname)
+uint32_t get_file_start_cluster_from_cluster(uint32_t sc, const char* filename, const char*fileextname)
 {
     char*item_buf;
     uint32_t file_start_cluster = INVALID_CLUSTER, namelen, extnamelen;
@@ -364,7 +364,7 @@ uint32_t get_file_start_cluster(const char* filename, const char*fileextname)
     DWORD items = 0;
     while(1){
         //lprintf("dir items 0x%x\n", items);
-        item_buf=get_root_item_buf(items);
+        item_buf=get_root_item_buf(sc, items);
         if(item_buf == 0 || *item_buf == 0){
             lprintf("end of root, not found file!\n");
             break;
@@ -384,6 +384,35 @@ uint32_t get_file_start_cluster(const char* filename, const char*fileextname)
         items++;
     }
     return file_start_cluster;
+}
+
+uint32_t get_file_start_cluster(const char* filename, const char*fileextname)
+{
+    return get_file_start_cluster_from_cluster(g_fs->dirbase, filename, fileextname);
+}
+
+uint32_t get_path_start_cluster(const char* path)
+{
+    uint32_t start_cluster = g_fs->dirbase;
+    char*t=NULL;
+    char*e=NULL;
+    char f[32];
+    memset(f, 0, 32);
+    strncpy(f, path, 31);
+    t=strtok(f, "/");
+    while(t){
+        if(strchr(t, '.')){
+            e=strchr(t, '.');
+            *e++=0;
+        }
+        else{
+            e=NULL;
+        }
+        lprintf("%s %s\n", t, e);
+        start_cluster = get_file_start_cluster_from_cluster(start_cluster, t, e);
+        t=strtok(NULL, "/");
+    }
+    return start_cluster;
 }
 
 #define MBR_FS_TYPE 0x1c2
@@ -532,10 +561,10 @@ dbr_check:
     return FS_OK;
 }
 
-int get_file_size(const char*filename, const char*ext_filename)
+int file_size(const char*filename)
 {
     int ret;
-    lprintf("get_file_size %s.%s\n", filename, ext_filename);
+    lprintf("get_file_size %s\n", filename);
     /*
     if(fs_debug_is_enabled()){
         debug_fs = 1;
@@ -557,7 +586,7 @@ int get_file_size(const char*filename, const char*ext_filename)
         g_fp->fs = g_fs;
     }
     if(g_fp->sclust==INVALID_CLUSTER){
-        g_fp->sclust = get_file_start_cluster(filename, ext_filename);
+        g_fp->sclust = get_path_start_cluster(filename);
     }
     if(g_fp->sclust!=INVALID_CLUSTER){
         //find root dir sec
@@ -569,6 +598,13 @@ int get_file_size(const char*filename, const char*ext_filename)
     else{
         return FS_FILE_NOT_FOUND;
     }
+}
+
+int get_file_size(const char*filename, const char*ext_filename)
+{
+    char path[24];
+    slprintf(path, "%s.%s", filename, ext_filename);
+    return file_size(path);
 }
 
 int get_file_content(char* buf, const char*filename, const char*extfn, uint32_t file_offset, uint32_t len)
@@ -584,6 +620,21 @@ int get_file_content(char* buf, const char*filename, const char*extfn, uint32_t 
         else{
             return FS_OK;
         }
+    }
+    else{
+        return ret;
+    }
+}
+
+int open_file_w(const char*path)
+{
+    int ret;
+    ret = file_size(path);
+    if(0 < ret){
+        g_fp->clust = g_fp->sclust;
+        g_fp->clust_sec_offset = 0;
+        g_fp->in_writing = 1;
+        return FS_OK;
     }
     else{
         return ret;
