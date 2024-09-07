@@ -65,6 +65,7 @@ void soft_reset_system();
 void power_off();
 void reboot_download();
 uint64_t get_system_us();
+u32 dt_us_last();
 void beep_by_timer_100(uint32_t hz_100);
 char * str_to_hex(char *s, uint32_t * result);
 void main_init(void);

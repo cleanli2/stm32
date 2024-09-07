@@ -243,6 +243,15 @@ uint64_t get_system_us()
     return system_us_count;
 }
 
+u32 dt_us_last()
+{
+    static uint64_t last_s_us=0;
+    uint64_t cur_s_us=get_system_us();
+    u32 dt = (u32)(cur_s_us-last_s_us);
+    last_s_us = cur_s_us;
+    return dt;
+}
+
 u32*TIM2_IRQHandler_local(u32*stack_data)
 {
     (void)stack_data;
