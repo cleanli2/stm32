@@ -180,7 +180,6 @@ void w25f(char *p)
     else if(cmdindex == 0xe){//
         lprintf("save log to sd card:stmlog.txt\n");
         u32 ch_cnt = 0, i512_ct=0;
-        char ch;
         u32 addr = SPI_FLASH_LOG_START;
         if(FS_OK!=open_file_for_write("STMLOG", "TXT")){
             lprintf_time("open file fail:stmlog.txt\n");
@@ -189,15 +188,16 @@ void w25f(char *p)
         memset(read_buf, ' ', 512);
         dt_us_last();
         while(1){
-            ch=SPI_Flash_Read_Byte(addr);
-            if(0xff!=ch)
-            {
-                read_buf[i512_ct++]=ch;
+            SPI_Flash_Read(read_buf,addr,512);
+            for(i512_ct=0;i512_ct<512;i512_ct++){
+                if(0xff==read_buf[i512_ct]){
+                    read_buf[i512_ct]='`';
+                }
+                else if(0x20>read_buf[i512_ct]){
+                    read_buf[i512_ct]='?';
+                }
             }
-            else{
-                read_buf[i512_ct++]='`';
-            }
-            ch_cnt++;
+            ch_cnt+=512;
             if(0==(ch_cnt%(SPI_FLASH_LOG_SIZE/10))){
                 lprintf("%d%%doing\n", ch_cnt*100/SPI_FLASH_LOG_SIZE);
             }
@@ -205,16 +205,14 @@ void w25f(char *p)
                 write_sec_to_file((const char*)read_buf);
                 close_file();
                 u32 tmus=dt_us_last();
-                lprintf_time("save log OK:%dus %dk/s\n", tmus,
+                lprintf_time("save log OK:%dk %dus %dk/s\n",
+                        SPI_FLASH_LOG_SIZE/1000,
+                        tmus,
                         SPI_FLASH_LOG_SIZE*1000/tmus);
                 return;
             }
-            if(i512_ct==511){
-                write_sec_to_file((const char*)read_buf);
-                i512_ct=0;
-                memset(read_buf, ' ', 512);
-            }
-            addr++;
+            write_sec_to_file((const char*)read_buf);
+            addr+=512;
         }
     }
     con_send('\n');
