@@ -204,7 +204,9 @@ void w25f(char *p)
             if(ch_cnt >= SPI_FLASH_LOG_SIZE){
                 write_sec_to_file((const char*)read_buf);
                 close_file();
-                lprintf_time("save log OK:%dus\n", dt_us_last());
+                u32 tmus=dt_us_last();
+                lprintf_time("save log OK:%dus %dk/s\n", tmus,
+                        SPI_FLASH_LOG_SIZE*1000/tmus);
                 return;
             }
             if(i512_ct==511){
