@@ -193,6 +193,9 @@ void w25f(char *p)
                 if(0xff==read_buf[i512_ct]){
                     read_buf[i512_ct]='`';
                 }
+                else if('\r'==read_buf[i512_ct]||
+                        '\n'==read_buf[i512_ct]){
+                }
                 else if(0x20>read_buf[i512_ct]){
                     read_buf[i512_ct]='?';
                 }
