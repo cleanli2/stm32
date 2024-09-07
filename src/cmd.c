@@ -182,7 +182,7 @@ void w25f(char *p)
         u32 ch_cnt = 0, i512_ct=0;
         char ch;
         u32 addr = SPI_FLASH_LOG_START;
-        if(FS_OK!=open_file_for_write("STM32_LOG", "TXT")){
+        if(FS_OK!=open_file_for_write("STMLOG", "TXT")){
             lprintf_time("open file fail:stm32_log.txt\n");
             return;
         }
