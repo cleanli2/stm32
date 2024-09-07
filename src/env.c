@@ -494,21 +494,24 @@ uint32_t set_env_uint(const char*name, uint32_t value)
 
 void find_log_write_addr()
 {
-    flash_log_write_addr = SPI_FLASH_LOG_START;
+    flash_log_write_addr = SPI_FLASH_LOG_START+SPI_FLASH_SECTOR_SIZE-1;
     while(1)
     {
         if(0xff==SPI_Flash_Read_Byte(flash_log_write_addr))
         {
-            return;
+            while(0xff==SPI_Flash_Read_Byte(--flash_log_write_addr));
+            flash_log_write_addr++;
+            break;
         }
-        flash_log_write_addr++;
-        if(SPI_FLASH_LOG_END == flash_log_write_addr){
+        flash_log_write_addr+=SPI_FLASH_SECTOR_SIZE;
+        if(SPI_FLASH_LOG_END <= flash_log_write_addr){
             lprintf("full of log, erase first sector to start\n");
             flash_log_write_addr = SPI_FLASH_LOG_START;
             SPI_Flash_Erase_Sector(flash_log_write_addr/SPI_FLASH_SECTOR_SIZE);//erase sector
-            return;
+            break;
         }
     }
+    lprintf_time("log_flash_addr:%x\n", flash_log_write_addr);
 }
 
 void log_to_flash(const char*lgbuf, u32 ri, u32 len, u32 buf_size)
