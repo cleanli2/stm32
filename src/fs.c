@@ -372,7 +372,7 @@ uint32_t get_file_start_cluster_from_cluster(uint32_t sc, const char* filename, 
         if(debug_fs)mem_print(item_buf, 0, 32);
         if(!strncmp(item_buf, filename, namelen) &&
                 !strncmp(item_buf+namelen, "    ", 8-namelen) &&
-                !strncmp(item_buf+8, fileextname, extnamelen)){
+                (NULL==fileextname || !strncmp(item_buf+8, fileextname, extnamelen))){
             lprintf("found %s.%s\n", filename, fileextname);
             g_fp->fsize = get_uint_offset(item_buf, DIR_FileSize, 4);
             lprintf("filesize %d\n", (DWORD)g_fp->fsize);
@@ -408,7 +408,8 @@ uint32_t get_path_start_cluster(const char* path)
         else{
             e=NULL;
         }
-        lprintf("%s %s\n", t, e);
+        if(debug_fs) lprintf("p of ext name=%x\n", e);
+        if(debug_fs) lprintf("name=%s ext=%s\n", t, e);
         start_cluster = get_file_start_cluster_from_cluster(start_cluster, t, e);
         t=strtok(NULL, "/");
     }
