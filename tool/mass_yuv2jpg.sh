@@ -12,7 +12,7 @@ do
 	if [ -f V$j/yuv$i.bin ]
 	then
 		echo yuv$i.bin exist
-		./yuv2jpg.sh V$j/yuv$i.bin yuv$i.jpg
+		yuv2jpg V$j/yuv$i.bin yuv$i.jpg
 	else
 		echo yuv$i.bin not exist
 		exit
