@@ -45,9 +45,9 @@ uint8_t cam_r_reg(uint8_t addr);
 void cam_save_1_frame(u32 only_uart_dump);
 int cam_w_reg(uint8_t addr, uint8_t data);
 int loop_stop=0;
+uint32_t g_fnn=0;
 int main()
 {
-    uint32_t fnn=0;
     uint32_t end_loop=50;
     char file_name[32];
     char stopreason[64];
@@ -62,9 +62,11 @@ int main()
     task_log(NULL);
     lprintf_time("start working loop.\n");
     cam_init(7);
+    g_fnn = get_env_uint("fsno", 0);
+    lprintf_time("start g_fnn=%d\n", g_fnn);
     while(!loop_stop){
-        slprintf(file_name, "V%d/YUV%d.BIN", fnn/100, fnn);
-        if(fnn%20==0){
+        slprintf(file_name, "V%d/YUV%d.BIN", g_fnn/100, g_fnn);
+        if(g_fnn%20==0){
             lprintf_time("%s\n", get_rtc_time(NULL));
             lprintf_time("Version %s%s\n", VERSION, GIT_SHA1);
         }
@@ -76,17 +78,17 @@ int main()
         }
         else{
             lprintf_time("open file fail:%s\n", file_name);
-            if(fnn<MIN_YUV_FILES_NUM){
-                slprintf(stopreason, "Too less files=%d\n", fnn);
+            if(g_fnn<MIN_YUV_FILES_NUM){
+                slprintf(stopreason, "Too less files=%d\n", g_fnn);
                 lprintf_time(stopreason);
                 break;
             }
             else{
                 lprintf_time("end of files, restart from YUV0.bin\n");
-                fnn=0;
+                g_fnn=0;
             }
         }
-        fnn++;
+        g_fnn++;
         if(adc_test()){
             slprintf(stopreason, "%s\n", "Battery low, power off");
             power_off();

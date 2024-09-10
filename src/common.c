@@ -530,8 +530,13 @@ void beep(uint32_t hz, uint32_t t_ms)
     GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
 }
 
+extern uint32_t g_fnn;
 void power_off()
 {
+    if(g_fnn!=get_env_uint("fsno", 0)){
+        lprintf_time("save g_fnn %d\n", g_fnn);
+        set_env_uint("fsno", g_fnn);
+    }
     Show_Str(20, 630,RED,0xffff,"Power off in 3 seconds",24,0,1);
     lprintf_time("power off in 3 secs\n");
     foce_save_log_func();
