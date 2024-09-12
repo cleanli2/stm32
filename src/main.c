@@ -59,12 +59,12 @@ int main()
         lprintf_time(stopreason);
         power_off();
     }
-    run_cmd_interface();
-    task_log(NULL);
-    lprintf_time("start working loop.\n");
-    cam_init(7);
     g_fnn = get_env_uint("fsno", 0);
     lprintf_time("start g_fnn=%d\n", g_fnn);
+    task_log(NULL);
+    run_cmd_interface();
+    lprintf_time("start working loop.\n");
+    cam_init(7);
     while(!loop_stop){
         slprintf(file_name, "V%d/YUV%d.BIN", g_fnn/100, g_fnn);
         if(g_fnn%20==0){
