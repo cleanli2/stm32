@@ -51,6 +51,7 @@ int main()
     uint32_t end_loop=50;
     char file_name[32];
     char stopreason[64];
+    memset(stopreason, 0, 64);
     main_init();
     cam_deinit();
     if(adc_test()){

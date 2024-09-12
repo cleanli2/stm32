@@ -186,6 +186,8 @@ void w25f(char *p)
             return;
         }
         memset(read_buf, ' ', 512);
+        lprintf("run task log\n");
+        task_log(NULL);
         dt_us_last();
         while(1){
             SPI_Flash_Read(read_buf,addr,512);
