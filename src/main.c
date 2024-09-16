@@ -39,13 +39,13 @@ uint32_t g_fnn=0;
 void prepare_pic_trsf()
 {
     memset(fbf, ' ', 512);
-    if(FS_OK==open_file_w("endfn.txt")){
+    if(FS_OK==open_file_w("ENDFN.TXT")){
         slprintf(fbf, "%d        ", g_fnn);
         write_sec_to_file((const char*)fbf);
         close_file();
         lprintf_time("\nendfn.txt=%s done\n", fbf);
     }
-    if(FS_OK==open_file_w("dtidn.txt")){
+    if(FS_OK==open_file_w("DTIDN.TXT")){
         slprintf(fbf, "%s", get_rtc_time(NULL));
         slprintf(fbf+10, "_%X_", *(u32*)(0x1ffff7f0));
         write_sec_to_file((const char*)fbf);
@@ -81,7 +81,7 @@ int main()
     }
     g_fnn = get_env_uint("fsno", 0);
     lprintf_time("start g_fnn=%d\n", g_fnn);
-    if(FS_OK==open_file_w("stafn.txt")){
+    if(FS_OK==open_file_w("STAFN.TXT")){
         slprintf(fbf, "%d        ", g_fnn);
         write_sec_to_file((const char*)fbf);
         close_file();
