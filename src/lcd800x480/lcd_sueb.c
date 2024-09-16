@@ -562,7 +562,7 @@ static void init_yuv_25fps(void)
 	sensor_write_reg(0x93, 0x00);
 	sensor_write_reg(0x9d, 0x4c);
 	sensor_write_reg(0x9e, 0x3f);
-	sensor_write_reg(0x3b, 0x0a);
+	sensor_write_reg(0x3b, 0x00);
 	sensor_write_reg(0x13, 0xf0);
 	sensor_write_reg(0x10, 0xff);
 	sensor_write_reg(0x00, 0xff);
@@ -572,19 +572,19 @@ static void init_yuv_25fps(void)
 	//
 	sensor_write_reg(0x12, 0x00);
 	sensor_write_reg(0x04, 0x00);
-	sensor_write_reg(0x18, 0x01);
-	sensor_write_reg(0x17, 0x13);
-	sensor_write_reg(0x32, 0x92);
-	sensor_write_reg(0x19, 0x02);
-	sensor_write_reg(0x1a, 0x7a);
+	sensor_write_reg(0x18, 0x61);
+	sensor_write_reg(0x17, 0x11);
+	sensor_write_reg(0x32, 0x80);
+	sensor_write_reg(0x19, 0x03);
+	sensor_write_reg(0x1a, 0x7b);
 	sensor_write_reg(0x03, 0x00);
 	//
 	sensor_write_reg(0x0e, 0x84);
 	sensor_write_reg(0x0f, 0x62);
-	sensor_write_reg(0x15, 0x02);
+	sensor_write_reg(0x15, 0x00);
 	sensor_write_reg(0x16, 0x02);
 	sensor_write_reg(0x1b, 0x01);
-	sensor_write_reg(0x1e, 0x01);
+	sensor_write_reg(0x1e, 0x31);
 	sensor_write_reg(0x29, 0x3c);
 	sensor_write_reg(0x33, 0x00);
 	sensor_write_reg(0x34, 0x07);
@@ -592,11 +592,11 @@ static void init_yuv_25fps(void)
 	sensor_write_reg(0x36, 0x00);
 	sensor_write_reg(0x38, 0x13);
 	sensor_write_reg(0x39, 0x43);
-	sensor_write_reg(0x3a, 0x00);
+	sensor_write_reg(0x3a, 0x0d);
 	sensor_write_reg(0x3c, 0x6c);
 	sensor_write_reg(0x3d, 0x90);
 	sensor_write_reg(0x3f, 0x29);
-	sensor_write_reg(0x40, 0xc1);
+	sensor_write_reg(0x40, 0xc0);
 	sensor_write_reg(0x41, 0x20);
 	sensor_write_reg(0x6b, 0x0a);
 	sensor_write_reg(0xa1, 0xc8);
@@ -639,10 +639,10 @@ static void init_yuv_25fps(void)
 	sensor_write_reg(0x6d, 0x30);
 	sensor_write_reg(0x6e, 0x4b);
 	sensor_write_reg(0x6f, 0x60);
-	sensor_write_reg(0x70, 0x70);
-	sensor_write_reg(0x71, 0x70);
-	sensor_write_reg(0x72, 0x70);
-	sensor_write_reg(0x73, 0x70);
+	sensor_write_reg(0x70, 0x3a);
+	sensor_write_reg(0x71, 0x35);
+	sensor_write_reg(0x72, 0x11);
+	sensor_write_reg(0x73, 0x00);
 	sensor_write_reg(0x74, 0x60);
 	sensor_write_reg(0x75, 0x60);
 	sensor_write_reg(0x76, 0x50);
@@ -1105,8 +1105,9 @@ void cam_read_line(int in_dump_line)
             while((!(CAM_GPIO_GROUP->IDR & CAM_VSYN))&&(CAM_GPIO_GROUP->IDR & CAM_HREF)){
                 GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
                 GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
-                if(rec_count<640*2)vbf[rec_count++]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
+                if(rec_count<640*2)vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
                 else lprintf("err:rec_count>1280\n");
+                rec_count++;
             }
             if(rec_count!=1280)lprintf_time("%d>L%d\n", rec_count, linect);
             if(!need_w_t_f){
