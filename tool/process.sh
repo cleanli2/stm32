@@ -59,3 +59,6 @@ else
 	jobs $ns 9999 $PWD /d/stm32_cam_data/$dirn$dn
 	jobs 0 $ne $PWD /d/stm32_cam_data/$dirn$dn
 fi
+cp $PWD/*fn.txt /d/stm32_cam_data/$dirn$dn
+cp $PWD/stmlog.txt /d/stm32_cam_data/$dirn$dn
+cp $PWD/process.sh /d/stm32_cam_data/$dirn$dn
