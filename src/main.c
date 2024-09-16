@@ -34,6 +34,26 @@ struct task all_tasks[]=
 };
 uint32_t task_mask = 0;
 
+extern char fbf[512];
+uint32_t g_fnn=0;
+void prepare_pic_trsf()
+{
+    memset(fbf, ' ', 512);
+    if(FS_OK==open_file_w("endfn.txt")){
+        slprintf(fbf, "%d        ", g_fnn);
+        write_sec_to_file((const char*)fbf);
+        close_file();
+        lprintf_time("\nendfn.txt=%s done\n", fbf);
+    }
+    if(FS_OK==open_file_w("dtidn.txt")){
+        slprintf(fbf, "%s", get_rtc_time(NULL));
+        slprintf(fbf+10, "_%X_", *(u32*)(0x1ffff7f0));
+        write_sec_to_file((const char*)fbf);
+        close_file();
+        lprintf_time("\ndtidn.txt=%s done\n", fbf);
+    }
+}
+
 #define MIN_YUV_FILES_NUM 100
 void cam_init(int);
 void cam_deinit();
@@ -45,7 +65,6 @@ uint8_t cam_r_reg(uint8_t addr);
 void cam_save_1_frame(u32 only_uart_dump);
 int cam_w_reg(uint8_t addr, uint8_t data);
 int loop_stop=0;
-uint32_t g_fnn=0;
 int main()
 {
     uint32_t end_loop=50;
@@ -57,10 +76,17 @@ int main()
     if(adc_test()){
         slprintf(stopreason, "%s\n", "Battery low, power off");
         lprintf_time(stopreason);
+        prepare_pic_trsf();
         power_off();
     }
     g_fnn = get_env_uint("fsno", 0);
     lprintf_time("start g_fnn=%d\n", g_fnn);
+    if(FS_OK==open_file_w("stafn.txt")){
+        slprintf(fbf, "%d        ", g_fnn);
+        write_sec_to_file((const char*)fbf);
+        close_file();
+        lprintf_time("\nstafn.txt=%s done\n", fbf);
+    }
     task_log(NULL);
     run_cmd_interface();
     lprintf_time("start working loop.\n");
@@ -101,6 +127,7 @@ int main()
     cam_deinit();
     lprintf_time("end working loop.\n");
     task_log(NULL);
+    prepare_pic_trsf();
     while(end_loop--){
         lprintf(stopreason);
         run_cmd_interface();
