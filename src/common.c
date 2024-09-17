@@ -936,6 +936,10 @@ void os_task2(void*p)
 void soft_reset_system()
 {
     lprintf_time("system reset\n");
+    if(g_fnn!=get_env_uint("fsno", 0)){
+        lprintf_time("save g_fnn %d\n", g_fnn);
+        set_env_uint("fsno", g_fnn);
+    }
     foce_save_log_func();
     set_BL_value(0);
     LCD_RESET();
