@@ -463,7 +463,7 @@ void auto_time_correct_raw(int adj_type)
     dt_lastadj.weekday= bcd2hex(dt_lastadj.weekday);
     hours_adj_1min = bcd2hex_32(hours_adj_1min);
 
-    lprintf("ATC:curtime:%s\n",get_rtc_time(&dt));
+    lprintf("ATC:curtime:%s tp %d\n",get_rtc_time(&dt), adj_type);
     if(!is_later_than(&dt, &dt_lastadj)){
         lprintf_time("ATC:t=%d skip 3\n", adj_type);
         return;
@@ -506,6 +506,8 @@ void auto_time_correct_raw(int adj_type)
         case ADJ_LESS_THAN_1HOUR: 
             {
                 int32_t seconds_adj;
+                lprintf("ADJ_LESS_THAN_1HOUR:diffhour %d ha1m %d\n",
+                        diff_hours, hours_adj_1min);
                 if(diff_hours>hours_adj_1min/6){
                     seconds_adj = diff_hours * 60 /hours_adj_1min;
                     if(ch_t[0]=='-')seconds_adj=-seconds_adj;
@@ -692,12 +694,15 @@ uint adjust_time(int scds)
         return RTC_FAIL;
     }
     if(RTC_FAIL==rtc_write_reg(SECOND_REG, hex2bcd(s))){
+        lprintf("Second wt fail\n");
         return RTC_FAIL;
     }
     if(RTC_FAIL==rtc_write_reg(MINUTE_REG, hex2bcd(m))){
+        lprintf("MIN wt fail\n");
         return RTC_FAIL;
     }
     if(RTC_FAIL==rtc_write_reg(HOUR_REG, hex2bcd(h))){
+        lprintf("HOUR wt fail\n");
         return RTC_FAIL;
     }
     lprintf_time("%d:%d:%d %d->%d:%d:%d OK\n", hb, mb, sb, scds, h, m, s);
