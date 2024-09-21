@@ -34,11 +34,30 @@ struct task all_tasks[]=
 };
 uint32_t task_mask = 0;
 
+int restarted=0;
 extern char fbf[512];
 uint32_t g_fnn=0;
 void prepare_pic_trsf()
 {
+    uint32_t n_s_fnn=0;
+    char t_file_name[32];
+    uint32_t t_fnn = get_env_uint("fsno", 0);
     memset(fbf, ' ', 512);
+    if(restarted && t_fnn < g_fnn){
+        n_s_fnn = g_fnn+1;
+        slprintf(t_file_name, "V%d/YUV%d.BIN", n_s_fnn/100, n_s_fnn);
+        if(FS_OK!=open_file_w(t_file_name)){
+            lprintf_time("%s not exist\n", t_file_name);
+            n_s_fnn = 0;
+        }
+        close_file();
+        if(FS_OK==open_file_w("STAFN.TXT")){
+            slprintf(fbf, "%d        ", n_s_fnn);
+            write_sec_to_file((const char*)fbf);
+            close_file();
+            lprintf_time("\nFiles looped, update stafn.txt=%s done\n", fbf);
+        }
+    }
     if(FS_OK==open_file_w("ENDFN.TXT")){
         slprintf(fbf, "%d        ", g_fnn);
         write_sec_to_file((const char*)fbf);
@@ -118,6 +137,7 @@ int main()
             }
             else{
                 lprintf_time("end of files, restart from YUV0.bin\n");
+                restarted=1;
                 g_fnn=0;
             }
         }
