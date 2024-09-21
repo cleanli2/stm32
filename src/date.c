@@ -6,6 +6,17 @@ uint32_t diff_with_inc_step(uint32_t f, uint32_t b, uint32_t inc_step)
 {
     return (f>=b)?f-b:f+inc_step-b;
 }
+uint8_t sub_with_back_limit(uint8_t * iptp, uint32_t diff, uint8_t limit)
+{
+    uint8_t ret = 0;
+    int32_t t = *iptp - diff;
+    while(t<0){
+        ret++;
+        t+=limit;
+    }
+    *iptp = t;
+    return ret;
+}
 uint8_t add_with_back_limit(uint8_t * iptp, uint32_t diff, uint8_t limit)
 {
     uint8_t ret = 0;

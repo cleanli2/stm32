@@ -1,5 +1,6 @@
 #include "common.h"
 #include "rtc.h"
+#include "date.h"
 
 #define uchar unsigned char
 
@@ -502,6 +503,22 @@ void auto_time_correct_raw(int adj_type)
                 }
             }
             break;
+        case ADJ_LESS_THAN_1HOUR: 
+            {
+                int32_t seconds_adj;
+                if(diff_hours>hours_adj_1min/6){
+                    seconds_adj = diff_hours * 60 /hours_adj_1min;
+                    if(ch_t[0]=='-')seconds_adj=-seconds_adj;
+                    if(RTC_OK==adjust_time(seconds_adj)){
+                        set_env("LastTimeAdj", get_rtc_time(NULL));
+                        lprintf_time("adj %d seconds OK\n", seconds_adj);
+                    }
+                    else{
+                        lprintf_time("adj %d seconds fail\n", seconds_adj);
+                    }
+                }
+            }
+            break;
         case ADJ_MINUTE:
         default:
             {
@@ -533,6 +550,11 @@ void auto_time_correct_10s()
 void auto_time_correct()
 {
     auto_time_correct_raw(ADJ_MINUTE);
+}
+
+void auto_time_correct2()
+{
+    auto_time_correct_raw(ADJ_LESS_THAN_1HOUR);
 }
 
 uint8_t check_rtc_alert_and_clear()
@@ -618,6 +640,69 @@ uint adjust_1min(uint faster_1min)
     return rtc_write_reg(MINUTE_REG, hex2bcd(min));
 #else
     adjust_second(faster_1min?60:-60);
+    return RTC_OK;
+#endif
+}
+
+uint adjust_time(int scds)
+{
+#ifdef RTC_8563
+    uint8_t h, m, s;
+    uint8_t hb, mb, sb;
+    if(scds>=3600)return RTC_FAIL;
+    s = bcd2hex(rtc_read_reg(SECOND_REG));
+    if(s != bcd2hex(rtc_read_reg(SECOND_REG))){
+        lprintf("read rtc reg 'second' fail\n");
+        return RTC_FAIL;
+    }
+    m = bcd2hex(rtc_read_reg(MINUTE_REG));
+    if(m != bcd2hex(rtc_read_reg(MINUTE_REG))){
+        lprintf("read rtc reg 'min' fail\n");
+        return RTC_FAIL;
+    }
+    h = bcd2hex(rtc_read_reg(HOUR_REG));
+    if(h != bcd2hex(rtc_read_reg(HOUR_REG))){
+        lprintf("read rtc reg 'hour' fail\n");
+        return RTC_FAIL;
+    }
+    hb=h;mb=m;sb=s;
+    if(scds>0){
+        add_with_back_limit(&h,
+                add_with_back_limit(&m,
+                    add_with_back_limit(&s, scds, 60), 60),
+                24);
+        if(h<hb){
+            lprintf("Hour exceeding upwards, adjust_time %d->%d fail\n", h, hb);
+            return RTC_FAIL;
+        }
+    }
+    else{
+        scds=-scds;
+        sub_with_back_limit(&h,
+                sub_with_back_limit(&m,
+                    sub_with_back_limit(&s, scds, 60), 60),
+                24);
+        if(h>hb){
+            lprintf("Hour exceeding downwards, adjust_time %d->%d fail\n", h, hb);
+            return RTC_FAIL;
+        }
+    }
+    if(s>57){
+        lprintf("Second %d near 59, adjust_time fail\n", h, hb);
+        return RTC_FAIL;
+    }
+    if(RTC_FAIL==rtc_write_reg(SECOND_REG, hex2bcd(s))){
+        return RTC_FAIL;
+    }
+    if(RTC_FAIL==rtc_write_reg(MINUTE_REG, hex2bcd(m))){
+        return RTC_FAIL;
+    }
+    if(RTC_FAIL==rtc_write_reg(HOUR_REG, hex2bcd(h))){
+        return RTC_FAIL;
+    }
+    lprintf_time("%d:%d:%d %d->%d:%d:%d OK\n", hb, mb, sb, scds, h, m, s);
+    return RTC_OK;
+#else
     return RTC_OK;
 #endif
 }

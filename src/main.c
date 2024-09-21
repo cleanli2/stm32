@@ -91,6 +91,7 @@ int main()
     char stopreason[64];
     memset(stopreason, 0, 64);
     main_init();
+    auto_time_correct();
     cam_deinit();
     if(adc_test()){
         slprintf(stopreason, "%s\n", "Battery low, power off");
@@ -121,6 +122,7 @@ int main()
                 lprintf_time(stopreason);
                 break;
             }
+            auto_time_correct2();
         }
         lprintf_time("open %s\n", file_name);
         if(FS_OK==open_file_w(file_name)){
