@@ -91,7 +91,7 @@ int main()
     char stopreason[64];
     memset(stopreason, 0, 64);
     main_init();
-    auto_time_correct();
+    auto_time_correct2();
     cam_deinit();
     if(adc_test()){
         slprintf(stopreason, "%s\n", "Battery low, power off");
