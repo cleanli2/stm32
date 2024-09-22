@@ -557,6 +557,9 @@ void main_init(void)
 
   //72M/72=1M, 1us/count
   timer_init(10000-1, 72-1);
+  lprintf("P8563_init\n");
+  P8563_init();
+  lprintf("date:%s\n", get_rtc_time(0));
 
   GPIO_InitTypeDef GPIO_InitStructure;
   //led
