@@ -37,6 +37,52 @@ extern const uint8_t ziku12[];
 extern const uint8_t ziku[];
 uint32_t get_ziku12_size();
 uint32_t get_ziku_size();
+void save_sd_log()
+{
+    lprintf("save log to sd card:stmlog.txt\n");
+    u32 ch_cnt = 0, i512_ct=0, show_ct=0;
+    u32 addr = SPI_FLASH_LOG_START;
+    if(FS_OK!=open_file_for_write("STMLOG", "TXT")){
+        lprintf_time("open file fail:stmlog.txt\n");
+        return;
+    }
+    memset(read_buf, ' ', 512);
+    lprintf("run task log\n");
+    task_log(NULL);
+    dt_us_last();
+    while(1){
+        SPI_Flash_Read(read_buf,addr,512);
+        for(i512_ct=0;i512_ct<512;i512_ct++){
+            if(0xff==read_buf[i512_ct]){
+                read_buf[i512_ct]='`';
+            }
+            else if('\r'==read_buf[i512_ct]||
+                    '\n'==read_buf[i512_ct]){
+            }
+            else if(0x20>read_buf[i512_ct]){
+                read_buf[i512_ct]='?';
+            }
+        }
+        ch_cnt+=512;
+        show_ct+=512;
+        if(show_ct>(SPI_FLASH_LOG_SIZE/10)){
+            lprintf("%d%%doing\n", ch_cnt*100/SPI_FLASH_LOG_SIZE);
+            show_ct=0;
+        }
+        if(ch_cnt >= SPI_FLASH_LOG_SIZE){
+            write_sec_to_file((const char*)read_buf);
+            close_file();
+            u32 tmus=dt_us_last();
+            lprintf_time("save log OK:%dk %dus %dk/s\n",
+                    SPI_FLASH_LOG_SIZE/1000,
+                    tmus,
+                    SPI_FLASH_LOG_SIZE*1000/tmus);
+            return;
+        }
+        write_sec_to_file((const char*)read_buf);
+        addr+=512;
+    }
+}
 void w25f(char *p)
 {
     uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
@@ -178,49 +224,7 @@ void w25f(char *p)
         task_log(NULL);
     }
     else if(cmdindex == 0xe){//
-        lprintf("save log to sd card:stmlog.txt\n");
-        u32 ch_cnt = 0, i512_ct=0, show_ct=0;
-        u32 addr = SPI_FLASH_LOG_START;
-        if(FS_OK!=open_file_for_write("STMLOG", "TXT")){
-            lprintf_time("open file fail:stmlog.txt\n");
-            return;
-        }
-        memset(read_buf, ' ', 512);
-        lprintf("run task log\n");
-        task_log(NULL);
-        dt_us_last();
-        while(1){
-            SPI_Flash_Read(read_buf,addr,512);
-            for(i512_ct=0;i512_ct<512;i512_ct++){
-                if(0xff==read_buf[i512_ct]){
-                    read_buf[i512_ct]='`';
-                }
-                else if('\r'==read_buf[i512_ct]||
-                        '\n'==read_buf[i512_ct]){
-                }
-                else if(0x20>read_buf[i512_ct]){
-                    read_buf[i512_ct]='?';
-                }
-            }
-            ch_cnt+=512;
-            show_ct+=512;
-            if(show_ct>(SPI_FLASH_LOG_SIZE/10)){
-                lprintf("%d%%doing\n", ch_cnt*100/SPI_FLASH_LOG_SIZE);
-                show_ct=0;
-            }
-            if(ch_cnt >= SPI_FLASH_LOG_SIZE){
-                write_sec_to_file((const char*)read_buf);
-                close_file();
-                u32 tmus=dt_us_last();
-                lprintf_time("save log OK:%dk %dus %dk/s\n",
-                        SPI_FLASH_LOG_SIZE/1000,
-                        tmus,
-                        SPI_FLASH_LOG_SIZE*1000/tmus);
-                return;
-            }
-            write_sec_to_file((const char*)read_buf);
-            addr+=512;
-        }
+        save_sd_log();
     }
     con_send('\n');
 

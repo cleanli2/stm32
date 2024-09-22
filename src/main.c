@@ -74,6 +74,7 @@ void prepare_pic_trsf()
 }
 
 #define MIN_YUV_FILES_NUM 100
+void save_sd_log();
 void cam_init(int);
 void cam_deinit();
 void cam_read_frame(int);
@@ -146,7 +147,7 @@ int main()
         g_fnn++;
         if(adc_test()){
             slprintf(stopreason, "%s\n", "Battery low, power off");
-            power_off();
+            loop_stop=1;
             break;
         }
         //task log
@@ -154,9 +155,11 @@ int main()
     }
     cam_deinit();
     lprintf_time("end working loop.\n");
-    task_log(NULL);
     prepare_pic_trsf();
+    task_log(NULL);
     if(loop_stop){
+        save_sd_log();
+        power_off();
     }
     while(end_loop--){
         lprintf(stopreason);
