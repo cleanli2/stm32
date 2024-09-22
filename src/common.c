@@ -517,6 +517,7 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
     beep(800, 3000);
 }
 #define AUTO_POWER_OFF_COUNT 100000
+void P8563_init();
 //static uint32_t single_timer_len = 16;
 /**
   * @brief  Main program.
