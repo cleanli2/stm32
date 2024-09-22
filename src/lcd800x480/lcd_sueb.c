@@ -1138,6 +1138,7 @@ extern int loop_stop;
 void cam_save_1_frame(u32 only_uart_dump)
 {
     char ucbf[5]={0};
+    uint32_t endct=0;
     int ucbfi=0;
     int w_start_line;
     frames_wsize = 0;
@@ -1153,6 +1154,14 @@ void cam_save_1_frame(u32 only_uart_dump)
         if(con_is_recved()){
             ucbf[ucbfi++]=con_recv();
         }
+        if(GPIOA->IDR & GPIO_Pin_13)
+        {
+            endct++;
+        }
+        else
+        {
+            endct=0;
+        }
         if(ucbfi==4){
             if(!strcmp(ucbf, "quit")){
                 lprintf_time("Get cmd:quit, abort!\n");
@@ -1163,6 +1172,12 @@ void cam_save_1_frame(u32 only_uart_dump)
                 lprintf("X:%s\n", ucbf);
                 ucbfi=0;
             }
+        }
+        if(endct == 4){
+            lprintf_time("Get end button, abort!\n");
+            loop_stop=1;
+            GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
+            return;
         }
     }
 
@@ -1444,22 +1459,29 @@ uint8_t cam_r_reg(uint8_t addr)
 #define CAM_DATA_PORT_GPIO_Pins 0x1fe
 void cam_deinit()
 {
+    GPIO_InitTypeDef  GPIO_InitStructure;
     lprintf_time("cam down\n");
     GPIO_SetBits(CAM_GPIO_GROUP,CAM_PWN);
     cam_xclk_off();
+    //END detect gpio pin
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_ResetBits(GPIOA,GPIO_Pin_13);
 }
 void cam_init(int choose)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
 
     //cam data port
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_InitStructure.GPIO_Pin = CAM_DATA_PORT_GPIO_Pins;//D1-D8
     GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
     GPIO_SetBits(GPIOB,CAM_DATA_PORT_GPIO_Pins);
     //cam data port end
 
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Pin = CAM_PWN;
     GPIO_Init(CAM_PWN_GPIO_GROUP, &GPIO_InitStructure);
@@ -1471,10 +1493,16 @@ void cam_init(int choose)
     lprintf("cam rst=1\n");
     GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST);
 
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-        GPIO_InitStructure.GPIO_Pin = CAM_PCLK|CAM_VSYN|CAM_HREF;
-        GPIO_Init(CAM_GPIO_GROUP, &GPIO_InitStructure); //GPIOB
-        GPIO_SetBits(CAM_GPIO_GROUP,CAM_PCLK|CAM_VSYN|CAM_HREF);
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_InitStructure.GPIO_Pin = CAM_PCLK|CAM_VSYN|CAM_HREF;
+    GPIO_Init(CAM_GPIO_GROUP, &GPIO_InitStructure); //GPIOB
+    GPIO_SetBits(CAM_GPIO_GROUP,CAM_PCLK|CAM_VSYN|CAM_HREF);
+
+    //END detect gpio pin
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_SetBits(GPIOA,GPIO_Pin_13);
 
     cam_i2c_init();
     cam_xclk_on();

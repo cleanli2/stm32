@@ -156,6 +156,8 @@ int main()
     lprintf_time("end working loop.\n");
     task_log(NULL);
     prepare_pic_trsf();
+    if(loop_stop){
+    }
     while(end_loop--){
         lprintf(stopreason);
         run_cmd_interface();
