@@ -280,58 +280,20 @@ void P8563_init()
     RCC_APB2PeriphClockCmd(I2C_GPIO_PERIPH, ENABLE);
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
-        //注意,时钟使能之后,对GPIO的操作才有效
-        //所以上拉之前,必须使能时钟.才能实现真正的上拉输出
-
-    //detect SCL1 or SCL2 start
-    GPIO_InitStructure.GPIO_Pin = SCL_PIN1|SCL_PIN2;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;  //
-    GPIO_Init(I2C_GROUP, &GPIO_InitStructure);
-
-    if(GPIO_ReadInputDataBit(I2C_GROUP, SCL_PIN1)
-            &&
-       (!GPIO_ReadInputDataBit(I2C_GROUP, SCL_PIN2)))
-    {
-        lprintf("SCL=SCL1 PC10\r\n");
-        use_SCL_1=1;
+    for(use_SCL_1=0;use_SCL_1!=1;use_SCL_1++){
+        lprintf("try use_SCL_1=%d\n", use_SCL_1);
+        GPIO_InitStructure.GPIO_Pin = SDA_PIN|SCL_PIN;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
+        GPIO_Init(I2C_GROUP, &GPIO_InitStructure);
+        GPIO_SetBits(I2C_GROUP,SDA_PIN|SCL_PIN);
+        if(1==rtc_write_reg(0x0,0x00)){
+            lprintf("try use_SCL_1=%d OK\n", use_SCL_1);
+            puthexch(rtc_read_reg(1));
+            rtc_write_reg(0x1,0x10|rtc_read_reg(0x1)); /*报警有效*/
+            rtc_inited = 1;
+            break;
+        }
     }
-    else if(GPIO_ReadInputDataBit(I2C_GROUP, SCL_PIN2)
-            &&
-       (!GPIO_ReadInputDataBit(I2C_GROUP, SCL_PIN1)))
-    {
-        lprintf("SCL=SCL2 PC12\r\n");
-        use_SCL_1=0;
-    }
-    else{
-        lprintf("error: can't detect SCL pin\r\n");
-    }
-    //detect SCL1 or SCL2 end
-
-
-
-    GPIO_InitStructure.GPIO_Pin = SDA_PIN|SCL_PIN;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
-    GPIO_Init(I2C_GROUP, &GPIO_InitStructure);
-    GPIO_SetBits(I2C_GROUP,SDA_PIN|SCL_PIN);
-    
-        // P8563_settime();
-#if 0
-        for(i=0;i<=5;i++) g8563_Store[i]=c8563_Store[i]; /*初始化时间*/
-    P8563_settime();  
-#endif
-    // if((ReadData(0x0a)&0x3f)!=0x08) /*检查是否第一次启动，是则初始化时间*/
-    // {
-    //	    P3_4 = 0;
-    //       for(i=0;i<=3;i++) g8563_Store[i]=c8563_Store[i]; /*初始化时间*/
-    //       P8563_settime();
-    puthexch(rtc_read_reg(0));
-    puthexch(rtc_read_reg(1));
-    rtc_write_reg(0x0,0x00);
-    //       writeData(0xa,0x8); /*8:00报警*/
-    rtc_write_reg(0x1,0x10|rtc_read_reg(0x1)); /*报警有效*/
-    //      writeData(0xd,0xf0);  //编程输出32.768K的频率
-    //  }
-    rtc_inited = 1;
 }
 void rtc_write(uint8_t*ip)
 {
