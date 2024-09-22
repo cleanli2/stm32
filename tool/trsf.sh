@@ -36,5 +36,6 @@ else
 	jobs 0 $ne $PWD /d/stm32_cam_data/$dirn$dn
 fi
 cp $PWD/*fn.txt /d/stm32_cam_data/$dirn$dn
+cp $PWD/dtidn.txt /d/stm32_cam_data/$dirn$dn
 cp $PWD/stmlog.txt /d/stm32_cam_data/$dirn$dn
 cp $PWD/*.sh /d/stm32_cam_data/$dirn$dn
