@@ -11,30 +11,18 @@ uint32_t get_env_start_addr()
 {
     uint8_t tmpc;
 
-    prtline;
-    lprintf("env_start_addr =0x%b\n", env_start_addr );
     if(env_start_addr == 0xffffffff){
-    prtline;
         //last byte will not be 0xff if main env has data
         set_cur_env_area(USE_MAIN_ENV);
-    prtline;
         tmpc = env_get_char(ENV_STORE_SIZE-1);
-    prtline;
         lprintf("last byte=0x%b\n", tmpc);
-    prtline;
         if(tmpc==0xff){
-    prtline;
             //will use help env
             lprintf("env:set hlep env %X\n", ENV_STORE_START_ADDR);
-    prtline;
             set_cur_env_area(USE_HELP_ENV);
-    prtline;
         }
-    prtline;
         lprintf("env use %X\n", env_start_addr);
-    prtline;
     }
-    prtline;
     return env_start_addr;
 }
 

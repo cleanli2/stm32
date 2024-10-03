@@ -274,44 +274,26 @@ void P8563_init()
     static int rtc_inited = 0;
     //uchar i;
 
-    prtline;
     if(rtc_inited)return;
 
-    prtline;
     GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
-    prtline;
     RCC_APB2PeriphClockCmd(I2C_GPIO_PERIPH, ENABLE);
-    prtline;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    prtline;
 
-    for(use_SCL_1=0;use_SCL_1!=2;use_SCL_1++){
+    for(use_SCL_1=0;use_SCL_1!=1;use_SCL_1++){
         lprintf("try use_SCL_1=%d\n", use_SCL_1);
-    prtline;
         GPIO_InitStructure.GPIO_Pin = SDA_PIN|SCL_PIN;
-    prtline;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //推挽输出 
-    prtline;
         GPIO_Init(I2C_GROUP, &GPIO_InitStructure);
-    prtline;
         GPIO_SetBits(I2C_GROUP,SDA_PIN|SCL_PIN);
-    prtline;
         if(1==rtc_write_reg(0x0,0x00)){
-    prtline;
             lprintf("try use_SCL_1=%d OK\n", use_SCL_1);
-    prtline;
             puthexch(rtc_read_reg(1));
-    prtline;
             rtc_write_reg(0x1,0x10|rtc_read_reg(0x1)); /*报警有效*/
-    prtline;
             rtc_inited = 1;
-    prtline;
             break;
-    prtline;
         }
-    prtline;
     }
-    prtline;
 }
 void rtc_write(uint8_t*ip)
 {

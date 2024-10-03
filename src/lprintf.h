@@ -21,5 +21,4 @@ void foce_save_log_func();
 void puthexch(char c);
 void reset_time_offset();
 
-#define prtline lprintf("L%d\n", __LINE__)
 #endif
