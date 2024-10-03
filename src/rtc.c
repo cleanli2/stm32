@@ -280,7 +280,7 @@ void P8563_init()
     RCC_APB2PeriphClockCmd(I2C_GPIO_PERIPH, ENABLE);
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
-    for(use_SCL_1=0;use_SCL_1!=1;use_SCL_1++){
+    for(use_SCL_1=0;use_SCL_1!=2;use_SCL_1++){
         lprintf("try use_SCL_1=%d\n", use_SCL_1);
         GPIO_InitStructure.GPIO_Pin = SDA_PIN|SCL_PIN;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //ÍÆÍìÊä³ö 

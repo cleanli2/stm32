@@ -20,5 +20,6 @@ void task_log(struct task*vp);
 void foce_save_log_func();
 void puthexch(char c);
 void reset_time_offset();
+void syshour_init();
 
 #endif

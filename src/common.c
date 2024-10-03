@@ -559,6 +559,7 @@ void main_init(void)
   timer_init(10000-1, 72-1);
   lprintf("P8563_init\n");
   P8563_init();
+  syshour_init();
   lprintf("date:%s\n", get_rtc_time(0));
 
   GPIO_InitTypeDef GPIO_InitStructure;

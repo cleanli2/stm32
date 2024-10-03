@@ -18,6 +18,7 @@ extern int use_SCL_1;
 #define RTC_FAIL 0
 #define RTC_OK 1
 
+void P8563_init();
 void rtc_read(uint8_t*);
 void rtc_write(uint8_t*);
 char* get_rtc_time(date_info_t*);

@@ -165,20 +165,22 @@ void reset_time_offset()
 {
     date_hour_offset = 0xffffffff;
 }
+void syshour_init()
+{
+    u32 ms_time;
+    date_info_t cur_date = {0};
+    get_date(&cur_date);
+    date_hour_offset = cur_date.second;
+    date_hour_offset += cur_date.minute*60;
+    date_hour_offset += cur_date.hour*3600;
+    date_hour_offset *= 1000;
+    ms_time = (u32)(get_system_us()/1000);
+    date_hour_offset -= ms_time;
+}
 char*get_sys_hour()
 {
     u32 ms_time;
     u32 t;//tmp variable
-    if(date_hour_offset == 0xffffffff){
-        date_info_t cur_date = {0};
-        get_date(&cur_date);
-        ms_time = (u32)(get_system_us()/1000);
-        date_hour_offset = cur_date.second;
-        date_hour_offset += cur_date.minute*60;
-        date_hour_offset += cur_date.hour*3600;
-        date_hour_offset *= 1000;
-        date_hour_offset -= ms_time;
-    }
     ms_time = (u32)(get_system_us()/1000);
     if(date_hour_offset != 0xffffffff){
         ms_time+=date_hour_offset;
