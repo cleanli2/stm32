@@ -531,7 +531,7 @@ void main_init(void)
        To reconfigure the default setting of SystemInit() function, refer to
        system_stm32f10x.c file
      */     
-  int looptimes = 3;
+  //int looptimes = 3;
   //uint32_t ict;
   RCC_ClocksTypeDef RCC_ClocksStatus;
 
@@ -545,6 +545,7 @@ void main_init(void)
   USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
   STM_COMInit(COM1, &USART_InitStructure);
+  lprintf("uart_init done\n");
   /* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
      You can monitor PD0 or PD2 on the scope to measure the output signal. 
      If you need to fine tune this frequency, you can add more GPIO set/reset 
@@ -679,16 +680,16 @@ void main_init(void)
   lprintf_time("lcd init\n");
   lcd_sueb_init(0);
   lprintf_time("lcd init done.\n");
-  lprintf_time("SD init\n");
-  SD_Init();
-  lprintf_time("SD init done\n");
-  //SD_LowLevel_Init();
+  //lprintf_time("SD init\n");
+  //SD_Init();
+  //lprintf_time("SD init done\n");
+  SD_LowLevel_Init();
 
   /*1us/timer_count, 10ms/timer_intrpt*/
-  while (looptimes--)
-  {
-      led_flash(0x3, 100);
-  }
+  //while (looptimes--)
+  //{
+  //    led_flash(0x3, 100);
+  //}
   beep_by_timer_100(0);
   //while(1) run_cmd_interface();
 #if 0
