@@ -1437,8 +1437,29 @@ void wav_ui_init(void*vp)
 {
     int fd, file_len;
     const char* fname="MUSIC", *ename="WAV";
+    SD_Error Status = SD_OK;
+    SD_CardInfo mycard;
 
     ui_buf[0]=0xffffffff;
+
+    {
+	    lprintf("sd_init\n");
+	    if((Status = SD_Init()) != SD_OK)
+	    {
+		    lprintf("Fail\n");
+	    }
+	    else{
+		    lprintf("OK\n");
+		    if((Status = SD_GetCardInfo(&mycard)) != SD_OK)
+		    {
+			    lprintf("get card info Fail\n");
+		    }
+		    else{
+			    lprintf("block size %d\n", mycard.CardBlockSize);
+			    lprintf("block capacity %d\n", mycard.CardCapacity);
+		    }
+	    }
+    }
 
     lprintf("wav_ui:dac on\n");
     Dac1_Init();
