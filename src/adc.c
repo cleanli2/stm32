@@ -10,6 +10,7 @@
 uint32_t v_bat = 0;
 
 static int adc_inited = 0;
+static int g_adc_log_en= 0;
 void adc_init()
 {
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -72,7 +73,6 @@ uint32_t get_adc_value(int my_index)
     do
     {
         delay_us(5);
-        Debug_LOG_ADC("waiting convertion done...\n");
     }while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);
     return ADC_GetConversionValue(ADC1);
 }
@@ -82,24 +82,24 @@ void get_myadc_value(uint32_t*v_core_mv_p, uint32_t*v_bat_mv_p, int32_t*i_mA_p)
     uint32_t v_currt_mv, v_core_mv, v_bat_mv, raw_v_ref, raw_v_bat, raw_v_currt;
     int32_t i_mA;
 
-    Debug_LOG_ADC("start adc1 VREF convertion\n");
+    if(g_adc_log_en)Debug_LOG_ADC("start adc1 VREF convertion\n");
     raw_v_ref=get_adc_value(VREF);
-    Debug_LOG_ADC("vref = %x\n", raw_v_ref);
+    if(g_adc_log_en)Debug_LOG_ADC("vref = %x\n", raw_v_ref);
     v_core_mv = V_REV_mv * 4096 / raw_v_ref;
-    Debug_LOG_ADC("real vcore = %dmv\n", v_core_mv);
+    if(g_adc_log_en)Debug_LOG_ADC("real vcore = %dmv\n", v_core_mv);
 
-    Debug_LOG_ADC("start adc1 V4_2 convertion\n");
+    if(g_adc_log_en)Debug_LOG_ADC("start adc1 V4_2 convertion\n");
     raw_v_bat=get_adc_value(V4_2);
     v_bat_mv = V_REV_mv * raw_v_bat / raw_v_ref;
     v_bat_mv = v_bat_mv * V4_2_RATIO;
-    Debug_LOG_ADC("real vbat = %dmv\n", v_bat_mv);
+    if(g_adc_log_en)Debug_LOG_ADC("real vbat = %dmv\n", v_bat_mv);
 
-    Debug_LOG_ADC("start adc1 IBAT convertion\n");
+    if(g_adc_log_en)Debug_LOG_ADC("start adc1 IBAT convertion\n");
     raw_v_currt=get_adc_value(VIMEA);
-    Debug_LOG_ADC("vcur = %x\n", raw_v_currt);
+    if(g_adc_log_en)Debug_LOG_ADC("vcur = %x\n", raw_v_currt);
     //mA/mv
     v_currt_mv = V_REV_mv * raw_v_currt / raw_v_ref;
-    Debug_LOG_ADC("real v_currt = %dmv\n", v_currt_mv);
+    if(g_adc_log_en)Debug_LOG_ADC("real v_currt = %dmv\n", v_currt_mv);
     i_mA = v_currt_mv;
     i_mA = (i_mA-V_REV_mv) * CURRENT_MEASUREMENT_CALIBRATION;
     *v_core_mv_p = v_core_mv;
@@ -107,9 +107,10 @@ void get_myadc_value(uint32_t*v_core_mv_p, uint32_t*v_bat_mv_p, int32_t*i_mA_p)
     *i_mA_p = i_mA;
 }
 
-int adc_test()
+int adc_test(int log_en)
 {
     int ret = 0;
+    g_adc_log_en = log_en;
 #ifdef POWER_MONITOR
     uint32_t v_core, i_currt;
     int32_t i;
@@ -119,7 +120,7 @@ int adc_test()
         adc_init();
     }
     else{
-        Debug_LOG_ADC("adc already inited\n");
+        if(log_en)Debug_LOG_ADC("adc already inited\n");
     }
 
     get_myadc_value(&v_core, &v_bat, &i);
@@ -131,8 +132,8 @@ int adc_test()
         in_charge = '-';
         i_currt = -i;
     }
-    Debug_LOG_ADC("real I = %dmA\n", i_currt);
-    Debug_LOG_ADC("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, i_currt);
+    if(log_en)Debug_LOG_ADC("real I = %dmA\n", i_currt);
+    if(log_en)Debug_LOG_ADC("----%dmv %dmv %c%dmA\n", v_core, v_bat, in_charge, i_currt);
 #ifdef LARGE_SCREEN
     lcd_lprintf(240, 0, "%dmv %dmv %c%dmA", v_core, v_bat, in_charge, i_currt);
 #else
@@ -142,7 +143,7 @@ int adc_test()
         lprintf_time("v_core %dmv v_bat %dmv in_charge %c I %dmA\n", v_core, v_bat, in_charge, i_currt);
     }
     if(v_bat < BATT_LOW_LIMIT){
-        lprintf("battery is low\n");
+        lprintf_time("battery is low\n");
         ret = 1;
     }
 #endif

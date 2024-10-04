@@ -17,6 +17,6 @@ extern uint32_t v_bat;
   0:normal
   1:battery voltage is low
   */
-int adc_test();
+int adc_test(int log_en);
 void get_myadc_value(uint32_t*v_core_mv_p, uint32_t*v_bat_mv_p, int32_t*i_mA_p);
 #endif

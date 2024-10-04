@@ -759,7 +759,7 @@ void adc(char *p)
 {
     (void)p;
     con_send('\n');
-    adc_test();
+    adc_test(1);
 
     return;
 

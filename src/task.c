@@ -138,7 +138,7 @@ void task_power(struct task*vp)
 {
     (void)vp;
     if(g_flag_1s){
-        if(adc_test()){
+        if(adc_test(0)){
             cur_task_event_flag |= 1<<EVENT_BATT_LOW;
         }
         flash_led(LED_Y_C|LED_Y_1, 20);
