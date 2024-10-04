@@ -143,7 +143,6 @@ extern u16  BACK_COLOR; //背景颜色.默认为白色
 #define LCD_HW_WRITE_TEST 2
 #define LCD_HW_READ_TEST 3
 void lcd_sueb_init(int testitem);
-void LCD_write(u16 VAL);
 u16 LCD_read(void);
 void LCD_Clear(u16 Color);	 
 void LCD_SetCursor(u16 Xpos, u16 Ypos);
@@ -159,7 +158,6 @@ void LCD_WR_DATA(u16 data);
 void LCD_ReadReg(u16 LCD_Reg,u8 *Rval,int n);
 void LCD_WriteRAM_Prepare(void);
 void LCD_ReadRAM_Prepare(void);   
-void Lcd_WriteData_16Bit(u16 Data);
 u16 Lcd_ReadData_16Bit(void);
 void LCD_direction(u8 direction );
 u16 Color_To_565(u8 r, u8 g, u8 b);
@@ -170,6 +168,42 @@ void LCD_RESET();
 void lcd_sueb_test();
 void lcd_sueb_basicinit();
 
+#define LCD_write(VAL) \
+{ \
+	LCD_CS_CLR; \
+	DATAOUT(VAL); \
+	LCD_WR_CLR;  \
+	LCD_WR_SET;  \
+	LCD_CS_SET; \
+}
+
+/*****************************************************************************
+ * @name       :void Lcd_WriteData_16Bit(u16 Data)
+ * @date       :2018-08-09 
+ * @function   :Write an 16-bit command to the LCD screen
+ * @parameters :Data:Data to be written
+ * @retvalue   :None
+******************************************************************************/	 
+#if LCD_USE8BIT_MODEL==1
+#define Lcd_WriteData_16Bit(Data) \
+{ \
+    LCD_RS_SET; \
+    LCD_CS_CLR; \
+    DATAOUT(Data); \
+    LCD_WR_CLR;  \
+    LCD_WR_SET; \
+    DATAOUT(Data<<8); \
+    LCD_WR_CLR;  \
+    LCD_WR_SET; \
+    LCD_CS_SET; \
+}
+#else
+#define Lcd_WriteData_16Bit(Data) \
+{	\
+    LCD_RS_SET; \
+    LCD_write(Data); \
+}
+#endif
 //如果仍然觉得速度不够快，可以使用下面的宏定义,提高速度.
 //注意要去掉lcd.c中void LCD_WR_DATA(u16 data)函数定义哦
 /*
@@ -198,8 +232,3 @@ void lcd_sueb_basicinit();
 */
 				  		 
 #endif  
-	 
-	 
-
-
-

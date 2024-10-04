@@ -102,15 +102,6 @@ void LCD_BUS_To_write(int write)
     }
 }
 
-void LCD_write(u16 VAL)
-{
-	LCD_CS_CLR;  
-	DATAOUT(VAL);
-	LCD_WR_CLR; 
-	LCD_WR_SET; 
-	LCD_CS_SET;
-}
-
 u16 LCD_read(void)
 {
 	u16 data;
@@ -255,32 +246,6 @@ void LCD_WriteRAM_Prepare(void)
 void LCD_ReadRAM_Prepare(void)
 {
 	LCD_WR_REG(lcddev.rramcmd);
-}
-
-/*****************************************************************************
- * @name       :void Lcd_WriteData_16Bit(u16 Data)
- * @date       :2018-08-09 
- * @function   :Write an 16-bit command to the LCD screen
- * @parameters :Data:Data to be written
- * @retvalue   :None
-******************************************************************************/	 
-void Lcd_WriteData_16Bit(u16 Data)
-{	
-   LCD_RS_SET; 
-	 #if LCD_USE8BIT_MODEL
-		LCD_CS_CLR;
-		DATAOUT(Data);
-		LCD_WR_CLR; 
-		LCD_WR_SET;
-		DATAOUT(Data<<8);
-		LCD_WR_CLR; 
-		LCD_WR_SET;
-		LCD_CS_SET;
- //  LCD_write(Data&0xFF00);
-//	 LCD_write(Data<<8);
-	 #else
-	 LCD_write(Data);
-	 #endif
 }
 
 u16 Color_To_565(u8 r, u8 g, u8 b)

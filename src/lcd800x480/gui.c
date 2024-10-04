@@ -755,8 +755,12 @@ void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 							{
 								if(!mode) //非叠加方式
 								{
-									if(tfont24[k].Msk[i]&(0x80>>j))	Lcd_WriteData_16Bit(fc);
-									else Lcd_WriteData_16Bit(bc);
+									if(tfont24[k].Msk[i]&(0x80>>j)){
+                                        Lcd_WriteData_16Bit(fc);
+                                    }
+									else{
+                                        Lcd_WriteData_16Bit(bc);
+                                    }
 								}
 							else
 							{
@@ -810,8 +814,12 @@ void GUI_DrawFont32(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 				    	{
 							if(!mode) //非叠加方式
 							{
-								if(tfont32[k].Msk[i]&(0x80>>j))	Lcd_WriteData_16Bit(fc);
-								else Lcd_WriteData_16Bit(bc);
+								if(tfont32[k].Msk[i]&(0x80>>j)){
+                                    Lcd_WriteData_16Bit(fc);
+                                }
+								else{
+                                    Lcd_WriteData_16Bit(bc);
+                                }
 							}
 							else
 							{
