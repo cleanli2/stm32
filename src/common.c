@@ -684,6 +684,7 @@ void main_init(void)
   //SD_Init();
   //lprintf_time("SD init done\n");
   SD_LowLevel_Init();
+  lprintf("w25 flash ID:%x\n", SPI_Flash_ReadID());
 
   /*1us/timer_count, 10ms/timer_intrpt*/
   //while (looptimes--)
