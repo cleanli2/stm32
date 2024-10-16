@@ -94,16 +94,8 @@ void switch_env_area()
 
 uint8_t env_get_char(uint32_t offset)
 {
-    uint8_t ret, ret2;
+    uint8_t ret;
     SPI_Flash_Read(&ret, get_env_start_addr()+offset, 1);
-    SPI_Flash_Read(&ret2, get_env_start_addr()+offset, 1);
-    if(ret!=ret2){
-        lprintf("ERR found! %s %b %b\n", __func__, ret, ret2);
-        while(1){
-            SPI_Flash_Read(&ret2, get_env_start_addr()+offset, 1);
-            lprintf("%b ", ret2);
-        }
-    }
     //lprintf("sf_read %x@%x\n", ret, get_env_start_addr()+offset);
     return ret;
 }
