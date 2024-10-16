@@ -138,24 +138,12 @@ uint32_t strcpy2mem(uint8_t *s, uint32_t env_offset)
 
 int envmatch (uint8_t *s1, int i2)
 {
-            lprintf("em:i2=%d %s %c %c %c %c %c %c %c %c %c %c %c\n", i2, s1, env_get_char(i2),
-                    env_get_char(i2+1),
-                    env_get_char(i2+2),
-                    env_get_char(i2+3),
-                    env_get_char(i2+4),
-                    env_get_char(i2+5),
-                    env_get_char(i2+6),
-                    env_get_char(i2+7),
-                    env_get_char(i2+8),
-                    env_get_char(i2+9),
-                    env_get_char(i2+10));
 
     while (*s1 == env_get_char(i2++))
         if (*s1++ == '=')
             return(i2);
     if (*s1 == '\0' && env_get_char(i2-1) == '=')
         return(i2);
-    lprintf("*s1=%c (%d)=%c\n", *s1, i2, env_get_char(i2));
     return(-1);
 }
 
@@ -166,12 +154,10 @@ int envmatch (uint8_t *s1, int i2)
 uint32_t find_env_data_start_raw()
 {
     uint32_t i_down=0, i_up=ENV_STORE_SIZE-1, i;
-    lprintf("idown=%x\n", env_get_char(i_down));
     if(env_get_char(i_down) != 0xff){
         lprintf("env data is full\n");
         return ENV_INVALID;
     }
-    lprintf("iup=%x\n", env_get_char(i_up));
     if(env_get_char(i_up) == 0xff){
         lprintf("empty env block\n");
         return ENV_EMPTY_DATA;
@@ -259,13 +245,10 @@ uint32_t find_env_data_start()
     env_data_start_i = ret;
     return ret;
 }
-extern uint8_t read_buf[512];
+
 uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
 {
     uint32_t i = 0, nxt, ret = ENV_OK;
-    lprintf("%s--env_store_start %x size %x\n\n", name, get_env_start_addr(), ENV_STORE_SIZE);
-    SPI_Flash_Read((uint8_t*)read_buf, 0xfff00, 512);
-    mem_print((const char*)read_buf, 0xfff00, 512);
     if(p_position!=NULL){
         *p_position=ENV_INVALID;
     }
@@ -282,9 +265,7 @@ uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
     }
 
     i = find_env_data_start();
-    lprintf("%s:i=%d\n", __func__, i);
     if(i > ENV_ABNORMAL){
-        lprintf("%s:i=%d, env fail\n", __func__, i);
         ret = ENV_FAIL;
         goto end;
     }
@@ -294,13 +275,11 @@ uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
         for (nxt=i; env_get_char(nxt) != '\0'; ++nxt) {
             if (nxt >= ENV_STORE_SIZE) {
                 ret = ENV_FAIL;
-                lprintf("%s:2 env fail\n", __func__);
                 goto end;
             }
         }
-        if ((val=envmatch((uint8_t *)name, i)) < 0){
+        if ((val=envmatch((uint8_t *)name, i)) < 0)
             continue;
-        }
         if(p_position!=NULL){
             *p_position = i;
             goto end;

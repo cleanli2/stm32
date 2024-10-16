@@ -1919,13 +1919,10 @@ void draw_button(button_t*pbt)
         int lx = MIN(pbt->x, pbt->x+pbt->w);
         int ly = MIN(pbt->y, pbt->y+pbt->h);
         draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, color);
-        lprintf("ie is %d\n", is_eng);
         if(pbt->ch_text && !is_eng){
-            lprintf("CCCC\n");
             lcd_lprintf(lx+BUTTON_LINE_SPACE,ly+BUTTON_LINE_SPACE,pbt->ch_text);
         }
         else if(pbt->text){
-            lprintf("EREE\n");
             lcd_lprintf(lx+BUTTON_LINE_SPACE,ly+BUTTON_LINE_SPACE,pbt->text);
         }
         pbt++;
