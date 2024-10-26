@@ -11,6 +11,7 @@ uint32_t v_bat = 0;
 
 static int adc_inited = 0;
 static int g_adc_log_en= 0;
+static int g_v4_2_ratio_option = 0;
 void adc_init()
 {
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -51,6 +52,7 @@ void adc_init()
     while(ADC_GetCalibrationStatus(ADC1));
     lprintf("adc1 calibration done\n");
     adc_inited = ADC_INITED;
+    g_v4_2_ratio_option = get_env_uint("v42rt", 0);
 }
 
 uint32_t get_adc_value(int my_index)
@@ -91,7 +93,15 @@ void get_myadc_value(uint32_t*v_core_mv_p, uint32_t*v_bat_mv_p, int32_t*i_mA_p)
     if(g_adc_log_en)Debug_LOG_ADC("start adc1 V4_2 convertion\n");
     raw_v_bat=get_adc_value(V4_2);
     v_bat_mv = V_REV_mv * raw_v_bat / raw_v_ref;
-    v_bat_mv = v_bat_mv * V4_2_RATIO;
+    switch(g_v4_2_ratio_option){
+        case 1:
+            v_bat_mv = v_bat_mv * V4_2_RATIO_1;
+            break;
+        case 0:
+        default:
+            v_bat_mv = v_bat_mv * V4_2_RATIO;
+            break;
+    }
     if(g_adc_log_en)Debug_LOG_ADC("real vbat = %dmv\n", v_bat_mv);
 
     if(g_adc_log_en)Debug_LOG_ADC("start adc1 IBAT convertion\n");
