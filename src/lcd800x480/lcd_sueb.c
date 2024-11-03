@@ -1065,10 +1065,10 @@ char tmstp[24];
 void cam_read_line(int in_dump_line)
 {
 
-    u32 mode = FREE_MODE;
     u32 need_w_t_f = 1;
     u32 linect = 0;
     u32 rec_count = 0;
+    u32 linen = rn;
     memset(vbf, 0xff, 640*2);
     GPIO_SetBits(CAM_GPIO_GROUP,RCK);
 
@@ -1081,14 +1081,16 @@ void cam_read_line(int in_dump_line)
         linect=in_dump_line;
     }
 
-    while(rec_count<640*2){
-        //rck=0
-        GPIO_ResetBits(CAM_GPIO_GROUP,RCK);
-        //rck=1
-        GPIO_SetBits(CAM_GPIO_GROUP,RCK);
+    while(linen--){
+        while(rec_count<640*2){
+            //rck=0
+            GPIO_ResetBits(CAM_GPIO_GROUP,RCK);
+            //rck=1
+            GPIO_SetBits(CAM_GPIO_GROUP,RCK);
 
-        vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
-        rec_count++;
+            vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
+            rec_count++;
+        }
     }
     if(!need_w_t_f){
         mem_print(vbf, 640*2*linect, 640*2);
