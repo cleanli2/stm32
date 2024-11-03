@@ -1091,15 +1091,16 @@ void cam_read_line(int in_dump_line)
             vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
             rec_count++;
         }
-    }
-    if(!need_w_t_f){
-        mem_print(vbf, 640*2*linect, 640*2);
-    }
-    else{
-        yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
-        if(wtf(vbf, 640*2, 512)<0){
-            lprintf_time("cam write to file error, linect %d\n", linect);
-            return;
+        if(!need_w_t_f){
+            mem_print(vbf, 640*2*linect, 640*2);
+        }
+        else{
+            yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
+            if(wtf(vbf, 640*2, 512)<0){
+                lprintf_time("cam write to file error, linect %d\n", linect);
+                return;
+            }
+            rec_count=0;
         }
     }
     lprintf(">");
