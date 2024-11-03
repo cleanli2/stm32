@@ -1066,76 +1066,40 @@ void cam_read_line(int in_dump_line)
 {
 
     u32 mode = FREE_MODE;
-    u32 next_read_line;
-    u32 next_free_line;
-    u32 need_w_t_f = 0;
+    u32 need_w_t_f = 1;
     u32 linect = 0;
     u32 rec_count = 0;
     memset(vbf, 0xff, 640*2);
+    GPIO_SetBits(CAM_GPIO_GROUP,RCK);
+
     if(in_dump_line<0){
         need_w_t_f = 1;
-        next_read_line = (u32)(-in_dump_line);
-        //lprintf("write to file");
+        linect=(u32)(-in_dump_line);
     }
     else{
         need_w_t_f = 0;
-        next_read_line = (u32)(in_dump_line);
-        lprintf("no write to file");
+        linect=in_dump_line;
     }
-    //lprintf("start line %d\n", next_read_line);
-    next_free_line = next_read_line+rn;
-    while(!(CAM_GPIO_GROUP->IDR & RRST));
-    while((CAM_GPIO_GROUP->IDR & RRST));//start of frame
 
-    while(1){
-        if(mode==FREE_MODE){
-            if(linect==next_read_line){
-                cam_xclk_off();
-                mode=READ_MODE;
-                next_read_line+=rn+fn;
-            }
-        }
-        else{
-            if(linect==next_free_line){
-                cam_xclk_on();
-                mode=FREE_MODE;
-                next_free_line+=rn+fn;
-            }
-        }
-        if(mode==READ_MODE){
-            while((!(CAM_GPIO_GROUP->IDR & RRST))&&(!(CAM_GPIO_GROUP->IDR & RE))){
-                GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
-                GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
-            }
-            while((!(CAM_GPIO_GROUP->IDR & RRST))&&(CAM_GPIO_GROUP->IDR & RE)){
-                GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
-                GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
-                if(rec_count<640*2)vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
-                else lprintf("err:rec_count>1280\n");
-                rec_count++;
-            }
-            if(rec_count!=1280)lprintf_time("%d>L%d\n", rec_count, linect);
-            if(!need_w_t_f){
-                mem_print(vbf, 640*2*linect, 640*2);
-            }
-            else{
-                yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
-                if(wtf(vbf, 640*2, 512)<0){
-                    lprintf_time("cam write to file error, linect %d\n", linect);
-                    cam_xclk_on();
-                    return;
-                }
-            }
-        }
-        else{
-            while((!(CAM_GPIO_GROUP->IDR & RRST))&&(!(CAM_GPIO_GROUP->IDR & RE)));
-            while((!(CAM_GPIO_GROUP->IDR & RRST))&&(CAM_GPIO_GROUP->IDR & RE));
-        }
-        rec_count = 0;
-        if(CAM_GPIO_GROUP->IDR & RRST)break;
-        if(linect++>1000)break;
+    while(rec_count<640*2){
+        //rck=0
+        GPIO_ResetBits(CAM_GPIO_GROUP,RCK);
+        //rck=1
+        GPIO_SetBits(CAM_GPIO_GROUP,RCK);
+
+        vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
+        rec_count++;
     }
-    if(linect!=480)lprintf_time("linect %d!=480\n", linect);
+    if(!need_w_t_f){
+        mem_print(vbf, 640*2*linect, 640*2);
+    }
+    else{
+        yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
+        if(wtf(vbf, 640*2, 512)<0){
+            lprintf_time("cam write to file error, linect %d\n", linect);
+            return;
+        }
+    }
     lprintf(">");
     
 }
@@ -1149,12 +1113,21 @@ void cam_save_1_frame(u32 only_uart_dump)
     frames_wsize = 0;
     fbfs=0;
     slprintf(tmstp, "%s", get_rtc_time(NULL));
+    //al422 we = 0
+    GPIO_ResetBits(AL422_WG,WE);
+    //al422 oe = 0
+    GPIO_ResetBits(CAM_GPIO_GROUP,OE);
+    //al422 rrst = 0
+    GPIO_ResetBits(CAM_GPIO_GROUP,RRST);
+    //al422 rrst = 1
+    GPIO_SetBits(CAM_GPIO_GROUP,RRST);
+
     for(w_start_line = 1; (u32)w_start_line < 480-rn; w_start_line+=rn){
         if(only_uart_dump) cam_read_line(w_start_line);
         else cam_read_line(-w_start_line);
         if(get_sd_hw_err()){
             lprintf_time("SD hw error\n");
-            return;
+            goto quit;
         }
         if(con_is_recved()){
             ucbf[ucbfi++]=con_recv();
@@ -1171,7 +1144,7 @@ void cam_save_1_frame(u32 only_uart_dump)
             if(!strcmp(ucbf, "quit")){
                 lprintf_time("Get cmd:quit, abort!\n");
                 loop_stop=1;
-                return;
+                goto quit;
             }
             else{
                 lprintf("X:%s\n", ucbf);
@@ -1182,9 +1155,15 @@ void cam_save_1_frame(u32 only_uart_dump)
             lprintf_time("Get end button, abort!\n");
             loop_stop=1;
             GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-            return;
+            goto quit;
         }
     }
+quit:
+    //al422 we = 1
+    GPIO_SetBits(AL422_WG,WE);
+    //al422 oe = 1
+    GPIO_SetBits(CAM_GPIO_GROUP,OE);
+    return;
 
 }
 void cam_read_frame(int dump_line)
