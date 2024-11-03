@@ -92,11 +92,16 @@ void Enable_BL(int en)//µãÁÁ±³¹â
 #define CAM_DATA_OFFSET 1
 #define CAM_GPIO_GROUP GPIOB
 #define CAM_PWN_GPIO_GROUP GPIOC
-#define CAM_VSYN GPIO_Pin_12
+#define RRST GPIO_Pin_12
 #define CAM_PWN GPIO_Pin_13
 #define CAM_RST GPIO_Pin_0
-#define CAM_PCLK GPIO_Pin_10
-#define CAM_HREF GPIO_Pin_11
+#define RCK GPIO_Pin_10
+#define RE GPIO_Pin_11
+#define OE GPIO_Pin_9
+#define WCK GPIO_Pin_15
+#define AL422_WG GPIOA
+#define WE GPIO_Pin_1
+#define WRST GPIO_Pin_0
 
 void i2c_init();
 uint8_t cam_r_reg(uint8_t addr);
@@ -1079,8 +1084,8 @@ void cam_read_line(int in_dump_line)
     }
     //lprintf("start line %d\n", next_read_line);
     next_free_line = next_read_line+rn;
-    while(!(CAM_GPIO_GROUP->IDR & CAM_VSYN));
-    while((CAM_GPIO_GROUP->IDR & CAM_VSYN));//start of frame
+    while(!(CAM_GPIO_GROUP->IDR & RRST));
+    while((CAM_GPIO_GROUP->IDR & RRST));//start of frame
 
     while(1){
         if(mode==FREE_MODE){
@@ -1098,11 +1103,11 @@ void cam_read_line(int in_dump_line)
             }
         }
         if(mode==READ_MODE){
-            while((!(CAM_GPIO_GROUP->IDR & CAM_VSYN))&&(!(CAM_GPIO_GROUP->IDR & CAM_HREF))){
+            while((!(CAM_GPIO_GROUP->IDR & RRST))&&(!(CAM_GPIO_GROUP->IDR & RE))){
                 GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
                 GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
             }
-            while((!(CAM_GPIO_GROUP->IDR & CAM_VSYN))&&(CAM_GPIO_GROUP->IDR & CAM_HREF)){
+            while((!(CAM_GPIO_GROUP->IDR & RRST))&&(CAM_GPIO_GROUP->IDR & RE)){
                 GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
                 GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
                 if(rec_count<640*2)vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
@@ -1123,11 +1128,11 @@ void cam_read_line(int in_dump_line)
             }
         }
         else{
-            while((!(CAM_GPIO_GROUP->IDR & CAM_VSYN))&&(!(CAM_GPIO_GROUP->IDR & CAM_HREF)));
-            while((!(CAM_GPIO_GROUP->IDR & CAM_VSYN))&&(CAM_GPIO_GROUP->IDR & CAM_HREF));
+            while((!(CAM_GPIO_GROUP->IDR & RRST))&&(!(CAM_GPIO_GROUP->IDR & RE)));
+            while((!(CAM_GPIO_GROUP->IDR & RRST))&&(CAM_GPIO_GROUP->IDR & RE));
         }
         rec_count = 0;
-        if(CAM_GPIO_GROUP->IDR & CAM_VSYN)break;
+        if(CAM_GPIO_GROUP->IDR & RRST)break;
         if(linect++>1000)break;
     }
     if(linect!=480)lprintf_time("linect %d!=480\n", linect);
@@ -1194,9 +1199,9 @@ void cam_read_frame(int dump_line)
     //u32 frames_skip= 100;
     frames_wsize = 0;
     while(1){
-        //while(CAM_GPIO_GROUP->IDR & CAM_VSYN);
-        while(!(CAM_GPIO_GROUP->IDR & CAM_VSYN));
-        while((CAM_GPIO_GROUP->IDR & CAM_VSYN))ct_bf_vsyn++;
+        //while(CAM_GPIO_GROUP->IDR & RRST);
+        while(!(CAM_GPIO_GROUP->IDR & RRST));
+        while((CAM_GPIO_GROUP->IDR & RRST))ct_bf_vsyn++;
 #if 0
         if(frames_skip--){
             prt_hex(frames_skip);
@@ -1205,11 +1210,11 @@ void cam_read_frame(int dump_line)
         else frames_skip=100;
 #endif
         cam_xclk_off();
-        while(!(CAM_GPIO_GROUP->IDR & CAM_VSYN)){
-        //while(CAM_GPIO_GROUP->IDR & CAM_VSYN){
+        while(!(CAM_GPIO_GROUP->IDR & RRST)){
+        //while(CAM_GPIO_GROUP->IDR & RRST){
             GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
             GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
-            if(CAM_GPIO_GROUP->IDR & CAM_HREF){
+            if(CAM_GPIO_GROUP->IDR & RE){
                 vbf[rec_count++]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
                 w_count++;
                 count++;
@@ -1470,9 +1475,93 @@ void cam_deinit()
     GPIO_Init(GPIOA, &GPIO_InitStructure);
     GPIO_ResetBits(GPIOA,GPIO_Pin_13);
 }
+void cam_al422(const char*ps, uint32_t p2)
+{
+    if(!strcmp(ps, "re")){
+        if(p2){
+            GPIO_SetBits(CAM_GPIO_GROUP,RE);
+        }
+        else{
+            GPIO_ResetBits(CAM_GPIO_GROUP,RE);
+        }
+    }
+    if(!strcmp(ps, "oe")){
+        if(p2){
+            GPIO_SetBits(CAM_GPIO_GROUP,OE);
+        }
+        else{
+            GPIO_ResetBits(CAM_GPIO_GROUP,OE);
+        }
+    }
+    if(!strcmp(ps, "rrst")){
+        if(p2){
+            GPIO_SetBits(CAM_GPIO_GROUP,RRST);
+        }
+        else{
+            GPIO_ResetBits(CAM_GPIO_GROUP,RRST);
+        }
+    }
+    if(!strcmp(ps, "rck")){
+        if(p2){
+            GPIO_SetBits(CAM_GPIO_GROUP,RCK);
+        }
+        else{
+            GPIO_ResetBits(CAM_GPIO_GROUP,RCK);
+        }
+    }
+    if(!strcmp(ps, "wck")){
+        if(p2){
+            GPIO_SetBits(CAM_GPIO_GROUP,WCK);
+        }
+        else{
+            GPIO_ResetBits(CAM_GPIO_GROUP,WCK);
+        }
+    }
+    if(!strcmp(ps, "we")){
+        if(p2){
+            GPIO_SetBits(AL422_WG,WE);
+        }
+        else{
+            GPIO_ResetBits(AL422_WG,WE);
+        }
+    }
+    if(!strcmp(ps, "wrst")){
+        if(p2){
+            GPIO_SetBits(AL422_WG,WRST);
+        }
+        else{
+            GPIO_ResetBits(AL422_WG,WRST);
+        }
+    }
+    if(!strcmp(ps, "d")){
+        GPIO_InitTypeDef  GPIO_InitStructure;
+        if(p2>=0x100){//input
+            //cam data port
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+            GPIO_InitStructure.GPIO_Pin = CAM_DATA_PORT_GPIO_Pins;//D1-D8
+            GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
+            GPIO_SetBits(GPIOB,CAM_DATA_PORT_GPIO_Pins);
+            //cam data port end
+            lprintf("input data %x\n", CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET);
+        }
+        else{//output
+            //cam data port
+            CAM_GPIO_GROUP->ODR&=(~(0xff<<CAM_DATA_OFFSET));
+            CAM_GPIO_GROUP->ODR|=p2<<CAM_DATA_OFFSET;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+            GPIO_InitStructure.GPIO_Pin = CAM_DATA_PORT_GPIO_Pins;//D1-D8
+            GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
+            //cam data port end
+            lprintf("output data %x\n", 0xff&(CAM_GPIO_GROUP->ODR>>CAM_DATA_OFFSET));
+        }
+    }
+}
 void cam_init(int choose)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
+    int clks=100;
 
     //cam data port
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -1488,15 +1577,14 @@ void cam_init(int choose)
     lprintf("cam pwn=0\n");
     GPIO_ResetBits(CAM_GPIO_GROUP,CAM_PWN);
 
-    GPIO_InitStructure.GPIO_Pin = CAM_RST;
+    GPIO_InitStructure.GPIO_Pin = CAM_RST|RRST|RCK|RE|OE|WCK;
     GPIO_Init(CAM_GPIO_GROUP, &GPIO_InitStructure); //GPIOB
-    lprintf("cam rst=1\n");
-    GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST);
+    lprintf("cam rst=1|RRST|RCK|RE|OE|WCK\n");
+    GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST|RRST|RCK|RE|OE|WCK);
 
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_InitStructure.GPIO_Pin = CAM_PCLK|CAM_VSYN|CAM_HREF;
-    GPIO_Init(CAM_GPIO_GROUP, &GPIO_InitStructure); //GPIOB
-    GPIO_SetBits(CAM_GPIO_GROUP,CAM_PCLK|CAM_VSYN|CAM_HREF);
+    GPIO_InitStructure.GPIO_Pin = WRST|WE;
+    GPIO_Init(AL422_WG, &GPIO_InitStructure); //GPIOA
+    GPIO_SetBits(AL422_WG,WRST|WE);
 
     //END detect gpio pin
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
@@ -1504,59 +1592,20 @@ void cam_init(int choose)
     GPIO_Init(GPIOA, &GPIO_InitStructure);
     GPIO_SetBits(GPIOA,GPIO_Pin_13);
 
-    cam_i2c_init();
+    //cam_i2c_init();
     cam_xclk_on();
     delay_ms(2);
-    lprintf_time("cam reset return %x\n", cam_w_reg(0x12, 0x80));
+    //lprintf_time("cam reset return %x\n", cam_w_reg(0x12, 0x80));
     delay_ms(20);
     //read cam id
-    while(1){
-        if(0x76==cam_r_reg(0x0A)){
-            break;
-        }
-        lprintf("cam read 0x0A=%b\n", cam_r_reg(0x0A));
-        delay_ms(10);
+    while(clks--){
+        GPIO_SetBits(CAM_GPIO_GROUP,WCK);
+        GPIO_SetBits(CAM_GPIO_GROUP,RCK);
+        delay_ms(2);
+        GPIO_ResetBits(CAM_GPIO_GROUP,WCK);
+        GPIO_ResetBits(CAM_GPIO_GROUP,RCK);
+        delay_ms(2);
     }
-    lprintf("cam read 0x0A=%b\n", cam_r_reg(0x0A));
-    lprintf("cam read 0x0B=%b\n", cam_r_reg(0x0B));
-
-    switch(choose){
-        case 1:
-            lprintf_time("set_OV7670reg\n");
-            set_OV7670reg();
-            break;
-            //OV7670_config_window(272,12,320,240);//
-        case 2:
-            lprintf_time("init_rgb565_qvga_12fps\n");
-            init_rgb565_qvga_12fps();
-            break;
-        case 3:
-            lprintf_time("init_rgb565_qvga_25fps_new\n");
-            init_rgb565_qvga_25fps_new();
-            break;
-        case 4:
-            lprintf_time("init_rgb565_qvga_25fps\n");
-            init_rgb565_qvga_25fps();
-            break;
-        case 5:
-            lprintf_time("init_yuv_25fps\n");
-            init_yuv_25fps();
-            break;
-        case 6:
-            lprintf_time("init_yuv_12fps\n");
-            init_yuv_12fps();
-            break;
-        case 7:
-            lprintf_time("modified set_OV7670reg\n");
-            set_OV7670reg_M();
-            break;
-        default:
-            lprintf("cam w 0x1e return %x\n", cam_w_reg(0x1e, 0x30|cam_r_reg(0x1e)));
-            lprintf_time("no init regs\n");
-    }
-    //lprintf("cam w 0x70 return %x\n", cam_w_reg(0x70, 0x80|cam_r_reg(0x70)));
-    //lprintf("cam w 0x71 return %x\n", cam_w_reg(0x71, 0x80|cam_r_reg(0x71)));
-    lprintf("cam read 0x12=%b\n", cam_r_reg(0x12));
 }
 
 void LCD_BUS_To_write(int write)

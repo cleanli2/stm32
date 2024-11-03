@@ -1252,6 +1252,7 @@ char file_name[16];
 u32 fnn=0;
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 void cam_init(int);
+void cam_al422(const char*ps, uint32_t p2);
 void cam_deinit();
 void cam_read_frame(int);
 void cam_read_line(int);
@@ -1491,6 +1492,18 @@ void cam(char *p)
         lprintf("p2=%d\n", p2);
         cam_init(p2);
     }
+    if(!strcmp(p1, "al422")){
+        p2 = 0;
+        if(np<3){
+            lprintf("err, should 3 paras\n");
+            goto err;
+        }
+        p = str_to_str(p, &ps);
+        p = str_to_hex(p, &p2);
+        lprintf("ps=%s\n", ps);
+        lprintf("p2=%d\n", p2);
+        cam_al422(ps, p2);
+    }
     if(!strcmp(p1, "i2c")){
         if(np>=2){
             p = str_to_hex(p, &p2);
@@ -1513,6 +1526,8 @@ void cam(char *p)
             }
         }
     }
+err:
+    return;
 }
 
 void bflog(char *p)
