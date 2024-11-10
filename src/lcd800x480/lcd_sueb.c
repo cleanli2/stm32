@@ -1063,24 +1063,16 @@ void cam_set_rfn(u32 irn, u32 ifn)
 #define READ_MODE 0
 #define FREE_MODE 1
 char tmstp[24];
-void cam_read_line(int in_dump_line)
+void cam_read_line(int in_dump_line, u32 only_uart_dump)
 {
 
-    u32 need_w_t_f = 1;
     u32 linect = 0;
     u32 rec_count = 0;
     u32 linen = rn;
     memset(vbf, 0xff, 640*2);
     GPIO_SetBits(CAM_GPIO_GROUP,RCK);
 
-    if(in_dump_line<0){
-        need_w_t_f = 1;
-        linect=(u32)(-in_dump_line);
-    }
-    else{
-        need_w_t_f = 0;
-        linect=in_dump_line;
-    }
+    linect=in_dump_line;
 
     while(linen--){
         while(rec_count<640*2){
@@ -1092,7 +1084,7 @@ void cam_read_line(int in_dump_line)
             vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
             rec_count++;
         }
-        if(!need_w_t_f){
+        if(only_uart_dump){
             mem_print(vbf, 640*2*linect, 640*2);
         }
         else{
@@ -1149,8 +1141,7 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
     GPIO_ResetBits(CAM_GPIO_GROUP,OE);
 
     for(w_start_line = ls; (u32)w_start_line < le-rn; w_start_line+=rn){
-        if(only_uart_dump) cam_read_line(w_start_line);
-        else cam_read_line(-w_start_line);
+        cam_read_line(w_start_line,only_uart_dump);
         if(get_sd_hw_err()){
             lprintf_time("SD hw error\n");
             goto quit;
