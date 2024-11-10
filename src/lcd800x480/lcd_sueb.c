@@ -1129,7 +1129,6 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
     int w_start_line;
     int ret=0;
     frames_wsize = 0;
-    fbfs=0;
     slprintf(tmstp, "%s", get_rtc_time(NULL));
     //al422 we = 0, stop write
     GPIO_ResetBits(AL422_WG,WE);
@@ -1149,7 +1148,7 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
     //al422 rrst = 1
     GPIO_SetBits(CAM_GPIO_GROUP,RRST);
 
-    for(w_start_line = ls; (u32)w_start_line < le-rn; w_start_line+=rn){
+    for(w_start_line = ls; (u32)w_start_line <= le-rn; w_start_line+=rn){
         cam_read_line(w_start_line,only_uart_dump);
         if(get_sd_hw_err()){
             lprintf_time("SD hw error\n");
@@ -1194,6 +1193,7 @@ quit:
 }
 void cam_save_1_frame(u32 only_uart_dump)
 {
+    fbfs=0;
     if(cam_save_lines(0, 300, only_uart_dump))return;
     cam_save_lines(301, 479, only_uart_dump);
 }
