@@ -92,13 +92,14 @@ void Enable_BL(int en)//µãÁÁ±³¹â
 #define CAM_DATA_OFFSET 1
 #define CAM_GPIO_GROUP GPIOB
 #define CAM_PWN_GPIO_GROUP GPIOC
+#define VSNC GPIO_Pin_11
 #define RRST GPIO_Pin_12
 #define CAM_PWN GPIO_Pin_13
 #define CAM_RST GPIO_Pin_0
 #define RCK GPIO_Pin_10
 #define RE GPIO_Pin_11
 #define OE GPIO_Pin_9
-#define WCK GPIO_Pin_15
+#define HREF GPIO_Pin_15
 #define AL422_WG GPIOA
 #define WE GPIO_Pin_1
 #define WRST GPIO_Pin_0
@@ -1106,6 +1107,9 @@ void cam_read_line(int in_dump_line)
     lprintf(">");
     
 }
+void wait_frame_start()
+{
+}
 extern int loop_stop;
 void cam_save_1_frame(u32 only_uart_dump)
 {
@@ -1116,6 +1120,7 @@ void cam_save_1_frame(u32 only_uart_dump)
     frames_wsize = 0;
     fbfs=0;
     slprintf(tmstp, "%s", get_rtc_time(NULL));
+    wait_frame_start();
     //al422 we = 0
     GPIO_ResetBits(AL422_WG,WE);
     //al422 oe = 0
@@ -1493,10 +1498,8 @@ void cam_al422(const char*ps, uint32_t p2)
     }
     if(!strcmp(ps, "wck")){
         if(p2){
-            GPIO_SetBits(CAM_GPIO_GROUP,WCK);
         }
         else{
-            GPIO_ResetBits(CAM_GPIO_GROUP,WCK);
         }
     }
     if(!strcmp(ps, "we")){
@@ -1553,16 +1556,21 @@ void cam_init(int choose)
     GPIO_SetBits(GPIOB,CAM_DATA_PORT_GPIO_Pins);
     //cam data port end
 
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_InitStructure.GPIO_Pin = VSNC | HREF;
+    GPIO_Init(CAM_GPIO_GROUP, &GPIO_InitStructure);
+    GPIO_SetBits(CAM_GPIO_GROUP,VSNC | HREF);
+
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Pin = CAM_PWN;
     GPIO_Init(CAM_PWN_GPIO_GROUP, &GPIO_InitStructure);
     lprintf("cam pwn=0\n");
     GPIO_ResetBits(CAM_GPIO_GROUP,CAM_PWN);
 
-    GPIO_InitStructure.GPIO_Pin = CAM_RST|RRST|RCK|RE|OE|WCK;
+    GPIO_InitStructure.GPIO_Pin = CAM_RST|RRST|RCK|RE|OE;
     GPIO_Init(CAM_GPIO_GROUP, &GPIO_InitStructure); //GPIOB
-    lprintf("cam rst=1|RRST|RCK|RE|OE|WCK\n");
-    GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST|RRST|RCK|RE|OE|WCK);
+    lprintf("cam rst=1|RRST|RCK|RE|OE\n");
+    GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST|RRST|RCK|RE|OE);
 
     GPIO_InitStructure.GPIO_Pin = WRST|WE;
     GPIO_Init(AL422_WG, &GPIO_InitStructure); //GPIOA
@@ -1590,10 +1598,8 @@ void cam_init(int choose)
     lprintf("cam read 0x0A=%b\n", cam_r_reg(0x0A));
     lprintf("cam read 0x0B=%b\n", cam_r_reg(0x0B));
     while(clks--){
-        GPIO_SetBits(CAM_GPIO_GROUP,WCK);
         GPIO_SetBits(CAM_GPIO_GROUP,RCK);
         delay_ms(2);
-        GPIO_ResetBits(CAM_GPIO_GROUP,WCK);
         GPIO_ResetBits(CAM_GPIO_GROUP,RCK);
         delay_ms(2);
     }
