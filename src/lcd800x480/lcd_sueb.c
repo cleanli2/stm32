@@ -97,7 +97,7 @@ void Enable_BL(int en)//µãÁÁ±³¹â
 #define CAM_PWN GPIO_Pin_13
 #define CAM_RST GPIO_Pin_0
 #define RCK GPIO_Pin_10
-#define RE GPIO_Pin_11
+//#define RE GPIO_Pin_11
 #define OE GPIO_Pin_9
 #define HREF GPIO_Pin_15
 #define AL422_WG GPIOA
@@ -1201,7 +1201,7 @@ void cam_read_frame(int dump_line)
         //while(CAM_GPIO_GROUP->IDR & RRST){
             GPIO_ResetBits(GPIOA, GPIO_Pin_8);//XCLK = 0
             GPIO_SetBits(GPIOA, GPIO_Pin_8);//XCLK = 1
-            if(CAM_GPIO_GROUP->IDR & RE){
+            if(CAM_GPIO_GROUP->IDR & VSNC){
                 vbf[rec_count++]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
                 w_count++;
                 count++;
@@ -1466,10 +1466,8 @@ void cam_al422(const char*ps, uint32_t p2)
 {
     if(!strcmp(ps, "re")){
         if(p2){
-            GPIO_SetBits(CAM_GPIO_GROUP,RE);
         }
         else{
-            GPIO_ResetBits(CAM_GPIO_GROUP,RE);
         }
     }
     if(!strcmp(ps, "oe")){
@@ -1567,10 +1565,10 @@ void cam_init(int choose)
     lprintf("cam pwn=0\n");
     GPIO_ResetBits(CAM_GPIO_GROUP,CAM_PWN);
 
-    GPIO_InitStructure.GPIO_Pin = CAM_RST|RRST|RCK|RE|OE;
+    GPIO_InitStructure.GPIO_Pin = CAM_RST|RRST|RCK|OE;
     GPIO_Init(CAM_GPIO_GROUP, &GPIO_InitStructure); //GPIOB
-    lprintf("cam rst=1|RRST|RCK|RE|OE\n");
-    GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST|RRST|RCK|RE|OE);
+    lprintf("cam rst=1|RRST|RCK|OE\n");
+    GPIO_SetBits(CAM_GPIO_GROUP,CAM_RST|RRST|RCK|OE);
 
     GPIO_InitStructure.GPIO_Pin = WRST|WE;
     GPIO_Init(AL422_WG, &GPIO_InitStructure); //GPIOA
