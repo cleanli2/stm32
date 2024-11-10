@@ -1128,6 +1128,8 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
     frames_wsize = 0;
     fbfs=0;
     slprintf(tmstp, "%s", get_rtc_time(NULL));
+    //al422 we = 0, stop write
+    GPIO_ResetBits(AL422_WG,WE);
     //al422 wrst
     GPIO_ResetBits(AL422_WG,WRST);
     GPIO_SetBits(AL422_WG,WRST);
@@ -1586,7 +1588,8 @@ void cam_init(int choose)
 
     GPIO_InitStructure.GPIO_Pin = WRST|WE;
     GPIO_Init(AL422_WG, &GPIO_InitStructure); //GPIOA
-    GPIO_SetBits(AL422_WG,WRST|WE);
+    GPIO_SetBits(AL422_WG,WRST);
+    GPIO_ResetBits(AL422_WG,WE);
 
     //END detect gpio pin
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
@@ -1650,7 +1653,7 @@ void cam_init(int choose)
             lprintf_time("no init regs\n");
     }
     //lprintf("cam w 0x70 return %x\n", cam_w_reg(0x70, 0x80|cam_r_reg(0x70)));
-    //lprintf("cam w 0x71 return %x\n", cam_w_reg(0x71, 0x80|cam_r_reg(0x71)));
+    lprintf("cam w 0x71 return %x\n", cam_w_reg(0x71, 0x80|cam_r_reg(0x71)));
     lprintf("cam read 0x12=%b\n", cam_r_reg(0x12));
 
 }
