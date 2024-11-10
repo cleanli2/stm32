@@ -1195,7 +1195,9 @@ void cam_save_1_frame(u32 only_uart_dump)
 {
     fbfs=0;
     if(cam_save_lines(0, 300, only_uart_dump))return;
-    cam_save_lines(301, 479, only_uart_dump);
+    cam_save_lines(300, 480, only_uart_dump);
+    memset(vbf, 0xff, 640*2);
+    wtf(vbf, 640*2, 512);//write left in buffer
 }
 void cam_read_frame(int dump_line)
 {
