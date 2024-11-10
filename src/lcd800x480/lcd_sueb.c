@@ -1088,7 +1088,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
             mem_print(vbf, 640*2*linect, 640*2);
         }
         else{
-            //yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
+            yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
             if(wtf(vbf, 640*2, 512)<0){
                 lprintf_time("cam write to file error, linect %d\n", linect);
                 return;
@@ -1662,7 +1662,7 @@ void cam_init(int choose)
             lprintf_time("no init regs\n");
     }
     //lprintf("cam w 0x70 return %x\n", cam_w_reg(0x70, 0x80|cam_r_reg(0x70)));
-    lprintf("cam w 0x71 return %x\n", cam_w_reg(0x71, 0x80|cam_r_reg(0x71)));
+    //lprintf("cam w 0x71 return %x\n", cam_w_reg(0x71, 0x80|cam_r_reg(0x71)));
     lprintf("cam read 0x12=%b\n", cam_r_reg(0x12));
 
 }
