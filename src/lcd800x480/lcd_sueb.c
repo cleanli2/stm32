@@ -1076,19 +1076,19 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
 
     while(linen--){
         while(rec_count<640*2){
+            vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
+            rec_count++;
+
             //rck=0
             GPIO_ResetBits(CAM_GPIO_GROUP,RCK);
             //rck=1
             GPIO_SetBits(CAM_GPIO_GROUP,RCK);
-
-            vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
-            rec_count++;
         }
         if(only_uart_dump){
             mem_print(vbf, 640*2*linect, 640*2);
         }
         else{
-            yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
+            //yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
             if(wtf(vbf, 640*2, 512)<0){
                 lprintf_time("cam write to file error, linect %d\n", linect);
                 return;
