@@ -1110,12 +1110,15 @@ void save_lines_to_al422(uint32_t line_ct_start, uint32_t line_num)
     }
     //al422 we = 1, start write
     GPIO_SetBits(AL422_WG,WE);
+    GPIO_SetBits(AL422_WG,WRST);
     while(line_num--){
         while(!(CAM_GPIO_GROUP->IDR & HREF));
         while((CAM_GPIO_GROUP->IDR & HREF));
     }
     //al422 we = 0, stop write
     GPIO_ResetBits(AL422_WG,WE);
+    //al422 wrst
+    GPIO_ResetBits(AL422_WG,WRST);
 }
 extern int loop_stop;
 int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
@@ -1130,17 +1133,21 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
     slprintf(tmstp, "%s", get_rtc_time(NULL));
     //al422 we = 0, stop write
     GPIO_ResetBits(AL422_WG,WE);
-    //al422 wrst
-    GPIO_ResetBits(AL422_WG,WRST);
-    GPIO_SetBits(AL422_WG,WRST);
     //save frame to al422
     save_lines_to_al422(ls, le-ls);
-    //al422 rrst = 0
-    GPIO_ResetBits(CAM_GPIO_GROUP,RRST);
-    //al422 rrst = 1
-    GPIO_SetBits(CAM_GPIO_GROUP,RRST);
+
+
+    //prepare read
     //al422 oe = 0
     GPIO_ResetBits(CAM_GPIO_GROUP,OE);
+    //al422 rrst = 0
+    GPIO_ResetBits(CAM_GPIO_GROUP,RRST);
+    //rck=0
+    GPIO_ResetBits(CAM_GPIO_GROUP,RCK);
+    //rck=1
+    GPIO_SetBits(CAM_GPIO_GROUP,RCK);
+    //al422 rrst = 1
+    GPIO_SetBits(CAM_GPIO_GROUP,RRST);
 
     for(w_start_line = ls; (u32)w_start_line < le-rn; w_start_line+=rn){
         cam_read_line(w_start_line,only_uart_dump);
