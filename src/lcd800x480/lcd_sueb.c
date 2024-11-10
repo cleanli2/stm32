@@ -1108,30 +1108,47 @@ void cam_read_line(int in_dump_line)
     lprintf(">");
     
 }
-void wait_frame_start()
+void save_lines_to_al422(uint32_t line_ct_start, uint32_t line_num)
 {
+    while(!(CAM_GPIO_GROUP->IDR & VSNC));
+    while((CAM_GPIO_GROUP->IDR & VSNC));
+    while(line_ct_start--){
+        while(!(CAM_GPIO_GROUP->IDR & HREF));
+        while((CAM_GPIO_GROUP->IDR & HREF));
+    }
+    //al422 we = 1, start write
+    GPIO_SetBits(AL422_WG,WE);
+    while(line_num--){
+        while(!(CAM_GPIO_GROUP->IDR & HREF));
+        while((CAM_GPIO_GROUP->IDR & HREF));
+    }
+    //al422 we = 0, stop write
+    GPIO_ResetBits(AL422_WG,WE);
 }
 extern int loop_stop;
-void cam_save_1_frame(u32 only_uart_dump)
+int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
 {
     char ucbf[5]={0};
     uint32_t endct=0;
     int ucbfi=0;
     int w_start_line;
+    int ret=0;
     frames_wsize = 0;
     fbfs=0;
     slprintf(tmstp, "%s", get_rtc_time(NULL));
-    wait_frame_start();
-    //al422 we = 0
-    GPIO_ResetBits(AL422_WG,WE);
-    //al422 oe = 0
-    GPIO_ResetBits(CAM_GPIO_GROUP,OE);
+    //al422 wrst
+    GPIO_ResetBits(AL422_WG,WRST);
+    GPIO_SetBits(AL422_WG,WRST);
+    //save frame to al422
+    save_lines_to_al422(ls, le-ls);
     //al422 rrst = 0
     GPIO_ResetBits(CAM_GPIO_GROUP,RRST);
     //al422 rrst = 1
     GPIO_SetBits(CAM_GPIO_GROUP,RRST);
+    //al422 oe = 0
+    GPIO_ResetBits(CAM_GPIO_GROUP,OE);
 
-    for(w_start_line = 1; (u32)w_start_line < 480-rn; w_start_line+=rn){
+    for(w_start_line = ls; (u32)w_start_line < le-rn; w_start_line+=rn){
         if(only_uart_dump) cam_read_line(w_start_line);
         else cam_read_line(-w_start_line);
         if(get_sd_hw_err()){
@@ -1153,6 +1170,7 @@ void cam_save_1_frame(u32 only_uart_dump)
             if(!strcmp(ucbf, "quit")){
                 lprintf_time("Get cmd:quit, abort!\n");
                 loop_stop=1;
+                ret=1;//abort
                 goto quit;
             }
             else{
@@ -1164,16 +1182,20 @@ void cam_save_1_frame(u32 only_uart_dump)
             lprintf_time("Get end button, abort!\n");
             loop_stop=1;
             GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
+            ret=1;//abort
             goto quit;
         }
     }
 quit:
-    //al422 we = 1
-    GPIO_SetBits(AL422_WG,WE);
     //al422 oe = 1
     GPIO_SetBits(CAM_GPIO_GROUP,OE);
-    return;
+    return ret;
 
+}
+void cam_save_1_frame(u32 only_uart_dump)
+{
+    if(cam_save_lines(0, 300, only_uart_dump))return;
+    cam_save_lines(301, 479, only_uart_dump);
 }
 void cam_read_frame(int dump_line)
 {
