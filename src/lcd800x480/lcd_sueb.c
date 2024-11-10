@@ -1103,6 +1103,7 @@ void cam_read_line(int in_dump_line)
             }
             rec_count=0;
         }
+        linect++;
     }
     lprintf(">");
     
