@@ -67,6 +67,7 @@ char showstr[SHOWSTR_LEN];
 void get_otc()
 {
     uint tmp=0;
+    uint32_t o1=otc>>32, o2=otc&0xffffffff;
     while(tmp==0){
         tmp=0xffff&get_system_us();
     }
@@ -76,13 +77,14 @@ void get_otc()
     lprintf_time("b2 otc=%W\n", otc);
     otc+=tmp;
     lprintf_time("otc=%W\n", otc);
-    lprintf("%X %X   \n", otc>>32, otc&0xffffffff);
+    lprintf("%X %X   \n", o1, o2);
     lprintf("%X%X   \n", 0x33445566, 0xaabbccdd);
 }
 void led8s_task(void*p)
 {
     int len_ss;
     int switch_status=0;
+    uint32_t o1=otc>>32, o2=otc&0xffffffff;
     (void)p;
     while(1){
         os_ms_delay(50);
@@ -97,13 +99,16 @@ void led8s_task(void*p)
         last_switch_status = switch_status;
 
         if(switch_status){
-            slprintf(showstr, "%W    ", otc);
+            o1=otc>>32;
+            o2=otc&0xffffffff;
+            slprintf(showstr, "%X%X    ", o1, o2);
         }
         else{
             slprintf(showstr, "%s", get_rtc_time(&g_cur_date));
         }
         slprintf(showstr+20, "%d", switch_count);
         len_ss=strlen(showstr);
+        lprintf("showstr=%s\n", showstr);
         while(len_ss<SHOWSTR_LEN-1){
             showstr[len_ss++]=' ';
         }
