@@ -70,10 +70,14 @@ void get_otc()
     while(tmp==0){
         tmp=0xffff&get_system_us();
     }
-    otc<<=4;
+    lprintf("%X\n", tmp);
+    lprintf_time("b otc=%W\n", otc);
+    otc<<=16;
+    lprintf_time("b2 otc=%W\n", otc);
     otc+=tmp;
     lprintf_time("otc=%W\n", otc);
-    lprintf("%X %X   ", 0x33445566, 0xaabbccdd);
+    lprintf("%X %X   \n", otc>>32, otc&0xffffffff);
+    lprintf("%X%X   \n", 0x33445566, 0xaabbccdd);
 }
 void led8s_task(void*p)
 {
