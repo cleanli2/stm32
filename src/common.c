@@ -62,7 +62,19 @@ static uint date_ct_led8s_lastdelay=LED8S_LASTDELAY;
 #define MAX_SHOW_LEN 15
 static uint switch_count=0;
 static int last_switch_status=0;
+static uint64_t otc=0;
 char showstr[SHOWSTR_LEN];
+void get_otc()
+{
+    uint tmp=0;
+    while(tmp==0){
+        tmp=0xffff&get_system_us();
+    }
+    otc<<=4;
+    otc+=tmp;
+    lprintf_time("otc=%W\n", otc);
+    lprintf("%X %X   ", 0x33445566, 0xaabbccdd);
+}
 void led8s_task(void*p)
 {
     int len_ss;
@@ -76,11 +88,12 @@ void led8s_task(void*p)
         if((!last_switch_status) && switch_status){
             switch_count++;
             lprintf_time("SW++=%d-@%s!\n", switch_count, get_rtc_time(&g_cur_date));
+            if(otc<0x1000000000000)get_otc();
         }
         last_switch_status = switch_status;
 
         if(switch_status){
-            slprintf(showstr, "%X%X    ", 0x33445566, 0xaabbccdd);
+            slprintf(showstr, "%W    ", otc);
         }
         else{
             slprintf(showstr, "%s", get_rtc_time(&g_cur_date));
