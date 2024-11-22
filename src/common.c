@@ -119,20 +119,20 @@ void led8s_task(void*p)
             slprintf(showstr+20, "%d", switch_count);
             len_ss=strlen(showstr);
             memcpy(t, showstr+11, 8);
-        lprintf("---1|%s\n", showstr);
+            //lprintf("---1|%s\n", showstr);
             memset(showstr+11, ' ', 5);
-        lprintf("---2|%s\n", showstr);
-            lprintf("len_ss=%d\n", len_ss);
+            //lprintf("---2|%s\n", showstr);
+            //lprintf("len_ss=%d\n", len_ss);
             len_ss-=20;
-            ts=showstr+15-len_ss;
+            ts=showstr+14-len_ss;
             while(len_ss){
-                ts[len_ss]=showstr[20+len_ss];
+                ts[len_ss]=showstr[19+len_ss];
                 len_ss--;
             }
-        lprintf("---3|%s\n", showstr);
+            //lprintf("---3|%s\n", showstr);
             memcpy(showstr+16, t, 8);
         }
-        lprintf("----|%s\n", showstr);
+        //lprintf("----|%s\n", showstr);
         if(date_ct_led8s++>intv){
             date_ct_led8s=0;
             if(date_move_direction_led8s){
