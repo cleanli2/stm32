@@ -77,6 +77,8 @@ void get_otc()
     lprintf_time("b2 otc=%W\n", otc);
     otc+=tmp;
     lprintf_time("otc=%W\n", otc);
+    o1=otc>>32;
+    o2=otc&0xffffffff;
     lprintf("%X %X   \n", o1, o2);
     lprintf("%X%X   \n", 0x33445566, 0xaabbccdd);
 }
@@ -111,7 +113,7 @@ void led8s_task(void*p)
         }
         slprintf(showstr+20, "%d", switch_count);
         len_ss=strlen(showstr);
-        lprintf("showstr=%s\n", showstr);
+        //lprintf("showstr=%s\n", showstr);
         while(len_ss<SHOWSTR_LEN-1){
             showstr[len_ss++]=' ';
         }
