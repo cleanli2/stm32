@@ -84,10 +84,11 @@ void get_otc()
 }
 void led8s_task(void*p)
 {
-    int intv;
+    uint intv;
     int len_ss;
     int switch_status=0;
     uint32_t o1=otc>>32, o2=otc&0xffffffff;
+    char t[8], *ts;
     (void)p;
     while(1){
         os_ms_delay(50);
@@ -106,18 +107,32 @@ void led8s_task(void*p)
             o2=otc&0xffffffff;
             slprintf(showstr, "%X%X    ", o1, o2);
             intv=LED8S_INTV*5;
+            slprintf(showstr+20, "%d", switch_count);
+            len_ss=strlen(showstr);
+            while(len_ss<SHOWSTR_LEN-1){
+                showstr[len_ss++]=' ';
+            }
         }
         else{
             slprintf(showstr, "%s", get_rtc_time(&g_cur_date));
             intv=LED8S_INTV;
+            slprintf(showstr+20, "%d", switch_count);
+            len_ss=strlen(showstr);
+            memcpy(t, showstr+11, 8);
+        lprintf("---1|%s\n", showstr);
+            memset(showstr+11, ' ', 5);
+        lprintf("---2|%s\n", showstr);
+            lprintf("len_ss=%d\n", len_ss);
+            len_ss-=20;
+            ts=showstr+15-len_ss;
+            while(len_ss){
+                ts[len_ss]=showstr[20+len_ss];
+                len_ss--;
+            }
+        lprintf("---3|%s\n", showstr);
+            memcpy(showstr+16, t, 8);
         }
-        slprintf(showstr+20, "%d", switch_count);
-        len_ss=strlen(showstr);
-        //lprintf("showstr=%s\n", showstr);
-        while(len_ss<SHOWSTR_LEN-1){
-            showstr[len_ss++]=' ';
-        }
-        //lprintf("----|%s\n", showstr);
+        lprintf("----|%s\n", showstr);
         if(date_ct_led8s++>intv){
             date_ct_led8s=0;
             if(date_move_direction_led8s){
