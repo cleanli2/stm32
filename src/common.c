@@ -59,7 +59,7 @@ static uint date_ct_led8s=0;
 static uint date_ct_led8s_lastdelay=LED8S_LASTDELAY;
 
 #define SHOWSTR_LEN 25
-#define MAX_SHOW_LEN 15
+#define MAX_SHOW_LEN 14
 static uint switch_count=0;
 static int last_switch_status=0;
 static uint64_t otc=0;
