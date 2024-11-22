@@ -57,26 +57,42 @@ static uint date_move_direction_led8s=1;//1-to right 0-to left
 static int date_pos_led8s=0;
 static uint date_ct_led8s=0;
 static uint date_ct_led8s_lastdelay=LED8S_LASTDELAY;
+
+#define SHOWSTR_LEN 25
+#define MAX_SHOW_LEN 14
+static uint switch_count=0;
+static int last_switch_status=0;
+char showstr[SHOWSTR_LEN];
 void led8s_task(void*p)
 {
-    char*date;
+    int switch_status=0;
     (void)p;
     while(1){
         os_ms_delay(50);
-        date = get_rtc_time(&g_cur_date);
+
+        switch_status=GET_SWITCH_STA();
+        lprintf("sw%d\n", switch_status);
+        if((!last_switch_status) && switch_status){
+            switch_count++;
+        }
+        last_switch_status = switch_status;
+
+        slprintf(showstr, "%s", get_rtc_time(&g_cur_date));
+        slprintf(showstr+20, "%d", switch_count);
+        lprintf("----|%s\n", showstr);
         if(date_ct_led8s++>LED8S_INTV){
             date_ct_led8s=0;
             if(date_move_direction_led8s){
-                if(date_pos_led8s++>8){
-                    date_pos_led8s=9;
+                if(date_pos_led8s++>MAX_SHOW_LEN-1){
+                    date_pos_led8s=MAX_SHOW_LEN;
                     if(date_ct_led8s_lastdelay--==0){
                         date_ct_led8s_lastdelay=LED8S_LASTDELAY;
                         date_move_direction_led8s=!date_move_direction_led8s;
                         GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
                     }
                 }
-                if(date[date_pos_led8s]=='.' ||
-                        date[date_pos_led8s]==':')
+                if(showstr[date_pos_led8s]=='.' ||
+                        showstr[date_pos_led8s]==':')
                     date_pos_led8s++;
             }
             else{
@@ -91,14 +107,14 @@ void led8s_task(void*p)
                         }
                     }
                 }
-                if(date[date_pos_led8s]=='.' ||
-                        date[date_pos_led8s]==':')
+                if(showstr[date_pos_led8s]=='.' ||
+                        showstr[date_pos_led8s]==':')
                     if(date_pos_led8s!=0)
                         date_pos_led8s--;
             }
             //prt_hex(date_move_direction_led8s);
             //prt_hex(date_ct_led8s_lastdelay);
-            lcd_lprintf(1, 0x10000,0,date+date_pos_led8s);
+            lcd_lprintf(1, 0x10000,0,showstr+date_pos_led8s);
         }
     }
 }
@@ -759,6 +775,10 @@ void main_init(void)
   GPIO_ResetBits(GPIOB,GPIO_Pin_0);	
   GPIO_SetBits(GPIOB,GPIO_Pin_4);//spi flash cs =1
 
+  /* Configure Switch as input floating */
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_InitStructure.GPIO_Pin = SWITCH_PIN;
+  GPIO_Init(SWITCH_GP, &GPIO_InitStructure);
 #endif
   //led end
   led8s_init();

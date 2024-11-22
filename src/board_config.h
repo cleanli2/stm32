@@ -144,6 +144,10 @@
 
 #elif defined SUNRISE
 /////////////////////////////////////SUNRISE//////////////////////////////////////////////
+//
+#define SWITCH_GP GPIOC
+#define SWITCH_PIN GPIO_Pin_9
+#define GET_SWITCH_STA() (GPIOC->IDR&SWITCH_PIN)
 
 #define LCD_DISABLE
 
