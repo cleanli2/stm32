@@ -59,12 +59,13 @@ static uint date_ct_led8s=0;
 static uint date_ct_led8s_lastdelay=LED8S_LASTDELAY;
 
 #define SHOWSTR_LEN 25
-#define MAX_SHOW_LEN 14
+#define MAX_SHOW_LEN 15
 static uint switch_count=0;
 static int last_switch_status=0;
 char showstr[SHOWSTR_LEN];
 void led8s_task(void*p)
 {
+    int len_ss;
     int switch_status=0;
     (void)p;
     while(1){
@@ -79,6 +80,10 @@ void led8s_task(void*p)
 
         slprintf(showstr, "%s", get_rtc_time(&g_cur_date));
         slprintf(showstr+20, "%d", switch_count);
+        len_ss=strlen(showstr);
+        while(len_ss<SHOWSTR_LEN-1){
+            showstr[len_ss++]=' ';
+        }
         lprintf("----|%s\n", showstr);
         if(date_ct_led8s++>LED8S_INTV){
             date_ct_led8s=0;
