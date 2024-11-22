@@ -72,9 +72,10 @@ void led8s_task(void*p)
         os_ms_delay(50);
 
         switch_status=GET_SWITCH_STA();
-        lprintf("sw%d\n", switch_status);
+        //lprintf("sw%d\n", switch_status);
         if((!last_switch_status) && switch_status){
             switch_count++;
+            lprintf_time("SW++=%d-@%s!\n", switch_count, get_rtc_time(&g_cur_date));
         }
         last_switch_status = switch_status;
 
@@ -84,7 +85,7 @@ void led8s_task(void*p)
         while(len_ss<SHOWSTR_LEN-1){
             showstr[len_ss++]=' ';
         }
-        lprintf("----|%s\n", showstr);
+        //lprintf("----|%s\n", showstr);
         if(date_ct_led8s++>LED8S_INTV){
             date_ct_led8s=0;
             if(date_move_direction_led8s){
