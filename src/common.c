@@ -82,6 +82,7 @@ void get_otc()
 }
 void led8s_task(void*p)
 {
+    int intv;
     int len_ss;
     int switch_status=0;
     uint32_t o1=otc>>32, o2=otc&0xffffffff;
@@ -102,9 +103,11 @@ void led8s_task(void*p)
             o1=otc>>32;
             o2=otc&0xffffffff;
             slprintf(showstr, "%X%X    ", o1, o2);
+            intv=LED8S_INTV*5;
         }
         else{
             slprintf(showstr, "%s", get_rtc_time(&g_cur_date));
+            intv=LED8S_INTV;
         }
         slprintf(showstr+20, "%d", switch_count);
         len_ss=strlen(showstr);
@@ -113,7 +116,7 @@ void led8s_task(void*p)
             showstr[len_ss++]=' ';
         }
         //lprintf("----|%s\n", showstr);
-        if(date_ct_led8s++>LED8S_INTV){
+        if(date_ct_led8s++>intv){
             date_ct_led8s=0;
             if(date_move_direction_led8s){
                 if(date_pos_led8s++>MAX_SHOW_LEN-1){
