@@ -79,7 +79,12 @@ void led8s_task(void*p)
         }
         last_switch_status = switch_status;
 
-        slprintf(showstr, "%s", get_rtc_time(&g_cur_date));
+        if(switch_status){
+            slprintf(showstr, "%X%X    ", 0x33445566, 0xaabbccdd);
+        }
+        else{
+            slprintf(showstr, "%s", get_rtc_time(&g_cur_date));
+        }
         slprintf(showstr+20, "%d", switch_count);
         len_ss=strlen(showstr);
         while(len_ss<SHOWSTR_LEN-1){
