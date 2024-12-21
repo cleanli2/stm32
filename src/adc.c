@@ -10,7 +10,7 @@
 uint32_t v_bat = 0;
 
 static int adc_inited = 0;
-static unsigned int adci_cali = 0;
+static int adci_cali = 0;
 void adc_init()
 {
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -50,7 +50,7 @@ void adc_init()
     /* Check the end of ADC1 calibration */
     while(ADC_GetCalibrationStatus(ADC1));
     lprintf("adc1 calibration done\n");
-    adci_cali= get_env_uint("adcIcal", 0);
+    adci_cali= (int)get_env_uint("adcIcal", 0);
     lprintf("adci_cali=%d\n", adci_cali);
     adc_inited = ADC_INITED;
 }
@@ -105,6 +105,9 @@ void get_myadc_value(uint32_t*v_core_mv_p, uint32_t*v_bat_mv_p, int32_t*i_mA_p)
     Debug_LOG_ADC("real v_currt = %dmv\n", v_currt_mv);
     i_mA = v_currt_mv;
     if(adci_cali){
+        Debug_LOG_ADC("dtV = %dmv\n", i_mA-V_REV_mv);
+        Debug_LOG_ADC("adci_cali = %d\n", adci_cali);
+        Debug_LOG_ADC("(i_mA-V_REV_mv) * adci_cali=%d\n", (i_mA-V_REV_mv)*adci_cali);
         i_mA = (i_mA-V_REV_mv) * adci_cali / 1000;
     }
     else{
