@@ -1509,12 +1509,22 @@ void cam_al422(const char*ps, uint32_t p2)
             GPIO_ResetBits(AL422_WG,WE);
         }
     }
+    if(!strcmp(ps, "hv")){
+        uint32_t t=100,v,h;
+        while(t--){
+            if(AL422_WG->IDR & VSNC)v=1;
+            else v=0;
+            if(AL422_WG->IDR & HREF)h=1;
+            else h=0;
+            lprintf("%d %d\r\n", h, v);
+        }
+    }
     if(!strcmp(ps, "wrst")){
         if(p2){
-            GPIO_SetBits(AL422_WG,WRST);
+            GPIO_SetBits(WRST_GP,WRST);
         }
         else{
-            GPIO_ResetBits(AL422_WG,WRST);
+            GPIO_ResetBits(WRST_GP,WRST);
         }
     }
     if(!strcmp(ps, "d")){
