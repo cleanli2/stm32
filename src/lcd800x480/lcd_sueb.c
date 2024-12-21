@@ -1102,17 +1102,23 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
 }
 void check_lines()
 {
-    int lines=0, v=0;
+    int lines=0;
+    //int v=0;
     lprintf("count lines in 1 frame\r\n");
     while(!(AL422_WG->IDR & VSNC));
     while((AL422_WG->IDR & VSNC));
-    while(!(AL422_WG->IDR & VSNC)){
-        while(!(AL422_WG->IDR & HREF));
-        while((AL422_WG->IDR & HREF));
+    while(1){
+        while(!(AL422_WG->IDR & HREF) && !(AL422_WG->IDR & VSNC));
+        if(AL422_WG->IDR & VSNC){
+            break;
+        }
+        while(AL422_WG->IDR & HREF);
         lines++;
+#if 0
         if(v) CAM_GPIO_GROUP->BSRR = RRST;
         else CAM_GPIO_GROUP->BRR = RRST;
         v=1-v;
+#endif
     }
     lprintf("lines=%d\r\n", lines);
 }
