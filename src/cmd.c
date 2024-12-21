@@ -1251,6 +1251,8 @@ extern int disk_retry;
 char file_name[16];
 u32 fnn=0;
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
+int cam_dump_lines(u32 l);
+void check_lines();
 void cam_init(int);
 void cam_al422(const char*ps, uint32_t p2);
 void cam_deinit();
@@ -1491,6 +1493,17 @@ void cam(char *p)
         }
         lprintf("p2=%d\n", p2);
         cam_init(p2);
+    }
+    if(!strcmp(p1, "lines")){
+        check_lines();
+    }
+    if(!strcmp(p1, "dl")){
+        p2 = 0;
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+        }
+        lprintf("p2=%d\n", p2);
+        cam_dump_lines(p2);
     }
     if(!strcmp(p1, "al422")){
         p2 = 0;

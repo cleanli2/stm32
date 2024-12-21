@@ -1100,6 +1100,18 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
     lprintf(">");
     
 }
+void check_lines()
+{
+    int lines=0;
+    while(!(AL422_WG->IDR & VSNC));
+    while((AL422_WG->IDR & VSNC));
+    while(!(AL422_WG->IDR & VSNC)){
+        while(!(AL422_WG->IDR & HREF));
+        while((AL422_WG->IDR & HREF));
+        lines++;
+    }
+    lprintf("lines=%d\r\n", lines);
+}
 void save_lines_to_al422(uint32_t line_ct_start, uint32_t line_num)
 {
     while(!(AL422_WG->IDR & VSNC));
@@ -1186,6 +1198,35 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
         }
     }
 quit:
+    //al422 oe = 1
+    GPIO_SetBits(AL422_WG,OE);
+    return ret;
+
+}
+int cam_dump_lines(u32 l)
+{
+    int ret=0;
+    frames_wsize = 0;
+    //al422 we = 0, stop write
+    GPIO_ResetBits(AL422_WG,WE);
+    //save frame to al422
+    save_lines_to_al422(l, 1);
+
+
+    //prepare read
+    //al422 oe = 0
+    GPIO_ResetBits(AL422_WG,OE);
+    //al422 rrst = 0
+    GPIO_ResetBits(CAM_GPIO_GROUP,RRST);
+    //rck=0
+    GPIO_ResetBits(AL422_WG,RCK);
+    //rck=1
+    GPIO_SetBits(AL422_WG,RCK);
+    //al422 rrst = 1
+    GPIO_SetBits(CAM_GPIO_GROUP,RRST);
+
+    cam_read_line(l,1);
+
     //al422 oe = 1
     GPIO_SetBits(AL422_WG,OE);
     return ret;
