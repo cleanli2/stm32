@@ -327,7 +327,9 @@ void SD_power_on()
 {
     lprintf_time("sd power on\n");
     SD_CS_HIGH();
+#ifdef SDPOW_CTRL
     GPIO_ResetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
+#endif
 }
 
 
@@ -353,7 +355,9 @@ void SD_power_off()
     GPIO_SetBits(DOUT_GG, DOUT_PIN);
 
     SD_CS_LOW();
+#ifdef SDPOW_CTRL
     GPIO_SetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
+#endif
 
     SD_DeInit();
 }
