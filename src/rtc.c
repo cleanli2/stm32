@@ -182,6 +182,47 @@ err:
     Stop();
     return ret;
 }  
+int cam_w_reg(uint8_t addr, uint8_t data)
+{
+    int ret;
+    Start();
+    ret=writebyte(0x42); /*写命令*/
+    if(ret==0)goto err;
+    ret=writebyte(addr); /*写地址*/
+    if(ret==0)goto err;
+    ret=writebyte(data); /*写数据*/
+    Stop();
+    return ret;
+err:
+    Stop();
+    lprintf("cam writeData addr %b data %b error\n", addr, data);
+    return ret;
+}
+uint8_t cam_r_regn(uchar addr,uchar n,uchar * buf) /*多字节*/
+{  
+    uint8_t ret;
+    uchar i;
+    Start();
+    ret=writebyte(0x42); /*写命令*/
+    if(ret==0)goto err;
+    ret=writebyte(addr); /*写地址*/
+    if(ret==0)goto err;
+    Stop();
+    Start();
+    ret=writebyte(0x43); /*读命令*/
+    if(ret==0)goto err;
+    for(i=0;i<n;i++)
+    {
+        buf[i]=Readbyte();
+        if(i<n-1) 
+            WriteACK(0);
+    }
+    WriteACK(1);
+err:
+    Stop();
+    return ret;
+}  
+
 /********************************************
   内部函数,读入时间到内部缓冲区
  ********************************************/

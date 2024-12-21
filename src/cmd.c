@@ -1393,7 +1393,7 @@ void cam(char *p)
         }
         if(p2 == 0xffffffff){//write to file
             if(FS_OK==open_file_for_write(file_name, "BIN")){
-                cam_read_frame((int)p2);
+                //cam_read_frame((int)p2);
                 close_file();
             }
             else{
@@ -1401,7 +1401,7 @@ void cam(char *p)
             }
         }
         else{
-            cam_read_frame((int)p2);
+            //cam_read_frame((int)p2);
         }
     }
     if(!strcmp(p1, "xclk")){

@@ -1,2 +1,2 @@
-make clean
+make board=sunrise clean
 make board=sunrise -j8
