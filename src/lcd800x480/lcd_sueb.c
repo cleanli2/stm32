@@ -69,6 +69,7 @@ void cam_xclk_off();
 void cam_xclk_on();
 void BL_PWM_init();
 void BL_PWM_deinit();
+void LCD_BUS_To_write(int write);
 
 //管理LCD重要参数
 //默认为竖屏
@@ -1590,6 +1591,7 @@ void cam_init(int choose)
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
 
+    LCD_BUS_To_write(0);
     bus_to_lcd(0);
 
 
@@ -2444,7 +2446,7 @@ void LCD_GPIOInit(void)
 	GPIO_SetBits(GPIOA,GPIO_Pin_8|GPIO_Pin_1| GPIO_Pin_0);	
 #endif
 
-	//LCD_BUS_To_write(1);
+	LCD_BUS_To_write(1);
 	lprintf("LCD gpio init done\n");
 #endif
 }
