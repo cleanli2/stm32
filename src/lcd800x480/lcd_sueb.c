@@ -1100,14 +1100,14 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
              */
             for(int i=0;i<640*2;i+=4)
             {
-                r=vbf[i]+((360*((uint8_t)vbf[i+3]-128))>>8);
-                g=vbf[i]-(((88*((uint8_t)vbf[i+1]-128)+184*((uint8_t)vbf[i+3]-128)))>>8);
-                b=vbf[i]+((455*((uint8_t)vbf[i+1]-128))>>8);
+                r=vbf[i]+((360*(vbf[i+3]-128))>>8);
+                g=vbf[i]-(((88*(vbf[i+1]-128)+184*(vbf[i+3]-128)))>>8);
+                b=vbf[i]+((455*(vbf[i+1]-128))>>8);
                 color=Color_To_565(r, g, b);
                 Lcd_WriteData_16Bit(color);
-                r=vbf[i+2]+((360*((uint8_t)vbf[i+3]-128))>>8);
-                g=vbf[i+2]-(((88*((uint8_t)vbf[i+1]-128)+184*((uint8_t)vbf[i+3]-128)))>>8);
-                b=vbf[i+2]+((455*((uint8_t)vbf[i+1]-128))>>8);
+                r=vbf[i+2]+((360*(vbf[i+3]-128))>>8);
+                g=vbf[i+2]-(((88*(vbf[i+1]-128)+184*(vbf[i+3]-128)))>>8);
+                b=vbf[i+2]+((455*(vbf[i+1]-128))>>8);
                 color=Color_To_565(r, g, b);
                 Lcd_WriteData_16Bit(color);
                 //if(i==0)lprintf("%x\n", color);
