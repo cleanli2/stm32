@@ -1717,8 +1717,8 @@ void cam_init(int choose)
             lprintf("cam w 0x1e return %x\n", cam_w_reg(0x1e, 0x30|cam_r_reg(0x1e)));
             lprintf_time("no init regs\n");
     }
-    //lprintf("cam w 0x70 return %x\n", cam_w_reg(0x70, 0x80|cam_r_reg(0x70)));
-    //lprintf("cam w 0x71 return %x\n", cam_w_reg(0x71, 0x80|cam_r_reg(0x71)));
+    lprintf("cam w 0x70 return %x\n", cam_w_reg(0x70, 0x80|cam_r_reg(0x70)));
+    lprintf("cam w 0x71 return %x\n", cam_w_reg(0x71, 0x80|cam_r_reg(0x71)));
     lprintf("cam read 0x12=%b\n", cam_r_reg(0x12));
 
 }
