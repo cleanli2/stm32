@@ -1462,7 +1462,7 @@ uint8_t cam_r_reg(uint8_t addr)
     return ret;
 }
 
-#define CAM_DATA_PORT_GPIO_Pins 0x7f8
+#define CAM_DATA_PORT_GPIO_Pins (0xffu<<CAM_DATA_OFFSET)
 void cam_deinit()
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -1591,7 +1591,6 @@ void cam_init(int choose)
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
 
-    LCD_BUS_To_write(0);
     bus_to_lcd(0);
 
 
