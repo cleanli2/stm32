@@ -1061,6 +1061,7 @@ void cam_set_rfn(u32 irn, u32 ifn)
     fn = ifn;
     lprintf("set:rn=%d, fn=%d\n", rn, fn);
 }
+#define TO_LCD 2
 #define READ_MODE 0
 #define FREE_MODE 1
 char tmstp[24];
@@ -1085,8 +1086,18 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
             //rck=1
             GPIO_SetBits(AL422_WG,RCK);
         }
-        if(only_uart_dump){
+        if(only_uart_dump==1){
             mem_print(vbf, 640*2*linect, 640*2);
+        }
+        else if(only_uart_dump == TO_LCD){
+            uint16_t color;
+            bus_to_lcd(1);
+            for(int i=0;i<640*2;i+=2)
+            {
+                color=(vbf[i]<<8)+vbf[i+1];
+                Lcd_WriteData_16Bit(color);
+            }
+            bus_to_lcd(0);
         }
         else{
             yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
@@ -1250,6 +1261,16 @@ void cam_save_1_frame(u32 only_uart_dump)
     cam_save_lines(300, 480, only_uart_dump);
     memset(vbf, 0xff, 640*2);
     wtf(vbf, 640*2, 512);//write left in buffer
+}
+
+void cam_to_lcd_1_frame()
+{
+    fbfs=0;
+
+	LCD_SetWindows(0,0,640,480);   
+
+    if(cam_save_lines(0, 300, TO_LCD))return;
+    cam_save_lines(300, 480, TO_LCD);
 }
 
 /*****************camera i2c******************/

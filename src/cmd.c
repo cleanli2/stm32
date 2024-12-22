@@ -1267,6 +1267,7 @@ void cam_set_rfn(u32 irn, u32 ifn);
 uint8_t cam_r_reg(uint8_t addr);
 void cam_save_1_frame(u32 only_uart_dump);
 int cam_w_reg(uint8_t addr, uint8_t data);
+void cam_to_lcd_1_frame();
 void cam(char *p)
 {
     SD_Error Status = SD_OK;
@@ -1498,6 +1499,9 @@ void cam(char *p)
         }
         lprintf("p2=%d\n", p2);
         cam_init(p2);
+    }
+    if(!strcmp(p1, "lcd")){
+        cam_to_lcd_1_frame();
     }
     if(!strcmp(p1, "lines")){
         check_lines();
