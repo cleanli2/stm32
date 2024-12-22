@@ -1098,16 +1098,16 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
              * G= Y - (( ( 88 * (U - 128)  + 184 * (V - 128)) )>>8) ;
              * B= Y +((455 * (U - 128))>>8) ;
              */
-            for(int i=0;i<640;i+=2)
+            for(int i=0;i<640;i+=4)
             {
-                r=vbf[i*4]+((360*((uint8_t)vbf[i*4+1]-128))>>8);
-                g=vbf[i*4]-(((88*((uint8_t)vbf[i*4+3]-128)+184*((uint8_t)vbf[i*4+1]-128)))>>8);
-                b=vbf[i*4]+((455*((uint8_t)vbf[i*4+3]-128))>>8);
+                r=vbf[i]+((360*((uint8_t)vbf[i+1]-128))>>8);
+                g=vbf[i]-(((88*((uint8_t)vbf[i+3]-128)+184*((uint8_t)vbf[i+1]-128)))>>8);
+                b=vbf[i]+((455*((uint8_t)vbf[i+3]-128))>>8);
                 color=Color_To_565(r, g, b);
                 Lcd_WriteData_16Bit(color);
-                r=vbf[i*4+2]+((360*((uint8_t)vbf[i*4+1]-128))>>8);
-                g=vbf[i*4+2]-(((88*((uint8_t)vbf[i*4+3]-128)+184*((uint8_t)vbf[i*4+1]-128)))>>8);
-                b=vbf[i*4+2]+((455*((uint8_t)vbf[i*4+3]-128))>>8);
+                r=vbf[i+2]+((360*((uint8_t)vbf[i+1]-128))>>8);
+                g=vbf[i+2]-(((88*((uint8_t)vbf[i+3]-128)+184*((uint8_t)vbf[i+1]-128)))>>8);
+                b=vbf[i+2]+((455*((uint8_t)vbf[i+3]-128))>>8);
                 color=Color_To_565(r, g, b);
                 Lcd_WriteData_16Bit(color);
                 //if(i==0)lprintf("%x\n", color);
