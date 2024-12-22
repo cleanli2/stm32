@@ -658,11 +658,15 @@ void show_ziku(char *p)
     return;
 }
 #endif
+//void LCD_BUS_To_write(int write);
+void bus_to_lcd(int mode_to_lcd);
 void lcdsuebstep(char *p)
 {
     uint32_t para1 = 0, para2=0, para3 = 0, para4 = 0, color = 0,tmp, cmdindex;
     uint32_t para5 = 0, para6=0, para7 = 0;
 
+    //LCD_BUS_To_write(1);
+    bus_to_lcd(1);
     lprintf("p=%s\n", p);
     tmp = get_howmany_para(p);
     lprintf("tmp=%d\n", tmp);
@@ -1269,6 +1273,7 @@ void cam(char *p)
     SD_CardInfo mycard;
     char*p1, *ps;
     uint32_t np, p2=0x53, p3=3;
+    bus_to_lcd(0);
     if(!file_name[0])strcpy(file_name, "YUV2");
     lprintf("filename:%s\n", file_name);
     np = get_howmany_para(p);

@@ -1562,6 +1562,27 @@ void cam_al422(const char*ps, uint32_t p2)
         }
     }
 }
+static GPIO_InitTypeDef  GPIO_I;
+void bus_to_lcd(int mode_to_lcd)
+{
+    if(mode_to_lcd){
+        //output
+        GPIO_I.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_I.GPIO_Mode = GPIO_Mode_Out_PP;
+        GPIO_I.GPIO_Pin = CAM_DATA_PORT_GPIO_Pins;//D7-D14
+        GPIO_Init(GPIOB, &GPIO_I); //GPIOB
+        GPIO_SetBits(GPIOB,CAM_DATA_PORT_GPIO_Pins);
+    }
+    else{
+        //cam data port
+        GPIO_I.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_I.GPIO_Mode = GPIO_Mode_IPU;
+        GPIO_I.GPIO_Pin = CAM_DATA_PORT_GPIO_Pins;//D7-D14
+        GPIO_Init(GPIOB, &GPIO_I); //GPIOB
+        GPIO_SetBits(GPIOB,CAM_DATA_PORT_GPIO_Pins);
+        //cam data port end
+    }
+}
 void cam_init(int choose)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -1569,14 +1590,10 @@ void cam_init(int choose)
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
 
-    //cam data port
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_InitStructure.GPIO_Pin = CAM_DATA_PORT_GPIO_Pins;//D7-D14
-    GPIO_Init(GPIOB, &GPIO_InitStructure); //GPIOB
-    GPIO_SetBits(GPIOB,CAM_DATA_PORT_GPIO_Pins);
-    //cam data port end
+    bus_to_lcd(0);
 
+
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_InitStructure.GPIO_Pin = VSNC | HREF;
     GPIO_Init(AL422_WG, &GPIO_InitStructure);
