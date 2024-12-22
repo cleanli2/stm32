@@ -139,7 +139,7 @@
 #elif defined SUNRISE
 /////////////////////////////////////SUNRISE//////////////////////////////////////////////
 
-#define NO_LCD
+//#define NO_LCD
 #define POWER_MONITOR
 #define GPIO_ADC_VREF_PIN GPIO_Pin_5
 #define GPIO_ADC_V4_2_PIN GPIO_Pin_2
@@ -177,7 +177,7 @@
 #define LED      8        //背光控制引脚      PA8
 #define LCD_CS   0       //片选引脚            PA0
 #define LCD_RS   1       //寄存器/数据选择引脚 PA1 
-//#define LCD_RST  13       //复位引脚            PC13
+#define LCD_RST  13       //复位引脚            PC13
 #define LCD_WR   15       //写引脚              PC15
 #define LCD_RD   14       //读引脚              PC14
 
@@ -195,7 +195,7 @@
 //GPIO置位（拉高）
 #define	LCD_CS_SET  GPIOA->BSRR=1<<LCD_CS    //片选端口  	
 #define	LCD_RS_SET	GPIOA->BSRR=1<<LCD_RS    //数据/命令    
-//#define	LCD_RST_SET	GPIOC->BSRR=1<<LCD_RST   //复位			  
+#define	LCD_RST_SET	GPIOC->BSRR=1<<LCD_RST   //复位			  
 #define	LCD_WR_SET	GPIOC->BSRR=1<<LCD_WR    //写 	
 #define LCD_RD_SET  GPIOC->BSRR=1<<LCD_RD    //读		  
 #define LCD_LED_SET  GPIOA->BSRR=1<<LED      //读		  
@@ -203,20 +203,20 @@
 //GPIO复位（拉低）							    
 #define	LCD_CS_CLR  GPIOA->BRR=1<<LCD_CS     //片选端口  	
 #define	LCD_RS_CLR	GPIOA->BRR=1<<LCD_RS     //数据/命令  	 
-//#define	LCD_RST_CLR	GPIOC->BRR=1<<LCD_RST    //复位			  
+#define	LCD_RST_CLR	GPIOC->BRR=1<<LCD_RST    //复位			  
 #define	LCD_WR_CLR	GPIOC->BRR=1<<LCD_WR     //写
 #define LCD_RD_CLR  GPIOC->BRR=1<<LCD_RD     //读	  		  
 #define LCD_LED_CLR  GPIOA->BRR=1<<LED      //读		  
 
-//#define LCD_PORT_GPIO_Pins               ((uint16_t)0xFFFF)  /*!< High 8 pins selected */
+#define LCD_PORT_GPIO_Pins               ((uint16_t)0xFFFF)
 //PB0~15,作为数据线
 //注意：如果使用8位模式数据总线，则液晶屏的数据高8位是接到MCU的高8位总线上
 //举例：如果接8位模式则本示例接线为液晶屏DB10-DB17对应接至单片机GPIOB_Pin8-GPIOB_Pin15
 //举例：如果是16位模式：DB0-DB7分别接GPIOB_Pin0-GPIOB_Pin7,DB10-DB17对应接至单片机GPIOB_Pin8-GPIOB_Pin15
 //Note:DB4<->A3 DB3<->A2 for HW problem
 //NOTE:the HW problem above is not problem, it's caused by error config
-//#define DATAOUT(x) (GPIOB->ODR = x)
-//#define DATAIN()     (GPIOB->IDR)
+#define DATAOUT(x) (GPIOB->ODR = x)
+#define DATAIN()     (GPIOB->IDR)
 /*
 static inline uint16_t DATAIN()
 {

@@ -2540,10 +2540,12 @@ void lcd_sueb_basicinit()
 }
 
 //#define PWMV 2
-uint32_t PWMV = 2;
+uint32_t PWMV = 0x9000;
 //PWM freq=72000/(PWMV)/2=2Mhz
+//PWM freq=72000/(0x9000)/2=976hz
 #define BLPWM_ARR (PWMV-1)
 #define BLPWM_PSC 1
+
 void BL_PWM_init()
 {
     uint16_t arr = BLPWM_ARR;
@@ -2685,12 +2687,13 @@ uint16_t get_BL_value()
  * @parameters :None
  * @retvalue   :None
 ******************************************************************************/	 	 
+#if 0
 void lcd_sueb_init(int testitem)
 {
     (void)testitem;
     set_BL_value(DEFAULT_BL);//quater bright
 }
-#if 0
+#else
 void lcd_sueb_init(int testitem)
 {  
 	u16 lcd_id;
@@ -3091,39 +3094,6 @@ void lcd_sueb_init(int testitem)
   LCD_direction(USE_HORIZONTAL);//设置LCD显示方向
     set_BL_value(DEFAULT_BL);//quater bright
 	LCD_Clear(WHITE);//清全屏白色
-
-    prtline;
-    //sd init
-    do
-    {
-        SD_CardInfo mycard;
-        lprintf("Detecting sd card...");
-        if(SD_Init() != SD_OK )
-        {
-            lprintf("retry once\r\n");
-            if(SD_Init() != SD_OK){
-                lprintf("Fail\n");
-                break;
-            }
-            lprintf("retry OK\r\n");
-        }
-        else{
-            lprintf("OK\n");
-        }
-        if(SD_GetCardInfo(&mycard) != SD_OK)
-        {
-            lprintf("get card info Fail\n");
-            break;
-        }
-        else{
-            lprintf("block size %d\n", mycard.CardBlockSize);
-            lprintf("block capacity %d\n", mycard.CardCapacity);
-        }
-        lprintf("filesize 0x%x\r\n", get_file_size("YUV1", "BIN"));
-        close_file();
-    }
-    while(0);
-    //sd init end
 #endif
 }
 #endif
