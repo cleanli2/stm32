@@ -1184,6 +1184,7 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
 
     for(w_start_line = ls; (u32)w_start_line <= le-rn; w_start_line+=rn){
         cam_read_line(w_start_line,only_uart_dump);
+        if(TO_LCD==only_uart_dump)continue;
         if(get_sd_hw_err()){
             lprintf_time("SD hw error\n");
             goto quit;
@@ -1267,7 +1268,9 @@ void cam_to_lcd_1_frame()
 {
     fbfs=0;
 
+    bus_to_lcd(1);
 	LCD_SetWindows(0,0,640,480);   
+    bus_to_lcd(0);
 
     if(cam_save_lines(0, 300, TO_LCD))return;
     cam_save_lines(300, 480, TO_LCD);
