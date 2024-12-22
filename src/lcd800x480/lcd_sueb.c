@@ -1465,7 +1465,7 @@ uint8_t cam_r_reg(uint8_t addr)
 void cam_deinit()
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
-    cam_xclk_off();
+    //cam_xclk_off();
     //END detect gpio pin
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
