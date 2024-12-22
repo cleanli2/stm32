@@ -2444,7 +2444,7 @@ void LCD_GPIOInit(void)
 	GPIO_SetBits(GPIOA,GPIO_Pin_8|GPIO_Pin_1| GPIO_Pin_0);	
 #endif
 
-	//LCD_BUS_To_write(1);
+	LCD_BUS_To_write(1);
 	lprintf("LCD gpio init done\n");
 #endif
 }
