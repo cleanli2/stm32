@@ -2444,7 +2444,7 @@ void LCD_GPIOInit(void)
 	GPIO_SetBits(GPIOA,GPIO_Pin_8|GPIO_Pin_1| GPIO_Pin_0);	
 #endif
 
-	LCD_BUS_To_write(1);
+	//LCD_BUS_To_write(1);
 	lprintf("LCD gpio init done\n");
 #endif
 }
@@ -2553,7 +2553,7 @@ void lcd_sueb_basicinit()
 {
 	LCD_GPIOInit();//LCD GPIO初始化
 	delay_ms(100);
- 	//LCD_RESET(); //LCD 复位
+ 	LCD_RESET(); //LCD 复位
 }
 
 //#define PWMV 2
