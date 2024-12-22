@@ -2392,7 +2392,7 @@ LCD_Set_Window(xs,ys,w, h);
 ******************************************************************************/	
 void LCD_Clear(u16 Color)
 {
-	Proxy_lcd_clr_window(Color, 0,0,lcddev.width-1,lcddev.height-1);
+	lcd_clr_window(Color, 0,0,lcddev.width-1,lcddev.height-1);
 }
 
 /*****************************************************************************

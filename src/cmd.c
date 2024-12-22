@@ -702,7 +702,7 @@ void lcdsuebstep(char *p)
         p=str_to_hex(p, &para4);
 	if(tmp==6)
         p=str_to_hex(p, &color);
-        Proxy_lcd_clr_window(color, para1, para2, para3, para4);
+        lcd_clr_window(color, para1, para2, para3, para4);
     }
     else if(cmdindex == 6){//cmd
 	if (tmp<2)goto error;
