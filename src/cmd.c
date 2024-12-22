@@ -1487,7 +1487,7 @@ void cam(char *p)
         lprintf("p3=%d\n", p3);
         cam_set_rfn(p2, p3);
     }
-    if(!strcmp(p1, "camoff")){
+    if(!strcmp(p1, "off")){
         lprintf("camera power down\n");
         cam_deinit();
         lprintf_time("camera power down\n");

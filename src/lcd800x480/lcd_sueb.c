@@ -70,6 +70,7 @@ void cam_xclk_on();
 void BL_PWM_init();
 void BL_PWM_deinit();
 void LCD_BUS_To_write(int write);
+void bus_to_lcd(int mode_to_lcd);
 
 //管理LCD重要参数
 //默认为竖屏
