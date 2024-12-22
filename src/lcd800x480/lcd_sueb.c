@@ -1098,7 +1098,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
              * G= Y - (( ( 88 * (U - 128)  + 184 * (V - 128)) )>>8) ;
              * B= Y +((455 * (U - 128))>>8) ;
              */
-            for(int i=0;i<640;i+=4)
+            for(int i=0;i<640*2;i+=4)
             {
                 r=vbf[i]+((360*((uint8_t)vbf[i+1]-128))>>8);
                 g=vbf[i]-(((88*((uint8_t)vbf[i+3]-128)+184*((uint8_t)vbf[i+1]-128)))>>8);
