@@ -293,10 +293,10 @@ void led_raw_set(u32 led_flag)
     }
     if(led_flag & 0x1){
         if(led_flag & 0x4){
-            GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
+            //GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
         }
         else{
-            GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
+            //GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
         }
     }
 }
@@ -720,12 +720,6 @@ void main_init(void)
   GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
   GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
 
-  RCC_APB2PeriphClockCmd(LED0_GPIO_PERIPH, ENABLE);
-
-  GPIO_InitStructure.GPIO_Pin = LED0_GPIO_PIN;
-  GPIO_Init(LED0_GPIO_GROUP, &GPIO_InitStructure);
-  GPIO_ResetBits(LED0_GPIO_GROUP, LED0_GPIO_PIN);
-
   RCC_APB2PeriphClockCmd(LED1_GPIO_PERIPH, ENABLE);
 
   GPIO_InitStructure.GPIO_Pin = LED1_GPIO_PIN;
@@ -875,10 +869,10 @@ void os_task1(void*p)
         //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
         os_10ms_delay(td/2);
         //putchars("1 1\n");
-        GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
+        //GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
         os_10ms_delay(20-td/2+1);
         //putchars("1 0\n");
-        GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
+        //GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
 #if 1
         if(direct){
             td++;
