@@ -1093,9 +1093,9 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
         else if(only_uart_dump == TO_LCD){
             uint16_t color;
             bus_to_lcd(1);
-            for(int i=0;i<640*2;i+=2)
+            for(int i=0;i<640;i++)
             {
-                color=(vbf[i]<<8)+vbf[i+1];
+                color=(vbf[i*2]<<8)+vbf[i*2+1];
                 Lcd_WriteData_16Bit(color);
             }
             bus_to_lcd(0);
@@ -1270,7 +1270,7 @@ void cam_to_lcd_1_frame()
     fbfs=0;
 
     bus_to_lcd(1);
-	LCD_SetWindows(0,0,640,480);   
+	LCD_SetWindows(0,0,639,479);   
     bus_to_lcd(0);
 
     if(cam_save_lines(0, 300, TO_LCD))return;
