@@ -1119,6 +1119,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
             rec_count=0;
         }
         else{
+            if(g_tlcd) wtlcd(vbf, 640*2);
             yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
             if(wtf(vbf, 640*2, 512)<0){
                 lprintf_time("cam write to file error, linect %d\n", linect);
