@@ -39,6 +39,8 @@ USART_InitTypeDef USART_InitStructure;
 
 u32 last_systick;
 u32 interv_systick;
+u32 g_cam_r70p_e=0;
+u32 g_cam_r71p_e=0;
 static int sound_enable=1;
 static uint32_t g_10ms_count = 0;
 uint32_t g_ms_count = 0;
@@ -824,6 +826,8 @@ void main_init(void)
   //SD_LowLevel_Init();
 
   /*1us/timer_count, 10ms/timer_intrpt*/
+  g_cam_r70p_e = get_env_uint("camr70pe", 0);
+  g_cam_r71p_e = get_env_uint("camr71pe", 0);
   while (looptimes--)
   {
       led_flash(0x3, 100);

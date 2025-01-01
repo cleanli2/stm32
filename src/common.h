@@ -27,6 +27,8 @@
 
 
 extern u32 interv_systick;
+extern u32 g_cam_r70p_e;
+extern u32 g_cam_r71p_e;
 #define TIM2_RELOAD 60000
 enum intnum {
     INTSYSTICK,
