@@ -1527,7 +1527,13 @@ void cam(char *p)
         cam_init(p2);
     }
     if(!strcmp(p1, "lcd")){
-        cam_to_lcd_1_frame();
+        p2 = 1;
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+        }
+        while(p2--){
+            cam_to_lcd_1_frame();
+        }
     }
     if(!strcmp(p1, "flcd")){
         if(np<2){
