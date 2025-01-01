@@ -8,4 +8,4 @@ RCK=PC8          output   1
 WR=PC10          output   0
 OE=PC9           output   1
 WRST=PD2         output   1
-RRST=PB0         output   1
+RRST=PA4         output   1
