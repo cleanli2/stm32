@@ -1528,6 +1528,7 @@ void cam(char *p)
             p = str_to_hex(p, &p2);
         }
         while(p2--){
+            lprintf("left %d\n", p2);
             if(FS_OK==open_file_w("/SDLCD.BIN")){
                 cam_save_1_frame(0);
                 close_file();
