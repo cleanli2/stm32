@@ -1503,6 +1503,18 @@ void cam(char *p)
     if(!strcmp(p1, "lcd")){
         cam_to_lcd_1_frame();
     }
+    if(!strcmp(p1, "sdlcd")){
+        if(FS_OK==open_file_for_write("SDLCD", "BIN")){
+            cam_save_1_frame(0);
+            close_file();
+            file_to_lcd("SDLCD.BIN");
+            lprintf("\n===============save frame to file SDLCD.bin done\n");
+        }
+        else{
+            lprintf("open file fail:SDLCD.BIN\n");
+            return;
+        }
+    }
     if(!strcmp(p1, "lines")){
         check_lines();
     }

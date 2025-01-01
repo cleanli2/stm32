@@ -1295,6 +1295,16 @@ void cam_to_lcd_1_frame()
     cam_save_lines(300, 480, TO_LCD);
 }
 
+void file_to_lcd(const char* fn)
+{
+    bus_to_lcd(1);
+	LCD_SetWindows(0,0,639,479);   
+    bus_to_lcd(0);
+
+    if(cam_save_lines(0, 300, TO_LCD))return;
+    cam_save_lines(300, 480, TO_LCD);
+}
+
 /*****************camera i2c******************/
 #if 0
 #define cam_SDA_PIN GPIO_Pin_13

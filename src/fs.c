@@ -695,3 +695,44 @@ int write_sec_to_file(const char*buf)
     g_fp->fptr += g_fs->ssize;
     return g_fp->fptr;
 }
+
+int open_file_r(const char*path)
+{
+    int ret;
+    ret = file_size(path);
+    if(0 < ret){
+        g_fp->clust = g_fp->sclust;
+        g_fp->clust_sec_offset = 0;
+        g_fp->in_writing = 0;
+        return FS_OK;
+    }
+    else{
+        return ret;
+    }
+}
+
+int read_sec_from_file(char*buf)
+{
+    const char* retbuf;
+    if(g_fp->in_writing){
+        lprintf("try read write file\r\n");
+        return -1;
+    }
+    //lprintf("clust %d sec_off %d\r\n", g_fp->clust, g_fp->clust_sec_offset);
+    uint32_t target_sector_no = g_fp->fs->database + (g_fp->clust - 2) * g_fs->csize;
+    target_sector_no += g_fp->clust_sec_offset;
+    retbuf=disk_read_sector(target_sector_no);
+    if(NULL==retbuf){
+        return -1;
+    }
+    memcpy(buf, retbuf, g_fs->csize);
+    g_fp->clust_sec_offset++;
+    if(g_fp->clust_sec_offset >=g_fp->fs->csize)
+    {
+        g_fp->clust = get_next_cluster(g_fp->clust);
+        g_fp->clust_sec_offset = 0;
+    }
+    g_fp->fptr += g_fs->ssize;
+    return g_fp->fptr;
+}
+
