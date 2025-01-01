@@ -1270,6 +1270,7 @@ int cam_w_reg(uint8_t addr, uint8_t data);
 void cam_to_lcd_1_frame();
 void file_to_lcd();
 void pre_cam_to_lcd();
+void save_lines_to_al422(uint32_t line_ct_start, uint32_t line_num);
 void cam(char *p)
 {
     SD_Error Status = SD_OK;
@@ -1316,6 +1317,18 @@ void cam(char *p)
 			    lprintf("block capacity %d\n", mycard.CardCapacity);
 		    }
 	    }
+    }
+    if(!strcmp(p1, "slal")){
+        if(np>=2){
+            p = str_to_hex(p, &p2);
+            lprintf("p2=%d\n", p2);
+        }
+        if(np>=3){
+            p = str_to_hex(p, &p3);
+            lprintf("p3=%d\n", p3);
+        }
+        lprintf("line start=%d n=%d\n", p2, p3);
+        save_lines_to_al422(p2, p3);
     }
     if(!strcmp(p1, "fwrite")){
         lprintf("memset %x\n", p2);
