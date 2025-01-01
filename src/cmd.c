@@ -1261,7 +1261,7 @@ void cam_init(int);
 void cam_al422(const char*ps, uint32_t p2);
 void cam_deinit();
 void cam_read_frame(int);
-void cam_read_line(int);
+void cam_read_line(int, u32);
 void set_xclk(uint32_t fct);
 void cam_set_rfn(u32 irn, u32 ifn);
 uint8_t cam_r_reg(uint8_t addr);
@@ -1269,6 +1269,7 @@ void cam_save_1_frame(u32 only_uart_dump);
 int cam_w_reg(uint8_t addr, uint8_t data);
 void cam_to_lcd_1_frame();
 void file_to_lcd();
+void pre_cam_to_lcd();
 void cam(char *p)
 {
     SD_Error Status = SD_OK;
@@ -1455,6 +1456,9 @@ void cam(char *p)
             }
         }
     }
+    if(!strcmp(p1, "prelcd")){
+        pre_cam_to_lcd();
+    }
     if(!strcmp(p1, "w")){
         p2 = 0xffffffff;
         lprintf("open %s.BIN\n", file_name);
@@ -1464,7 +1468,7 @@ void cam(char *p)
         }
         if(p2 == 0xffffffff){//write to file
             if(FS_OK==open_file_for_write(file_name, "BIN")){
-                cam_read_line((int)p2);
+                cam_read_line(0, (int)p2);
                 close_file();
             }
             else{
@@ -1472,7 +1476,7 @@ void cam(char *p)
             }
         }
         else{
-            cam_read_line((int)p2);
+            cam_read_line(32, (u32)p2);
         }
     }
     if(!strcmp(p1, "srfn")){

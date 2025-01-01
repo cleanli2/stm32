@@ -1109,8 +1109,10 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
         }
         if(only_uart_dump==1){
             mem_print(vbf, 640*2*linect, 640*2);
+            rec_count=0;
         }
         else if(only_uart_dump == TO_LCD){
+            mem_print(vbf, 640*2*linect, 640*2);
             wtlcd(vbf, 640*2);
             rec_count=0;
         }
@@ -1277,6 +1279,13 @@ void cam_save_1_frame(u32 only_uart_dump)
     cam_save_lines(300, 480, only_uart_dump);
     memset(vbf, 0xff, 640*2);
     wtf(vbf, 640*2, 512);//write left in buffer
+}
+
+void pre_cam_to_lcd()
+{
+    bus_to_lcd(1);
+	LCD_SetWindows(0,0,639,479);   
+    bus_to_lcd(0);
 }
 
 void cam_to_lcd_1_frame()
