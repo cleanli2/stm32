@@ -1108,6 +1108,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
                 Lcd_WriteData_16Bit(color);
             }
             bus_to_lcd(0);
+            rec_count=0;
         }
         else{
             yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
