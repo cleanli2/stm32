@@ -1656,14 +1656,6 @@ static GPIO_InitTypeDef  GPIO_I;
 void bus_to_lcd(int mode_to_lcd)
 {
     if(mode_to_lcd){
-        //disable al422 output
-        //al422 oe = 1
-        GPIO_SetBits(AL422_WG,OE);
-        //rck=1
-        GPIO_SetBits(AL422_WG,RCK);
-        //rck=0
-        GPIO_ResetBits(AL422_WG,RCK);
-
         //output
         GPIO_I.GPIO_Speed = GPIO_Speed_50MHz;
         GPIO_I.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -1679,7 +1671,6 @@ void bus_to_lcd(int mode_to_lcd)
         GPIO_Init(GPIOB, &GPIO_I); //GPIOB
         GPIO_SetBits(GPIOB,CAM_DATA_PORT_GPIO_Pins);
         //cam data port end
-        GPIO_ResetBits(AL422_WG,OE);
     }
 }
 void cam_init(int choose)
