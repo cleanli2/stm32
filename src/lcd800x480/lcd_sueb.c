@@ -1718,6 +1718,8 @@ void cam_init(int choose)
     delay_ms(2);
     lprintf_time("cam reset return %x\n", cam_w_reg(0x12, 0x80));
     delay_ms(20);
+
+    pre_cam_to_lcd();
     //read cam id
     while(1){
         if(0x76==cam_r_reg(0x0A)){
