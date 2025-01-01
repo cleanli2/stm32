@@ -1120,7 +1120,6 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
                 lprintf_time("cam write to file error, linect %d\n", linect);
                 return;
             }
-            wtlcd(vbf, 640*2);
             rec_count=0;
         }
         linect++;
@@ -1274,9 +1273,6 @@ int cam_dump_lines(u32 l)
 void cam_save_1_frame(u32 only_uart_dump)
 {
     fbfs=0;
-    bus_to_lcd(1);
-	LCD_SetWindows(0,0,639,479);   
-    bus_to_lcd(0);
     if(cam_save_lines(0, 300, only_uart_dump))return;
     cam_save_lines(300, 480, only_uart_dump);
     memset(vbf, 0xff, 640*2);
@@ -1295,14 +1291,17 @@ void cam_to_lcd_1_frame()
     cam_save_lines(300, 480, TO_LCD);
 }
 
-void file_to_lcd(const char* fn)
+void file_to_lcd()
 {
+    u32 pos;
     bus_to_lcd(1);
 	LCD_SetWindows(0,0,639,479);   
     bus_to_lcd(0);
 
-    if(cam_save_lines(0, 300, TO_LCD))return;
-    cam_save_lines(300, 480, TO_LCD);
+    while((pos=read_sec_from_file(fbf))<640*480*2){
+        wtlcd(fbf, 512);
+    }
+    wtlcd(fbf, pos-640*480*2);//left data
 }
 
 /*****************camera i2c******************/

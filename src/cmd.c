@@ -1268,6 +1268,7 @@ uint8_t cam_r_reg(uint8_t addr);
 void cam_save_1_frame(u32 only_uart_dump);
 int cam_w_reg(uint8_t addr, uint8_t data);
 void cam_to_lcd_1_frame();
+void file_to_lcd();
 void cam(char *p)
 {
     SD_Error Status = SD_OK;
@@ -1507,8 +1508,11 @@ void cam(char *p)
         if(FS_OK==open_file_for_write("SDLCD", "BIN")){
             cam_save_1_frame(0);
             close_file();
-            file_to_lcd("SDLCD.BIN");
             lprintf("\n===============save frame to file SDLCD.bin done\n");
+            open_file_r("SDLCD.BIN");
+            file_to_lcd();
+            close_file();
+            lprintf("\n===============file SDLCD.bin to lcd done\n");
         }
         else{
             lprintf("open file fail:SDLCD.BIN\n");

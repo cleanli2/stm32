@@ -718,14 +718,14 @@ int read_sec_from_file(char*buf)
         lprintf("try read write file\r\n");
         return -1;
     }
-    //lprintf("clust %d sec_off %d\r\n", g_fp->clust, g_fp->clust_sec_offset);
+    lprintf("clust %d sec_off %d\r\n", g_fp->clust, g_fp->clust_sec_offset);
     uint32_t target_sector_no = g_fp->fs->database + (g_fp->clust - 2) * g_fs->csize;
     target_sector_no += g_fp->clust_sec_offset;
     retbuf=disk_read_sector(target_sector_no);
     if(NULL==retbuf){
         return -1;
     }
-    memcpy(buf, retbuf, g_fs->csize);
+    memcpy(buf, retbuf, 512);
     g_fp->clust_sec_offset++;
     if(g_fp->clust_sec_offset >=g_fp->fs->csize)
     {
