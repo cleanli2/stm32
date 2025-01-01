@@ -117,7 +117,7 @@ int main()
         if(g_fnn%20==0){
             lprintf_time("%s\n", get_rtc_time(NULL));
             lprintf_time("Version %s%s\n", VERSION, GIT_SHA1);
-            if(strncmp("2024", get_rtc_time(NULL), 4)){
+            if(strncmp("2025", get_rtc_time(NULL), 4)){
                 lprintf_time("RTC err:%s\n", get_rtc_time(NULL));
                 slprintf(stopreason, "RTC err@%d\n", g_fnn);
                 lprintf_time(stopreason);
