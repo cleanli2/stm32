@@ -1523,18 +1523,24 @@ void cam(char *p)
         }
     }
     if(!strcmp(p1, "sdlcd")){
-        if(FS_OK==open_file_w("/SDLCD.BIN")){
-            cam_save_1_frame(0);
-            close_file();
-            lprintf("\n===============save frame to file SDLCD.bin done\n");
-            open_file_r("/SDLCD.BIN");
-            file_to_lcd();
-            close_file();
-            lprintf("\n===============file SDLCD.bin to lcd done\n");
+        p2 = 1;
+        if(np>=2){
+            p = str_to_hex(p, &p2);
         }
-        else{
-            lprintf("open file fail:SDLCD.BIN\n");
-            return;
+        while(p2--){
+            if(FS_OK==open_file_w("/SDLCD.BIN")){
+                cam_save_1_frame(0);
+                close_file();
+                lprintf("\n===============save frame to file SDLCD.bin done\n");
+                open_file_r("/SDLCD.BIN");
+                file_to_lcd();
+                close_file();
+                lprintf("\n===============file SDLCD.bin to lcd done\n");
+            }
+            else{
+                lprintf("open file fail:SDLCD.BIN\n");
+                return;
+            }
         }
     }
     if(!strcmp(p1, "lines")){
