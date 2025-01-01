@@ -59,6 +59,7 @@
 #include "test.h"	 
 #include "display.h"
 #include "fs.h"
+#include "yuv2rgb.h"
 
 	   
 typedef uint8_t uchar;
@@ -1091,26 +1092,20 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
             mem_print(vbf, 640*2*linect, 640*2);
         }
         else if(only_uart_dump == TO_LCD){
-            uint32_t color,r,g,b;
+            struct dataof_yuv2bmp dyb;
+            uint32_t color;
             bus_to_lcd(1);
-            /*
-             * R= Y + ((360 * (V - 128))>>8) ;
-             * G= Y - (( ( 88 * (U - 128)  + 184 * (V - 128)) )>>8) ;
-             * B= Y +((455 * (U - 128))>>8) ;
-             */
             for(int i=0;i<640*2;i+=4)
             {
-                r=vbf[i]+((360*(vbf[i+3]-128))>>8);
-                g=vbf[i]-(((88*(vbf[i+1]-128)+184*(vbf[i+3]-128)))>>8);
-                b=vbf[i]+((455*(vbf[i+1]-128))>>8);
-                color=Color_To_565(r, g, b);
+                dyb.y1=vbf[i];
+                dyb.u=vbf[i+1];
+                dyb.y2=vbf[i+2];
+                dyb.v=vbf[i+3];
+                yuv2bmp(&dyb);
+                color=Color_To_565(dyb.r1, dyb.g1, dyb.b1);
                 Lcd_WriteData_16Bit(color);
-                r=vbf[i+2]+((360*(vbf[i+3]-128))>>8);
-                g=vbf[i+2]-(((88*(vbf[i+1]-128)+184*(vbf[i+3]-128)))>>8);
-                b=vbf[i+2]+((455*(vbf[i+1]-128))>>8);
-                color=Color_To_565(r, g, b);
+                color=Color_To_565(dyb.r2, dyb.g2, dyb.b2);
                 Lcd_WriteData_16Bit(color);
-                //if(i==0)lprintf("%x\n", color);
             }
             bus_to_lcd(0);
         }
