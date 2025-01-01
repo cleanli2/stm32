@@ -419,6 +419,8 @@ uint32_t get_path_start_cluster(const char* path)
             break;
         }
         t=strtok(NULL, "/");
+        lprintf("t=%x\n", t);
+        if(t)lprintf("%s\n", t);
     }
     return start_cluster;
 }
@@ -718,7 +720,7 @@ int read_sec_from_file(char*buf)
         lprintf("try read write file\r\n");
         return -1;
     }
-    lprintf("clust %d sec_off %d\r\n", g_fp->clust, g_fp->clust_sec_offset);
+    //lprintf("clust %d sec_off %d\r\n", g_fp->clust, g_fp->clust_sec_offset);
     uint32_t target_sector_no = g_fp->fs->database + (g_fp->clust - 2) * g_fs->csize;
     target_sector_no += g_fp->clust_sec_offset;
     retbuf=disk_read_sector(target_sector_no);
