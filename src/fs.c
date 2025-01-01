@@ -394,15 +394,15 @@ uint32_t get_file_start_cluster(const char* filename, const char*fileextname)
     return get_file_start_cluster_from_cluster(g_fs->dirbase, filename, fileextname);
 }
 
+static char fs_name_f[32];
 uint32_t get_path_start_cluster(const char* path)
 {
     uint32_t start_cluster = g_fs->dirbase;
     char*t=NULL;
     char*e=NULL;
-    char f[32];
-    memset(f, 0, 32);
-    strncpy(f, path, 31);
-    t=strtok(f, "/");
+    memset(fs_name_f, 0, 32);
+    strncpy(fs_name_f, path, 31);
+    t=strtok(fs_name_f, "/");
     while(t){
         if(strchr(t, '.')){
             e=strchr(t, '.');
@@ -421,6 +421,7 @@ uint32_t get_path_start_cluster(const char* path)
         t=strtok(NULL, "/");
         lprintf("t=%x\n", t);
         if(t)lprintf("%s\n", t);
+        mem_print(t, (u32)t, 32);
     }
     return start_cluster;
 }
