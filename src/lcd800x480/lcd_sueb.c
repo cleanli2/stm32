@@ -1063,6 +1063,25 @@ void cam_set_rfn(u32 irn, u32 ifn)
     fn = ifn;
     lprintf("set:rn=%d, fn=%d\n", rn, fn);
 }
+void wtlcd(char*bf, u32 len)
+{
+    struct dataof_yuv2bmp dyb;
+    uint32_t color;
+    bus_to_lcd(1);
+    for(u32 i=0;i<len;i+=4)
+    {
+        dyb.y1=bf[i];
+        dyb.u=bf[i+1];
+        dyb.y2=bf[i+2];
+        dyb.v=bf[i+3];
+        yuv2bmp(&dyb);
+        color=Color_To_565(dyb.r1, dyb.g1, dyb.b1);
+        Lcd_WriteData_16Bit(color);
+        color=Color_To_565(dyb.r2, dyb.g2, dyb.b2);
+        Lcd_WriteData_16Bit(color);
+    }
+    bus_to_lcd(0);
+}
 #define TO_LCD 2
 #define READ_MODE 0
 #define FREE_MODE 1
@@ -1092,22 +1111,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
             mem_print(vbf, 640*2*linect, 640*2);
         }
         else if(only_uart_dump == TO_LCD){
-            struct dataof_yuv2bmp dyb;
-            uint32_t color;
-            bus_to_lcd(1);
-            for(int i=0;i<640*2;i+=4)
-            {
-                dyb.y1=vbf[i];
-                dyb.u=vbf[i+1];
-                dyb.y2=vbf[i+2];
-                dyb.v=vbf[i+3];
-                yuv2bmp(&dyb);
-                color=Color_To_565(dyb.r1, dyb.g1, dyb.b1);
-                Lcd_WriteData_16Bit(color);
-                color=Color_To_565(dyb.r2, dyb.g2, dyb.b2);
-                Lcd_WriteData_16Bit(color);
-            }
-            bus_to_lcd(0);
+            wtlcd(vbf, 640*2);
             rec_count=0;
         }
         else{
@@ -1116,6 +1120,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
                 lprintf_time("cam write to file error, linect %d\n", linect);
                 return;
             }
+            wtlcd(vbf, 640*2);
             rec_count=0;
         }
         linect++;
@@ -1269,6 +1274,9 @@ int cam_dump_lines(u32 l)
 void cam_save_1_frame(u32 only_uart_dump)
 {
     fbfs=0;
+    bus_to_lcd(1);
+	LCD_SetWindows(0,0,639,479);   
+    bus_to_lcd(0);
     if(cam_save_lines(0, 300, only_uart_dump))return;
     cam_save_lines(300, 480, only_uart_dump);
     memset(vbf, 0xff, 640*2);
