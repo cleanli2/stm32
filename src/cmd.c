@@ -1327,6 +1327,8 @@ void cam(char *p)
 	    }
     }
     if(!strcmp(p1, "slal")){
+        p2=0;
+        p3=10;
         if(np>=2){
             p = str_to_hex(p, &p2);
             lprintf("p2=%d\n", p2);
