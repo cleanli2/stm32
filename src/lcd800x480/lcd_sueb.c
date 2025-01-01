@@ -1172,6 +1172,32 @@ void save_lines_to_al422(uint32_t line_ct_start, uint32_t line_num)
     GPIO_ResetBits(WRST_GP,WRST);
 }
 extern int loop_stop;
+void end_al422_read()
+{
+    //disable output
+    //al422 oe = 1
+    GPIO_SetBits(AL422_WG,OE);
+    //rck=0
+    GPIO_ResetBits(AL422_WG,RCK);
+    //rck=1
+    GPIO_SetBits(AL422_WG,RCK);
+
+}
+void reset_al422_read()
+{
+    //prepare read
+    //al422 oe = 0
+    GPIO_ResetBits(AL422_WG,OE);
+    //al422 rrst = 0
+    GPIO_ResetBits(CAM_GPIO_GROUP,RRST);
+    //rck=0
+    GPIO_ResetBits(AL422_WG,RCK);
+    //rck=1
+    GPIO_SetBits(AL422_WG,RCK);
+    //al422 rrst = 1
+    GPIO_SetBits(CAM_GPIO_GROUP,RRST);
+
+}
 int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
 {
     char ucbf[5]={0};

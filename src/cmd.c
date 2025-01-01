@@ -1258,6 +1258,8 @@ extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 int cam_dump_lines(u32 l);
 void check_lines();
 void cam_init(int);
+void end_al422_read();
+void reset_al422_read();
 void cam_al422(const char*ps, uint32_t p2);
 void cam_deinit();
 void cam_read_frame(int);
@@ -1285,6 +1287,12 @@ void cam(char *p)
     if(np>=1){
         p = str_to_str(p, &p1);
         lprintf("p1=%s\n", p1);
+    }
+    if(!strcmp(p1, "ealr")){
+        end_al422_read();
+    }
+    if(!strcmp(p1, "ralr")){
+        reset_al422_read();
     }
     if(!strcmp(p1, "sdp")){
         //PC0 is used for sd power control
