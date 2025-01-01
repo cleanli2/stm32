@@ -1114,7 +1114,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
             rec_count=0;
         }
         else if(only_uart_dump == TO_LCD){
-            mem_print(vbf, 640*2*linect, 640*2);
+            //mem_print(vbf, 640*2*linect, 640*2);
             wtlcd(vbf, 640*2);
             rec_count=0;
         }
