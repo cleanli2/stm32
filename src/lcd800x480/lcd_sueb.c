@@ -1076,7 +1076,7 @@ void wtlcd(char*bf, u32 len)
         dyb.u=bf[i+1];
         dyb.y2=bf[i+2];
         dyb.v=bf[i+3];
-        yuv2bmp(&dyb);
+        yuv2bmp_tab(&dyb);
         color=Color_To_565(dyb.r1, dyb.g1, dyb.b1);
         Lcd_WriteData_16Bit(color);
         color=Color_To_565(dyb.r2, dyb.g2, dyb.b2);

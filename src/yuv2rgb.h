@@ -39,5 +39,34 @@ static inline void yuv2bmp(struct dataof_yuv2bmp* dy)
     dy->r1=CLAMP(0, r1, 255);
     dy->r2=CLAMP(0, r2, 255);
 }
+extern int bu[256];
+extern int rv[256];
+extern int gu[256];
+extern int gv[256];
+static inline void yuv2bmp_tab(struct dataof_yuv2bmp* dy)
+{
+	int y1, y2, u, v;
+	int r1, r2, b1, b2, g1, g2;
+	y1=dy->y1;
+	u=dy->u;
+	y2=dy->y2;
+	v=dy->v;
+
+    //compute
+    b1=y1+bu[u];
+    g1=y1-(gu[u]+gv[v]);
+    r1=y1+rv[v];
+    b2=y2+bu[u];
+    g2=y2-(gu[u]+gv[v]);
+    r2=y2+rv[v];
+
+    //output
+    dy->b1=CLAMP(0, b1, 255);
+    dy->b2=CLAMP(0, b2, 255);
+    dy->g1=CLAMP(0, g1, 255);
+    dy->g2=CLAMP(0, g2, 255);
+    dy->r1=CLAMP(0, r1, 255);
+    dy->r2=CLAMP(0, r2, 255);
+}
 
 #endif

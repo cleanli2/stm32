@@ -78,6 +78,7 @@ src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm3
 src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c          \
 src/task.c                                                                                            \
 src/ui.c                                                                                              \
+src/yuv_rgb_tab.c                                                                                              \
 src/usb/USB/CONFIG/hw_config.c                                                                        \
 src/usb/USB/CONFIG/mass_mal.c                                                                         \
 src/usb/USB/CONFIG/memory.c                                                                           \
