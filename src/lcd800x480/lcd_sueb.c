@@ -1100,12 +1100,22 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
     linect=in_dump_line;
 
     while(linen--){
+        if(rec_count==0){
+            GPIO_ResetBits(AL422_WG,OE);
+            //rck=0
+            GPIO_ResetBits(AL422_WG,RCK);
+            //rck=1
+            GPIO_SetBits(AL422_WG,RCK);
+        }
         while(rec_count<640*2){
             vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
             rec_count++;
 
             //rck=0
             GPIO_ResetBits(AL422_WG,RCK);
+            if(rec_count==640*2){
+                GPIO_SetBits(AL422_WG,OE);
+            }
             //rck=1
             GPIO_SetBits(AL422_WG,RCK);
         }
@@ -1190,7 +1200,7 @@ void reset_al422_read()
 {
     //prepare read
     //al422 oe = 0
-    GPIO_ResetBits(AL422_WG,OE);
+    //GPIO_ResetBits(AL422_WG,OE);
     //al422 rrst = 0
     GPIO_ResetBits(RRST_G,RRST);
     //rck=0
@@ -1218,7 +1228,7 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
 
     //prepare read
     //al422 oe = 0
-    GPIO_ResetBits(AL422_WG,OE);
+    //GPIO_ResetBits(AL422_WG,OE);
     //al422 rrst = 0
     GPIO_ResetBits(RRST_G,RRST);
     //rck=0
