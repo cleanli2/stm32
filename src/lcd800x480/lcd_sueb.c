@@ -92,6 +92,16 @@ void Enable_BL(int en)//µãÁÁ±³¹â
 	    //GPIOC->BRR = 0x00002000;
 	}
 }
+#define LCD_write(d) {\
+        LCD_CS_CLR; \
+        DATAOUT(d);\
+        LCD_WR_CLR; \
+        LCD_WR_SET; \
+        LCD_CS_SET; \
+}
+
+#define Color_To_565(r, g, b)  ((((r) & 0xF8) << 8) | (((g) & 0xFC) << 3) | (((b) & 0xF8) >> 3))
+
 #define CAM_DATA_OFFSET 7
 #define CAM_GPIO_GROUP GPIOB
 
@@ -1808,18 +1818,6 @@ void LCD_BUS_To_write(int write)
 #endif
 }
 
-void LCD_write(u16 VAL)
-{
-    (void)VAL;
-#ifndef NO_LCD
-	LCD_CS_CLR;  
-	DATAOUT(VAL);
-	LCD_WR_CLR; 
-	LCD_WR_SET; 
-	LCD_CS_SET;
-#endif
-}
-
 u16 LCD_read(void)
 {
 	u16 data=0;
@@ -1973,6 +1971,7 @@ void LCD_ReadRAM_Prepare(void)
 	LCD_WR_REG(lcddev.rramcmd);
 }
 
+
 /*****************************************************************************
  * @name       :void Lcd_WriteData_16Bit(u16 Data)
  * @date       :2018-08-09 
@@ -1995,13 +1994,8 @@ void Lcd_WriteData_16Bit(u16 Data)
  //  LCD_write(Data&0xFF00);
 //	 LCD_write(Data<<8);
 	 #else
-	 LCD_write(Data);
+        LCD_write(Data);
 	 #endif
-}
-
-u16 Color_To_565(u8 r, u8 g, u8 b)
-{
-	return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | ((b & 0xF8) >> 3);
 }
 
 /*****************************************************************************

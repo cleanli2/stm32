@@ -1532,6 +1532,7 @@ void cam(char *p)
             p = str_to_hex(p, &p2);
         }
         while(p2--){
+            lprintf("%s\n", get_rtc_time(0));
             cam_to_lcd_1_frame();
         }
     }
