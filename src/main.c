@@ -42,6 +42,7 @@ void prepare_pic_trsf()
     uint32_t n_s_fnn=0;
     char t_file_name[32];
     uint32_t t_fnn = get_env_uint("fsno", 0);
+    set_env_uint("fsno", g_fnn);
     memset(fbf, ' ', 512);
     if(restarted && t_fnn < g_fnn){
         n_s_fnn = g_fnn+1;
