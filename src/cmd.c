@@ -1078,6 +1078,35 @@ void history(char *p)
     return;
 }
 
+uint8_t pcf8574t_writeData(uint8_t mdata);
+uint8_t pcf8574t_readData1(uint8_t * buff);
+void i2ccmd(char *p)
+{
+    (void)p;
+    char *p1;
+    uint32_t np, p2=0x00;
+    np = get_howmany_para(p);
+    lprintf("number of para=%d\n", np);
+    if(np>=1){
+        p = str_to_str(p, &p1);
+        lprintf("p1=%s\n", p1);
+    }
+    if(np>=2){
+        p = str_to_hex(p, &p2);
+        lprintf("p2=%d\n", p2);
+    }
+    if(!strcmp(p1, "w")){
+        pcf8574t_writeData(p2);
+    }
+    if(!strcmp(p1, "r")){
+        pcf8574t_readData1((uint8_t*)&p2);
+        lprintf("p2=%x\n", p2);
+    }
+    con_send('\n');
+
+    return;
+
+}
 void keytest(char *p)
 {
     (void)p;
@@ -1754,6 +1783,7 @@ static const struct command cmd_list[]=
 #ifndef WRITE_W25F
     //{"lcd19264init",lcd19264init},
     //{"lcd19264dc",dispcchar},
+    {"pcf8574t", i2ccmd},
     {"kt",keytest},
     {"led",ledtest},
     {"logf",logflag},
