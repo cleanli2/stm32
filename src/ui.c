@@ -1377,11 +1377,23 @@ void do_tipt()
 #endif
 }
 
+#define TIPT_OX 25
+#define TIPT_OY 400
+
 button_t tipt_button[]={
 #ifdef LARGE_SCREEN
-    {125, 550, 200,  80, do_tipt, -1, 0, "Push", 0, NULL},
-#else
-    {100, 240, 40,  20, do_tipt, -1, 0, "Push", 0, NULL},
+    {TIPT_OX, TIPT_OY, 80,  80, do_tipt, -1, 0, "1 DEL", 0, NULL},
+    {TIPT_OX+115, TIPT_OY, 80,  80, do_tipt, -1, 0, "2 abc", 0, NULL},
+    {TIPT_OX+245, TIPT_OY, 80,  80, do_tipt, -1, 0, "3 def", 0, NULL},
+    {TIPT_OX+375, TIPT_OY, 80,  80, do_tipt, -1, 0, "", 0, NULL},
+    {TIPT_OX, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "4 ghi", 0, NULL},
+    {TIPT_OX+115, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "5 jkl", 0, NULL},
+    {TIPT_OX+245, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "6 mno", 0, NULL},
+    {TIPT_OX+375, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "", 0, NULL},
+    {TIPT_OX, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "7 pqrs", 0, NULL},
+    {TIPT_OX+115, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "8 tuv", 0, NULL},
+    {TIPT_OX+245, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "9 wxyz", 0, NULL},
+    {TIPT_OX+375, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "", 0, NULL},
 #endif
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
