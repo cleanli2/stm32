@@ -1345,8 +1345,8 @@ void tipt_ui_init(void*vp)
     ui_buf[0] = 0;
     ui_buf[1] = 0;
     ui_buf[2] = 0;
-    ui_buf[3] = get_env_uint("tipt0", 100);
-    ui_buf[4] = get_env_uint("tipt1", 100);
+    ui_buf[3] = 0;
+    ui_buf[4] = 0;//input buf pointer
 }
 void tipt_ui_process_event(void*vp)
 {
@@ -1369,10 +1369,11 @@ void tipt_ui_process_event(void*vp)
 #define TIPT_SHOW_WIN_H 250
 #define TIPT_SHOW_WIN_DX 2
 #define TIPT_SHOW_WIN_DY 2
-void do_tipt()
+void do_tipt(void*cfp)
 {
 #ifdef LARGE_SCREEN
-    unsigned char inputs[16]="789";
+    int btidx=*(int*)cfp;
+    char *inputs=(char*)ui_buf;
     win tiptw={TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y, TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_H,
         TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_DY};
     u32 t_show_x=TIPT_SHOW_WIN_X, t_show_y=TIPT_SHOW_WIN_Y;
@@ -1382,10 +1383,21 @@ void do_tipt()
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5);
     draw_sq(TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5, BLACK);
-	t=t9.getpymb(inputs);
+    if(btidx<0 || btidx>=12){
+        lprintf("error btidx\r\n");
+        return;
+    }
+    else if(btidx==0){
+        memset(inputs, 0, 16);
+        ui_buf[4]=0;
+    }
+    else if(btidx<9){
+        inputs[ui_buf[4]++]=0x30+btidx+1;
+    }
+    lprintf("\r\ninput is:%s\r\n",inputs);
+	t=t9.getpymb((unsigned char*)inputs);
 	if(t&0X80)
 	{
-		lprintf("\r\ninput is:%s\r\n",inputs);
 		lprintf("part match:%d\r\n",t&0X7F);
         next_show_char=(const char*)t9.pymb[0]->py;
         next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
@@ -1395,9 +1407,8 @@ void do_tipt()
         next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
 	}else if(t)
 	{
-		lprintf("\r\ninput is:%s\r\n",inputs);
 		lprintf("total match:%d\r\n",t);
-		lprintf("total match result:\r\n");
+		//lprintf("total match result:\r\n");
 		for(i=0;i<t;i++)
 		{
 			//lprintf("%s,%s\r\n",t9.pymb[i]->py,t9.pymb[i]->pymb);
@@ -1420,14 +1431,14 @@ button_t tipt_button[]={
     {TIPT_OX, TIPT_OY, 80,  80, do_tipt, -1, 0, "1 DEL", 0, NULL},
     {TIPT_OX+115, TIPT_OY, 80,  80, do_tipt, -1, 0, "2 abc", 0, NULL},
     {TIPT_OX+245, TIPT_OY, 80,  80, do_tipt, -1, 0, "3 def", 0, NULL},
-    {TIPT_OX+375, TIPT_OY, 80,  80, do_tipt, -1, 0, "", 0, NULL},
     {TIPT_OX, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "4 ghi", 0, NULL},
     {TIPT_OX+115, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "5 jkl", 0, NULL},
     {TIPT_OX+245, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "6 mno", 0, NULL},
-    {TIPT_OX+375, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "", 0, NULL},
     {TIPT_OX, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "7 pqrs", 0, NULL},
     {TIPT_OX+115, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "8 tuv", 0, NULL},
     {TIPT_OX+245, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "9 wxyz", 0, NULL},
+    {TIPT_OX+375, TIPT_OY, 80,  80, do_tipt, -1, 0, "", 0, NULL},
+    {TIPT_OX+375, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "", 0, NULL},
     {TIPT_OX+375, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "", 0, NULL},
 #endif
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
@@ -2156,6 +2167,7 @@ void process_nedt(ui_t* uif, nedt_t* ndt)
 void process_button(ui_t* uif, button_t*pbt)
 {
     uint16_t x = cached_touch_x, y = cached_touch_y;
+    int bt_idx=0;
     while(pbt->x >=0 ){
         if(pbt->disable){
             pbt++;
@@ -2179,7 +2191,7 @@ void process_button(ui_t* uif, button_t*pbt)
                 uif->ui_init(uif);
             }
             if(pbt->click_func){
-                pbt->click_func(NULL);
+                pbt->click_func(&bt_idx);
             }
             lprintf_time("uigot %x\n", pbt->ui_goto);
             if(pbt->ui_goto != -1){
@@ -2187,6 +2199,7 @@ void process_button(ui_t* uif, button_t*pbt)
             }
         }
         pbt++;
+        bt_idx++;
     }
 }
 
