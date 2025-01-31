@@ -1345,7 +1345,7 @@ void tipt_ui_init(void*vp)
     ui_buf[0] = 0;
     ui_buf[1] = 0;
     ui_buf[2] = 0;
-    ui_buf[3] = 0;
+    ui_buf[3] = 0;//choose index. 4 bytes
     ui_buf[4] = 0;//input buf pointer
 }
 void tipt_ui_process_event(void*vp)
@@ -1367,6 +1367,7 @@ void do_tipt(void*cfp)
 #ifdef LARGE_SCREEN
     int btidx=*(int*)cfp;
     char *inputs=(char*)ui_buf;
+    char *choose_idx=(char*)&ui_buf[3];//0-py index 1-char index 2-mode:input/py_choose/char_choose
     win tiptw={TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y, TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_H,
         TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_DY};
     u32 t_show_x=TIPT_SHOW_WIN_X, t_show_y=TIPT_SHOW_WIN_Y-FONT_SIZE-TIPT_SHOW_WIN_DY;
@@ -1377,28 +1378,30 @@ void do_tipt(void*cfp)
     draw_sq(TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5, BLACK);
     lprintf("\r\nbtidx=%d u4=%d\r\n",btidx, ui_buf[4]);
-    mem_print(inputs, 0, 16);
+    mem_print(inputs, 0, 12);
     if(btidx<0 || btidx>=12){
         lprintf("error btidx\r\n");
         return;
     }
     else if(btidx==0){
-        memset(inputs, 0, 16);
-        ui_buf[4]=0;
+        if(ui_buf[4]>0){
+            inputs[ui_buf[4]--]=0;
+        }
     }
     else if(btidx<9){
         inputs[ui_buf[4]++]=0x30+btidx+1;
+        ui_buf[3]=0;
     }
     lprintf("\r\ninput is:%s\r\n",inputs);
 	t=t9.getpymb((unsigned char*)inputs);
 	if(t&0X80)
 	{
 		lprintf("part match:%d\r\n",t&0X7F);
-        t_show_x=TIPT_SHOW_WIN_X;
+        t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
         t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
         next_show_char=(const char*)t9.pymb[0]->py;
         next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
-        t_show_x=TIPT_SHOW_WIN_X;
+        t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
         t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
         next_show_char=(const char*)t9.pymb[0]->pymb;
 		//lprintf("part match result:%s,%s\r\n",t9.pymb[0]->py,t9.pymb[0]->pymb);
@@ -1411,15 +1414,23 @@ void do_tipt(void*cfp)
 		{
 			//lprintf("%s,%s\r\n",t9.pymb[i]->py,t9.pymb[i]->pymb);
             next_show_char=(const char*)t9.pymb[i]->py;
-            t_show_x=TIPT_SHOW_WIN_X;
+            t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
 		}
         if(t==1){
             next_show_char=(const char*)t9.pymb[0]->pymb;
-            t_show_x=TIPT_SHOW_WIN_X;
+            t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
+        }
+        else{
+            next_show_char=(const char*)t9.pymb[(int)choose_idx[0]]->pymb;
+            t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
+            t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
+            next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
+            draw_sq(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2,
+                    TIPT_SHOW_WIN_X+FONT_SIZE*10+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+FONT_SIZE+TIPT_SHOW_WIN_DY/2, BLACK);
         }
 	}else lprintf("no matched results\r\n");
 #endif
