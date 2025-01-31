@@ -1352,14 +1352,6 @@ void tipt_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     (void)uif;
-    ui_buf[0]++;
-    ui_buf[1]++;
-    if(ui_buf[0]>ui_buf[3]){
-        ui_buf[0]=0;
-    }
-    if(ui_buf[1]>ui_buf[4]){
-        ui_buf[1]=0;
-    }
     common_process_event(vp);
 }
 
@@ -1369,6 +1361,7 @@ void tipt_ui_process_event(void*vp)
 #define TIPT_SHOW_WIN_H 250
 #define TIPT_SHOW_WIN_DX 2
 #define TIPT_SHOW_WIN_DY 2
+#define FONT_SIZE 16
 void do_tipt(void*cfp)
 {
 #ifdef LARGE_SCREEN
@@ -1376,13 +1369,15 @@ void do_tipt(void*cfp)
     char *inputs=(char*)ui_buf;
     win tiptw={TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y, TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_H,
         TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_DY};
-    u32 t_show_x=TIPT_SHOW_WIN_X, t_show_y=TIPT_SHOW_WIN_Y;
+    u32 t_show_x=TIPT_SHOW_WIN_X, t_show_y=TIPT_SHOW_WIN_Y-FONT_SIZE-TIPT_SHOW_WIN_DY;
 	unsigned char t=0;
 	unsigned char i=0;
     lcd_clr_window(WHITE, TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5);
     draw_sq(TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5, BLACK);
+    lprintf("\r\nbtidx=%d u4=%d\r\n",btidx, ui_buf[4]);
+    mem_print(inputs, 0, 16);
     if(btidx<0 || btidx>=12){
         lprintf("error btidx\r\n");
         return;
@@ -1399,9 +1394,12 @@ void do_tipt(void*cfp)
 	if(t&0X80)
 	{
 		lprintf("part match:%d\r\n",t&0X7F);
+        t_show_x=TIPT_SHOW_WIN_X;
+        t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
         next_show_char=(const char*)t9.pymb[0]->py;
         next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
         t_show_x=TIPT_SHOW_WIN_X;
+        t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
         next_show_char=(const char*)t9.pymb[0]->pymb;
 		//lprintf("part match result:%s,%s\r\n",t9.pymb[0]->py,t9.pymb[0]->pymb);
         next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
@@ -1414,11 +1412,15 @@ void do_tipt(void*cfp)
 			//lprintf("%s,%s\r\n",t9.pymb[i]->py,t9.pymb[i]->pymb);
             next_show_char=(const char*)t9.pymb[i]->py;
             t_show_x=TIPT_SHOW_WIN_X;
-            next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
-            next_show_char=(const char*)t9.pymb[i]->pymb;
-            t_show_x=TIPT_SHOW_WIN_X;
+            t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
 		}
+        if(t==1){
+            next_show_char=(const char*)t9.pymb[0]->pymb;
+            t_show_x=TIPT_SHOW_WIN_X;
+            t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
+            next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
+        }
 	}else lprintf("no matched results\r\n");
 #endif
 }
