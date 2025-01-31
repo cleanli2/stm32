@@ -29,6 +29,7 @@ enum UI_NAME_INDEX {
     UI_DATE_SET,
     UI_RANDOM,
     UI_SET,
+    UI_TIPT,
 #ifdef DAC_SUPPORT
     UI_WAV,
 #endif

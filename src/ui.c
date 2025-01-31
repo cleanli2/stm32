@@ -258,8 +258,9 @@ button_t main_menu_button[]={
     {130,530,200, 60, NULL, UI_TIMER_SET, 0, "More Timer", 0, more_timer_cch_str},
     {130,600,200, 60, NULL, UI_DATE, 0, "Date&Time", 0, date_cch_str},
 #ifdef DAC_SUPPORT
-    {350,250,80, 60, NULL, UI_WAV, 0, "WavFile", 0, NULL},
+    {350,180,80, 60, NULL, UI_WAV, 0, "WavFile", 0, NULL},
 #endif
+    {350,250,80, 60, NULL, UI_TIPT, 0, "WavFile", 0, NULL},
     {350,460,80, 60, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
     {350,390,80, 60, NULL, UI_RANDOM, 0, "Random", 0, NULL},
     {350,320,80, 60, NULL, UI_SET, 0, "Settings", 0, NULL},
@@ -1334,6 +1335,58 @@ button_t random_button[]={
 };
 /****end of random ui*****/
 
+/****start of tipt ui*****/
+void tipt_ui_init(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    (void)uif;
+    common_ui_init(vp);
+    ui_buf[0] = 0;
+    ui_buf[1] = 0;
+    ui_buf[2] = 0;
+    ui_buf[3] = get_env_uint("tipt0", 100);
+    ui_buf[4] = get_env_uint("tipt1", 100);
+}
+void tipt_ui_process_event(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    (void)uif;
+    ui_buf[0]++;
+    ui_buf[1]++;
+    if(ui_buf[0]>ui_buf[3]){
+        ui_buf[0]=0;
+    }
+    if(ui_buf[1]>ui_buf[4]){
+        ui_buf[1]=0;
+    }
+    common_process_event(vp);
+}
+
+void do_tipt()
+{
+#ifdef LARGE_SCREEN
+    set_LCD_Char_scale(4);
+    lcd_lprintf(200, 175, "%d  ", ui_buf[0]);
+    lcd_lprintf(200, 350, "%d  ", ui_buf[1]);
+    set_LCD_Char_scale(1);
+#else
+    set_LCD_Char_scale(2);
+    lcd_lprintf(100, 100, "%d  ", ui_buf[0]);
+    lcd_lprintf(100, 180, "%d  ", ui_buf[1]);
+    set_LCD_Char_scale(1);
+#endif
+}
+
+button_t tipt_button[]={
+#ifdef LARGE_SCREEN
+    {125, 550, 200,  80, do_tipt, -1, 0, "Push", 0, NULL},
+#else
+    {100, 240, 40,  20, do_tipt, -1, 0, "Push", 0, NULL},
+#endif
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+};
+/****end of tipt ui*****/
+
 /****start of set ui*****/
 nedt_t ui_set_nedt[]={
 #ifdef LARGE_SCREEN
@@ -1773,6 +1826,18 @@ ui_t ui_list[]={
         NULL,//char*timeout_music;
         NULL,
         ui_set_nedt,
+    },
+    {
+        tipt_ui_init,
+        tipt_ui_process_event,
+        NULL,
+        tipt_button,
+        UI_TIPT,
+        220, //timeout
+        0,
+        NULL,//char*timeout_music;
+        NULL,
+        NULL,//nedt_t*
     },
 #ifdef DAC_SUPPORT
     {
