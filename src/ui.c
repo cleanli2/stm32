@@ -1396,10 +1396,10 @@ void do_tipt(void*cfp)
             ui_buf[3]=0;
         }
         else{
-            if(btidx==4){
+            if(btidx==3){
                 choose_idx[1]--;
             }
-            if(btidx==6){
+            if(btidx==5){
                 choose_idx[1]++;
             }
         }
@@ -1463,6 +1463,8 @@ void do_tipt(void*cfp)
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
+            choose_idx[2]=1;
+            choose_idx[0]=0;
         }
         else{
             while(choose_idx[0]<0)choose_idx[0]+=t;
@@ -1475,9 +1477,13 @@ void do_tipt(void*cfp)
                     TIPT_SHOW_WIN_X+FONT_SIZE*10+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+FONT_SIZE+TIPT_SHOW_WIN_DY/2+FONT_SIZE*choose_idx[0], BLACK);
         }
         if(choose_idx[2]==1){
-            while(choose_idx[1]<0)choose_idx[0]+=t9.pymb[(int)choose_idx[0]]->num;
-            while(choose_idx[1]>(t9.pymb[(int)choose_idx[0]]->num))choose_idx[0]-=t9.pymb[(int)choose_idx[0]]->num;
-            draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+FONT_SIZE*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+FONT_SIZE*(t+choose_idx[1]/N_EACH_LINE),
+            lprintf("num=%d\r\n", t9.pymb[(int)choose_idx[0]]->num);
+            lprintf("choose_idx[1]=0x%b\r\n", choose_idx[1]);
+            while(choose_idx[1]<0)choose_idx[1]+=t9.pymb[(int)choose_idx[0]]->num/2;
+            lprintf("choose_idx[1]=0x%b\r\n", choose_idx[1]);
+            while(choose_idx[1]>(t9.pymb[(int)choose_idx[0]]->num/2))choose_idx[1]-=t9.pymb[(int)choose_idx[0]]->num/2;
+            lprintf("choose_idx[1]=0x%b\r\n", choose_idx[1]);
+            draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(t+choose_idx[1]/N_EACH_LINE),
                     FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
         }
 	}else lprintf("no matched results\r\n");
@@ -1492,9 +1498,9 @@ button_t tipt_button[]={
     {TIPT_OX, TIPT_OY, 80,  80, do_tipt, -1, 0, "1 DEL", 0, NULL},
     {TIPT_OX+115, TIPT_OY, 80,  80, do_tipt, -1, 0, "2 abc", 0, NULL},
     {TIPT_OX+245, TIPT_OY, 80,  80, do_tipt, -1, 0, "3 def", 0, NULL},
-    {TIPT_OX, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "4 ghi", 0, NULL},
+    {TIPT_OX, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "4 ghi <", 0, NULL},
     {TIPT_OX+115, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "5 jkl", 0, NULL},
-    {TIPT_OX+245, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "6 mno", 0, NULL},
+    {TIPT_OX+245, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "6 mno >", 0, NULL},
     {TIPT_OX, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "7 pqrs", 0, NULL},
     {TIPT_OX+115, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "8 tuv", 0, NULL},
     {TIPT_OX+245, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "9 wxyz", 0, NULL},
