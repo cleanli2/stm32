@@ -17,6 +17,7 @@ typedef struct
 {
   char *py_input;//输入的字符串
   char *py;	   //对应的拼音
+  int num;
   unsigned char *pymb;	   //码表
 }py_index;
 

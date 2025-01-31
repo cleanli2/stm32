@@ -33,6 +33,7 @@ void timer_ui_transfer_with_para(uint32_t timeout,
         uint32_t repeat, const int8_t* music);
 void draw_button(button_t*pbt);
 void draw_sq(int x1, int y1, int x2, int y2, int color);
+void draw_sq2(int x1, int y1, int w, int h, int color);
 void common_ui_uninit(void*vp);
 
 void timer_set_ui_init(void*vp)
@@ -1362,12 +1363,13 @@ void tipt_ui_process_event(void*vp)
 #define TIPT_SHOW_WIN_DX 2
 #define TIPT_SHOW_WIN_DY 2
 #define FONT_SIZE 16
+#define N_EACH_LINE (TIPT_SHOW_WIN_H/(FONT_SIZE+TIPT_SHOW_WIN_DX))
 void do_tipt(void*cfp)
 {
 #ifdef LARGE_SCREEN
     int btidx=*(int*)cfp;
     char *inputs=(char*)ui_buf;
-    char *choose_idx=(char*)&ui_buf[3];//0-py index 1-char index 2-mode:input/py_choose/char_choose
+    signed char *choose_idx=(signed char*)&ui_buf[3];//0-py index 1-char index 2-mode:input/py_choose/char_choose
     win tiptw={TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y, TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_H,
         TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_DY};
     u32 t_show_x=TIPT_SHOW_WIN_X, t_show_y=TIPT_SHOW_WIN_Y-FONT_SIZE-TIPT_SHOW_WIN_DY;
@@ -1389,14 +1391,46 @@ void do_tipt(void*cfp)
         }
     }
     else if(btidx<9){
-        inputs[ui_buf[4]++]=0x30+btidx+1;
-        ui_buf[3]=0;
+        if(0==choose_idx[2]){
+            inputs[ui_buf[4]++]=0x30+btidx+1;
+            ui_buf[3]=0;
+        }
+        else{
+            if(btidx==4){
+                choose_idx[1]--;
+            }
+            if(btidx==6){
+                choose_idx[1]++;
+            }
+        }
     }
     else if(btidx==9){
-        if(choose_idx[0]>0)choose_idx[0]--;
+        if(0==choose_idx[2]){
+            choose_idx[0]--;
+        }
+        else{
+            choose_idx[1]-=N_EACH_LINE;
+        }
     }
     else if(btidx==10){
-        choose_idx[0]++;
+        if(0==choose_idx[2]){
+            choose_idx[0]++;
+        }
+        else{
+            choose_idx[1]+=N_EACH_LINE;
+        }
+    }
+    else if(btidx==11){//enter
+        if(0==choose_idx[2]){
+            choose_idx[2]=1;
+        }
+        else{
+            ui_buf[0] = 0;
+            ui_buf[1] = 0;
+            ui_buf[2] = 0;
+            ui_buf[3] = 0;//choose index. 4 bytes
+            ui_buf[4] = 0;//input buf pointer
+        }
     }
     lprintf("\r\ninput is:%s\r\n",inputs);
 	t=t9.getpymb((unsigned char*)inputs);
@@ -1431,13 +1465,20 @@ void do_tipt(void*cfp)
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
         }
         else{
-            if(choose_idx[0]>(t-1))choose_idx[0]=t-1;
+            while(choose_idx[0]<0)choose_idx[0]+=t;
+            while(choose_idx[0]>(t-1))choose_idx[0]-=t;
             next_show_char=(const char*)t9.pymb[(int)choose_idx[0]]->pymb;
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
-            draw_sq(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2,
-                    TIPT_SHOW_WIN_X+FONT_SIZE*10+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+FONT_SIZE+TIPT_SHOW_WIN_DY/2, BLACK);
+            draw_sq(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+FONT_SIZE*choose_idx[0],
+                    TIPT_SHOW_WIN_X+FONT_SIZE*10+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+FONT_SIZE+TIPT_SHOW_WIN_DY/2+FONT_SIZE*choose_idx[0], BLACK);
+        }
+        if(choose_idx[2]==1){
+            while(choose_idx[1]<0)choose_idx[0]+=t9.pymb[(int)choose_idx[0]]->num;
+            while(choose_idx[1]>(t9.pymb[(int)choose_idx[0]]->num))choose_idx[0]-=t9.pymb[(int)choose_idx[0]]->num;
+            draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+FONT_SIZE*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+FONT_SIZE*(t+choose_idx[1]/N_EACH_LINE),
+                    FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
         }
 	}else lprintf("no matched results\r\n");
 #endif
@@ -2021,6 +2062,10 @@ void draw_sq(int x1, int y1, int x2, int y2, int color)
         PutPixel(x1,y,color);
         PutPixel(x2,y,color);
     }while(y!=y2);
+}
+void draw_sq2(int x1, int y1, int w, int h, int color)
+{
+    draw_sq(x1, y1, x1+w, y1+h, color);
 }
 
 void draw_prgb_raw(prgb_t*pip)
