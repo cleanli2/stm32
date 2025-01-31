@@ -260,7 +260,7 @@ button_t main_menu_button[]={
 #ifdef DAC_SUPPORT
     {350,180,80, 60, NULL, UI_WAV, 0, "WavFile", 0, NULL},
 #endif
-    {350,250,80, 60, NULL, UI_TIPT, 0, "WavFile", 0, NULL},
+    {350,250,80, 60, NULL, UI_TIPT, 0, "TextInput", 0, NULL},
     {350,460,80, 60, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
     {350,390,80, 60, NULL, UI_RANDOM, 0, "Random", 0, NULL},
     {350,320,80, 60, NULL, UI_SET, 0, "Settings", 0, NULL},
