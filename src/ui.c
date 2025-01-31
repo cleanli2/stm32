@@ -1385,12 +1385,18 @@ void do_tipt(void*cfp)
     }
     else if(btidx==0){
         if(ui_buf[4]>0){
-            inputs[ui_buf[4]--]=0;
+            inputs[--ui_buf[4]]=0;
         }
     }
     else if(btidx<9){
         inputs[ui_buf[4]++]=0x30+btidx+1;
         ui_buf[3]=0;
+    }
+    else if(btidx==9){
+        if(choose_idx[0]>0)choose_idx[0]--;
+    }
+    else if(btidx==10){
+        choose_idx[0]++;
     }
     lprintf("\r\ninput is:%s\r\n",inputs);
 	t=t9.getpymb((unsigned char*)inputs);
@@ -1425,6 +1431,7 @@ void do_tipt(void*cfp)
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
         }
         else{
+            if(choose_idx[0]>(t-1))choose_idx[0]=t-1;
             next_show_char=(const char*)t9.pymb[(int)choose_idx[0]]->pymb;
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
@@ -1450,9 +1457,9 @@ button_t tipt_button[]={
     {TIPT_OX, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "7 pqrs", 0, NULL},
     {TIPT_OX+115, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "8 tuv", 0, NULL},
     {TIPT_OX+245, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "9 wxyz", 0, NULL},
-    {TIPT_OX+375, TIPT_OY, 80,  80, do_tipt, -1, 0, "", 0, NULL},
-    {TIPT_OX+375, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "", 0, NULL},
-    {TIPT_OX+375, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "", 0, NULL},
+    {TIPT_OX+375, TIPT_OY, 80,  80, do_tipt, -1, 0, "up", 0, NULL},//9
+    {TIPT_OX+375, TIPT_OY+100, 80,  80, do_tipt, -1, 0, "down", 0, NULL},//10
+    {TIPT_OX+375, TIPT_OY+200, 80,  80, do_tipt, -1, 0, "enter", 0, NULL},//11
 #endif
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
