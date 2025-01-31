@@ -1366,7 +1366,7 @@ void tipt_ui_process_event(void*vp)
 #define TIPT_SHOW_WIN_X 25
 #define TIPT_SHOW_WIN_Y 125
 #define TIPT_SHOW_WIN_W 400
-#define TIPT_SHOW_WIN_H 300
+#define TIPT_SHOW_WIN_H 250
 #define TIPT_SHOW_WIN_DX 2
 #define TIPT_SHOW_WIN_DY 2
 void do_tipt()
@@ -1378,10 +1378,10 @@ void do_tipt()
     u32 t_show_x=TIPT_SHOW_WIN_X, t_show_y=TIPT_SHOW_WIN_Y;
 	unsigned char t=0;
 	unsigned char i=0;
-    lcd_clr_window(WHITE, TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y,
-            TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H);
-    draw_sq(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y,
-            TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H, BLACK);
+    lcd_clr_window(WHITE, TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
+            TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5);
+    draw_sq(TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
+            TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5, BLACK);
 	t=t9.getpymb(inputs);
 	if(t&0X80)
 	{
