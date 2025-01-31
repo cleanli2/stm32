@@ -1378,11 +1378,18 @@ void do_tipt()
     u32 t_show_x=TIPT_SHOW_WIN_X, t_show_y=TIPT_SHOW_WIN_Y;
 	unsigned char t=0;
 	unsigned char i=0;
+    lcd_clr_window(WHITE, TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y,
+            TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H);
+    draw_sq(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y,
+            TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H, BLACK);
 	t=t9.getpymb(inputs);
 	if(t&0X80)
 	{
 		lprintf("\r\ninput is:%s\r\n",inputs);
 		lprintf("part match:%d\r\n",t&0X7F);
+        next_show_char=(const char*)t9.pymb[0]->py;
+        next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
+        t_show_x=TIPT_SHOW_WIN_X;
         next_show_char=(const char*)t9.pymb[0]->pymb;
 		//lprintf("part match result:%s,%s\r\n",t9.pymb[0]->py,t9.pymb[0]->pymb);
         next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
@@ -1394,6 +1401,10 @@ void do_tipt()
 		for(i=0;i<t;i++)
 		{
 			//lprintf("%s,%s\r\n",t9.pymb[i]->py,t9.pymb[i]->pymb);
+            next_show_char=(const char*)t9.pymb[i]->py;
+            t_show_x=TIPT_SHOW_WIN_X;
+            next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
+            next_show_char=(const char*)t9.pymb[i]->pymb;
             t_show_x=TIPT_SHOW_WIN_X;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
 		}
@@ -1401,7 +1412,7 @@ void do_tipt()
 #endif
 }
 
-#define TIPT_OX 25
+#define TIPT_OX 15
 #define TIPT_OY 400
 
 button_t tipt_button[]={
