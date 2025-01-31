@@ -2,6 +2,7 @@
 #include "fs.h"
 #include "music.h"
 #include "ui.h"
+#include "pyinput.h"
 
 #define POWER_INDICATOR_CYCLE 30
 ui_t working_ui_t;
@@ -1362,18 +1363,41 @@ void tipt_ui_process_event(void*vp)
     common_process_event(vp);
 }
 
+#define TIPT_SHOW_WIN_X 25
+#define TIPT_SHOW_WIN_Y 125
+#define TIPT_SHOW_WIN_W 400
+#define TIPT_SHOW_WIN_H 300
+#define TIPT_SHOW_WIN_DX 2
+#define TIPT_SHOW_WIN_DY 2
 void do_tipt()
 {
 #ifdef LARGE_SCREEN
-    set_LCD_Char_scale(4);
-    lcd_lprintf(200, 175, "%d  ", ui_buf[0]);
-    lcd_lprintf(200, 350, "%d  ", ui_buf[1]);
-    set_LCD_Char_scale(1);
-#else
-    set_LCD_Char_scale(2);
-    lcd_lprintf(100, 100, "%d  ", ui_buf[0]);
-    lcd_lprintf(100, 180, "%d  ", ui_buf[1]);
-    set_LCD_Char_scale(1);
+    unsigned char inputs[16]="789";
+    win tiptw={TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y, TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_H,
+        TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_DY};
+    u32 t_show_x=TIPT_SHOW_WIN_X, t_show_y=TIPT_SHOW_WIN_Y;
+	unsigned char t=0;
+	unsigned char i=0;
+	t=t9.getpymb(inputs);
+	if(t&0X80)
+	{
+		lprintf("\r\ninput is:%s\r\n",inputs);
+		lprintf("part match:%d\r\n",t&0X7F);
+        next_show_char=(const char*)t9.pymb[0]->pymb;
+		//lprintf("part match result:%s,%s\r\n",t9.pymb[0]->py,t9.pymb[0]->pymb);
+        next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
+	}else if(t)
+	{
+		lprintf("\r\ninput is:%s\r\n",inputs);
+		lprintf("total match:%d\r\n",t);
+		lprintf("total match result:\r\n");
+		for(i=0;i<t;i++)
+		{
+			//lprintf("%s,%s\r\n",t9.pymb[i]->py,t9.pymb[i]->pymb);
+            t_show_x=TIPT_SHOW_WIN_X;
+            next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
+		}
+	}else lprintf("no matched results\r\n");
 #endif
 }
 
