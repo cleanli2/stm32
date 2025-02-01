@@ -1436,7 +1436,8 @@ void do_tipt(void*cfp)
         }
     }
     lprintf("\r\ninput is:%s\r\n",inputs);
-	t=t9.getpymb((unsigned char*)inputs);
+    t=t9.getpymb((unsigned char*)inputs);
+    if(t>MAX_PY_OPS)t=MAX_PY_OPS;
 	if(t)
 	{
 		lprintf("total match:%d\r\n",t);
@@ -1458,14 +1459,13 @@ void do_tipt(void*cfp)
             choose_idx[0]=0;
         }
         else{
-            if(t>MAX_PY_OPS)t=MAX_PY_OPS;
             while(choose_idx[0]<0)choose_idx[0]+=t;
             while(choose_idx[0]>(t-1))choose_idx[0]-=t;
             next_show_char=(const char*)t9.pymb[(int)choose_idx[0]]->pymb;
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
-            draw_sq(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+FONT_SIZE*choose_idx[0],
+            draw_sq(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*choose_idx[0],
                     TIPT_SHOW_WIN_X+FONT_SIZE*10+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+FONT_SIZE+TIPT_SHOW_WIN_DY/2+FONT_SIZE*choose_idx[0], BLACK);
         }
         if(choose_idx[2]==1){
