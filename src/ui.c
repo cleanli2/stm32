@@ -1470,16 +1470,16 @@ void do_tipt(void*cfp)
             else{
                 lprintf("final enter, clear\r\n");
                 if(choose_idx[3]){
-                    rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2];
-                    rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2+1];
-                }
-                else{
                     rs[0]=eng.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]];
                     rs[1]=0;
                 }
-                if(rs[0]==0xa1&&rs[1]==0xfd){//enter key
-                    rs[0]=0xd;
-                    rs[1]=0xa;
+                else{
+                    rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2];
+                    rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2+1];
+                    if(rs[0]==0xa1&&rs[1]==0xfd){//enter key
+                        rs[0]=0xd;
+                        rs[1]=0xa;
+                    }
                 }
                 strcat(book_buf, rs);
                 ui_buf[0] = 0;
@@ -1547,10 +1547,10 @@ void do_tipt(void*cfp)
         }
         if(choose_idx[2]==1){
             //lprintf("num=%d\r\n", t9.pymb[(int)choose_idx[0]]->num);
-            if(choose_idx[3]){
+            if(choose_idx[3]){//english
                 while(choose_idx[1]<0)choose_idx[1]+=eng.pymb[(int)choose_idx[0]]->num;
                 while(choose_idx[1]>=(eng.pymb[(int)choose_idx[0]]->num))choose_idx[1]-=eng.pymb[(int)choose_idx[0]]->num;
-                draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE/2)*(choose_idx[1]%(2*N_EACH_LINE)), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(t+choose_idx[1]/(2*N_EACH_LINE)),
+                draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX+FONT_SIZE/2)*(choose_idx[1]%(2*N_EACH_LINE)), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(t+choose_idx[1]/(2*N_EACH_LINE)),
                         FONT_SIZE/2+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
             }
             else{
