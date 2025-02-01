@@ -1363,7 +1363,8 @@ void tipt_ui_process_event(void*vp)
 #define TIPT_SHOW_WIN_DX 2
 #define TIPT_SHOW_WIN_DY 2
 #define FONT_SIZE 16
-#define N_EACH_LINE (TIPT_SHOW_WIN_H/(FONT_SIZE+TIPT_SHOW_WIN_DX*2))
+#define N_EACH_LINE (TIPT_SHOW_WIN_W/(FONT_SIZE+TIPT_SHOW_WIN_DX*2))
+#define MAX_PY_OPS 4
 void do_tipt(void*cfp)
 {
 #ifdef LARGE_SCREEN
@@ -1379,7 +1380,7 @@ void do_tipt(void*cfp)
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5);
     draw_sq(TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5, BLACK);
-    lprintf("\r\nbtidx=%d u4=%d\r\n",btidx, ui_buf[4]);
+    lprintf("\r\nbtidx=%d u4=%d each=%d\r\n",btidx, ui_buf[4], N_EACH_LINE);
     mem_print(inputs, 0, 12);
     if(btidx<0 || btidx>=12){
         lprintf("error btidx\r\n");
@@ -1389,6 +1390,7 @@ void do_tipt(void*cfp)
         if(ui_buf[4]>0){
             inputs[--ui_buf[4]]=0;
         }
+		choose_idx[2]=1;
     }
     else if(btidx<9){
         if(0==choose_idx[2]){
@@ -1435,19 +1437,7 @@ void do_tipt(void*cfp)
     }
     lprintf("\r\ninput is:%s\r\n",inputs);
 	t=t9.getpymb((unsigned char*)inputs);
-	if(t&0X80)
-	{
-		lprintf("part match:%d\r\n",t&0X7F);
-        t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
-        t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
-        next_show_char=(const char*)t9.pymb[0]->py;
-        next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
-        t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
-        t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
-        next_show_char=(const char*)t9.pymb[0]->pymb;
-		//lprintf("part match result:%s,%s\r\n",t9.pymb[0]->py,t9.pymb[0]->pymb);
-        next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
-	}else if(t)
+	if(t)
 	{
 		lprintf("total match:%d\r\n",t);
 		//lprintf("total match result:\r\n");
@@ -1468,6 +1458,7 @@ void do_tipt(void*cfp)
             choose_idx[0]=0;
         }
         else{
+            if(t>MAX_PY_OPS)t=MAX_PY_OPS;
             while(choose_idx[0]<0)choose_idx[0]+=t;
             while(choose_idx[0]>(t-1))choose_idx[0]-=t;
             next_show_char=(const char*)t9.pymb[(int)choose_idx[0]]->pymb;
@@ -1622,22 +1613,22 @@ void wav_ui_init(void*vp)
     ui_buf[0]=0xffffffff;
 
     {
-	    lprintf("sd_init\n");
-	    if((Status = SD_Init()) != SD_OK)
-	    {
-		    lprintf("Fail\n");
-	    }
-	    else{
-		    lprintf("OK\n");
-		    if((Status = SD_GetCardInfo(&mycard)) != SD_OK)
-		    {
-			    lprintf("get card info Fail\n");
-		    }
-		    else{
-			    lprintf("block size %d\n", mycard.CardBlockSize);
-			    lprintf("block capacity %d\n", mycard.CardCapacity);
-		    }
-	    }
+		lprintf("sd_init\n");
+		if((Status = SD_Init()) != SD_OK)
+		{
+			lprintf("Fail\n");
+		}
+		else{
+			lprintf("OK\n");
+			if((Status = SD_GetCardInfo(&mycard)) != SD_OK)
+			{
+				lprintf("get card info Fail\n");
+			}
+			else{
+				lprintf("block size %d\n", mycard.CardBlockSize);
+				lprintf("block capacity %d\n", mycard.CardCapacity);
+			}
+		}
     }
 
     lprintf("wav_ui:dac on\n");

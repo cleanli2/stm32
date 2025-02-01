@@ -26,13 +26,16 @@ unsigned char str_match(unsigned char*str1,unsigned char*str2)
 	unsigned char i=0;
 	while(1)
 	{
-		if(*str1!=*str2)break;		  //部分匹配
-		if(*str1=='\0'){i=0XFF;break;}//完全匹配
+		if(*str1=='\0'){
+			return i;
+		}
+		if(*str1!=*str2){
+			return 0;
+		}
 		i++;
 		str1++;
 		str2++;
 	}
-	return i;//两个字符串相等
 }
 
 //获取匹配的拼音码表
@@ -43,29 +46,17 @@ unsigned char str_match(unsigned char*str1,unsigned char*str2)
 //			   部分匹配的时候，表示有效匹配的位数				    	 
 unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
 {
-	py_index *bestmatch;//最佳匹配
 	int pyindex_len;
 	int i;
-	unsigned char temp,mcnt=0,bmcnt=0;
-	bestmatch=(py_index*)&py_index3[0];//默认为a的匹配
+	unsigned char temp,mcnt=0;
 	pyindex_len=size_of_pyindex();//得到py索引表的大小.
 	for(i=0;i<pyindex_len;i++)
 	{
 		temp=str_match(strin,(unsigned char*)py_index3[i].py_input);
 		if(temp)
 		{
-			if(temp==0XFF)matchlist[mcnt++]=(py_index*)&py_index3[i];
-			else if(temp>bmcnt)//找最佳匹配
-			{
-				bmcnt=temp;
-			    bestmatch=(py_index*)&py_index3[i];//最好的匹配.
-			}
+			matchlist[mcnt++]=(py_index*)&py_index3[i];
 		}
-	}
-	if(mcnt==0&&bmcnt)//没有完全匹配的结果,但是有部分匹配的结果
-	{
-		matchlist[0]=bestmatch;
-		mcnt=bmcnt|0X80;		//返回部分匹配的有效位数
 	}
 	return mcnt;//返回匹配的个数
 }
