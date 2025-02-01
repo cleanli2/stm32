@@ -1548,8 +1548,8 @@ void do_tipt(void*cfp)
         if(choose_idx[2]==1){
             //lprintf("num=%d\r\n", t9.pymb[(int)choose_idx[0]]->num);
             if(choose_idx[3]){//english
-                while(choose_idx[1]<0)choose_idx[1]+=eng.pymb[(int)choose_idx[0]]->num;
-                while(choose_idx[1]>=(eng.pymb[(int)choose_idx[0]]->num))choose_idx[1]-=eng.pymb[(int)choose_idx[0]]->num;
+                while(choose_idx[1]<0)choose_idx[1]+=eng.pymb[(int)choose_idx[0]]->num-1;
+                while(choose_idx[1]>=(eng.pymb[(int)choose_idx[0]]->num))choose_idx[1]-=eng.pymb[(int)choose_idx[0]]->num-1;
                 draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX+FONT_SIZE/2)*(choose_idx[1]%(2*N_EACH_LINE)), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(t+choose_idx[1]/(2*N_EACH_LINE)),
                         FONT_SIZE/2+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
             }
