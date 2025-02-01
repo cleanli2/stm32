@@ -11,6 +11,35 @@
 //版本：V1.0			    
 //广州市星翼电子科技有限公司  	 												    								  
 //////////////////////////////////////////////////////////////////////////////////
+unsigned char get_eng_mb(unsigned char* str);
+
+pyinput eng=
+{
+	get_eng_mb,
+    {0},
+};
+
+unsigned char get_matched_mb(unsigned char *strin,py_index **matchlist)
+{
+	int mbindex_len;
+	int i;
+	unsigned char temp,mcnt=0;
+	mbindex_len=size_of_engmbindex();//
+	for(i=0;i<mbindex_len;i++)
+	{
+		temp=str_match(strin,(unsigned char*)eng_mb_index[i].py_input);
+		if(temp > 0 && ((mcnt<MAX_PY_OPS)||(0x80&temp)))
+		{
+			matchlist[mcnt++]=(py_index*)&eng_mb_index[i];
+		}
+	}
+	return mcnt;//返回匹配的个数
+}
+
+unsigned char get_eng_mb(unsigned char* str)
+{
+	return get_matched_mb(str,eng.pymb);
+}
 
 //拼音输入法
 pyinput t9=

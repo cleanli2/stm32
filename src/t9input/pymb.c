@@ -9,7 +9,33 @@
 //版本：V1.0			    
 //广州市星翼电子科技有限公司  	 												    								  
 //////////////////////////////////////////////////////////////////////////////////
+const unsigned char eng_mb_space []={",.;!?:<>()'"};
+const unsigned char eng_mb_2     []={"2abcABC"};
+const unsigned char eng_mb_3    []={"3defDEF"};
+const unsigned char eng_mb_4    []={"4ghiGHI"};
+const unsigned char eng_mb_5   []={"5jklJKL"};
+const unsigned char eng_mb_6    []={"6mnoMNO"};
+const unsigned char eng_mb_7    []={"7pqrsPQRS"};
+const unsigned char eng_mb_8   []={"8tuvTUV"};
+const unsigned char eng_mb_9   []={"9wxyzWXYZ"};
 
+const py_index eng_mb_index[]=
+{
+    {"2","2",sizeof(eng_mb_2),(unsigned char*)eng_mb_2},
+    {"3","3",sizeof(eng_mb_3),(unsigned char*)eng_mb_3},
+    {"4","4",sizeof(eng_mb_4),(unsigned char*)eng_mb_4},
+    {"5","5",sizeof(eng_mb_5),(unsigned char*)eng_mb_5},
+    {"6","6",sizeof(eng_mb_6),(unsigned char*)eng_mb_6},
+    {"7","7",sizeof(eng_mb_7),(unsigned char*)eng_mb_7},
+    {"8","8",sizeof(eng_mb_8),(unsigned char*)eng_mb_8},
+    {"9","9",sizeof(eng_mb_9),(unsigned char*)eng_mb_9},
+    {"22","pmark",sizeof(eng_mb_space),(unsigned char*)eng_mb_space},
+};
+
+int size_of_engmbindex()
+{
+	return sizeof(eng_mb_index)/sizeof(eng_mb_index[0]);
+}
 //汉字排列表
 const unsigned char PY_mb_space []={"，。；↓、！？《》　：（）“”"};
 const unsigned char PY_mb_a     []={"啊阿腌吖锕嗄錒呵腌"};
