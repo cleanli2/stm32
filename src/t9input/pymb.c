@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 //ºº×ÖÅÅÁĞ±í
-const unsigned char PY_mb_space []={"£¬¡££»¡¢£¡£¿¡¶¡·¡¡£º£¨£©¡°¡±"};
+const unsigned char PY_mb_space []={"£¬¡££»¡ı¡¢£¡£¿¡¶¡·¡¡£º£¨£©¡°¡±"};
 const unsigned char PY_mb_a     []={"°¡°¢ëçß¹ï¹…àÄåHºÇëç"};
 const unsigned char PY_mb_ai    []={"°®°£°¤°¥°¦°§°¨°©°ª°«°¬°­°¯ŞßàÈàÉæÈè¨êÓíÁïÍö°"};
 const unsigned char PY_mb_an    []={"°²°³°´°µ°¶°¸°°°±ÚÏ°·ÛûŞîáíâÖèñï§ğÆ÷ö"};
@@ -423,7 +423,7 @@ const unsigned char PY_mb_zuo   []={"×ó×ô×ö×÷×ø×ù×ò´éßò×õÚè×ÁàÜâôëÑìñíÄõ¡"};
 //Æ´ÒôË÷Òı±í
 const py_index py_index3[]=
 {
-{"","",sizeof(PY_mb_space),(unsigned char*)PY_mb_space},
+{"2","pmark",sizeof(PY_mb_space),(unsigned char*)PY_mb_space},
 {"2","a",sizeof(PY_mb_a),(unsigned char*)PY_mb_a},
 {"3","e",sizeof(PY_mb_e),(unsigned char*)PY_mb_e},
 {"6","o",sizeof(PY_mb_o),(unsigned char*)PY_mb_o},
