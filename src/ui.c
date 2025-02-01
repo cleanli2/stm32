@@ -1395,7 +1395,7 @@ void do_tipt(void*cfp)
     draw_sq(TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
             TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5, BLACK);
     lprintf("\r\nbtidx=%d u4=%d each=%d\r\n",btidx, ui_buf[4], N_EACH_LINE);
-    mem_print(inputs, 0, 12);
+    mem_print(book_buf, 0, 512);
     if(btidx<0 || btidx>=12){
         lprintf("error btidx\r\n");
         return;
@@ -1443,15 +1443,15 @@ void do_tipt(void*cfp)
         }
         else{
             lprintf("final enter, clear\r\n");
+            rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2];
+            rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2+1];
+            rs[2]=0;
+            strcat(book_buf, rs);
             ui_buf[0] = 0;
             ui_buf[1] = 0;
             ui_buf[2] = 0;
             ui_buf[3] = 0;//choose index. 4 bytes
             ui_buf[4] = 0;//input buf pointer
-            rs[0]=t9.pymb[(int)choose_idx[0]]->pymb[choose_idx[1]*2];
-            rs[1]=t9.pymb[(int)choose_idx[0]]->pymb[choose_idx[1]*2+1];
-            rs[2]=0;
-            strcpy(book_buf, rs);
         }
     }
     lprintf("\r\ninput is:%s\r\n",inputs);
@@ -1470,7 +1470,7 @@ void do_tipt(void*cfp)
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
 		}
         if(t==1){
-            next_show_char=(const char*)t9.pymb[0]->pymb;
+            next_show_char=(const char*)t9.pymb[0]->pymb_ch;
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
@@ -1480,7 +1480,7 @@ void do_tipt(void*cfp)
         else{
             while(choose_idx[0]<0)choose_idx[0]+=t;
             while(choose_idx[0]>(t-1))choose_idx[0]-=t;
-            next_show_char=(const char*)t9.pymb[(int)choose_idx[0]]->pymb;
+            next_show_char=(const char*)t9.pymb[(int)choose_idx[0]]->pymb_ch;
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
@@ -1489,11 +1489,11 @@ void do_tipt(void*cfp)
         }
         if(choose_idx[2]==1){
             lprintf("num=%d\r\n", t9.pymb[(int)choose_idx[0]]->num);
-            lprintf("choose_idx[1]=0x%b\r\n", choose_idx[1]);
             while(choose_idx[1]<0)choose_idx[1]+=t9.pymb[(int)choose_idx[0]]->num/2;
-            lprintf("choose_idx[1]=0x%b\r\n", choose_idx[1]);
             while(choose_idx[1]>=(t9.pymb[(int)choose_idx[0]]->num/2))choose_idx[1]-=t9.pymb[(int)choose_idx[0]]->num/2;
+            lprintf("choose_idx[0]=0x%b\r\n", choose_idx[1]);
             lprintf("choose_idx[1]=0x%b\r\n", choose_idx[1]);
+            lprintf("choose_idx[2]=0x%b\r\n", choose_idx[1]);
             draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(t+choose_idx[1]/N_EACH_LINE),
                     FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
         }

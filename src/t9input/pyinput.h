@@ -18,7 +18,7 @@ typedef struct
   char *py_input;//输入的字符串
   char *py;	   //对应的拼音
   int num;
-  unsigned char *pymb;	   //码表
+  unsigned char *pymb_ch;
 }py_index;
 
 #define MAX_MATCH_PYMB 	10	//最大匹配数
