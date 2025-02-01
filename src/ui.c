@@ -1461,6 +1461,10 @@ void do_tipt(void*cfp)
             rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2];
             rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2+1];
             rs[2]=0;
+            if(rs[0]==0xa1&&rs[1]==0xfd){//enter key
+                rs[0]=0xd;
+                rs[1]=0xa;
+            }
             strcat(book_buf, rs);
             ui_buf[0] = 0;
             ui_buf[1] = 0;
