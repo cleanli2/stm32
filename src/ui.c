@@ -39,12 +39,16 @@ void common_ui_uninit(void*vp);
 
 void str_del_last(char* s)
 {
+    int l=strlen(s);
+    if(l==0)return;
     while(*s){
         s++;
     }
     *--s=0;
-    if(*--s>0x80){
-        *s=0;
+    if(l>=2){
+        if(*--s>0x80){
+            *s=0;
+        }
     }
 }
 
@@ -1386,6 +1390,7 @@ void tipt_ui_process_event(void*vp)
 void do_tipt(void*cfp)
 {
 #ifdef LARGE_SCREEN
+    int u_txt=0;
     int btidx=*(int*)cfp;
     char *inputs=(char*)ui_buf;
     char rs[3]={0};
@@ -1412,6 +1417,7 @@ void do_tipt(void*cfp)
         }
         else{
             str_del_last(book_buf);
+            u_txt=1;
         }
 		choose_idx[2]=0;
 		choose_idx[1]=0;
@@ -1462,14 +1468,7 @@ void do_tipt(void*cfp)
             ui_buf[3] = 0;//choose index. 4 bytes
             ui_buf[4] = 0;//input buf pointer
             //update text
-            lcd_clr_window(WHITE, TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
-                    TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5);
-            draw_sq(TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
-                    TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5, BLACK);
-            next_show_char=book_buf;
-            t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
-            t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
-            next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
+            u_txt=1;
         }
     }
     lprintf("\r\ninput is:%s\r\n",inputs);
@@ -1515,6 +1514,16 @@ void do_tipt(void*cfp)
                     FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
         }
 	}else lprintf("no matched results\r\n");
+    if(u_txt){
+        lcd_clr_window(WHITE, TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
+                TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5);
+        draw_sq(TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
+                TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5, BLACK);
+        next_show_char=book_buf;
+        t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
+        t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
+        next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
+    }
 #endif
 }
 
