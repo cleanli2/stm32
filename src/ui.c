@@ -1425,7 +1425,9 @@ void do_tipt(void*cfp)
     else if(btidx<9){
         if(0==choose_idx[2]){
             inputs[ui_buf[4]++]=0x30+btidx+1;
-            ui_buf[3]=0;
+            choose_idx[2]=0;
+            choose_idx[1]=0;
+            choose_idx[0]=0;
         }
         else{
             if(btidx==3){
@@ -1483,8 +1485,10 @@ void do_tipt(void*cfp)
                 ui_buf[0] = 0;
                 ui_buf[1] = 0;
                 ui_buf[2] = 0;
-                ui_buf[3] = 0;//choose index. 4 bytes
                 ui_buf[4] = 0;//input buf pointer
+                choose_idx[2]=0;
+                choose_idx[1]=0;
+                choose_idx[0]=0;
                 //update text
                 u_txt=1;
             }
