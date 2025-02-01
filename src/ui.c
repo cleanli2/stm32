@@ -1474,7 +1474,7 @@ void do_tipt(void*cfp)
             lprintf("choose_idx[1]=0x%b\r\n", choose_idx[1]);
             while(choose_idx[1]<0)choose_idx[1]+=t9.pymb[(int)choose_idx[0]]->num/2;
             lprintf("choose_idx[1]=0x%b\r\n", choose_idx[1]);
-            while(choose_idx[1]>(t9.pymb[(int)choose_idx[0]]->num/2))choose_idx[1]-=t9.pymb[(int)choose_idx[0]]->num/2;
+            while(choose_idx[1]>=(t9.pymb[(int)choose_idx[0]]->num/2))choose_idx[1]-=t9.pymb[(int)choose_idx[0]]->num/2;
             lprintf("choose_idx[1]=0x%b\r\n", choose_idx[1]);
             draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(t+choose_idx[1]/N_EACH_LINE),
                     FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
