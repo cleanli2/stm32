@@ -542,7 +542,7 @@ const py_index py_index3[]=
 {"426","gan",sizeof(PY_mb_gan),(unsigned char*)PY_mb_gan},
 {"426","gao",sizeof(PY_mb_gao),(unsigned char*)PY_mb_gao},
 {"434","gei",sizeof(PY_mb_gei),(unsigned char*)PY_mb_gei},
-{"436","gen",sizeof(PY_mb_gan),(unsigned char*)PY_mb_gan},
+{"436","gen",sizeof(PY_mb_gen),(unsigned char*)PY_mb_gen},
 {"468","gou",sizeof(PY_mb_gou),(unsigned char*)PY_mb_gou},
 {"482","gua",sizeof(PY_mb_gua),(unsigned char*)PY_mb_gua},
 {"484","gui",sizeof(PY_mb_gui),(unsigned char*)PY_mb_gui},

@@ -1377,7 +1377,7 @@ void tipt_ui_process_event(void*vp)
 #define TIPT_TEXT_SHOW_WIN_Y 40
 #define TIPT_TEXT_SHOW_WIN_W 430
 #define TIPT_TEXT_SHOW_WIN_H 150
-#define TIPT_TEXT_SHOW_WIN_DX 2
+#define TIPT_TEXT_SHOW_WIN_DX 1
 #define TIPT_TEXT_SHOW_WIN_DY 2
 #define TIPT_SHOW_WIN_X 25
 #define TIPT_SHOW_WIN_Y 200
@@ -1406,7 +1406,7 @@ void do_tipt(void*cfp)
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5);
     draw_sq(TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5, BLACK);
-    lprintf("\r\nbtidx=%d u4=%d each=%d\r\n",btidx, ui_buf[4], N_EACH_LINE);
+    //lprintf("\r\nbtidx=%d u4=%d each=%d\r\n",btidx, ui_buf[4], N_EACH_LINE);
     if(btidx<0 || btidx>=12){
         lprintf("error btidx\r\n");
         return;
@@ -1475,11 +1475,11 @@ void do_tipt(void*cfp)
             u_txt=1;
         }
     }
-    lprintf("\r\ninput is:%s\r\n",inputs);
+    lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*11, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%s", inputs);
     t=t9.getpymb((unsigned char*)inputs);
 	if(t)
 	{
-		lprintf("total match:%d\r\n",t);
+		//lprintf("total match:%d\r\n",t);
 		//lprintf("total match result:\r\n");
 		for(i=0;i<t;i++)
 		{
@@ -1508,12 +1508,9 @@ void do_tipt(void*cfp)
                     FONT_SIZE*10, FONT_SIZE+TIPT_SHOW_WIN_DY/2, BLACK);
         }
         if(choose_idx[2]==1){
-            lprintf("num=%d\r\n", t9.pymb[(int)choose_idx[0]]->num);
+            //lprintf("num=%d\r\n", t9.pymb[(int)choose_idx[0]]->num);
             while(choose_idx[1]<0)choose_idx[1]+=t9.pymb[(int)choose_idx[0]]->num/2;
             while(choose_idx[1]>=(t9.pymb[(int)choose_idx[0]]->num/2))choose_idx[1]-=t9.pymb[(int)choose_idx[0]]->num/2;
-            lprintf("choose_idx[0]=0x%b\r\n", choose_idx[1]);
-            lprintf("choose_idx[1]=0x%b\r\n", choose_idx[1]);
-            lprintf("choose_idx[2]=0x%b\r\n", choose_idx[1]);
             draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(t+choose_idx[1]/N_EACH_LINE),
                     FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
         }
