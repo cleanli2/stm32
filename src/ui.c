@@ -1445,34 +1445,38 @@ void do_tipt(void*cfp)
         }
     }
     else if(btidx==10){
-        if(0==choose_idx[2]){
-            choose_idx[0]++;
-        }
-        else{
-            choose_idx[1]+=N_EACH_LINE;
+        if(ui_buf[4]>0){
+            if(0==choose_idx[2]){
+                choose_idx[0]++;
+            }
+            else{
+                choose_idx[1]+=N_EACH_LINE;
+            }
         }
     }
     else if(btidx==11){//enter
-        if(0==choose_idx[2]){
-            choose_idx[2]=1;
-        }
-        else{
-            lprintf("final enter, clear\r\n");
-            rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2];
-            rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2+1];
-            rs[2]=0;
-            if(rs[0]==0xa1&&rs[1]==0xfd){//enter key
-                rs[0]=0xd;
-                rs[1]=0xa;
+        if(ui_buf[4]>0){
+            if(0==choose_idx[2]){
+                choose_idx[2]=1;
             }
-            strcat(book_buf, rs);
-            ui_buf[0] = 0;
-            ui_buf[1] = 0;
-            ui_buf[2] = 0;
-            ui_buf[3] = 0;//choose index. 4 bytes
-            ui_buf[4] = 0;//input buf pointer
-            //update text
-            u_txt=1;
+            else{
+                lprintf("final enter, clear\r\n");
+                rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2];
+                rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2+1];
+                rs[2]=0;
+                if(rs[0]==0xa1&&rs[1]==0xfd){//enter key
+                    rs[0]=0xd;
+                    rs[1]=0xa;
+                }
+                strcat(book_buf, rs);
+                ui_buf[0] = 0;
+                ui_buf[1] = 0;
+                ui_buf[2] = 0;
+                ui_buf[3] = 0;//choose index. 4 bytes
+                ui_buf[4] = 0;//input buf pointer
+                //update text
+                u_txt=1;
+            }
         }
     }
     lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*11, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%s", inputs);
