@@ -1390,7 +1390,8 @@ void do_tipt(void*cfp)
         if(ui_buf[4]>0){
             inputs[--ui_buf[4]]=0;
         }
-		choose_idx[2]=1;
+		choose_idx[2]=0;
+		choose_idx[1]=0;
     }
     else if(btidx<9){
         if(0==choose_idx[2]){
@@ -1465,8 +1466,8 @@ void do_tipt(void*cfp)
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
-            draw_sq(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*choose_idx[0],
-                    TIPT_SHOW_WIN_X+FONT_SIZE*10+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+FONT_SIZE+TIPT_SHOW_WIN_DY/2+FONT_SIZE*choose_idx[0], BLACK);
+            draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*choose_idx[0],
+                    FONT_SIZE*10, FONT_SIZE+TIPT_SHOW_WIN_DY/2, BLACK);
         }
         if(choose_idx[2]==1){
             lprintf("num=%d\r\n", t9.pymb[(int)choose_idx[0]]->num);
