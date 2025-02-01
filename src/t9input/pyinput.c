@@ -1,5 +1,6 @@
 #include "pyinput.h"
 #include "string.h"
+#include "common.h"
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序参考自网络并加以修改
 //ALIENTEK战舰STM32开发板
@@ -19,15 +20,14 @@ pyinput t9=
 };
 
 //比较两个字符串的匹配情况
-//返回值:0xff,表示完全匹配.
-//		 其他,匹配的字符数
 unsigned char str_match(unsigned char*str1,unsigned char*str2)
 {
 	unsigned char i=0;
 	while(1)
 	{
 		if(*str1=='\0'){
-			return i;
+            if(*str2=='\0')return 0x80+i;
+            else return i;
 		}
 		if(*str1!=*str2){
 			return 0;
@@ -40,10 +40,6 @@ unsigned char str_match(unsigned char*str1,unsigned char*str2)
 
 //获取匹配的拼音码表
 //*strin,输入的字符串,形如:"726"
-//**matchlist,输出的匹配表.
-//返回值:[7],0,表示完全匹配；1，表示部分匹配（仅在没有完全匹配的时候才会出现）
-//		 [6:0],完全匹配的时候，表示完全匹配的拼音个数
-//			   部分匹配的时候，表示有效匹配的位数				    	 
 unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
 {
 	int pyindex_len;
@@ -53,7 +49,7 @@ unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
 	for(i=0;i<pyindex_len;i++)
 	{
 		temp=str_match(strin,(unsigned char*)py_index3[i].py_input);
-		if(temp)
+		if(temp > 0 && ((mcnt<MAX_PY_OPS)||(0x80&temp)))
 		{
 			matchlist[mcnt++]=(py_index*)&py_index3[i];
 		}

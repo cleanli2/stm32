@@ -23,6 +23,8 @@ typedef struct
 
 #define MAX_MATCH_PYMB 	10	//最大匹配数
 
+#define MAX_PY_OPS 4
+
 //拼音输入法
 typedef struct
 {

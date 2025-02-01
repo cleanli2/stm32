@@ -1371,7 +1371,6 @@ void tipt_ui_process_event(void*vp)
 #define TIPT_SHOW_WIN_DY 2
 #define FONT_SIZE 16
 #define N_EACH_LINE (TIPT_SHOW_WIN_W/(FONT_SIZE+TIPT_SHOW_WIN_DX*2))
-#define MAX_PY_OPS 4
 void do_tipt(void*cfp)
 {
 #ifdef LARGE_SCREEN
@@ -1456,7 +1455,6 @@ void do_tipt(void*cfp)
     }
     lprintf("\r\ninput is:%s\r\n",inputs);
     t=t9.getpymb((unsigned char*)inputs);
-    if(t>MAX_PY_OPS)t=MAX_PY_OPS;
 	if(t)
 	{
 		lprintf("total match:%d\r\n",t);
