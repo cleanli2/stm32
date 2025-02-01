@@ -10,7 +10,7 @@
 //广州市星翼电子科技有限公司  	 												    								  
 //////////////////////////////////////////////////////////////////////////////////
 const unsigned char eng_mb_space []={",.;!?:<>()'"};
-const unsigned char eng_mb_2     []={"2abcABC"};
+const unsigned char eng_mb_2     []={"012abcABC"};
 const unsigned char eng_mb_3    []={"3defDEF"};
 const unsigned char eng_mb_4    []={"4ghiGHI"};
 const unsigned char eng_mb_5   []={"5jklJKL"};
