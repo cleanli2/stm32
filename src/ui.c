@@ -36,6 +36,18 @@ void draw_sq(int x1, int y1, int x2, int y2, int color);
 void draw_sq2(int x1, int y1, int w, int h, int color);
 void common_ui_uninit(void*vp);
 
+
+void str_del_last(char* s)
+{
+    while(*s){
+        s++;
+    }
+    *--s=0;
+    if(*--s>0x80){
+        *s=0;
+    }
+}
+
 void timer_set_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -1389,12 +1401,7 @@ void do_tipt(void*cfp)
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5);
     draw_sq(TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5, BLACK);
-    lcd_clr_window(WHITE, TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
-            TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5);
-    draw_sq(TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
-            TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5, BLACK);
     lprintf("\r\nbtidx=%d u4=%d each=%d\r\n",btidx, ui_buf[4], N_EACH_LINE);
-    mem_print(book_buf, 0, 512);
     if(btidx<0 || btidx>=12){
         lprintf("error btidx\r\n");
         return;
@@ -1402,6 +1409,9 @@ void do_tipt(void*cfp)
     else if(btidx==0){
         if(ui_buf[4]>0){
             inputs[--ui_buf[4]]=0;
+        }
+        else{
+            str_del_last(book_buf);
         }
 		choose_idx[2]=0;
 		choose_idx[1]=0;
@@ -1451,6 +1461,15 @@ void do_tipt(void*cfp)
             ui_buf[2] = 0;
             ui_buf[3] = 0;//choose index. 4 bytes
             ui_buf[4] = 0;//input buf pointer
+            //update text
+            lcd_clr_window(WHITE, TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
+                    TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5);
+            draw_sq(TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
+                    TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5, BLACK);
+            next_show_char=book_buf;
+            t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
+            t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
+            next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
         }
     }
     lprintf("\r\ninput is:%s\r\n",inputs);
@@ -1496,10 +1515,6 @@ void do_tipt(void*cfp)
                     FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
         }
 	}else lprintf("no matched results\r\n");
-    next_show_char=book_buf;
-    t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
-    t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
-    next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
 #endif
 }
 
