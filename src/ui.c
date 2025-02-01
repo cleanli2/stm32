@@ -1502,7 +1502,6 @@ void do_tipt(void*cfp)
     {
         lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*22, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "English");
         t=eng.getpymb((unsigned char*)inputs);
-        if(t>1)t=1;
     }
     else
     {
