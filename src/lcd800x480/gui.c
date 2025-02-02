@@ -940,7 +940,7 @@ const char* area_show_str(win_pt wdp, u32 *xp, u32 *yp, const char*string, int i
 {
     const char* ret;
     //lprintf("ass>x %d y %d\n", *xp, *yp);
-    ret = Show_Str_win_raw(xp, yp, BLACK, WHITE, string, 16, 0, wdp, is_dummy);
+    ret = Show_Str_win_raw(xp, yp, POINT_COLOR, WHITE, string, 16, 0, wdp, is_dummy);
     //lprintf("ass<x %d y %d\n", *xp, *yp);
     return ret;
 }
