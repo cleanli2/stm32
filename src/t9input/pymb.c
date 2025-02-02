@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 const unsigned char eng_mb_space []={",.;!?:<>()'"};
 const unsigned char eng_mb_2     []={"012abcABC"};
-const unsigned char eng_mb_3    []={"3defDEF"};
+const unsigned char eng_mb_3    []={" 3defDEF"};
 const unsigned char eng_mb_4    []={"4ghiGHI"};
 const unsigned char eng_mb_5   []={"5jklJKL"};
 const unsigned char eng_mb_6    []={"6mnoMNO"};
