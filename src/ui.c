@@ -1365,6 +1365,8 @@ void tipt_ui_init(void*vp)
     ui_buf[3] = 0;//choose index. 4 bytes
     ui_buf[4] = 0;//input buf pointer
     memset(book_buf, 0, 512);
+    book_buf[0]=0xa1;
+    book_buf[1]=0xfd;//indicator in text
 }
 void tipt_ui_process_event(void*vp)
 {
@@ -1393,7 +1395,7 @@ void do_tipt(void*cfp)
     int u_txt=0;
     int btidx=*(int*)cfp;
     char *inputs=(char*)ui_buf;
-    char rs[3]={0};
+    char rs[5]={0};
     signed char *choose_idx=(signed char*)&ui_buf[3];//0-py index 1-char index 2-mode:input/py_choose/char_choose 3-eng/chs
     win tiptw={TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y, TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_H,
         TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_DY};
@@ -1416,7 +1418,12 @@ void do_tipt(void*cfp)
             inputs[--ui_buf[4]]=0;
         }
         else{
-            str_del_last(book_buf);
+            str_del_last(book_buf);//del indicator
+            str_del_last(book_buf);//del real one
+            rs[0]=0xa1;
+            rs[1]=0xfd;
+            rs[2]=0;
+            strcat(book_buf, rs);
             u_txt=1;
         }
 		choose_idx[2]=0;
@@ -1461,6 +1468,9 @@ void do_tipt(void*cfp)
                 }
             }
         }
+        else{//switch chs/eng mode
+            choose_idx[3]=1-choose_idx[3];
+        }
     }
     else if(btidx==11){//enter
         if(ui_buf[4]>0){
@@ -1469,17 +1479,19 @@ void do_tipt(void*cfp)
             }
             else{
                 lprintf("final enter, clear\r\n");
+                str_del_last(book_buf);//del last indicator
                 if(choose_idx[3]){
                     rs[0]=eng.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]];
-                    rs[1]=0;
+                    rs[1]=0xa1;
+                    rs[2]=0xfd;
+                    rs[3]=0;
                 }
                 else{
                     rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2];
                     rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2+1];
-                    if(rs[0]==0xa1&&rs[1]==0xfd){//enter key
-                        rs[0]=0xd;
-                        rs[1]=0xa;
-                    }
+                    rs[2]=0xa1;
+                    rs[3]=0xfd;
+                    rs[4]=0;
                 }
                 strcat(book_buf, rs);
                 ui_buf[0] = 0;
@@ -1493,8 +1505,14 @@ void do_tipt(void*cfp)
                 u_txt=1;
             }
         }
-        else{//switch chs/eng mode
-            choose_idx[3]=1-choose_idx[3];
+        else{//enter in text
+            str_del_last(book_buf);
+            rs[0]=0xd;
+            rs[1]=0xa;
+            rs[2]=0xa1;
+            rs[3]=0xfd;
+            rs[4]=0;
+            strcat(book_buf, rs);
         }
     }
     lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*11, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%s", inputs);
