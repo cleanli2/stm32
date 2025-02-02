@@ -40,9 +40,9 @@ int check_same(const char*s)
 {
     char compare[]="I love China, which has 5000 years histroy!";
     int n=strlen(s);
-    if(n<4)return 1;
+    if(n<3)return 1;
     
-    return 0==strncmp(compare, s, n-3);
+    return 0==strncmp(compare, s, n-2);
 }
 
 void str_del_last(char* s)
@@ -1599,7 +1599,6 @@ void do_tipt(void*cfp)
         t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
         t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
         if(!check_same(book_buf)){
-            lprintf("not same\n");
             POINT_COLOR=RED;
         }
         next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
