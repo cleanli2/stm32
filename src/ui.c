@@ -36,6 +36,14 @@ void draw_sq(int x1, int y1, int x2, int y2, int color);
 void draw_sq2(int x1, int y1, int w, int h, int color);
 void common_ui_uninit(void*vp);
 
+int check_same(const char*s)
+{
+    char compare[]="I love China, which has 5000 years histroy!";
+    int n=strlen(s);
+    if(n<4)return 1;
+    
+    return 0==strncmp(compare, s, n-3);
+}
 
 void str_del_last(char* s)
 {
@@ -1513,6 +1521,7 @@ void do_tipt(void*cfp)
             rs[3]=0xfd;
             rs[4]=0;
             strcat(book_buf, rs);
+            u_txt=1;
         }
     }
     lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*11, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%s", inputs);
@@ -1589,7 +1598,12 @@ void do_tipt(void*cfp)
         next_show_char=book_buf;
         t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
         t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
+        if(!check_same(book_buf)){
+            lprintf("not same\n");
+            POINT_COLOR=RED;
+        }
         next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
+        POINT_COLOR=BLACK;
     }
 #endif
 }
