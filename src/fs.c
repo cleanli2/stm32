@@ -674,6 +674,7 @@ void close_file()
         g_fp->clust_sec_offset = 0;
         g_fp->in_writing = 0;
         g_fp->sclust=INVALID_CLUSTER;
+        g_fp->fsize=0;
     }
 }
 
@@ -737,4 +738,9 @@ int read_sec_from_file(char*buf)
     }
     g_fp->fptr += g_fs->ssize;
     return g_fp->fptr;
+}
+
+uint32_t get_filesize()
+{
+    return g_fp->fsize;
 }

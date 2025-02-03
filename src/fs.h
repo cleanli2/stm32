@@ -173,4 +173,5 @@ void fs_hw_init(disk_opers*dops);
 int write_sec_to_file(const char*buf);
 void close_file();
 int read_sec_from_file(char*buf);
+uint32_t get_filesize();
 #endif
