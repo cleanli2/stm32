@@ -1425,6 +1425,9 @@ int check_same(const char*s)
 {
     int n=strlen(s);
     if(n<3)return 1;
+
+    mem_print(s, 0, n-2);
+    mem_print(tipt_buf, 0, n-2);
     
     return 0==strncmp(tipt_buf, s, n-2);
 }
@@ -1578,6 +1581,15 @@ void do_tipt(void*cfp)
             rs[3]=0xfd;
             rs[4]=0;
             strcat(book_buf, rs);
+
+            //handle compare buf update
+            SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
+            rs[2]=0;
+            if(strlen(tipt_buf)>=TIPT_BUF_SIZE-3){
+                str_leftmove(tipt_buf, 2);
+            }
+            ui_buf[5]+=2;
+            strcat(tipt_buf, rs);
             u_txt=1;
         }
     }
