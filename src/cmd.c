@@ -1589,9 +1589,11 @@ void rtc_cmd(char *p)
     return;
 
 }
+//#define ROUND_512(X) (X==0?0:((X-1)/512+1)*512)
+#define ROUND_512(X) (((X-1)/512+1)*512)
 void file_op(char *p)
 {
-    uint32_t tmp;
+    uint32_t tmp, pos;
     char* path;
     tmp = get_howmany_para(p);
     lprintf("tmp=%d\n", tmp);
@@ -1601,8 +1603,13 @@ void file_op(char *p)
     }
     if(tmp>=1){
         p = str_to_str(p, &path);
-        if(FS_OK==open_file_w(path)){
-            lprintf("Open %s OK\n", path);
+        if(FS_OK==open_file_r(path)){
+            tmp=get_filesize();
+            lprintf("Open %s OK, length %d\n", path, tmp);
+            while((pos=read_sec_from_file((char*)read_buf))<=ROUND_512(tmp)){
+                lprintf("pos=%d\n", pos);
+                mem_print((const char*)read_buf, pos-512, 512);
+            }
         }
         else{
             lprintf("Open %s fail\n", path);
