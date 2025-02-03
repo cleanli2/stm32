@@ -1006,7 +1006,7 @@ void sd_ui_init(void*vp)
 void sd_ui_uninit(void*vp)
 {
     if(0xffffffff!=ui_buf[0]){
-        close_file(ui_buf[0]);
+        close_file_legacy(ui_buf[0]);
     }
     common_ui_uninit(vp);
     lprintf("setenv page_start_offset %d\n", page_start_offset);
@@ -1399,7 +1399,7 @@ void tipt_ui_process_event(void*vp)
 #define N_EACH_LINE (TIPT_SHOW_WIN_W/(FONT_SIZE+TIPT_SHOW_WIN_DX*2))
 #define N_TEXT_EACH_LINE (TIPT_TEXT_SHOW_WIN_W/(FONT_SIZE+TIPT_TEXT_SHOW_WIN_DX*2))
 #define N_TEXT_LINES (TIPT_TEXT_SHOW_WIN_H/(FONT_SIZE+TIPT_TEXT_SHOW_WIN_DY))
-#dfine TIPT_BUF_SIZE ((N_TEXT_EACH_LINE/2-1)*N_TEXT_LINES)
+#define TIPT_BUF_SIZE ((N_TEXT_EACH_LINE/2-1)*N_TEXT_LINES)
 char tipt_buf[TIPT_BUF_SIZE];
 void do_tipt(void*cfp)
 {
@@ -1812,7 +1812,7 @@ void wav_ui_process_event(void*vp)
                 ret = read_file(ui_buf[0], book_buf, ui_buf[2], rlen);
                 if(ret != FS_OK){
                     lprintf("sd wave file read fail\n");
-                    close_file(ui_buf[0]);
+                    close_file_legacy(ui_buf[0]);
                     ui_buf[0]=0xffffffff;
                     return;
                 }
@@ -1887,7 +1887,7 @@ void wav_ui_process_event(void*vp)
 void wav_ui_uninit(void*vp)
 {
     if(0xffffffff!=ui_buf[0]){
-        close_file(ui_buf[0]);
+        close_file_legacy(ui_buf[0]);
     }
     Dac1_DeInit();
     dac_set_freq(0);//11k
@@ -1905,7 +1905,7 @@ void wav_next_file()
     int l=9, fd, file_len;
     ui_buf[6]=1;//pause play
     if(0xffffffff!=ui_buf[0]){
-        close_file(ui_buf[0]);
+        close_file_legacy(ui_buf[0]);
         ui_buf[0]=0xffffffff;
     }
     while(l--){

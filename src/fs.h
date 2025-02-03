@@ -6,6 +6,8 @@ typedef uint8_t BYTE;
 typedef uint16_t WORD;
 typedef uint32_t DWORD;
 
+#define FS_HW_INITED 0xf54711ed
+
 #define FS_OK 0
 #define FS_FAIL (-1)
 #define FS_DISK_ERR (-2)
@@ -104,6 +106,8 @@ typedef uint32_t DWORD;
 #define FS_FAT32	3
 #define MIN_EOF	0x0FFFFFF8
 typedef SD_Error (*block_read_func)(uint8_t* pBuffer, uint32_t block_n, uint16_t BlockSize);
+typedef SD_Error (*block_write_func)(uint8_t* pBuffer, uint32_t block_n, uint16_t BlockSize);
+typedef SD_Error (*disk_init_func)(void);
 
 typedef struct {
 	BYTE	fs_type;		/* FAT sub-type (0:Not mounted) */
@@ -132,18 +136,29 @@ typedef struct {
 	DWORD	tsect;		    /* Total sectors */
 	WORD	nrsv;		    /* reserv sectors */
     block_read_func rd_block;
+    block_write_func wt_block;
+    disk_init_func disk_init;
 
 } FATFS;
+
+typedef struct {
+    block_read_func rd_block;
+    block_write_func wt_block;
+    disk_init_func disk_init;
+    uint32_t disk_hw_inited;
+} disk_opers;
 
 typedef struct {
 	FATFS*	fs;				/* Pointer to the related file system object (**do not change order**) */
 	WORD	id;				/* Owner file system mount ID (**do not change order**) */
 	BYTE	flag;			/* Status flags */
 	BYTE	err;			/* Abort flag (error code) */
+	BYTE	in_writing;		/* flag of writing*/
 	DWORD	fptr;			/* File read/write pointer (Zeroed on file open) */
 	DWORD	fsize;			/* File size */
 	DWORD	sclust;			/* File start cluster (0:no cluster chain, always 0 when fsize is 0) */
 	DWORD	clust;			/* Current cluster of fpter (not valid when fprt is 0) */
+	DWORD	clust_sec_offset;	/* offset of Current cluster*/
 	DWORD	dsect;			/* Sector number appearing in buf[] (0:invalid) */
 #if _FS_WRITE
 	DWORD	dir_sect;		/* Sector number containing the directory entry */
@@ -153,6 +168,14 @@ typedef struct {
 } FIL;
 
 int open_file(block_read_func rd_block, const char*fn, const char*en, int*filesize);
-int close_file(int fd);
+int close_file_legacy(int fd);
 int read_file(int fd, char*buf, uint32_t file_offset, uint32_t len);
+int open_file_for_write(const char*fn, const char*ext);
+int open_file_w(const char*path);
+int open_file_r(const char*path);
+void fs_hw_init(disk_opers*dops);
+int write_sec_to_file(const char*buf);
+void close_file();
+int read_sec_from_file(char*buf);
+uint32_t get_filesize();
 #endif

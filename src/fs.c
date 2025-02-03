@@ -507,7 +507,7 @@ int open_file(block_read_func rd_block, const char*fn, const char*en, int*filesi
     return file_opened_no;
 }
 
-int close_file(int fd)
+int close_file_legacy(int fd)
 {
     if(file_opened_no!=fd){
         return FS_FILE_NOT_OPEN;

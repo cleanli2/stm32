@@ -1198,13 +1198,13 @@ void dac(char *p)
                 ret = read_file(fd, filebuf, foffset, 512);
                 if(ret != FS_OK){
                     lprintf("sd file read fail\n");
-                    close_file(fd);
+                    close_file_legacy(fd);
                     return;
                 }
                 para2=(uint32_t)filebuf;
                 Dac1_wave(type, para2);
                 if(con_is_recved()){
-                    close_file(fd);
+                    close_file_legacy(fd);
                     return;
                 }
                 if(left_len>512){
@@ -1213,7 +1213,7 @@ void dac(char *p)
                 }
                 else{
                     lprintf("file play done\n");
-                    close_file(fd);
+                    close_file_legacy(fd);
                     return;
                 }
             }
@@ -1264,7 +1264,7 @@ void f2erm(char *p)
         ret = read_file(fd, filebuf, foffset, 512);
         if(ret != FS_OK){
             lprintf("sd file read fail\n");
-            close_file(fd);
+            close_file_legacy(fd);
             return;
         }
         lprintf("ee write: %X\n", eaddr);
@@ -1276,7 +1276,7 @@ void f2erm(char *p)
         }
         else{
             lprintf("file copy done\n");
-            close_file(fd);
+            close_file_legacy(fd);
             return;
         }
     }
