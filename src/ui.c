@@ -1457,8 +1457,8 @@ int check_same(const char*s)
         }
     }
 
-    mem_print(s, 0, n-2);
-    mem_print(tipt_buf, 0, n-2);
+    //mem_print(s, 0, n-2);
+    //mem_print(tipt_buf, 0, n-2);
     
     if(0==strncmp(tipt_buf, s, n-2)){
         ui_buf[8]=ui_buf[5];

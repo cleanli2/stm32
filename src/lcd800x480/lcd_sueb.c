@@ -965,7 +965,7 @@ void set_BL_value(uint16_t v)
 {
     static int BL_PWM_inited = 0;
     uint16_t comp_v;
-    lprintf("v=%d\n", v);
+    //lprintf("v=%d\n", v);
     if(v>100){
         lprintf("err:BL v>100\n");
         return;
@@ -973,7 +973,7 @@ void set_BL_value(uint16_t v)
     cur_bl_value = v;
     if(v>0){
         comp_v = 0x9000/100*(100-v);
-        lprintf("comp_v=%x\n", comp_v);
+        //lprintf("comp_v=%x\n", comp_v);
         TIM_SetCompare1(TIM1,comp_v);
         if(!BL_PWM_inited){
             BL_PWM_init();
