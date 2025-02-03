@@ -9,7 +9,7 @@ ui_t working_ui_t;
 int cur_ui_index = 0;
 int last_ui_index = 0;
 ui_t*current_ui;
-uint32_t ui_buf[8];
+uint32_t ui_buf[16];
 int prgb_color = BLACK;
 
 static uint32_t power_indicator_counter = 0;
@@ -1378,7 +1378,7 @@ void tipt_ui_uninit(void*vp)
     if(ui_buf[5]<0xffffff){
         set_env_uint("tiptsz", ui_buf[7]);
         set_env_uint("tiptsa", ui_buf[6]);
-        set_env_uint("tiptpo", ui_buf[5]-ui_buf[6]);
+        set_env_uint("tiptpo", ui_buf[8]-ui_buf[6]);
     }
 }
 void tipt_ui_init(void*vp)
@@ -1429,6 +1429,7 @@ int check_same(const char*s)
     //handle compare buf update
     if(ui_buf[5]<0xffffff){
         int e2rom_need_n=n-strlen(tipt_buf);
+        if(e2rom_need_n>4)return 0;
         while(e2rom_need_n>0){
             SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
             if(rs[0]>0x80){
@@ -1456,7 +1457,13 @@ int check_same(const char*s)
     mem_print(s, 0, n-2);
     mem_print(tipt_buf, 0, n-2);
     
-    return 0==strncmp(tipt_buf, s, n-2);
+    if(0==strncmp(tipt_buf, s, n-2)){
+        ui_buf[8]=ui_buf[5];
+        return 1;
+    }
+    else{
+        return 0;
+    }
 }
 
 void do_tipt(void*cfp)
@@ -1591,6 +1598,7 @@ void do_tipt(void*cfp)
                 ui_buf[6]=get_env_uint("tiptsa", 0x100000);//tipt start addr of e2rom
                 if(iadr==ui_buf[6]){
                     ui_buf[5]=ui_buf[6]+get_env_uint("tiptpo", 0);//tipt progress offset
+                    ui_buf[8]=ui_buf[5];
                     ui_buf[7]=get_env_uint("tiptsz", 0x100);//tipt size
 
                     memset(book_buf, 0, 512);
