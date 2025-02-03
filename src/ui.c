@@ -1430,6 +1430,9 @@ int check_same(const char*s)
     if(ui_buf[5]<0xffffff){
         int e2rom_need_n=n-strlen(tipt_buf);
         if(e2rom_need_n>4)return 0;
+        if(ui_buf[5]-ui_buf[6]+e2rom_need_n>ui_buf[7]){
+            e2rom_need_n = ui_buf[7]-(ui_buf[5]-ui_buf[6]);
+        }
         while(e2rom_need_n>0){
             SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
             if(rs[0]>0x80){
@@ -1597,12 +1600,17 @@ void do_tipt(void*cfp)
                 str_to_hex(book_buf, &iadr);
                 ui_buf[6]=get_env_uint("tiptsa", 0x100000);//tipt start addr of e2rom
                 if(iadr==ui_buf[6]){
+                    uint32_t rn;
                     ui_buf[5]=ui_buf[6]+get_env_uint("tiptpo", 0);//tipt progress offset
                     ui_buf[8]=ui_buf[5];
                     ui_buf[7]=get_env_uint("tiptsz", 0x100);//tipt size
 
                     memset(book_buf, 0, 512);
-                    SPI_Flash_Read((uint8*)book_buf, ui_buf[5], TIPT_BUF_SIZE-3);
+                    rn = ui_buf[7]-(ui_buf[5]-ui_buf[6]);
+                    if(rn > TIPT_BUF_SIZE-3){
+                        rn=TIPT_BUF_SIZE-3;
+                    }
+                    SPI_Flash_Read((uint8*)book_buf, ui_buf[5], rn);
                     next_show_char=book_buf;
                     t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
                     t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
