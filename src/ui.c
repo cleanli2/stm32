@@ -36,15 +36,6 @@ void draw_sq(int x1, int y1, int x2, int y2, int color);
 void draw_sq2(int x1, int y1, int w, int h, int color);
 void common_ui_uninit(void*vp);
 
-int check_same(const char*s)
-{
-    char compare[]="I love China, which has 5000 years histroy!";
-    int n=strlen(s);
-    if(n<3)return 1;
-    
-    return 0==strncmp(compare, s, n-2);
-}
-
 void str_del_last(char* s)
 {
     int l=strlen(s);
@@ -1362,27 +1353,6 @@ button_t random_button[]={
 /****end of random ui*****/
 
 /****start of tipt ui*****/
-void tipt_ui_init(void*vp)
-{
-    ui_t* uif =(ui_t*)vp;
-    (void)uif;
-    common_ui_init(vp);
-    ui_buf[0] = 0;
-    ui_buf[1] = 0;
-    ui_buf[2] = 0;
-    ui_buf[3] = 0;//choose index. 4 bytes
-    ui_buf[4] = 0;//input buf pointer
-    memset(book_buf, 0, 512);
-    book_buf[0]=0xa1;
-    book_buf[1]=0xfd;//indicator in text
-}
-void tipt_ui_process_event(void*vp)
-{
-    ui_t* uif =(ui_t*)vp;
-    (void)uif;
-    common_process_event(vp);
-}
-
 #define TIPT_TEXT_SHOW_WIN_X 25
 #define TIPT_TEXT_SHOW_WIN_Y 40
 #define TIPT_TEXT_SHOW_WIN_W 430
@@ -1401,6 +1371,64 @@ void tipt_ui_process_event(void*vp)
 #define N_TEXT_LINES (TIPT_TEXT_SHOW_WIN_H/(FONT_SIZE+TIPT_TEXT_SHOW_WIN_DY))
 #define TIPT_BUF_SIZE ((N_TEXT_EACH_LINE/2-1)*N_TEXT_LINES)
 char tipt_buf[TIPT_BUF_SIZE];
+
+void tipt_ui_init(void*vp)
+{
+    u32 t_show_x, t_show_y;
+    ui_t* uif =(ui_t*)vp;
+    (void)uif;
+    win tiptw_text={TIPT_TEXT_SHOW_WIN_X, TIPT_TEXT_SHOW_WIN_Y, TIPT_TEXT_SHOW_WIN_W, TIPT_TEXT_SHOW_WIN_H,
+        TIPT_TEXT_SHOW_WIN_DX, TIPT_TEXT_SHOW_WIN_DY};
+    common_ui_init(vp);
+    ui_buf[0] = 0;
+    ui_buf[1] = 0;
+    ui_buf[2] = 0;
+    ui_buf[3] = 0;//choose index. 4 bytes
+    ui_buf[4] = 0;//input buf pointer
+    ui_buf[5] = 0x100000;//e2rom addr
+
+    memset(book_buf, 0, 512);
+    SPI_Flash_Read((uint8*)book_buf, ui_buf[5], TIPT_BUF_SIZE-3);
+    next_show_char=book_buf;
+    t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
+    t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
+    next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
+
+    memset(book_buf, 0, 512);
+    memset(tipt_buf, 0, TIPT_BUF_SIZE-1);
+    book_buf[0]=0xa1;
+    book_buf[1]=0xfd;//indicator in text
+}
+void tipt_ui_process_event(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    (void)uif;
+    common_process_event(vp);
+}
+
+void str_leftmove(char*s, int n)
+{
+    int l=strlen(s);
+    if(l==0)return;
+    if(l<=n){
+        memset(s, 0, l);
+        return;
+    }
+    for(int i=0;i<l-n;i++){
+        s[i]=s[i+n];
+        s++;
+    }
+    memset(s+l-n, 0, n);
+
+}
+int check_same(const char*s)
+{
+    int n=strlen(s);
+    if(n<3)return 1;
+    
+    return 0==strncmp(tipt_buf, s, n-2);
+}
+
 void do_tipt(void*cfp)
 {
 #ifdef LARGE_SCREEN
@@ -1497,6 +1525,9 @@ void do_tipt(void*cfp)
                     rs[1]=0xa1;
                     rs[2]=0xfd;
                     rs[3]=0;
+                    if(strlen(book_buf)>=TIPT_BUF_SIZE-4){
+                        str_leftmove(book_buf, 1);
+                    }
                 }
                 else{
                     rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2];
@@ -1504,6 +1535,9 @@ void do_tipt(void*cfp)
                     rs[2]=0xa1;
                     rs[3]=0xfd;
                     rs[4]=0;
+                    if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
+                        str_leftmove(book_buf, 2);
+                    }
                 }
                 strcat(book_buf, rs);
                 ui_buf[0] = 0;
@@ -1513,6 +1547,25 @@ void do_tipt(void*cfp)
                 choose_idx[2]=0;
                 choose_idx[1]=0;
                 choose_idx[0]=0;
+
+                //handle compare buf update
+                SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
+                if(rs[0]>0x80){
+                    rs[2]=0;
+                    if(strlen(tipt_buf)>=TIPT_BUF_SIZE-3){
+                        str_leftmove(tipt_buf, 2);
+                    }
+                    ui_buf[5]+=2;
+                }
+                else{
+                    rs[1]=0;
+                    if(strlen(tipt_buf)>=TIPT_BUF_SIZE-2){
+                        str_leftmove(tipt_buf, 1);
+                    }
+                    ui_buf[5]+=1;
+                }
+                strcat(tipt_buf, rs);
+
                 //update text
                 u_txt=1;
             }
