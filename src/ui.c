@@ -1422,8 +1422,36 @@ void str_leftmove(char*s, int n)
 }
 int check_same(const char*s)
 {
+    char rs[3];
     int n=strlen(s);
     if(n<3)return 1;
+
+    //handle compare buf update
+    if(ui_buf[5]<0xffffff){
+        int e2rom_need_n=n-strlen(tipt_buf);
+        while(e2rom_need_n>0){
+            SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
+            if(rs[0]>0x80){
+                rs[2]=0;
+                if(strlen(tipt_buf)>=TIPT_BUF_SIZE-3){
+                    str_leftmove(tipt_buf, 2);
+                }
+                ui_buf[5]+=2;
+                e2rom_need_n--;
+                if(e2rom_need_n==0)break;
+                e2rom_need_n--;
+            }
+            else{
+                rs[1]=0;
+                if(strlen(tipt_buf)>=TIPT_BUF_SIZE-2){
+                    str_leftmove(tipt_buf, 1);
+                }
+                ui_buf[5]+=1;
+                e2rom_need_n--;
+            }
+            strcat(tipt_buf, rs);
+        }
+    }
 
     mem_print(s, 0, n-2);
     mem_print(tipt_buf, 0, n-2);
@@ -1550,26 +1578,6 @@ void do_tipt(void*cfp)
                 choose_idx[1]=0;
                 choose_idx[0]=0;
 
-                //handle compare buf update
-                if(ui_buf[5]<0xffffff){
-                    SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
-                    if(rs[0]>0x80){
-                        rs[2]=0;
-                        if(strlen(tipt_buf)>=TIPT_BUF_SIZE-3){
-                            str_leftmove(tipt_buf, 2);
-                        }
-                        ui_buf[5]+=2;
-                    }
-                    else{
-                        rs[1]=0;
-                        if(strlen(tipt_buf)>=TIPT_BUF_SIZE-2){
-                            str_leftmove(tipt_buf, 1);
-                        }
-                        ui_buf[5]+=1;
-                    }
-                    strcat(tipt_buf, rs);
-                }
-
                 //update text
                 u_txt=1;
             }
@@ -1605,16 +1613,6 @@ void do_tipt(void*cfp)
                 rs[4]=0;
                 strcat(book_buf, rs);
 
-                //handle compare buf update
-                if(ui_buf[5]<0xffffff){
-                    SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
-                    rs[2]=0;
-                    if(strlen(tipt_buf)>=TIPT_BUF_SIZE-3){
-                        str_leftmove(tipt_buf, 2);
-                    }
-                    ui_buf[5]+=2;
-                    strcat(tipt_buf, rs);
-                }
                 u_txt=1;
             }
         }
