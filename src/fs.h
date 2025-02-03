@@ -168,7 +168,9 @@ int get_file_content(char* buf, const char*filename, const char*ext_name, uint32
 int get_file_size(const char*flnm, const char*ext);
 int open_file_for_write(const char*fn, const char*ext);
 int open_file_w(const char*path);
+int open_file_r(const char*path);
 void fs_hw_init(disk_opers*dops);
 int write_sec_to_file(const char*buf);
 void close_file();
+int read_sec_from_file(char*buf);
 #endif

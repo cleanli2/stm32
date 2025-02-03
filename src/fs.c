@@ -394,15 +394,15 @@ uint32_t get_file_start_cluster(const char* filename, const char*fileextname)
     return get_file_start_cluster_from_cluster(g_fs->dirbase, filename, fileextname);
 }
 
+static char fs_name_f[32];
 uint32_t get_path_start_cluster(const char* path)
 {
     uint32_t start_cluster = g_fs->dirbase;
     char*t=NULL;
     char*e=NULL;
-    char f[32];
-    memset(f, 0, 32);
-    strncpy(f, path, 31);
-    t=strtok(f, "/");
+    memset(fs_name_f, 0, 32);
+    strncpy(fs_name_f, path, 31);
+    t=strtok(fs_name_f, "/");
     while(t){
         if(strchr(t, '.')){
             e=strchr(t, '.');
@@ -419,6 +419,9 @@ uint32_t get_path_start_cluster(const char* path)
             break;
         }
         t=strtok(NULL, "/");
+        lprintf("t=%x\n", t);
+        if(t)lprintf("%s\n", t);
+        mem_print(t, (u32)t, 32);
     }
     return start_cluster;
 }
@@ -686,6 +689,46 @@ int write_sec_to_file(const char*buf)
     if(NULL==disk_write_sector(buf, target_sector_no)){
         return -1;
     }
+    g_fp->clust_sec_offset++;
+    if(g_fp->clust_sec_offset >=g_fp->fs->csize)
+    {
+        g_fp->clust = get_next_cluster(g_fp->clust);
+        g_fp->clust_sec_offset = 0;
+    }
+    g_fp->fptr += g_fs->ssize;
+    return g_fp->fptr;
+}
+
+int open_file_r(const char*path)
+{
+    int ret;
+    ret = file_size(path);
+    if(0 < ret){
+        g_fp->clust = g_fp->sclust;
+        g_fp->clust_sec_offset = 0;
+        g_fp->in_writing = 0;
+        return FS_OK;
+    }
+    else{
+        return ret;
+    }
+}
+
+int read_sec_from_file(char*buf)
+{
+    const char* retbuf;
+    if(g_fp->in_writing){
+        lprintf("try read write file\r\n");
+        return -1;
+    }
+    //lprintf("clust %d sec_off %d\r\n", g_fp->clust, g_fp->clust_sec_offset);
+    uint32_t target_sector_no = g_fp->fs->database + (g_fp->clust - 2) * g_fs->csize;
+    target_sector_no += g_fp->clust_sec_offset;
+    retbuf=disk_read_sector(target_sector_no);
+    if(NULL==retbuf){
+        return -1;
+    }
+    memcpy(buf, retbuf, 512);
     g_fp->clust_sec_offset++;
     if(g_fp->clust_sec_offset >=g_fp->fs->csize)
     {
