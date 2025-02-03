@@ -1375,33 +1375,23 @@ char tipt_buf[TIPT_BUF_SIZE];
 void tipt_ui_uninit(void*vp)
 {
     (void)vp;
-    set_env_uint("tiptsz", ui_buf[7]);
-    set_env_uint("tiptsa", ui_buf[6]);
-    set_env_uint("tiptpo", ui_buf[5]-ui_buf[6]);
+    if(ui_buf[5]<0xffffff){
+        set_env_uint("tiptsz", ui_buf[7]);
+        set_env_uint("tiptsa", ui_buf[6]);
+        set_env_uint("tiptpo", ui_buf[5]-ui_buf[6]);
+    }
 }
 void tipt_ui_init(void*vp)
 {
-    u32 t_show_x, t_show_y;
     ui_t* uif =(ui_t*)vp;
     (void)uif;
-    win tiptw_text={TIPT_TEXT_SHOW_WIN_X, TIPT_TEXT_SHOW_WIN_Y, TIPT_TEXT_SHOW_WIN_W, TIPT_TEXT_SHOW_WIN_H,
-        TIPT_TEXT_SHOW_WIN_DX, TIPT_TEXT_SHOW_WIN_DY};
     common_ui_init(vp);
     ui_buf[0] = 0;
     ui_buf[1] = 0;
     ui_buf[2] = 0;
     ui_buf[3] = 0;//choose index. 4 bytes
     ui_buf[4] = 0;//input buf pointer
-    ui_buf[6]=get_env_uint("tiptsa", 0x100000);//tipt start addr of e2rom
-    ui_buf[5]=ui_buf[6]+get_env_uint("tiptpo", 0);//tipt progress offset
-    ui_buf[7]=get_env_uint("tiptsz", 0x100);//tipt size
-
-    memset(book_buf, 0, 512);
-    SPI_Flash_Read((uint8*)book_buf, ui_buf[5], TIPT_BUF_SIZE-3);
-    next_show_char=book_buf;
-    t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
-    t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
-    next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
+    ui_buf[5]=0xffffffff;
 
     memset(book_buf, 0, 512);
     memset(tipt_buf, 0, TIPT_BUF_SIZE-1);
@@ -1561,22 +1551,24 @@ void do_tipt(void*cfp)
                 choose_idx[0]=0;
 
                 //handle compare buf update
-                SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
-                if(rs[0]>0x80){
-                    rs[2]=0;
-                    if(strlen(tipt_buf)>=TIPT_BUF_SIZE-3){
-                        str_leftmove(tipt_buf, 2);
+                if(ui_buf[5]<0xffffff){
+                    SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
+                    if(rs[0]>0x80){
+                        rs[2]=0;
+                        if(strlen(tipt_buf)>=TIPT_BUF_SIZE-3){
+                            str_leftmove(tipt_buf, 2);
+                        }
+                        ui_buf[5]+=2;
                     }
-                    ui_buf[5]+=2;
-                }
-                else{
-                    rs[1]=0;
-                    if(strlen(tipt_buf)>=TIPT_BUF_SIZE-2){
-                        str_leftmove(tipt_buf, 1);
+                    else{
+                        rs[1]=0;
+                        if(strlen(tipt_buf)>=TIPT_BUF_SIZE-2){
+                            str_leftmove(tipt_buf, 1);
+                        }
+                        ui_buf[5]+=1;
                     }
-                    ui_buf[5]+=1;
+                    strcat(tipt_buf, rs);
                 }
-                strcat(tipt_buf, rs);
 
                 //update text
                 u_txt=1;
@@ -1584,26 +1576,53 @@ void do_tipt(void*cfp)
         }
         else{//enter in text
             str_del_last(book_buf);
-            rs[0]=0xd;
-            rs[1]=0xa;
-            rs[2]=0xa1;
-            rs[3]=0xfd;
-            rs[4]=0;
-            strcat(book_buf, rs);
-
             //handle compare buf update
-            SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
-            rs[2]=0;
-            if(strlen(tipt_buf)>=TIPT_BUF_SIZE-3){
-                str_leftmove(tipt_buf, 2);
+            if(ui_buf[5]==0xffffffff){
+                uint32_t iadr;
+                str_to_hex(book_buf, &iadr);
+                ui_buf[6]=get_env_uint("tiptsa", 0x100000);//tipt start addr of e2rom
+                if(iadr==ui_buf[6]){
+                    ui_buf[5]=ui_buf[6]+get_env_uint("tiptpo", 0);//tipt progress offset
+                    ui_buf[7]=get_env_uint("tiptsz", 0x100);//tipt size
+
+                    memset(book_buf, 0, 512);
+                    SPI_Flash_Read((uint8*)book_buf, ui_buf[5], TIPT_BUF_SIZE-3);
+                    next_show_char=book_buf;
+                    t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
+                    t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
+                    next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
+                    memset(book_buf, 0, 512);
+                }
+                else{
+                    ui_buf[5]=0xfffffffe;
+                }
             }
-            ui_buf[5]+=2;
-            strcat(tipt_buf, rs);
-            u_txt=1;
+            else{
+                rs[0]=0xd;
+                rs[1]=0xa;
+                rs[2]=0xa1;
+                rs[3]=0xfd;
+                rs[4]=0;
+                strcat(book_buf, rs);
+
+                //handle compare buf update
+                if(ui_buf[5]<0xffffff){
+                    SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
+                    rs[2]=0;
+                    if(strlen(tipt_buf)>=TIPT_BUF_SIZE-3){
+                        str_leftmove(tipt_buf, 2);
+                    }
+                    ui_buf[5]+=2;
+                    strcat(tipt_buf, rs);
+                }
+                u_txt=1;
+            }
         }
     }
     lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*11, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%s", inputs);
-    lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*16, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%d%", (ui_buf[5]-ui_buf[6])*100/ui_buf[7]);
+    if(ui_buf[5]<0xffffff){
+        lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*16, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%d%", (ui_buf[5]-ui_buf[6])*100/ui_buf[7]);
+    }
     if(choose_idx[3])
     {
         lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*22, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "English");
