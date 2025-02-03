@@ -1372,6 +1372,13 @@ button_t random_button[]={
 #define TIPT_BUF_SIZE ((N_TEXT_EACH_LINE/2-1)*N_TEXT_LINES)
 char tipt_buf[TIPT_BUF_SIZE];
 
+void tipt_ui_uninit(void*vp)
+{
+    (void)vp;
+    set_env_uint("tiptsz", ui_buf[7]);
+    set_env_uint("tiptsa", ui_buf[6]);
+    set_env_uint("tiptpo", ui_buf[5]-ui_buf[6]);
+}
 void tipt_ui_init(void*vp)
 {
     u32 t_show_x, t_show_y;
@@ -1385,7 +1392,9 @@ void tipt_ui_init(void*vp)
     ui_buf[2] = 0;
     ui_buf[3] = 0;//choose index. 4 bytes
     ui_buf[4] = 0;//input buf pointer
-    ui_buf[5] = 0x100000;//e2rom addr
+    ui_buf[6]=get_env_uint("tiptsa", 0x100000);//tipt start addr of e2rom
+    ui_buf[5]=ui_buf[6]+get_env_uint("tiptpo", 0);//tipt progress offset
+    ui_buf[7]=get_env_uint("tiptsz", 0x100);//tipt size
 
     memset(book_buf, 0, 512);
     SPI_Flash_Read((uint8*)book_buf, ui_buf[5], TIPT_BUF_SIZE-3);
@@ -1594,6 +1603,7 @@ void do_tipt(void*cfp)
         }
     }
     lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*11, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%s", inputs);
+    lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*16, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%d%", (ui_buf[5]-ui_buf[6])*100/ui_buf[7]);
     if(choose_idx[3])
     {
         lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*22, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "English");
@@ -2141,7 +2151,7 @@ ui_t ui_list[]={
     {
         tipt_ui_init,
         tipt_ui_process_event,
-        NULL,
+        tipt_ui_uninit,
         tipt_button,
         UI_TIPT,
         220, //timeout
