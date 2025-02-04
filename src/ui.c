@@ -1415,7 +1415,6 @@ void str_leftmove(char*s, int n)
     }
     for(int i=0;i<l-n;i++){
         s[i]=s[i+n];
-        s++;
     }
     memset(s+l-n, 0, n);
 
@@ -1457,8 +1456,8 @@ int check_same(const char*s)
         }
     }
 
-    mem_print(s, 0, n-2);
-    mem_print(tipt_buf, 0, n-2);
+    //mem_print(s, 0, n-2);
+    //mem_print(tipt_buf, 0, n-2);
     
     if(0==strncmp(tipt_buf, s, n-2)){
         ui_buf[8]=ui_buf[5];
@@ -1567,6 +1566,7 @@ void do_tipt(void*cfp)
                     rs[3]=0;
                     if(strlen(book_buf)>=TIPT_BUF_SIZE-4){
                         str_leftmove(book_buf, 1);
+                        str_leftmove(tipt_buf, 1);
                     }
                 }
                 else{
@@ -1577,6 +1577,7 @@ void do_tipt(void*cfp)
                     rs[4]=0;
                     if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
                         str_leftmove(book_buf, 2);
+                        str_leftmove(tipt_buf, 2);
                     }
                 }
                 strcat(book_buf, rs);
