@@ -1371,6 +1371,7 @@ button_t random_button[]={
 #define N_TEXT_LINES (TIPT_TEXT_SHOW_WIN_H/(FONT_SIZE+TIPT_TEXT_SHOW_WIN_DY))
 #define TIPT_BUF_SIZE ((N_TEXT_EACH_LINE/2-1)*N_TEXT_LINES)
 char tipt_buf[TIPT_BUF_SIZE];
+void do_tipt(void*cfp);
 
 void tipt_ui_uninit(void*vp)
 {
@@ -1392,16 +1393,54 @@ void tipt_ui_init(void*vp)
     ui_buf[3] = 0;//choose index. 4 bytes
     ui_buf[4] = 0;//input buf pointer
     ui_buf[5]=0xffffffff;
+    ui_buf[9]=0;//py list length
 
     memset(book_buf, 0, 512);
     memset(tipt_buf, 0, TIPT_BUF_SIZE-1);
     book_buf[0]=0xa1;
     book_buf[1]=0xfd;//indicator in text
 }
+    win tiptw={TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y, TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_H,
+        TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_DY};
 void tipt_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     (void)uif;
+    int btidx;
+    signed char *choose_idx=(signed char*)&ui_buf[3];//0-py index 1-char index 2-mode:input/py_choose/char_choose 3-eng/chs
+    if(cur_task_event_flag & (1<<EVENT_TOUCH_UP) && ui_buf[9]>0){
+        int x = cached_touch_x, y = cached_touch_y;
+        int linex, liney;
+        if(IN_RANGE(x, TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W-TIPT_SHOW_WIN_DX) &&
+                IN_RANGE(y, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-TIPT_SHOW_WIN_DY)){
+            liney=((y-TIPT_SHOW_WIN_Y-TIPT_SHOW_WIN_DY)/(FONT_SIZE+TIPT_SHOW_WIN_DY));
+            if(liney<(int)ui_buf[9]){
+                choose_idx[0]=liney;
+                if(ui_buf[9]==1){
+                    btidx=10;
+                    do_tipt(&btidx);
+                }
+                else{
+                    if(choose_idx[0]==0){
+                        btidx=9;
+                        choose_idx[0]++;
+                        do_tipt(&btidx);
+                    }
+                    else{
+                        btidx=10;
+                        choose_idx[0]--;
+                        do_tipt(&btidx);
+                    }
+                }
+            }
+            else{
+                if(choose_idx[3]){//english mode
+                }
+                else{
+                }
+            }
+        }
+    }
     common_process_event(vp);
 }
 
@@ -1481,7 +1520,6 @@ void do_tipt(void*cfp)
     win tiptw_text={TIPT_TEXT_SHOW_WIN_X, TIPT_TEXT_SHOW_WIN_Y, TIPT_TEXT_SHOW_WIN_W, TIPT_TEXT_SHOW_WIN_H,
         TIPT_TEXT_SHOW_WIN_DX, TIPT_TEXT_SHOW_WIN_DY};
     u32 t_show_x=TIPT_SHOW_WIN_X, t_show_y=TIPT_SHOW_WIN_Y-FONT_SIZE-TIPT_SHOW_WIN_DY;
-	unsigned char t=0;
 	unsigned char i=0;
     lcd_clr_window(WHITE, TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5);
@@ -1641,18 +1679,18 @@ void do_tipt(void*cfp)
     if(choose_idx[3])
     {
         lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*22, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "English");
-        t=eng.getpymb((unsigned char*)inputs);
+        ui_buf[9]=eng.getpymb((unsigned char*)inputs);
     }
     else
     {
         lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*22, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "Chinese");
-        t=t9.getpymb((unsigned char*)inputs);
+        ui_buf[9]=t9.getpymb((unsigned char*)inputs);
     }
-	if(t)
+	if(ui_buf[9])
 	{
-		//lprintf("total match:%d\r\n",t);
+		//lprintf("total match:%d\r\n",ui_buf[9]);
 		//lprintf("total match result:\r\n");
-		for(i=0;i<t;i++)
+		for(i=0;i<ui_buf[9];i++)
 		{
 			//lprintf("%s,%s\r\n",t9.pymb[i]->py,t9.pymb[i]->pymb);
             if(choose_idx[3])
@@ -1663,7 +1701,7 @@ void do_tipt(void*cfp)
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
 		}
-        if(t==1){
+        if(ui_buf[9]==1){
             if(choose_idx[3])
                 next_show_char=(const char*)eng.pymb[0]->pymb_ch;
             else
@@ -1675,8 +1713,8 @@ void do_tipt(void*cfp)
             choose_idx[0]=0;
         }
         else{
-            while(choose_idx[0]<0)choose_idx[0]+=t;
-            while(choose_idx[0]>(t-1))choose_idx[0]-=t;
+            while(choose_idx[0]<0)choose_idx[0]+=ui_buf[9];
+            while(choose_idx[0]>(signed char)(ui_buf[9]-1))choose_idx[0]-=ui_buf[9];
             if(choose_idx[3])
                 next_show_char=(const char*)eng.pymb[(int)choose_idx[0]]->pymb_ch;
             else
@@ -1692,13 +1730,13 @@ void do_tipt(void*cfp)
             if(choose_idx[3]){//english
                 while(choose_idx[1]<0)choose_idx[1]+=eng.pymb[(int)choose_idx[0]]->num-1;
                 while(choose_idx[1]>=(eng.pymb[(int)choose_idx[0]]->num-1))choose_idx[1]-=eng.pymb[(int)choose_idx[0]]->num-1;
-                draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX+FONT_SIZE/2)*(choose_idx[1]%(2*N_EACH_LINE)), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(t+choose_idx[1]/(2*N_EACH_LINE)),
+                draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX+FONT_SIZE/2)*(choose_idx[1]%(2*N_EACH_LINE)), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/(2*N_EACH_LINE)),
                         FONT_SIZE/2+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
             }
             else{
                 while(choose_idx[1]<0)choose_idx[1]+=t9.pymb[(int)choose_idx[0]]->num/2;
                 while(choose_idx[1]>=(t9.pymb[(int)choose_idx[0]]->num/2))choose_idx[1]-=t9.pymb[(int)choose_idx[0]]->num/2;
-                draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(t+choose_idx[1]/N_EACH_LINE),
+                draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE),
                         FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
             }
         }
