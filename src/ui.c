@@ -1366,6 +1366,7 @@ button_t random_button[]={
 #define TIPT_SHOW_WIN_DX 2
 #define TIPT_SHOW_WIN_DY 2
 #define FONT_SIZE 16
+#define HINT_SIZE 8
 #define N_EACH_LINE (TIPT_SHOW_WIN_W/(FONT_SIZE+TIPT_SHOW_WIN_DX*2))
 #define N_TEXT_EACH_LINE (TIPT_TEXT_SHOW_WIN_W/(FONT_SIZE+TIPT_TEXT_SHOW_WIN_DX*2))
 #define N_TEXT_LINES (TIPT_TEXT_SHOW_WIN_H/(FONT_SIZE+TIPT_TEXT_SHOW_WIN_DY))
@@ -1400,8 +1401,6 @@ void tipt_ui_init(void*vp)
     book_buf[0]=0xa1;
     book_buf[1]=0xfd;//indicator in text
 }
-    win tiptw={TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y, TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_H,
-        TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_DY};
 void tipt_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -1638,21 +1637,52 @@ void do_tipt(void*cfp)
             str_del_last(book_buf);
             //handle compare buf update
             if(ui_buf[5]==0xffffffff){
-                uint32_t iadr;
+                uint32_t iadr, of, brn=0;
                 str_to_hex(book_buf, &iadr);
                 ui_buf[6]=get_env_uint("tiptsa", 0x100000);//tipt start addr of e2rom
                 if(iadr==ui_buf[6]){
-                    uint32_t rn;
-                    ui_buf[5]=ui_buf[6]+get_env_uint("tiptpo", 0);//tipt progress offset
+                    uint32_t rn, read_adr;
+                    uint8*rp;
+                    of=get_env_uint("tiptpo", 0);//tipt progress offset
+                    ui_buf[5]=ui_buf[6]+of;
                     ui_buf[8]=ui_buf[5];
                     ui_buf[7]=get_env_uint("tiptsz", 0x100);//tipt size
 
                     memset(book_buf, 0, 512);
-                    rn = ui_buf[7]-(ui_buf[5]-ui_buf[6]);
-                    if(rn > TIPT_BUF_SIZE-3){
-                        rn=TIPT_BUF_SIZE-3;
+                    if(of>HINT_SIZE){
+                        rn=0;
                     }
-                    SPI_Flash_Read((uint8*)book_buf, ui_buf[5], rn);
+                    else{
+                        rn=HINT_SIZE-of;
+                        brn=of;
+                    }
+                    if(rn > ui_buf[7]-of){
+                        rn = ui_buf[7]-of;
+                    }
+                    if(rn > TIPT_BUF_SIZE-3-brn){
+                        rn=TIPT_BUF_SIZE-3-brn;
+                    }
+                    if(rn>0){
+                        SPI_Flash_Read((uint8*)book_buf+brn, ui_buf[5], rn);
+                    }
+                    read_adr=ui_buf[5]-1;
+                    rp=(uint8_t*)book_buf+brn-1;
+                    while(brn>0){
+                        SPI_Flash_Read((uint8*)rp, read_adr, 1);
+                        brn--;
+                        if(*rp>0x80){
+                            if(brn==0){
+                                str_leftmove(book_buf, 1);
+                                break;
+                            }
+                            else{
+                                rp--;
+                                read_adr--;
+                                SPI_Flash_Read((uint8*)rp, read_adr, 1);
+                                brn--;
+                            }
+                        }
+                    }
                     next_show_char=book_buf;
                     t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
                     t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
