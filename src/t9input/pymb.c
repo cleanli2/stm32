@@ -37,7 +37,7 @@ int size_of_engmbindex()
 	return sizeof(eng_mb_index)/sizeof(eng_mb_index[0]);
 }
 //ºº×ÖÅÅÁĞ±í
-const unsigned char PY_mb_space []={"£¬¡££»¡ı¡¢£¡£¿¡¶¡·¡¡£º£¨£©¡°¡±"};
+const unsigned char PY_mb_space []={"£¬¡££»¡ı¡¢£¡£¿¡¶¡·¡¡£º£¨£©¡°¡±¡õ"};
 const unsigned char PY_mb_a     []={"°¡°¢ëçß¹ï¹àÄåHºÇëç"};
 const unsigned char PY_mb_ai    []={"°®°¤°£°¥°¦°§°¨°©°ª°«°¬°­°¯ŞßàÈàÉæÈè¨êÓíÁïÍö°"};
 const unsigned char PY_mb_an    []={"°²°³°´°µ°¶°¸°°°±ÚÏ°·ÛûŞîáíâÖèñï§ğÆ÷ö"};

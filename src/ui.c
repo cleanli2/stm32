@@ -1640,7 +1640,9 @@ void do_tipt(void*cfp)
                 uint32_t iadr, of, brn=0;
                 str_to_hex(book_buf, &iadr);
                 ui_buf[6]=get_env_uint("tiptsa", 0x100000);//tipt start addr of e2rom
+                lprintf("iadr=%d\r\n", iadr);
                 if(iadr==ui_buf[6]){
+                    lprintf("hint in\r\n");
                     uint32_t rn, read_adr;
                     uint8*rp;
                     of=get_env_uint("tiptpo", 0);//tipt progress offset
@@ -1650,6 +1652,7 @@ void do_tipt(void*cfp)
 
                     memset(book_buf, 0, 512);
                     if(of>HINT_SIZE){
+                        brn=HINT_SIZE;
                         rn=0;
                     }
                     else{
@@ -1683,6 +1686,10 @@ void do_tipt(void*cfp)
                             }
                         }
                     }
+                    rs[0]=0xa1;
+                    rs[1]=0xf5;
+                    rs[2]=0;
+                    strcat(book_buf, rs);
                     next_show_char=book_buf;
                     t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
                     t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
@@ -1690,6 +1697,7 @@ void do_tipt(void*cfp)
                     memset(book_buf, 0, 512);
                 }
                 else{
+                    lprintf("NOT hint in\r\n");
                     ui_buf[5]=0xfffffffe;
                 }
             }
