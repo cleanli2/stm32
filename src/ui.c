@@ -1410,7 +1410,7 @@ void tipt_ui_process_event(void*vp)
     signed char *choose_idx=(signed char*)&ui_buf[3];//0-py index 1-char index 2-mode:input/py_choose/char_choose 3-eng/chs
     if(cur_task_event_flag & (1<<EVENT_TOUCH_UP) && ui_buf[9]>0){
         int x = cached_touch_x, y = cached_touch_y;
-        int linex, liney;
+        int liney;
         if(IN_RANGE(x, TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W-TIPT_SHOW_WIN_DX) &&
                 IN_RANGE(y, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-TIPT_SHOW_WIN_DY)){
             liney=((y-TIPT_SHOW_WIN_Y-TIPT_SHOW_WIN_DY)/(FONT_SIZE+TIPT_SHOW_WIN_DY));
@@ -1418,27 +1418,30 @@ void tipt_ui_process_event(void*vp)
                 choose_idx[0]=liney;
                 if(ui_buf[9]==1){
                     btidx=10;
-                    do_tipt(&btidx);
                 }
                 else{
                     if(choose_idx[0]==0){
                         btidx=9;
                         choose_idx[0]++;
-                        do_tipt(&btidx);
                     }
                     else{
                         btidx=10;
                         choose_idx[0]--;
-                        do_tipt(&btidx);
                     }
                 }
             }
             else{
                 if(choose_idx[3]){//english mode
+                    choose_idx[1]=((x-TIPT_SHOW_WIN_X-TIPT_SHOW_WIN_DX)/(FONT_SIZE/2+TIPT_SHOW_WIN_DX))+(liney-ui_buf[9])*2*N_EACH_LINE;
+                    btidx=11;
                 }
                 else{
+                    choose_idx[1]=((x-TIPT_SHOW_WIN_X-TIPT_SHOW_WIN_DX)/(FONT_SIZE+TIPT_SHOW_WIN_DX*2))+(liney-ui_buf[9])*N_EACH_LINE;
+                    btidx=11;
                 }
+                choose_idx[2]=1;
             }
+            do_tipt(&btidx);
         }
     }
     common_process_event(vp);
