@@ -1366,7 +1366,7 @@ button_t random_button[]={
 #define TIPT_SHOW_WIN_DX 2
 #define TIPT_SHOW_WIN_DY 2
 #define FONT_SIZE 16
-#define HINT_SIZE 8
+#define HINT_SIZE 16
 #define N_EACH_LINE (TIPT_SHOW_WIN_W/(FONT_SIZE+TIPT_SHOW_WIN_DX*2))
 #define N_TEXT_EACH_LINE (TIPT_TEXT_SHOW_WIN_W/(FONT_SIZE+TIPT_TEXT_SHOW_WIN_DX*2))
 #define N_TEXT_LINES (TIPT_TEXT_SHOW_WIN_H/(FONT_SIZE+TIPT_TEXT_SHOW_WIN_DY))
@@ -1665,6 +1665,7 @@ void do_tipt(void*cfp)
                     if(rn > TIPT_BUF_SIZE-3-brn){
                         rn=TIPT_BUF_SIZE-3-brn;
                     }
+                    lprintf("brn %d, rn %d\r\n", brn, rn);
                     if(rn>0){
                         SPI_Flash_Read((uint8*)book_buf+brn, ui_buf[5], rn);
                     }
@@ -1673,16 +1674,18 @@ void do_tipt(void*cfp)
                     while(brn>0){
                         SPI_Flash_Read((uint8*)rp, read_adr, 1);
                         brn--;
+                        rp--;
+                        read_adr--;
                         if(*rp>0x80){
                             if(brn==0){
                                 str_leftmove(book_buf, 1);
                                 break;
                             }
                             else{
-                                rp--;
-                                read_adr--;
                                 SPI_Flash_Read((uint8*)rp, read_adr, 1);
                                 brn--;
+                                rp--;
+                                read_adr--;
                             }
                         }
                     }
@@ -1691,6 +1694,10 @@ void do_tipt(void*cfp)
                     rs[2]=0;
                     strcat(book_buf, rs);
                     next_show_char=book_buf;
+                    lcd_clr_window(WHITE, TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
+                            TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5);
+                    draw_sq(TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
+                            TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5, BLACK);
                     t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
                     t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
                     next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
