@@ -1439,7 +1439,7 @@ void tipt_ui_process_event(void*vp)
                     choose_idx[1]=((x-TIPT_SHOW_WIN_X-TIPT_SHOW_WIN_DX)/(FONT_SIZE+TIPT_SHOW_WIN_DX*2))+(liney-ui_buf[9])*N_EACH_LINE;
                     btidx=11;
                 }
-                choose_idx[2]=1;
+                choose_idx[2]=0;
             }
             do_tipt(&btidx);
         }
