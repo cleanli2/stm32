@@ -1378,10 +1378,15 @@ void do_tipt(void*cfp);
 void tipt_ui_uninit(void*vp)
 {
     (void)vp;
+    int retry=100;
     if(ui_buf[5]<0xffffff){
         set_env_uint("tiptsz", ui_buf[7]);
         set_env_uint("tiptsa", ui_buf[6]);
         set_env_uint("tiptpo", ui_buf[8]-ui_buf[6]);
+        while((ui_buf[8]-ui_buf[6])!=get_env_uint("tiptpo", 0)){
+            set_env_uint("tiptpo", ui_buf[8]-ui_buf[6]);
+            if(retry--==0)break;
+        }
     }
 }
 void tipt_ui_init(void*vp)
