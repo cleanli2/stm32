@@ -1461,9 +1461,25 @@ void str_leftmove(char*s, int n)
     memset(s+l-n, 0, n);
 
 }
+int is_skip_pmark(char*s)
+{
+    if((s[0]==0xd && s[1]==0xa)
+            || (s[0]==0xa3 && s[1]==0xac)
+            || (s[0]==0xa1 && s[1]==0xa3)
+            || (s[0]==0xa3 && s[1]==0xbb)
+            || (s[0]==0xa3 && s[1]==0xbf)
+            || (s[0]==0xa3 && s[1]==0xa1)
+            || (s[0]==0xa1 && s[1]==0xa2)
+            ){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
 int check_same(const char*s)
 {
-    char rs[3];
+    char rs[3]={0};
     int n=strlen(s);
     if(n<3)return 1;
 
@@ -1502,6 +1518,26 @@ int check_same(const char*s)
     //mem_print(tipt_buf, 0, n-2);
     
     if(0==strncmp(tipt_buf, s, n-2)){
+        //read more 2 bytes, if p mark, cp to bookbuf
+        while(1){
+            SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
+            if(is_skip_pmark(rs)){
+                ui_buf[5]+=2;
+                str_del_last(book_buf);//del last indicator
+                if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
+                    str_leftmove(book_buf, 2);
+                    str_leftmove(tipt_buf, 2);
+                }
+                strcat(book_buf, rs);
+                strcat(tipt_buf, rs);
+                rs[0]=0xa1;
+                rs[1]=0xfd;
+                strcat(book_buf, rs);
+            }
+            else{
+                break;
+            }
+        }
         ui_buf[8]=ui_buf[5];
         return 1;
     }
@@ -1802,12 +1838,12 @@ void do_tipt(void*cfp)
                 TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5);
         draw_sq(TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
                 TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5, BLACK);
-        next_show_char=book_buf;
-        t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
-        t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
         if(!check_same(book_buf)){
             POINT_COLOR=RED;
         }
+        next_show_char=book_buf;
+        t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
+        t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
         next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
         POINT_COLOR=BLACK;
     }
