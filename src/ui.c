@@ -1694,6 +1694,7 @@ void do_tipt(void*cfp)
                     ui_buf[7]=get_env_uint("tiptsz", 0x100);//tipt size
                     if(ptg>0&&ptg<100){
                         of=ptg*ui_buf[7]/100;
+                        of&=0xfffffffe;
                     }
 
                     ui_buf[5]=ui_buf[6]+of;
