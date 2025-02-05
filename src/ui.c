@@ -1650,13 +1650,13 @@ void do_tipt(void*cfp)
                     uint32_t rn, read_adr;
                     uint8*rp;
                     of=get_env_uint("tiptpo", 0);//tipt progress offset
+                    ui_buf[7]=get_env_uint("tiptsz", 0x100);//tipt size
                     if(ptg>0&&ptg<100){
                         of=ptg*ui_buf[7]/100;
                     }
 
                     ui_buf[5]=ui_buf[6]+of;
                     ui_buf[8]=ui_buf[5];
-                    ui_buf[7]=get_env_uint("tiptsz", 0x100);//tipt size
 
                     memset(book_buf, 0, 512);
                     if(of>HINT_SIZE){
