@@ -1401,6 +1401,7 @@ void tipt_ui_init(void*vp)
     ui_buf[4] = 0;//input buf pointer
     ui_buf[5]=0xffffffff;
     ui_buf[9]=0;//py list length
+    ui_buf[15]=0;//lianxiang
 
     memset(book_buf, 0, 512);
     memset(tipt_buf, 0, TIPT_BUF_SIZE-1);
@@ -1591,8 +1592,13 @@ void do_tipt(void*cfp)
 		choose_idx[1]=0;
     }
     else if(btidx<9){
+        if(ui_buf[4]==0){
+            ui_buf[15]=0;
+            choose_idx[2]=0;
+        }
         if(0==choose_idx[2]){
             inputs[ui_buf[4]++]=0x30+btidx+1;
+            inputs[ui_buf[4]]=0;
             choose_idx[2]=0;
             choose_idx[1]=0;
             choose_idx[0]=0;
@@ -1634,7 +1640,7 @@ void do_tipt(void*cfp)
         }
     }
     else if(btidx==11){//enter
-        if(ui_buf[4]>0){
+        if(ui_buf[4]>0 || ui_buf[15]==1){
             if(0==choose_idx[2]){
                 choose_idx[2]=1;
             }
@@ -1670,6 +1676,13 @@ void do_tipt(void*cfp)
                 choose_idx[2]=0;
                 choose_idx[1]=0;
                 choose_idx[0]=0;
+                //provide common input char
+                if(0==choose_idx[3]){
+                    inputs[0]=rs[0];
+                    inputs[1]=rs[1];
+                    inputs[2]=rs[2];
+                    ui_buf[15]=1;
+                }
 
                 //update text
                 u_txt=1;
@@ -1770,6 +1783,7 @@ void do_tipt(void*cfp)
             }
         }
     }
+    mem_print(inputs, 0, 16);
     lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*11, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%s", inputs);
     if(ui_buf[5]<0xffffff){
         lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*16, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%d%", (ui_buf[5]-ui_buf[6])*100/ui_buf[7]);
@@ -1807,7 +1821,7 @@ void do_tipt(void*cfp)
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
-            choose_idx[2]=1;
+            if(choose_idx[2]==0) choose_idx[2]=1;
             choose_idx[0]=0;
         }
         else{
@@ -1823,7 +1837,7 @@ void do_tipt(void*cfp)
             draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*choose_idx[0],
                     FONT_SIZE*10, FONT_SIZE+TIPT_SHOW_WIN_DY/2, BLACK);
         }
-        if(choose_idx[2]==1){
+        if(choose_idx[2]>=1){
             //lprintf("num=%d\r\n", t9.pymb[(int)choose_idx[0]]->num);
             if(choose_idx[3]){//english
                 while(choose_idx[1]<0)choose_idx[1]+=eng.pymb[(int)choose_idx[0]]->num-1;

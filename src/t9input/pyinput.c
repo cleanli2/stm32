@@ -67,6 +67,9 @@ unsigned char str_match(unsigned char*str1,unsigned char*str2)
 	}
 }
 
+unsigned char dyn_mb[40]={"的一是不了在人有我他"};
+py_index dyn_index={"dynch","words",20,dyn_mb};
+
 //获取匹配的拼音码表
 //*strin,输入的字符串,形如:"726"
 unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
@@ -74,15 +77,20 @@ unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
 	int pyindex_len;
 	int i;
 	unsigned char temp,mcnt=0;
-	pyindex_len=size_of_pyindex();//得到py索引表的大小.
-	for(i=0;i<pyindex_len;i++)
-	{
-		temp=str_match(strin,(unsigned char*)py_index3[i].py_input);
-		if(temp > 0 && ((mcnt<MAX_PY_OPS)||(0x80&temp)))
-		{
-			matchlist[mcnt++]=(py_index*)&py_index3[i];
-		}
-	}
+    if(strin[0]<=0x80){
+        pyindex_len=size_of_pyindex();//得到py索引表的大小.
+        for(i=0;i<pyindex_len;i++)
+        {
+            temp=str_match(strin,(unsigned char*)py_index3[i].py_input);
+            if(temp > 0 && ((mcnt<MAX_PY_OPS)||(0x80&temp)))
+            {
+                matchlist[mcnt++]=(py_index*)&py_index3[i];
+            }
+        }
+    }
+    else{
+        matchlist[mcnt++]=&dyn_index;
+    }
 	return mcnt;//返回匹配的个数
 }
 
