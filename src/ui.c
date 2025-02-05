@@ -35,6 +35,7 @@ void draw_button(button_t*pbt);
 void draw_sq(int x1, int y1, int x2, int y2, int color);
 void draw_sq2(int x1, int y1, int w, int h, int color);
 void common_ui_uninit(void*vp);
+uint get_howmany_para(char *s);
 
 void str_del_last(char* s)
 {
@@ -1637,8 +1638,11 @@ void do_tipt(void*cfp)
             str_del_last(book_buf);
             //handle compare buf update
             if(ui_buf[5]==0xffffffff){
-                uint32_t iadr, of, brn=0;
-                str_to_hex(book_buf, &iadr);
+                uint32_t iadr, of, brn=0, pn, ptg=0;
+                char* p;
+                pn=get_howmany_para(book_buf);
+                p=str_to_hex(book_buf, &iadr);
+                if(pn>1)str_to_hex(p, &ptg);
                 ui_buf[6]=get_env_uint("tiptsa", 0x100000);//tipt start addr of e2rom
                 lprintf("iadr=%d\r\n", iadr);
                 if(iadr==ui_buf[6]){
@@ -1646,6 +1650,10 @@ void do_tipt(void*cfp)
                     uint32_t rn, read_adr;
                     uint8*rp;
                     of=get_env_uint("tiptpo", 0);//tipt progress offset
+                    if(ptg>0&&ptg<100){
+                        of=ptg*ui_buf[7]/100;
+                    }
+
                     ui_buf[5]=ui_buf[6]+of;
                     ui_buf[8]=ui_buf[5];
                     ui_buf[7]=get_env_uint("tiptsz", 0x100);//tipt size
