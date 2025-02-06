@@ -1602,7 +1602,7 @@ void do_tipt(void*cfp)
 		choose_idx[1]=0;
     }
     else if(btidx<9){
-        if(ui_buf[4]==0){
+        if(ui_buf[4]==0 && btidx!=3 && btidx!=5){
             ui_buf[15]=0;
             choose_idx[2]=0;
         }
