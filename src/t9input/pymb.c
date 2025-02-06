@@ -446,6 +446,63 @@ const unsigned char PY_mb_zui   []={"最罪嘴醉蕞觜"};
 const unsigned char PY_mb_zun   []={"尊遵樽鳟撙"};
 const unsigned char PY_mb_zuo   []={"左佐做作坐座昨撮唑柞阼琢嘬怍胙祚砟酢"};
 
+
+//words
+const unsigned char cy_mb_35    []={"法轮法律"};
+const unsigned char cy_mb_97    []={"意识"};
+const unsigned char cy_mb_29    []={"成为此外错误称为从未"};
+const unsigned char cy_mb_79    []={"所以所有声音"};
+const unsigned char cy_mb_39    []={"东西大学"};
+const unsigned char cy_mb_55    []={"看见空间科技可见"};
+const unsigned char cy_mb_57    []={"可是开始看书"};
+const unsigned char cy_mb_25    []={"出来从来处理除了"};
+const unsigned char cy_mb_59    []={"可以科学可笑"};
+const unsigned char cy_mb_99    []={"这样现在这些因为以为"};
+const unsigned char cy_mb_69    []={"没有没用满意命运"};
+const unsigned char cy_mb_95    []={"自己已经修炼心理"};
+const unsigned char cy_mb_862   []={"他们她们它们"};
+const unsigned char cy_mb_762   []={"什么人们生命上面说明"};
+const unsigned char cy_mb_932   []={"知道一定许多真的有点一点有的"};
+const unsigned char cy_mb_962   []={"怎么这么咱们我们外面文明"};
+const unsigned char cy_mb_662   []={"你们那么农民"};
+const unsigned char cy_mb_372   []={"但是当时地上"};
+const unsigned char cy_mb_745   []={"世界时间睡觉"};
+const unsigned char cy_mb_7442  []={"时候生活社会"};
+const unsigned char cy_mb_9829  []={"问题"};
+const unsigned char cy_mb_9429  []={"这个以后中国整个最高也会也好也很"};
+
+const py_index cy_index[]=
+{
+    {"35","fl",  sizeof(cy_mb_35  ),(unsigned char*)cy_mb_35  },
+    {"97","ys",  sizeof(cy_mb_97  ),(unsigned char*)cy_mb_97  },
+    {"29","cw",  sizeof(cy_mb_29  ),(unsigned char*)cy_mb_29  },
+    {"79","sy",  sizeof(cy_mb_79  ),(unsigned char*)cy_mb_79  },
+    {"39","dx",  sizeof(cy_mb_39  ),(unsigned char*)cy_mb_39  },
+    {"55","kj",  sizeof(cy_mb_55  ),(unsigned char*)cy_mb_55  },
+    {"57","ao",  sizeof(cy_mb_57  ),(unsigned char*)cy_mb_57  },
+    {"25","ba",  sizeof(cy_mb_25  ),(unsigned char*)cy_mb_25  },
+    {"59","bi",  sizeof(cy_mb_59  ),(unsigned char*)cy_mb_59  },
+    {"99","bo",  sizeof(cy_mb_99  ),(unsigned char*)cy_mb_99  },
+    {"69","bu",  sizeof(cy_mb_69  ),(unsigned char*)cy_mb_69  },
+    {"95","ca",  sizeof(cy_mb_95  ),(unsigned char*)cy_mb_95  },
+    {"962","ce", sizeof(cy_mb_962 ),(unsigned char*)cy_mb_962 },
+    {"862","ci", sizeof(cy_mb_862 ),(unsigned char*)cy_mb_862 },
+    {"762","cu", sizeof(cy_mb_762 ),(unsigned char*)cy_mb_762 },
+    {"932","da", sizeof(cy_mb_932 ),(unsigned char*)cy_mb_932 },
+    {"962","de", sizeof(cy_mb_962 ),(unsigned char*)cy_mb_962 },
+    {"662","di", sizeof(cy_mb_662 ),(unsigned char*)cy_mb_662 },
+    {"372","du", sizeof(cy_mb_372 ),(unsigned char*)cy_mb_372 },
+    {"745","en", sizeof(cy_mb_745 ),(unsigned char*)cy_mb_745 },
+    {"7442","er",sizeof(cy_mb_7442),(unsigned char*)cy_mb_7442},
+    {"9829","er",sizeof(cy_mb_9829),(unsigned char*)cy_mb_9829},
+    {"9429","er",sizeof(cy_mb_9429),(unsigned char*)cy_mb_9429},
+};
+
+int size_of_cyindex()
+{
+	return sizeof(cy_index)/sizeof(cy_index[0]);
+}
+
 //拼音索引表
 const py_index py_index3[]=
 {

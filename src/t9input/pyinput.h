@@ -39,7 +39,9 @@ unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist);
 unsigned char get_pymb(unsigned char* str);
 void test_py(unsigned char *inputstr);
 extern const py_index py_index3[];
+extern const py_index cy_index[];
 extern const py_index eng_mb_index[];
 int size_of_pyindex();
+int size_of_cyindex();
 int size_of_engmbindex();
 #endif
