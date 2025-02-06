@@ -1861,6 +1861,7 @@ void do_tipt(void*cfp)
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
+            if(choose_idx[2]==0 && t9.mwdth==4) choose_idx[2]=1;
             choose_idx[0]=0;
         }
         else{
@@ -1887,8 +1888,13 @@ void do_tipt(void*cfp)
             else{
                 while(choose_idx[1]<0)choose_idx[1]+=t9.pymb[(int)choose_idx[0]]->num/2;
                 while(choose_idx[1]>=(t9.pymb[(int)choose_idx[0]]->num/2))choose_idx[1]-=t9.pymb[(int)choose_idx[0]]->num/2;
-                draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE),
-                        FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
+                draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE), FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
+                if(t9.mwdth==4){
+                    for(int i=0;i<t9.pymb[(int)choose_idx[0]]->num/2-2;i+=2){
+                        LCD_DrawLine(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(i+2), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*1,
+                                TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(i+2), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*2);
+                    }
+                }
             }
         }
 	}else lprintf("no matched results\r\n");
