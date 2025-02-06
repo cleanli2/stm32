@@ -1861,7 +1861,6 @@ void do_tipt(void*cfp)
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
-            if(choose_idx[2]==0) choose_idx[2]=1;
             choose_idx[0]=0;
         }
         else{
