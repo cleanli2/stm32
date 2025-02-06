@@ -1568,7 +1568,7 @@ void do_tipt(void*cfp)
     int u_txt=0;
     int btidx=*(int*)cfp;
     char *inputs=(char*)ui_buf;
-    char rs[5]={0};
+    char rs[7]={0};
     signed char *choose_idx=(signed char*)&ui_buf[3];//0-py index 1-char index 2-mode:input/py_choose/char_choose 3-eng/chs
     win tiptw={TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y, TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_H,
         TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_DY};
@@ -1682,14 +1682,30 @@ void do_tipt(void*cfp)
                     }
                 }
                 else{
-                    rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2];
-                    rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2+1];
-                    rs[2]=0xa1;
-                    rs[3]=0xfd;
-                    rs[4]=0;
-                    if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
-                        str_leftmove(book_buf, 2);
-                        str_leftmove(tipt_buf, 2);
+                    if(t9.mwdth==2){
+                        rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2];
+                        rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[choose_idx[1]*2+1];
+                        rs[2]=0xa1;
+                        rs[3]=0xfd;
+                        rs[4]=0;
+                        if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
+                            str_leftmove(book_buf, 2);
+                            str_leftmove(tipt_buf, 2);
+                        }
+                    }
+                    else if(t9.mwdth==4){
+                        int tmpidx=choose_idx[1]/2;
+                        rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*4];
+                        rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*4+1];
+                        rs[2]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*4+2];
+                        rs[3]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*4+3];
+                        rs[4]=0xa1;
+                        rs[5]=0xfd;
+                        rs[6]=0;
+                        if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
+                            str_leftmove(book_buf, 4);
+                            str_leftmove(tipt_buf, 4);
+                        }
                     }
                 }
                 strcat(book_buf, rs);
@@ -1701,7 +1717,7 @@ void do_tipt(void*cfp)
                 choose_idx[1]=0;
                 choose_idx[0]=0;
                 //provide common input char
-                if(0==choose_idx[3]){
+                if(0==choose_idx[3]&&t9.mwdth==2){
                     inputs[0]=rs[0];
                     inputs[1]=rs[1];
                     inputs[2]=rs[2];

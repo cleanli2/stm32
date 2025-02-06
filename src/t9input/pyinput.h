@@ -30,6 +30,7 @@ typedef struct
 {
   unsigned char(*getpymb)(unsigned char *instr);			//字符串到码表获取函数
   py_index *pymb[MAX_MATCH_PYMB];	//码表存放位置
+  int mwdth;
 }pyinput;
 
 extern pyinput t9;

@@ -17,6 +17,7 @@ pyinput eng=
 {
 	get_eng_mb,
     {0},
+    1,
 };
 
 unsigned char get_matched_mb(unsigned char *strin,py_index **matchlist)
@@ -46,6 +47,7 @@ pyinput t9=
 {
 	get_pymb,
     {0},
+    2,
 };
 
 //比较两个字符串的匹配情况
@@ -112,6 +114,7 @@ unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
             if(temp > 0 && ((mcnt<MAX_PY_OPS)||(0x80&temp)))
             {
                 matchlist[mcnt++]=(py_index*)&py_index3[i];
+                t9.mwdth=2;
             }
         }
         if(mcnt==0){
@@ -122,6 +125,7 @@ unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
                 if(temp > 0 && ((mcnt<MAX_PY_OPS)||(0x80&temp)))
                 {
                     matchlist[mcnt++]=(py_index*)&cy_index[i];
+                    t9.mwdth=4;
                 }
             }
         }
