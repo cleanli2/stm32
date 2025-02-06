@@ -1471,7 +1471,7 @@ int is_skip_pmark(char*s)
 {
     const py_index*pmark_idx=&py_index3[0];
     for(int i=0;i<pmark_idx->num;i+=2){
-        if((s[0]==pmark_idx->pymb_ch[i])&&(s[1]==pmark_idx->pymb_ch[i+1])){
+        if(((unsigned char)s[0]==pmark_idx->pymb_ch[i])&&((unsigned char)s[1]==pmark_idx->pymb_ch[i+1])){
             return 1;
         }
     }
