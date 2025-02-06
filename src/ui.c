@@ -1586,23 +1586,29 @@ void do_tipt(void*cfp)
         return;
     }
     else if(btidx==0){
-        if(ui_buf[4]>0){
-            inputs[--ui_buf[4]]=0;
+        if(ui_buf[15]==1){
+            ui_buf[15]=0;
+            memset(inputs, 12, 0);
         }
         else{
-            str_del_last(book_buf);//del indicator
-            str_del_last(book_buf);//del real one
-            rs[0]=0xa1;
-            rs[1]=0xfd;
-            rs[2]=0;
-            strcat(book_buf, rs);
-            u_txt=1;
+            if(ui_buf[4]>0){
+                inputs[--ui_buf[4]]=0;
+            }
+            else{
+                str_del_last(book_buf);//del indicator
+                str_del_last(book_buf);//del real one
+                rs[0]=0xa1;
+                rs[1]=0xfd;
+                rs[2]=0;
+                strcat(book_buf, rs);
+                u_txt=1;
+            }
+            choose_idx[2]=0;
+            choose_idx[1]=0;
         }
-		choose_idx[2]=0;
-		choose_idx[1]=0;
     }
     else if(btidx<9){
-        if(ui_buf[4]==0 && btidx!=3 && btidx!=5){
+        if(ui_buf[4]==0 && btidx!=3 && btidx!=5&&ui_buf[15]==1){
             ui_buf[15]=0;
             choose_idx[2]=0;
         }
