@@ -1588,7 +1588,7 @@ void do_tipt(void*cfp)
     else if(btidx==0){
         if(ui_buf[15]==1){
             ui_buf[15]=0;
-            memset(inputs, 12, 0);
+            memset(inputs, 0, 12);
         }
         else{
             if(ui_buf[4]>0){
@@ -1629,14 +1629,21 @@ void do_tipt(void*cfp)
         }
     }
     else if(btidx==9){
-        if(0==choose_idx[2]){
-            choose_idx[0]--;
+        if(ui_buf[4]>0){
+            if(0==choose_idx[2]){
+                choose_idx[0]--;
+            }
+            else{
+                if(choose_idx[3]==0)//chs mode
+                {
+                    choose_idx[1]-=N_EACH_LINE;
+                }
+            }
         }
         else{
-            if(choose_idx[3]==0)//chs mode
-            {
-                choose_idx[1]-=N_EACH_LINE;
-            }
+            inputs[0]='h';
+            inputs[1]=0;
+            ui_buf[15]=1;
         }
     }
     else if(btidx==10){

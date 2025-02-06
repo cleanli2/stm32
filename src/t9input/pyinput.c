@@ -67,8 +67,32 @@ unsigned char str_match(unsigned char*str1,unsigned char*str2)
 	}
 }
 
-unsigned char dyn_mb[40]={"的一是不了在人有我他"};
-py_index dyn_index={"dynch","words",20,dyn_mb};
+#define DYN_HISTORY_SIZE 40
+int dyn_his_p=0;
+unsigned char dyn_mb[73]={"的一是不了在人有我他这个上们来到时大地为子中你说生着就那要也得里后自以会"};
+py_index dyn_index={"dynch","words",73,dyn_mb};
+unsigned char dyn_his_mb[DYN_HISTORY_SIZE+1]={"的一是不了在人有我他这个上们来到时大地为"};
+py_index dyn_his_index={"history","histywds",40,dyn_his_mb};
+
+int chs_is_in_list(char*ch, char*list, int len)
+{
+    for(int i=0;i<len;i+=2){
+        if((ch[0]==list[i])&&(ch[1]==list[i+1])){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void chs_put_in_list(char*ch, char*list)
+{
+    list[dyn_his_p]=ch[0];
+    list[dyn_his_p+1]=ch[1];
+    dyn_his_p+=2;
+    if(dyn_his_p>=DYN_HISTORY_SIZE){
+        dyn_his_p=0;
+    }
+}
 
 //获取匹配的拼音码表
 //*strin,输入的字符串,形如:"726"
@@ -77,7 +101,10 @@ unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
 	int pyindex_len;
 	int i;
 	unsigned char temp,mcnt=0;
-    if(strin[0]<=0x80){
+    if(strin[0]=='h'){
+        matchlist[mcnt++]=&dyn_his_index;
+    }
+    else if(strin[0]<=0x80){
         pyindex_len=size_of_pyindex();//得到py索引表的大小.
         for(i=0;i<pyindex_len;i++)
         {
@@ -89,6 +116,9 @@ unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
         }
     }
     else{
+        if(!chs_is_in_list((char*)strin, (char*)dyn_his_mb, DYN_HISTORY_SIZE)){
+            chs_put_in_list((char*)strin, (char*)dyn_his_mb);
+        }
         matchlist[mcnt++]=&dyn_index;
     }
 	return mcnt;//返回匹配的个数
