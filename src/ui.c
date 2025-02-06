@@ -1469,6 +1469,14 @@ void str_leftmove(char*s, int n)
 }
 int is_skip_pmark(char*s)
 {
+    const py_index*pmark_idx=&py_index3[0];
+    for(int i=0;i<pmark_idx->num;i+=2){
+        if((s[0]==pmark_idx->pymb_ch[i])&&(s[1]==pmark_idx->pymb_ch[i+1])){
+            return 1;
+        }
+    }
+    return 0;
+#if 0
     if((s[0]==0xd && s[1]==0xa)
             || (s[0]==0xa3 && s[1]==0xac)
             || (s[0]==0xa1 && s[1]==0xa3)
@@ -1476,12 +1484,14 @@ int is_skip_pmark(char*s)
             || (s[0]==0xa3 && s[1]==0xbf)
             || (s[0]==0xa3 && s[1]==0xa1)
             || (s[0]==0xa1 && s[1]==0xa2)
+            || (s[0]==0xa1 && s[1]==0xb7)
             ){
         return 1;
     }
     else{
         return 0;
     }
+#endif
 }
 int check_same(const char*s)
 {
