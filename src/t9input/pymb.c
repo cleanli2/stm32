@@ -448,35 +448,41 @@ const unsigned char PY_mb_zuo   []={"左佐做作坐座昨撮唑柞阼琢嘬怍胙祚砟酢"};
 
 
 //words
+const unsigned char cy_mb_27    []={"承认成人吃肉常人"};
 const unsigned char cy_mb_89    []={"特性"};
 const unsigned char cy_mb_35    []={"法轮法律"};
 const unsigned char cy_mb_97    []={"意识"};
 const unsigned char cy_mb_29    []={"成为此外错误称为从未"};
 const unsigned char cy_mb_79    []={"所以所有声音"};
 const unsigned char cy_mb_39    []={"东西大学"};
-const unsigned char cy_mb_55    []={"看见空间科技可见"};
+const unsigned char cy_mb_55    []={"看见空间科技可见力量理论来了历来"};
 const unsigned char cy_mb_57    []={"可是开始看书"};
 const unsigned char cy_mb_25    []={"出来从来处理除了"};
 const unsigned char cy_mb_59    []={"可以科学可笑"};
 const unsigned char cy_mb_99    []={"这样现在这些因为以为宇宙"};
 const unsigned char cy_mb_69    []={"没有没用满意命运"};
 const unsigned char cy_mb_95    []={"自己已经修炼心理"};
+const unsigned char cy_mb_262   []={"不能本能"};
+const unsigned char cy_mb_222   []={"出差常常从此层次超出传承"};
 const unsigned char cy_mb_862   []={"他们她们它们"};
 const unsigned char cy_mb_762   []={"什么人们生命上面说明奇门"};
-const unsigned char cy_mb_932   []={"知道一定许多真的有点一点有的"};
-const unsigned char cy_mb_962   []={"怎么这么咱们我们外面文明"};
+const unsigned char cy_mb_932   []={"知道一定许多真的有点一点有的选定"};
+const unsigned char cy_mb_962   []={"怎么这么咱们我们外面文明只能之内在哪总能"};
 const unsigned char cy_mb_662   []={"你们那么农民"};
-const unsigned char cy_mb_372   []={"但是当时地上"};
+const unsigned char cy_mb_372   []={"但是当时地上当然打人"};
 const unsigned char cy_mb_745   []={"世界时间睡觉"};
 const unsigned char cy_mb_432   []={"功法功夫"};
 const unsigned char cy_mb_832   []={"徒弟土地"};
+const unsigned char cy_mb_5429  []={"两个练功炼功"};
 const unsigned char cy_mb_3829  []={"独特"};
 const unsigned char cy_mb_7442  []={"时候生活社会"};
 const unsigned char cy_mb_9829  []={"问题"};
+const unsigned char cy_mb_6429  []={"那个哪个能够难过"};
 const unsigned char cy_mb_9429  []={"这个以后中国整个最高也会也好也很"};
 
 const py_index cy_index[]=
 {
+    {"27","fl",  sizeof(cy_mb_27  ),(unsigned char*)cy_mb_27  },
     {"89","fl",  sizeof(cy_mb_89  ),(unsigned char*)cy_mb_89  },
     {"35","fl",  sizeof(cy_mb_35  ),(unsigned char*)cy_mb_35  },
     {"97","ys",  sizeof(cy_mb_97  ),(unsigned char*)cy_mb_97  },
@@ -490,6 +496,7 @@ const py_index cy_index[]=
     {"99","bo",  sizeof(cy_mb_99  ),(unsigned char*)cy_mb_99  },
     {"69","bu",  sizeof(cy_mb_69  ),(unsigned char*)cy_mb_69  },
     {"95","ca",  sizeof(cy_mb_95  ),(unsigned char*)cy_mb_95  },
+    {"222","cc", sizeof(cy_mb_862 ),(unsigned char*)cy_mb_862 },
     {"862","ce", sizeof(cy_mb_862 ),(unsigned char*)cy_mb_862 },
     {"962","ce", sizeof(cy_mb_962 ),(unsigned char*)cy_mb_962 },
     {"762","cu", sizeof(cy_mb_762 ),(unsigned char*)cy_mb_762 },
@@ -500,6 +507,8 @@ const py_index cy_index[]=
     {"745","en", sizeof(cy_mb_745 ),(unsigned char*)cy_mb_745 },
     {"432","en", sizeof(cy_mb_432 ),(unsigned char*)cy_mb_432 },
     {"832","en", sizeof(cy_mb_832 ),(unsigned char*)cy_mb_432 },
+    {"5429","er",sizeof(cy_mb_5429),(unsigned char*)cy_mb_5429},
+    {"6429","er",sizeof(cy_mb_6429),(unsigned char*)cy_mb_6429},
     {"7442","er",sizeof(cy_mb_7442),(unsigned char*)cy_mb_7442},
     {"3829","er",sizeof(cy_mb_3829),(unsigned char*)cy_mb_3829},
     {"9829","er",sizeof(cy_mb_9829),(unsigned char*)cy_mb_9829},
