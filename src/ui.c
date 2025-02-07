@@ -1470,12 +1470,12 @@ void str_leftmove(char*s, int n)
 int is_skip_pmark(char*s)
 {
     const py_index*pmark_idx=&py_index3[0];
+    if(s[0]==0xd && s[1]==0xa)return 1;
     for(int i=0;i<pmark_idx->num;i+=2){
         if(((unsigned char)s[0]==pmark_idx->pymb_ch[i])&&((unsigned char)s[1]==pmark_idx->pymb_ch[i+1])){
             return 1;
         }
     }
-    if(s[0]==0xd && s[1]==0xa)return 1;
     return 0;
 #if 0
     if((s[0]==0xd && s[1]==0xa)
@@ -1581,7 +1581,7 @@ void do_tipt(void*cfp)
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5);
     draw_sq(TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5, BLACK);
-    //lprintf("\r\nbtidx=%d u4=%d each=%d\r\n",btidx, ui_buf[4], N_EACH_LINE);
+    lprintf("\r\nbtidx=%d u4=%d u3=%d\r\n",btidx, ui_buf[4], ui_buf[3]);
     if(btidx<0 || btidx>=12){
         lprintf("error btidx\r\n");
         return;
