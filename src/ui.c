@@ -1591,6 +1591,7 @@ void do_tipt(void*cfp)
             ui_buf[15]=0;
             memset(inputs, 0, 12);
             choose_idx[2]=0;
+            ui_buf[4]=0;
         }
         else{
             if(ui_buf[4]>0){
