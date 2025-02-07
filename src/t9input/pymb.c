@@ -364,7 +364,7 @@ const unsigned char PY_mb_tian  []={"天添填田甜恬舔腆殄掭忝阗畋钿锘"};
 const unsigned char PY_mb_tiao  []={"调挑条迢眺跳佻髫苕祧铫窕蜩笤粜龆鲦"};
 const unsigned char PY_mb_tie   []={"贴铁帖餮锇萜"};
 const unsigned char PY_mb_ting  []={"厅听烃汀廷停亭庭挺艇莛葶婷铤蜓霆梃"};
-const unsigned char PY_mb_tong  []={"桐瞳同铜彤童桶捅筒统痛佟僮茼恸潼酮仝垌嗵峒砼"};
+const unsigned char PY_mb_tong  []={"通桐瞳同铜彤童桶捅筒统痛佟僮茼恸潼酮仝垌嗵峒砼"};
 const unsigned char PY_mb_tou   []={"偷投头透骰钭亠"};
 const unsigned char PY_mb_tu    []={"凸秃突图徒途涂屠土吐兔堍荼菟钍酴"};
 const unsigned char PY_mb_tuan  []={"湍团抟彖疃"};
@@ -448,22 +448,27 @@ const unsigned char PY_mb_zuo   []={"左佐做作坐座昨撮唑柞阼琢嘬怍胙祚砟酢"};
 
 
 //words
-const unsigned char cy_mb_27    []={"承认成人吃肉常人"};
+const unsigned char cy_mb_27    []={"承认成人吃肉常人别人比如不让病人必然"};
+const unsigned char cy_mb_29    []={"必须不行不想表现成为此外错误称为从未"};
 const unsigned char cy_mb_89    []={"特性"};
-const unsigned char cy_mb_35    []={"法轮法律"};
+const unsigned char cy_mb_87    []={"特殊同时他是它是天上"};
+const unsigned char cy_mb_35    []={"法轮法律佛教飞机封建佛家道家大家当今大将"};
+const unsigned char cy_mb_39    []={"东西大学发现放学佛像返修导致电子肚子当中对着动作当作带着"};
 const unsigned char cy_mb_97    []={"意识"};
-const unsigned char cy_mb_29    []={"成为此外错误称为从未"};
+const unsigned char cy_mb_75    []={"普及人家如今儒家情景清静"};
 const unsigned char cy_mb_79    []={"所以所有声音"};
-const unsigned char cy_mb_39    []={"东西大学"};
 const unsigned char cy_mb_55    []={"看见空间科技可见力量理论来了历来"};
 const unsigned char cy_mb_57    []={"可是开始看书"};
 const unsigned char cy_mb_25    []={"出来从来处理除了"};
 const unsigned char cy_mb_59    []={"可以科学可笑"};
-const unsigned char cy_mb_99    []={"这样现在这些因为以为宇宙"};
+const unsigned char cy_mb_99    []={"这样现在这些因为以为宇宙学校相信信息现象详细信心显现"};
 const unsigned char cy_mb_69    []={"没有没用满意命运"};
 const unsigned char cy_mb_95    []={"自己已经修炼心理"};
+const unsigned char cy_mb_232   []={"部份办法不放不妨拜佛"};
+const unsigned char cy_mb_332   []={"反对奋斗发达非得佛道得到等等多大道德大多地方大法"};
 const unsigned char cy_mb_262   []={"不能本能"};
 const unsigned char cy_mb_222   []={"出差常常从此层次超出传承"};
+const unsigned char cy_mb_422   []={"过程刚才干脆高潮构成根本改变个别"};
 const unsigned char cy_mb_862   []={"他们她们它们"};
 const unsigned char cy_mb_762   []={"什么人们生命上面说明奇门"};
 const unsigned char cy_mb_932   []={"知道一定许多真的有点一点有的选定"};
@@ -473,22 +478,27 @@ const unsigned char cy_mb_372   []={"但是当时地上当然打人"};
 const unsigned char cy_mb_745   []={"世界时间睡觉"};
 const unsigned char cy_mb_432   []={"功法功夫"};
 const unsigned char cy_mb_832   []={"徒弟土地"};
+const unsigned char cy_mb_2429  []={"成功超过传功"};
+const unsigned char cy_mb_2829  []={"不同把它白天帮他本体不疼"};
 const unsigned char cy_mb_5429  []={"两个练功炼功"};
+const unsigned char cy_mb_6429  []={"那个哪个能够难过"};
 const unsigned char cy_mb_3829  []={"独特"};
 const unsigned char cy_mb_7442  []={"时候生活社会"};
+const unsigned char cy_mb_7429  []={"全国奇怪去过气功"};
 const unsigned char cy_mb_9829  []={"问题"};
-const unsigned char cy_mb_6429  []={"那个哪个能够难过"};
-const unsigned char cy_mb_9429  []={"这个以后中国整个最高也会也好也很"};
+const unsigned char cy_mb_9429  []={"这个以后中国整个最高也会也好也很一个英国应该有关一共严格"};
 
 const py_index cy_index[]=
 {
     {"27","fl",  sizeof(cy_mb_27  ),(unsigned char*)cy_mb_27  },
+    {"29","bx",  sizeof(cy_mb_29  ),(unsigned char*)cy_mb_29  },
     {"89","fl",  sizeof(cy_mb_89  ),(unsigned char*)cy_mb_89  },
+    {"87","fl",  sizeof(cy_mb_87  ),(unsigned char*)cy_mb_87  },
     {"35","fl",  sizeof(cy_mb_35  ),(unsigned char*)cy_mb_35  },
+    {"39","fx",  sizeof(cy_mb_39  ),(unsigned char*)cy_mb_39  },
     {"97","ys",  sizeof(cy_mb_97  ),(unsigned char*)cy_mb_97  },
-    {"29","cw",  sizeof(cy_mb_29  ),(unsigned char*)cy_mb_29  },
+    {"75","pj",  sizeof(cy_mb_75  ),(unsigned char*)cy_mb_75  },
     {"79","sy",  sizeof(cy_mb_79  ),(unsigned char*)cy_mb_79  },
-    {"39","dx",  sizeof(cy_mb_39  ),(unsigned char*)cy_mb_39  },
     {"55","kj",  sizeof(cy_mb_55  ),(unsigned char*)cy_mb_55  },
     {"57","ao",  sizeof(cy_mb_57  ),(unsigned char*)cy_mb_57  },
     {"25","ba",  sizeof(cy_mb_25  ),(unsigned char*)cy_mb_25  },
@@ -496,9 +506,12 @@ const py_index cy_index[]=
     {"99","bo",  sizeof(cy_mb_99  ),(unsigned char*)cy_mb_99  },
     {"69","bu",  sizeof(cy_mb_69  ),(unsigned char*)cy_mb_69  },
     {"95","ca",  sizeof(cy_mb_95  ),(unsigned char*)cy_mb_95  },
-    {"222","cc", sizeof(cy_mb_862 ),(unsigned char*)cy_mb_862 },
+    {"232","bf", sizeof(cy_mb_232 ),(unsigned char*)cy_mb_232 },
+    {"332","fd", sizeof(cy_mb_332 ),(unsigned char*)cy_mb_332 },
+    {"262","cc", sizeof(cy_mb_262 ),(unsigned char*)cy_mb_262 },
+    {"222","cc", sizeof(cy_mb_222 ),(unsigned char*)cy_mb_222 },
+    {"422","cc", sizeof(cy_mb_422 ),(unsigned char*)cy_mb_422 },
     {"862","ce", sizeof(cy_mb_862 ),(unsigned char*)cy_mb_862 },
-    {"962","ce", sizeof(cy_mb_962 ),(unsigned char*)cy_mb_962 },
     {"762","cu", sizeof(cy_mb_762 ),(unsigned char*)cy_mb_762 },
     {"932","da", sizeof(cy_mb_932 ),(unsigned char*)cy_mb_932 },
     {"962","de", sizeof(cy_mb_962 ),(unsigned char*)cy_mb_962 },
@@ -506,11 +519,14 @@ const py_index cy_index[]=
     {"372","du", sizeof(cy_mb_372 ),(unsigned char*)cy_mb_372 },
     {"745","en", sizeof(cy_mb_745 ),(unsigned char*)cy_mb_745 },
     {"432","en", sizeof(cy_mb_432 ),(unsigned char*)cy_mb_432 },
-    {"832","en", sizeof(cy_mb_832 ),(unsigned char*)cy_mb_432 },
+    {"832","en", sizeof(cy_mb_832 ),(unsigned char*)cy_mb_832 },
+    {"2429","er",sizeof(cy_mb_2429),(unsigned char*)cy_mb_2429},
+    {"2829","er",sizeof(cy_mb_2829),(unsigned char*)cy_mb_2829},
     {"5429","er",sizeof(cy_mb_5429),(unsigned char*)cy_mb_5429},
     {"6429","er",sizeof(cy_mb_6429),(unsigned char*)cy_mb_6429},
-    {"7442","er",sizeof(cy_mb_7442),(unsigned char*)cy_mb_7442},
     {"3829","er",sizeof(cy_mb_3829),(unsigned char*)cy_mb_3829},
+    {"7442","er",sizeof(cy_mb_7442),(unsigned char*)cy_mb_7442},
+    {"7429","er",sizeof(cy_mb_7429),(unsigned char*)cy_mb_7429},
     {"9829","er",sizeof(cy_mb_9829),(unsigned char*)cy_mb_9829},
     {"9429","er",sizeof(cy_mb_9429),(unsigned char*)cy_mb_9429},
 };
