@@ -449,19 +449,19 @@ const unsigned char PY_mb_zuo   []={"×ó×ô×ö×÷×ø×ù×ò´éßò×õÚè×ÁàÜâôëÑìñíÄõ¡"};
 
 //words
 const unsigned char cy_mb_27    []={"³ĞÈÏ³ÉÈË³ÔÈâ³£ÈË±ğÈË±ÈÈç²»ÈÃ²¡ÈË±ØÈ»"};
-const unsigned char cy_mb_29    []={"±ØĞë²»ĞĞ²»Ïë±íÏÖ³ÉÎª´ËÍâ´íÎó³ÆÎª´ÓÎ´"};
+const unsigned char cy_mb_29    []={"±ØĞë²»ĞĞ²»Ïë±íÏÖ³ÉÎª´ËÍâ´íÎó³ÆÎª´ÓÎ´³öÏÖ²ÅĞĞ"};
 const unsigned char cy_mb_89    []={"ÌØĞÔ"};
 const unsigned char cy_mb_87    []={"ÌØÊâÍ¬Ê±ËûÊÇËüÊÇÌìÉÏ"};
 const unsigned char cy_mb_35    []={"·¨ÂÖ·¨ÂÉ·ğ½Ì·É»ú·â½¨·ğ¼ÒµÀ¼Ò´ó¼Òµ±½ñ´ó½«"};
-const unsigned char cy_mb_39    []={"¶«Î÷´óÑ§·¢ÏÖ·ÅÑ§·ğÏñ·µĞŞµ¼ÖÂµç×Ó¶Ç×Óµ±ÖĞ¶Ô×Å¶¯×÷µ±×÷´ø×Å"};
+const unsigned char cy_mb_39    []={"¶«Î÷´óÑ§·¢ÏÖ·ÅÑ§·ğÏñ·µĞŞµ¼ÖÂµç×Ó¶Ç×Óµ±ÖĞ¶Ô×Å¶¯×÷µ±×÷´ø×Å·¶Î§·½Î»¸»ÎÌµÜ×Ó"};
 const unsigned char cy_mb_97    []={"ÒâÊ¶"};
-const unsigned char cy_mb_75    []={"ÆÕ¼°ÈË¼ÒÈç½ñÈå¼ÒÇé¾°Çå¾²"};
-const unsigned char cy_mb_79    []={"ËùÒÔËùÓĞÉùÒô"};
+const unsigned char cy_mb_75    []={"ÆÕ¼°ÈË¼ÒÈç½ñÈå¼ÒÇé¾°Çå¾²ÈçÀ´"};
+const unsigned char cy_mb_79    []={"ËùÒÔËùÓĞÉùÒôÈİÒ×Ë¼ÏëÉÏÑ§ÉËĞÄÅÄÕÕÇúÏßÆäÖĞÈ¥×öÇ©×ÖÇ¿×³ÈÏÎªÈËÎªË¼Î¬ËùÎ½ÉúÎïÊÂÎïÊìÏ¤ÊµÑéÉõÖÁËæ×ÅÉ¢ÏÉ"};
 const unsigned char cy_mb_55    []={"¿´¼û¿Õ¼ä¿Æ¼¼¿É¼ûÁ¦Á¿ÀíÂÛÀ´ÁËÀúÀ´"};
 const unsigned char cy_mb_57    []={"¿ÉÊÇ¿ªÊ¼¿´Êé"};
 const unsigned char cy_mb_25    []={"³öÀ´´ÓÀ´´¦Àí³ıÁË"};
-const unsigned char cy_mb_59    []={"¿ÉÒÔ¿ÆÑ§¿ÉĞ¦"};
-const unsigned char cy_mb_99    []={"ÕâÑùÏÖÔÚÕâĞ©ÒòÎªÒÔÎªÓîÖæÑ§Ğ£ÏàĞÅĞÅÏ¢ÏÖÏóÏêÏ¸ĞÅĞÄÏÔÏÖ"};
+const unsigned char cy_mb_59    []={"¿ÉÒÔ¿ÆÑ§¿ÉĞ¦¼ÛÖµ¾õÕß"};
+const unsigned char cy_mb_99    []={"ÕâÑùÏÖÔÚÕâĞ©ÒòÎªÒÔÎªÓîÖæÑ§Ğ£ÏàĞÅĞÅÏ¢ÏÖÏóÏêÏ¸ĞÅĞÄÏÔÏÖÎ£ÏÕÕæÕıÕâÖÖ×éÖ¯×îÖÕ×øÔÚÕ½Õù×ÜÖ®ÖÖÖÖ"};
 const unsigned char cy_mb_69    []={"Ã»ÓĞÃ»ÓÃÂúÒâÃüÔË"};
 const unsigned char cy_mb_95    []={"×Ô¼ºÒÑ¾­ĞŞÁ¶ĞÄÀí"};
 const unsigned char cy_mb_232   []={"²¿·İ°ì·¨²»·Å²»·Á°İ·ğ"};
@@ -469,19 +469,22 @@ const unsigned char cy_mb_332   []={"·´¶Ô·Ü¶··¢´ï·ÇµÃ·ğµÀµÃµ½µÈµÈ¶à´óµÀµÂ´ó¶àµØ·
 const unsigned char cy_mb_262   []={"²»ÄÜ±¾ÄÜ"};
 const unsigned char cy_mb_222   []={"³ö²î³£³£´Ó´Ë²ã´Î³¬³ö´«³Ğ"};
 const unsigned char cy_mb_422   []={"¹ı³Ì¸Õ²Å¸É´à¸ß³±¹¹³É¸ù±¾¸Ä±ä¸ö±ğ"};
+const unsigned char cy_mb_432   []={"¹Ûµã¹æ¶¨¸ü¶à¸Ğµ½¸Ğµ½¹Ì¶¨¹Å´ú¸Ä¶¯¹¦·¨¹¦·ò"};
+const unsigned char cy_mb_562   []={"ÀïÃæ"};
+const unsigned char cy_mb_832   []={"ËûµÄÍ½µÜËüµÄÌØ¶¨"};
 const unsigned char cy_mb_862   []={"ËûÃÇËıÃÇËüÃÇ"};
 const unsigned char cy_mb_762   []={"Ê²Ã´ÈËÃÇÉúÃüÉÏÃæËµÃ÷ÆæÃÅ"};
+const unsigned char cy_mb_922   []={"ĞÎ³ÉÏÂ´ÎÏà²îĞŞ³É"};
 const unsigned char cy_mb_932   []={"ÖªµÀÒ»¶¨Ğí¶àÕæµÄÓĞµãÒ»µãÓĞµÄÑ¡¶¨"};
 const unsigned char cy_mb_962   []={"ÔõÃ´ÕâÃ´ÔÛÃÇÎÒÃÇÍâÃæÎÄÃ÷Ö»ÄÜÖ®ÄÚÔÚÄÄ×ÜÄÜ"};
 const unsigned char cy_mb_662   []={"ÄãÃÇÄÇÃ´Å©Ãñ"};
 const unsigned char cy_mb_372   []={"µ«ÊÇµ±Ê±µØÉÏµ±È»´òÈË"};
 const unsigned char cy_mb_745   []={"ÊÀ½çÊ±¼äË¯¾õ"};
-const unsigned char cy_mb_432   []={"¹¦·¨¹¦·ò"};
-const unsigned char cy_mb_832   []={"Í½µÜÍÁµØ"};
 const unsigned char cy_mb_2429  []={"³É¹¦³¬¹ı´«¹¦"};
 const unsigned char cy_mb_2829  []={"²»Í¬°ÑËü°×Ìì°ïËû±¾Ìå²»ÌÛ"};
 const unsigned char cy_mb_5429  []={"Á½¸öÁ·¹¦Á¶¹¦"};
 const unsigned char cy_mb_6429  []={"ÄÇ¸öÄÄ¸öÄÜ¹»ÄÑ¹ı"};
+const unsigned char cy_mb_8429  []={"Í¨¹ıÌá¸ßÍ¨¹ıÌì¹ú"};
 const unsigned char cy_mb_3829  []={"¶ÀÌØ"};
 const unsigned char cy_mb_7442  []={"Ê±ºòÉú»îÉç»á"};
 const unsigned char cy_mb_7429  []={"È«¹úÆæ¹ÖÈ¥¹ıÆø¹¦"};
@@ -511,19 +514,22 @@ const py_index cy_index[]=
     {"262","cc", sizeof(cy_mb_262 ),(unsigned char*)cy_mb_262 },
     {"222","cc", sizeof(cy_mb_222 ),(unsigned char*)cy_mb_222 },
     {"422","cc", sizeof(cy_mb_422 ),(unsigned char*)cy_mb_422 },
+    {"432","cc", sizeof(cy_mb_432 ),(unsigned char*)cy_mb_432 },
+    {"562","cc", sizeof(cy_mb_562 ),(unsigned char*)cy_mb_562 },
+    {"832","ce", sizeof(cy_mb_832 ),(unsigned char*)cy_mb_832 },
     {"862","ce", sizeof(cy_mb_862 ),(unsigned char*)cy_mb_862 },
     {"762","cu", sizeof(cy_mb_762 ),(unsigned char*)cy_mb_762 },
+    {"922","da", sizeof(cy_mb_922 ),(unsigned char*)cy_mb_922 },
     {"932","da", sizeof(cy_mb_932 ),(unsigned char*)cy_mb_932 },
     {"962","de", sizeof(cy_mb_962 ),(unsigned char*)cy_mb_962 },
     {"662","di", sizeof(cy_mb_662 ),(unsigned char*)cy_mb_662 },
     {"372","du", sizeof(cy_mb_372 ),(unsigned char*)cy_mb_372 },
     {"745","en", sizeof(cy_mb_745 ),(unsigned char*)cy_mb_745 },
-    {"432","en", sizeof(cy_mb_432 ),(unsigned char*)cy_mb_432 },
-    {"832","en", sizeof(cy_mb_832 ),(unsigned char*)cy_mb_832 },
     {"2429","er",sizeof(cy_mb_2429),(unsigned char*)cy_mb_2429},
     {"2829","er",sizeof(cy_mb_2829),(unsigned char*)cy_mb_2829},
     {"5429","er",sizeof(cy_mb_5429),(unsigned char*)cy_mb_5429},
     {"6429","er",sizeof(cy_mb_6429),(unsigned char*)cy_mb_6429},
+    {"8429","er",sizeof(cy_mb_8429),(unsigned char*)cy_mb_8429},
     {"3829","er",sizeof(cy_mb_3829),(unsigned char*)cy_mb_3829},
     {"7442","er",sizeof(cy_mb_7442),(unsigned char*)cy_mb_7442},
     {"7429","er",sizeof(cy_mb_7429),(unsigned char*)cy_mb_7429},
