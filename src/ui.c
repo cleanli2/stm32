@@ -1579,6 +1579,7 @@ void do_tipt(void*cfp)
     int u_txt=0;
     int btidx=*(int*)cfp;
     char *inputs=(char*)ui_buf;
+    char *lastchar=(char*)&ui_buf[14];
     char rs[11]={0};
     signed char *choose_idx=(signed char*)&ui_buf[3];//0-py index 1-char index 2-mode:input/py_choose/char_choose 3-eng/chs
     win tiptw={TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y, TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_H,
@@ -1654,8 +1655,25 @@ void do_tipt(void*cfp)
             }
         }
         else{
-            inputs[0]='h';
-            inputs[1]=0;
+            if(0==inputs[0]||0x80>(unsigned char)inputs[0]){
+                inputs[0]='h';
+                inputs[1]=0;
+            }
+            else if('h'==inputs[0]){
+                inputs[0]='m';
+                inputs[1]=0;
+            }
+            else if('m'==inputs[0]){
+                if(choose_idx[3]){
+                    inputs[0]=0;
+                    inputs[1]=0;
+                }
+                else{
+                    inputs[0]=lastchar[0];
+                    inputs[1]=lastchar[1];
+                    inputs[2]=0;
+                }
+            }
             ui_buf[15]=1;
         }
     }
