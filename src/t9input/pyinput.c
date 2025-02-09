@@ -101,7 +101,7 @@ void chs_put_in_list(char*ch, char*list)
 
 void update_dyn(unsigned char*s)
 {
-	int pyindex_len;
+	int pyindex_len, listlen;
 	int i, j, dynp=DYN_MB_SIZE-2;
     pyindex_len=size_of_pyindex();//得到py索引表的大小.
     for(i=0;i<pyindex_len;i++)
@@ -109,13 +109,23 @@ void update_dyn(unsigned char*s)
         if(py_index3[i].grp_n<=2)continue;
         for(j=0;j<py_index3[i].num;j+=2){
             if(s[0]==py_index3[i].pymb_ch[j] && s[1]==py_index3[i].pymb_ch[j+1]
-                    && (0!=(j-1)%py_index3[i].grp_n)){
+                    && (0!=(j/2+1)%py_index3[i].grp_n)){
                 dyn_mb[dynp-1]=py_index3[i].pymb_ch[j+2];
                 dyn_mb[dynp]=py_index3[i].pymb_ch[j+3];
                 dynp-=2;
             }
         }
     }
+    listlen=size_of_ciyu2_list();
+    for(i=0;i<listlen;i++)
+    {
+        if(s[0]==ciyu2_list[i][0] && s[1]==ciyu2_list[i][1]){
+            dyn_mb[dynp-1]=ciyu2_list[i][2];
+            dyn_mb[dynp]=ciyu2_list[i][3];
+            dynp-=2;
+        }
+    }
+    mem_print(dyn_mb, 0, DYN_MB_SIZE);
 }
 
 //获取匹配的拼音码表

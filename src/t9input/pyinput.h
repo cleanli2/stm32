@@ -44,7 +44,9 @@ void test_py(unsigned char *inputstr);
 extern const py_index py_index3[];
 extern const py_index cy_index[];
 extern const py_index eng_mb_index[];
+extern const char ciyu2_list[][4];
 int size_of_pyindex();
 int size_of_cyindex();
+int size_of_ciyu2_list();
 int size_of_engmbindex();
 #endif
