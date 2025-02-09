@@ -456,68 +456,54 @@ const unsigned char cy_mb_2629  []={"²»ÄÜ±¾ÄÜ"};
 const unsigned char cy_mb_2729  []={"³ĞÈÏ³ÉÈË³ÔÈâ³£ÈË±ğÈË±ÈÈç²»ÈÃ²¡ÈË±ØÈ»"};
 const unsigned char cy_mb_2829  []={"²»Í¬°ÑËü°×Ìì°ïËû±¾Ìå²»ÌÛ"};
 const unsigned char cy_mb_2929  []={"±ØĞë²»ĞĞ²»Ïë±íÏÖ³ÉÎª´ËÍâ´íÎó³ÆÎª´ÓÎ´³öÏÖ²ÅĞĞ"};
-const unsigned char cy_mb_3029  []={""};
-const unsigned char cy_mb_3129  []={""};
-const unsigned char cy_mb_3229  []={""};
+const unsigned char cy_mb_3229  []={"¶«±±"};
 const unsigned char cy_mb_3329  []={"·´¶Ô·Ü¶··¢´ï·ÇµÃ·ğµÀµÃµ½µÈµÈ¶à´óµÀµÂ´ó¶àµØ·½´ó·¨"};
-const unsigned char cy_mb_3429  []={""};
+const unsigned char cy_mb_3429  []={"´ó¸Å"};
 const unsigned char cy_mb_3529  []={"·¨ÂÖ·¨ÂÉ·ğ½Ì·É»ú·â½¨·ğ¼ÒµÀ¼Ò´ó¼Òµ±½ñ´ó½«"};
-const unsigned char cy_mb_3629  []={""};
+const unsigned char cy_mb_3629  []={"¶àÃ´"};
 const unsigned char cy_mb_3729  []={"µ«ÊÇµ±Ê±µØÉÏµ±È»´òÈË¶øÊÇ"};
 const unsigned char cy_mb_3829  []={"¶ÀÌØ"};
 const unsigned char cy_mb_3929  []={"¶«Î÷´óÑ§·¢ÏÖ·ÅÑ§·ğÏñ·µĞŞµ¼ÖÂµç×Ó¶Ç×Óµ±ÖĞ¶Ô×Å¶¯×÷µ±×÷´ø×Å·¶Î§·½Î»¸»ÎÌµÜ×Ó¶¼ÓĞ¶¼Òª"};
-const unsigned char cy_mb_4029  []={""};
-const unsigned char cy_mb_4129  []={""};
 const unsigned char cy_mb_4229  []={"¹ı³Ì¸Õ²Å¸É´à¸ß³±¹¹³É¸ù±¾¸Ä±ä¸ö±ğ"};
 const unsigned char cy_mb_4329  []={"¹Ûµã¹æ¶¨¸ü¶à¸Ğµ½¸Ğµ½¹Ì¶¨¹Å´ú¸Ä¶¯¹¦·¨¹¦·òºÜ´óºÜ¶à»î¶¯ºÃ¶à"};
-const unsigned char cy_mb_4429  []={""};
-const unsigned char cy_mb_4529  []={""};
+const unsigned char cy_mb_4429  []={"¸Õ¸Õ"};
+const unsigned char cy_mb_4529  []={"¸Ï¿ì"};
 const unsigned char cy_mb_4629  []={"¹¦ÄÜ¹ÛÄî¹úÄÚ¸ÅÄî"};
-const unsigned char cy_mb_4729  []={""};
-const unsigned char cy_mb_4829  []={""};
-const unsigned char cy_mb_4929  []={""};
-const unsigned char cy_mb_5029  []={""};
-const unsigned char cy_mb_5129  []={""};
-const unsigned char cy_mb_5229  []={""};
-const unsigned char cy_mb_5329  []={""};
+const unsigned char cy_mb_4729  []={"¸æËß"};
+const unsigned char cy_mb_4829  []={"¸øËû"};
+const unsigned char cy_mb_4929  []={"¹úÍâ"};
+const unsigned char cy_mb_5229  []={"»ù±¾¿É±¯¿´²¡"};
+const unsigned char cy_mb_5329  []={"¿´·¨"};
 const unsigned char cy_mb_5429  []={"Á½¸öÁ·¹¦Á¶¹¦"};
 const unsigned char cy_mb_5529  []={"¿´¼û¿Õ¼ä¿Æ¼¼¿É¼ûÁ¦Á¿ÀíÂÛÀ´ÁËÀúÀ´"};
 const unsigned char cy_mb_5629  []={"ÀïÃæ"};
 const unsigned char cy_mb_5729  []={"ÀúÊ·À´ËµÀÏÊ¦ÀÏÊÇ¿ÉÊÇ¿ªÊ¼¿´Êé"};
-const unsigned char cy_mb_5829  []={""};
+const unsigned char cy_mb_5829  []={"½ñÌì"};
 const unsigned char cy_mb_5929  []={"¿ÉÒÔ¿ÆÑ§¿ÉĞ¦¼ÛÖµ¾õÕß"};
-const unsigned char cy_mb_6029  []={""};
-const unsigned char cy_mb_6129  []={""};
-const unsigned char cy_mb_6229  []={""};
-const unsigned char cy_mb_6329  []={""};
+const unsigned char cy_mb_6229  []={"Ã÷°×"};
+const unsigned char cy_mb_6329  []={"Ãæ¶ÔÃ¬¶Ü"};
 const unsigned char cy_mb_6429  []={"ÄÇ¸öÄÄ¸öÄÜ¹»ÄÑ¹ı"};
-const unsigned char cy_mb_6529  []={""};
+const unsigned char cy_mb_6529  []={"ÃÅ¿ÚÃüÁî"};
 const unsigned char cy_mb_6629  []={"ÄãÃÇÄÇÃ´Å©Ãñ"};
-const unsigned char cy_mb_6729  []={""};
-const unsigned char cy_mb_6829  []={""};
+const unsigned char cy_mb_6729  []={"ÃûÆ¬"};
+const unsigned char cy_mb_6829  []={"Ã÷ÌìÃ¿ÌìÂøÍ·"};
 const unsigned char cy_mb_6929  []={"Ã»ÓĞÃ»ÓÃÂúÒâÃüÔË"};
-const unsigned char cy_mb_7029  []={""};
-const unsigned char cy_mb_7129  []={""};
-const unsigned char cy_mb_7229  []={""};
+const unsigned char cy_mb_7229  []={"ÅÔ±ßÆÕ±é"};
 const unsigned char cy_mb_7329  []={"ÊÇ·ñÊ®·ÖÊ¦¸¸Ëµ·¨ÊÖ·¨Êé·¨ËÄ·½"};
 const unsigned char cy_mb_7429  []={"È«¹úÆæ¹ÖÈ¥¹ıÆø¹¦Ê±ºòÉú»îÉç»á"};
 const unsigned char cy_mb_7529  []={"ÆÕ¼°ÈË¼ÒÈç½ñÈå¼ÒÇé¾°Çå¾²ÈçÀ´Ê±¼äÊÀ½çË¯¾õ"};
 const unsigned char cy_mb_7629  []={"Ê²Ã´ÈËÃÇÉúÃüÉÏÃæËµÃ÷ÆæÃÅ"};
 const unsigned char cy_mb_7729  []={"Ê±ÆÚÊÂÇéÉÏÈ¥"};
-const unsigned char cy_mb_7829  []={""};
+const unsigned char cy_mb_7829  []={"ÆÕÍ¨"};
 const unsigned char cy_mb_7929  []={"ËùÒÔËùÓĞÉùÒôÈİÒ×Ë¼ÏëÉÏÑ§ÉËĞÄÅÄÕÕÇúÏßÆäÖĞÈ¥×öÇ©×ÖÇ¿×³ÈÏÎªÈËÎªË¼Î¬ËùÎ½ÉúÎïÊÂÎïÊìÏ¤ÊµÑéÉõÖÁËæ×ÅÉ¢ÏÉ"};
-const unsigned char cy_mb_8029  []={""};
-const unsigned char cy_mb_8129  []={""};
-const unsigned char cy_mb_8229  []={""};
+const unsigned char cy_mb_8229  []={"ÌØ±ğ"};
 const unsigned char cy_mb_8329  []={"ËûµÄÍ½µÜËüµÄÌØ¶¨"};
 const unsigned char cy_mb_8429  []={"Í¨¹ıÌá¸ßÍ¨¹ıÌì¹ú"};
-const unsigned char cy_mb_8529  []={""};
+const unsigned char cy_mb_8529  []={"Ìõ¼şËû¾Í"};
 const unsigned char cy_mb_8629  []={"ËûÃÇËıÃÇËüÃÇ"};
 const unsigned char cy_mb_8729  []={"ÌØÊâÍ¬Ê±ËûÊÇËüÊÇÌìÉÏ"};
-const unsigned char cy_mb_8829  []={""};
+const unsigned char cy_mb_8829  []={"ÌìÌìÌÔÌ­"};
 const unsigned char cy_mb_8929  []={"ÌØĞÔ"};
-const unsigned char cy_mb_9029  []={""};
-const unsigned char cy_mb_9129  []={""};
 const unsigned char cy_mb_9229  []={"ĞÎ³ÉÏÂ´ÎÏà²îĞŞ³É"};
 const unsigned char cy_mb_9329  []={"ÖªµÀÒ»¶¨Ğí¶àÕæµÄÓĞµãÒ»µãÓĞµÄÑ¡¶¨Ïàµ±ĞŞ·ğ"};
 const unsigned char cy_mb_9429  []={"Õâ¸öÒÔºóÖĞ¹úÕû¸ö×î¸ßÒ²»áÒ²ºÃÒ²ºÜÒ»¸öÓ¢¹úÓ¦¸ÃÓĞ¹ØÒ»¹²ÑÏ¸ñ"};
@@ -527,7 +513,32 @@ const unsigned char cy_mb_9729  []={"ÒâÊ¶×ÔÈ»ÕâÈËÔğÈÎÖ®ÈËÕæÈËÖ»ÊÇÕâÊÇ×ÜÊÇÖªÊ¶ÕæÊ
 const unsigned char cy_mb_9829  []={"ÎÊÌâ"};
 const unsigned char cy_mb_9929  []={"ÕâÑùÏÖÔÚÕâĞ©ÒòÎªÒÔÎªÓĞĞ©Ò»Ğ©Ò²ĞíÒ»Ö±Ò»ÖÖÓîÖæÑ§Ğ£ÏàĞÅĞÅÏ¢ÏÖÏóÏêÏ¸ĞÅĞÄÏÔÏÖÎ£ÏÕÕæÕıÕâÖÖ×éÖ¯×îÖÕ×øÔÚÕ½Õù×ÜÖ®ÖÖÖÖĞÄĞÔ"};
 
-
+//3 words
+const unsigned char cy_mb_9377  []={"ÓĞµÄÈË"};
+const unsigned char cy_mb_4227  []={"¸ß²ã´Î"};
+const unsigned char cy_mb_747   []={"Æø¹¦Ê¦"};
+const unsigned char cy_mb_976   []={"ÎªÊ²Ã´"};
+const unsigned char cy_mb_547   []={"Á¶¹¦ÈË"};
+const unsigned char cy_mb_993   []={"ÓĞĞí¶à"};
+const unsigned char cy_mb_947   []={"Õâ¸öÈË"};
+const unsigned char cy_mb_999   []={"Ö´ÖøĞÄ"};
+const unsigned char cy_mb_397   []={"¸±ÔªÉñ¸±ÒâÊ¶"};
+const unsigned char cy_mb_465   []={"¸ßÄÜÁ¿"};
+const unsigned char cy_mb_955   []={"ĞŞÁ¶½ç"};
+const unsigned char cy_mb_997   []={"Ö÷ÔªÉñÖ÷ÒâÊ¶"};
+const unsigned char cy_mb_359   []={"´ó¾õÕß¶Ê¼µĞÄ"};
+const unsigned char cy_mb_753   []={"ÊÀ¼ä·¨"};
+const unsigned char cy_mb_574   []={"¼ÙÆø¹¦"};
+const unsigned char cy_mb_3227  []={"µÍ²ã´Î"};
+const unsigned char cy_mb_975   []={"ÓĞÈË½²"};
+const unsigned char cy_mb_9247  []={"Ö»²»¹ı"};
+const unsigned char cy_mb_773   []={"ËùËµµÄ"};
+const unsigned char cy_mb_769   []={"Ê²Ã´Ñù"};
+const unsigned char cy_mb_657   []={"ÄÇ¾ÍÊÇ"};
+const unsigned char cy_mb_5867  []={"¿ªÌìÄ¿"};
+const unsigned char cy_mb_7487  []={"ËÉ¹ûÌå"};
+const unsigned char cy_mb_995   []={"ÍûÔ¶¾µ"};
+const unsigned char cy_mb_725   []={"Ëµ°×ÁË"};
 
 const py_index cy_index[]=
 {
@@ -950,8 +961,6 @@ const py_index py_index3[]=
     {"2729","ciyu", 4, sizeof(cy_mb_2729),(unsigned char*)cy_mb_2729},
     {"2829","ciyu", 4, sizeof(cy_mb_2829),(unsigned char*)cy_mb_2829},
     {"2929","ciyu", 4, sizeof(cy_mb_2929),(unsigned char*)cy_mb_2929},
-    {"3029","ciyu", 4, sizeof(cy_mb_3029),(unsigned char*)cy_mb_3029},
-    {"3129","ciyu", 4, sizeof(cy_mb_3129),(unsigned char*)cy_mb_3129},
     {"3229","ciyu", 4, sizeof(cy_mb_3229),(unsigned char*)cy_mb_3229},
     {"3329","ciyu", 4, sizeof(cy_mb_3329),(unsigned char*)cy_mb_3329},
     {"3429","ciyu", 4, sizeof(cy_mb_3429),(unsigned char*)cy_mb_3429},
@@ -960,8 +969,6 @@ const py_index py_index3[]=
     {"3729","ciyu", 4, sizeof(cy_mb_3729),(unsigned char*)cy_mb_3729},
     {"3829","ciyu", 4, sizeof(cy_mb_3829),(unsigned char*)cy_mb_3829},
     {"3929","ciyu", 4, sizeof(cy_mb_3929),(unsigned char*)cy_mb_3929},
-    {"4029","ciyu", 4, sizeof(cy_mb_4029),(unsigned char*)cy_mb_4029},
-    {"4129","ciyu", 4, sizeof(cy_mb_4129),(unsigned char*)cy_mb_4129},
     {"4229","ciyu", 4, sizeof(cy_mb_4229),(unsigned char*)cy_mb_4229},
     {"4329","ciyu", 4, sizeof(cy_mb_4329),(unsigned char*)cy_mb_4329},
     {"4429","ciyu", 4, sizeof(cy_mb_4429),(unsigned char*)cy_mb_4429},
@@ -970,8 +977,6 @@ const py_index py_index3[]=
     {"4729","ciyu", 4, sizeof(cy_mb_4729),(unsigned char*)cy_mb_4729},
     {"4829","ciyu", 4, sizeof(cy_mb_4829),(unsigned char*)cy_mb_4829},
     {"4929","ciyu", 4, sizeof(cy_mb_4929),(unsigned char*)cy_mb_4929},
-    {"5029","ciyu", 4, sizeof(cy_mb_5029),(unsigned char*)cy_mb_5029},
-    {"5129","ciyu", 4, sizeof(cy_mb_5129),(unsigned char*)cy_mb_5129},
     {"5229","ciyu", 4, sizeof(cy_mb_5229),(unsigned char*)cy_mb_5229},
     {"5329","ciyu", 4, sizeof(cy_mb_5329),(unsigned char*)cy_mb_5329},
     {"5429","ciyu", 4, sizeof(cy_mb_5429),(unsigned char*)cy_mb_5429},
@@ -980,8 +985,6 @@ const py_index py_index3[]=
     {"5729","ciyu", 4, sizeof(cy_mb_5729),(unsigned char*)cy_mb_5729},
     {"5829","ciyu", 4, sizeof(cy_mb_5829),(unsigned char*)cy_mb_5829},
     {"5929","ciyu", 4, sizeof(cy_mb_5929),(unsigned char*)cy_mb_5929},
-    {"6029","ciyu", 4, sizeof(cy_mb_6029),(unsigned char*)cy_mb_6029},
-    {"6129","ciyu", 4, sizeof(cy_mb_6129),(unsigned char*)cy_mb_6129},
     {"6229","ciyu", 4, sizeof(cy_mb_6229),(unsigned char*)cy_mb_6229},
     {"6329","ciyu", 4, sizeof(cy_mb_6329),(unsigned char*)cy_mb_6329},
     {"6429","ciyu", 4, sizeof(cy_mb_6429),(unsigned char*)cy_mb_6429},
@@ -990,8 +993,6 @@ const py_index py_index3[]=
     {"6729","ciyu", 4, sizeof(cy_mb_6729),(unsigned char*)cy_mb_6729},
     {"6829","ciyu", 4, sizeof(cy_mb_6829),(unsigned char*)cy_mb_6829},
     {"6929","ciyu", 4, sizeof(cy_mb_6929),(unsigned char*)cy_mb_6929},
-    {"7029","ciyu", 4, sizeof(cy_mb_7029),(unsigned char*)cy_mb_7029},
-    {"7129","ciyu", 4, sizeof(cy_mb_7129),(unsigned char*)cy_mb_7129},
     {"7229","ciyu", 4, sizeof(cy_mb_7229),(unsigned char*)cy_mb_7229},
     {"7329","ciyu", 4, sizeof(cy_mb_7329),(unsigned char*)cy_mb_7329},
     {"7429","ciyu", 4, sizeof(cy_mb_7429),(unsigned char*)cy_mb_7429},
@@ -1000,8 +1001,6 @@ const py_index py_index3[]=
     {"7729","ciyu", 4, sizeof(cy_mb_7729),(unsigned char*)cy_mb_7729},
     {"7829","ciyu", 4, sizeof(cy_mb_7829),(unsigned char*)cy_mb_7829},
     {"7929","ciyu", 4, sizeof(cy_mb_7929),(unsigned char*)cy_mb_7929},
-    {"8029","ciyu", 4, sizeof(cy_mb_8029),(unsigned char*)cy_mb_8029},
-    {"8129","ciyu", 4, sizeof(cy_mb_8129),(unsigned char*)cy_mb_8129},
     {"8229","ciyu", 4, sizeof(cy_mb_8229),(unsigned char*)cy_mb_8229},
     {"8329","ciyu", 4, sizeof(cy_mb_8329),(unsigned char*)cy_mb_8329},
     {"8429","ciyu", 4, sizeof(cy_mb_8429),(unsigned char*)cy_mb_8429},
@@ -1010,8 +1009,6 @@ const py_index py_index3[]=
     {"8729","ciyu", 4, sizeof(cy_mb_8729),(unsigned char*)cy_mb_8729},
     {"8829","ciyu", 4, sizeof(cy_mb_8829),(unsigned char*)cy_mb_8829},
     {"8929","ciyu", 4, sizeof(cy_mb_8929),(unsigned char*)cy_mb_8929},
-    {"9029","ciyu", 4, sizeof(cy_mb_9029),(unsigned char*)cy_mb_9029},
-    {"9129","ciyu", 4, sizeof(cy_mb_9129),(unsigned char*)cy_mb_9129},
     {"9229","ciyu", 4, sizeof(cy_mb_9229),(unsigned char*)cy_mb_9229},
     {"9329","ciyu", 4, sizeof(cy_mb_9329),(unsigned char*)cy_mb_9329},
     {"9429","ciyu", 4, sizeof(cy_mb_9429),(unsigned char*)cy_mb_9429},
@@ -1019,6 +1016,29 @@ const py_index py_index3[]=
     {"9629","ciyu", 4, sizeof(cy_mb_9629),(unsigned char*)cy_mb_9629},
     {"9729","ciyu", 4, sizeof(cy_mb_9729),(unsigned char*)cy_mb_9729},
     {"9829","ciyu", 4, sizeof(cy_mb_9829),(unsigned char*)cy_mb_9829},
+
+    //3 words
+
+    {"7477","ciyu", 6, sizeof(cy_mb_747 ),(unsigned char*)cy_mb_747 },
+    {"9767","ciyu", 6, sizeof(cy_mb_976 ),(unsigned char*)cy_mb_976 },
+    {"5477","ciyu", 6, sizeof(cy_mb_547 ),(unsigned char*)cy_mb_547 },
+    {"9937","ciyu", 6, sizeof(cy_mb_993 ),(unsigned char*)cy_mb_993 },
+    {"9477","ciyu", 6, sizeof(cy_mb_947 ),(unsigned char*)cy_mb_947 },
+    {"9997","ciyu", 6, sizeof(cy_mb_999 ),(unsigned char*)cy_mb_999 },
+    {"3977","ciyu", 6, sizeof(cy_mb_397 ),(unsigned char*)cy_mb_397 },
+    {"4657","ciyu", 6, sizeof(cy_mb_465 ),(unsigned char*)cy_mb_465 },
+    {"9557","ciyu", 6, sizeof(cy_mb_955 ),(unsigned char*)cy_mb_955 },
+    {"9977","ciyu", 6, sizeof(cy_mb_997 ),(unsigned char*)cy_mb_997 },
+    {"3597","ciyu", 6, sizeof(cy_mb_359 ),(unsigned char*)cy_mb_359 },
+    {"7537","ciyu", 6, sizeof(cy_mb_753 ),(unsigned char*)cy_mb_753 },
+    {"5747","ciyu", 6, sizeof(cy_mb_574 ),(unsigned char*)cy_mb_574 },
+    {"9957","ciyu", 6, sizeof(cy_mb_995 ),(unsigned char*)cy_mb_995 },
+    {"7257","ciyu", 6, sizeof(cy_mb_725 ),(unsigned char*)cy_mb_725 },
+    {"9757","ciyu", 6, sizeof(cy_mb_975 ),(unsigned char*)cy_mb_975 },
+    {"7737","ciyu", 6, sizeof(cy_mb_773 ),(unsigned char*)cy_mb_773 },
+    {"7697","ciyu", 6, sizeof(cy_mb_769 ),(unsigned char*)cy_mb_769 },
+    {"6577","ciyu", 6, sizeof(cy_mb_657 ),(unsigned char*)cy_mb_657 },
+
 };
 
 int size_of_pyindex()

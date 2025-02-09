@@ -71,7 +71,7 @@ unsigned char str_match(unsigned char*str1,unsigned char*str2)
 
 #define DYN_HISTORY_SIZE 40
 int dyn_his_p=0;
-unsigned char dyn_mb[110]={"的是不人一这了你有个就在他我能功么来修炼也那都到们大法上中去要出它为可看讲说什以心时会多样种体还好高常想气"};
+unsigned char dyn_mb[213]={"的是不人一这了你有个就在他我能功么来修炼也那都到们大法上中去要出它为可看讲说什以心时会多样种体还好高常想气所现家下没很身自西过事得东次层生真道些间给把正里着当佛子做己天因病后往性之开成发物用情候师学本呢和起化作只"};
 py_index dyn_index={"dynch","words",2,73,dyn_mb};
 unsigned char dyn_his_mb[DYN_HISTORY_SIZE+1]={"的一是不了在人有我他这个上们来到时大地为"};
 py_index dyn_his_index={"history","histywds",2,40,dyn_his_mb};
