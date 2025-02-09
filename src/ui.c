@@ -1901,6 +1901,7 @@ void do_tipt(void*cfp)
     lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*11, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%s", inputs);
     if(ui_buf[5]<0xffffff){
         lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*16, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%d%", (ui_buf[5]-ui_buf[6])*100/ui_buf[7]);
+        lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*19, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "0x%x%", (ui_buf[5]-ui_buf[6]));
     }
     if(choose_idx[3])
     {

@@ -113,6 +113,7 @@ void update_dyn(unsigned char*s)
         for(j=0;j<py_index3[i].num;j+=2){
             if(s[0]==py_index3[i].pymb_ch[j] && s[1]==py_index3[i].pymb_ch[j+1]
                     && (0!=(j+2)%py_index3[i].grp_n)){
+                if(dynp<1)break;
                 dyn_mb[dynp-1]=py_index3[i].pymb_ch[j+2];
                 dyn_mb[dynp]=py_index3[i].pymb_ch[j+3];
                 dynp-=2;
@@ -123,6 +124,7 @@ void update_dyn(unsigned char*s)
     for(i=0;i<listlen;i++)
     {
         if(s[0]==ciyu2_list[i][0] && s[1]==ciyu2_list[i][1]){
+            if(dynp<1)break;
             dyn_mb[dynp-1]=ciyu2_list[i][2];
             dyn_mb[dynp]=ciyu2_list[i][3];
             dynp-=2;
