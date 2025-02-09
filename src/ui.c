@@ -1497,7 +1497,7 @@ int is_skip_pmark(char*s)
 int check_same(const char*s)
 {
     char rs[3]={0};
-    int n=strlen(s);
+    int n=strlen(s), m;
     if(n<3)return 1;
 
     //handle compare buf update
@@ -1537,16 +1537,26 @@ int check_same(const char*s)
     if(0==strncmp(tipt_buf, s, n-2)){
         //read more 2 bytes, if p mark, cp to bookbuf
         while(1){
-            SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
+            m=strlen(tipt_buf);
+            n=strlen(book_buf);
+            if(m==(n-2)){
+                SPI_Flash_Read((uint8*)rs, ui_buf[5], 2);
+            }
+            else{
+                rs[0]=tipt_buf[n-1];
+                rs[1]=tipt_buf[n];
+            }
             if(is_skip_pmark(rs)){
-                ui_buf[5]+=2;
                 str_del_last(book_buf);//del last indicator
                 if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
                     str_leftmove(book_buf, 2);
                     str_leftmove(tipt_buf, 2);
                 }
                 strcat(book_buf, rs);
-                strcat(tipt_buf, rs);
+                if(m==(n-2)){
+                    ui_buf[5]+=2;
+                    strcat(tipt_buf, rs);
+                }
                 rs[0]=0xa1;
                 rs[1]=0xfd;
                 strcat(book_buf, rs);
