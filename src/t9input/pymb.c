@@ -448,90 +448,85 @@ const unsigned char PY_mb_zuo   []={"左佐做作坐座昨撮唑柞阼琢嘬怍胙祚砟酢"};
 
 
 //words
-const unsigned char cy_mb_27    []={"承认成人吃肉常人别人比如不让病人必然"};
-const unsigned char cy_mb_29    []={"必须不行不想表现成为此外错误称为从未出现才行"};
-const unsigned char cy_mb_89    []={"特性"};
-const unsigned char cy_mb_87    []={"特殊同时他是它是天上"};
-const unsigned char cy_mb_35    []={"法轮法律佛教飞机封建佛家道家大家当今大将"};
-const unsigned char cy_mb_39    []={"东西大学发现放学佛像返修导致电子肚子当中对着动作当作带着范围方位富翁弟子都有都要"};
-const unsigned char cy_mb_97    []={"意识自然这人责任之人真人只是这是总是知识真实真是至少这时再说"};
-const unsigned char cy_mb_75    []={"普及人家如今儒家情景清静如来"};
-const unsigned char cy_mb_77    []={"时期事情上去"};
-const unsigned char cy_mb_79    []={"所以所有声音容易思想上学伤心拍照曲线其中去做签字强壮认为人为思维所谓生物事物熟悉实验甚至随着散仙"};
-const unsigned char cy_mb_55    []={"看见空间科技可见力量理论来了历来"};
-const unsigned char cy_mb_57    []={"可是开始看书"};
-const unsigned char cy_mb_25    []={"出来从来处理除了"};
-const unsigned char cy_mb_59    []={"可以科学可笑价值觉者"};
-const unsigned char cy_mb_99    []={"这样现在这些因为以为有些一些也许一直一种宇宙学校相信信息现象详细信心显现危险真正这种组织最终坐在战争总之种种心性"};
-const unsigned char cy_mb_69    []={"没有没用满意命运"};
-const unsigned char cy_mb_95    []={"自己已经修炼心理"};
-const unsigned char cy_mb_232   []={"部份办法不放不妨拜佛"};
-const unsigned char cy_mb_332   []={"反对奋斗发达非得佛道得到等等多大道德大多地方大法"};
-const unsigned char cy_mb_262   []={"不能本能"};
-const unsigned char cy_mb_222   []={"出差常常从此层次超出传承"};
-const unsigned char cy_mb_422   []={"过程刚才干脆高潮构成根本改变个别"};
-const unsigned char cy_mb_432   []={"观点规定更多感到感到固定古代改动功法功夫很大很多活动好多"};
-const unsigned char cy_mb_462   []={"功能观念国内概念"};
-const unsigned char cy_mb_562   []={"里面"};
-const unsigned char cy_mb_832   []={"他的徒弟它的特定"};
-const unsigned char cy_mb_862   []={"他们她们它们"};
-const unsigned char cy_mb_732   []={"是否十分师父说法手法书法四方"};
-const unsigned char cy_mb_762   []={"什么人们生命上面说明奇门"};
-const unsigned char cy_mb_922   []={"形成下次相差修成"};
-const unsigned char cy_mb_932   []={"知道一定许多真的有点一点有的选定相当修佛"};
-const unsigned char cy_mb_962   []={"怎么这么咱们我们外面文明只能之内在哪总能"};
-const unsigned char cy_mb_662   []={"你们那么农民"};
-const unsigned char cy_mb_372   []={"但是当时地上当然打人而是"};
-const unsigned char cy_mb_745   []={"世界时间睡觉"};
+const unsigned char cy_mb_2729  []={"承认成人吃肉常人别人比如不让病人必然"};
+const unsigned char cy_mb_2929  []={"必须不行不想表现成为此外错误称为从未出现才行"};
+const unsigned char cy_mb_8929  []={"特性"};
+const unsigned char cy_mb_8729  []={"特殊同时他是它是天上"};
+const unsigned char cy_mb_3529  []={"法轮法律佛教飞机封建佛家道家大家当今大将"};
+const unsigned char cy_mb_3929  []={"东西大学发现放学佛像返修导致电子肚子当中对着动作当作带着范围方位富翁弟子都有都要"};
+const unsigned char cy_mb_9729  []={"意识自然这人责任之人真人只是这是总是知识真实真是至少这时再说"};
+const unsigned char cy_mb_7529  []={"普及人家如今儒家情景清静如来时间世界睡觉"};
+const unsigned char cy_mb_7729  []={"时期事情上去"};
+const unsigned char cy_mb_7929  []={"所以所有声音容易思想上学伤心拍照曲线其中去做签字强壮认为人为思维所谓生物事物熟悉实验甚至随着散仙"};
+const unsigned char cy_mb_5529  []={"看见空间科技可见力量理论来了历来"};
+const unsigned char cy_mb_2529  []={"出来从来处理除了"};
+const unsigned char cy_mb_5929  []={"可以科学可笑价值觉者"};
+const unsigned char cy_mb_9929  []={"这样现在这些因为以为有些一些也许一直一种宇宙学校相信信息现象详细信心显现危险真正这种组织最终坐在战争总之种种心性"};
+const unsigned char cy_mb_6929  []={"没有没用满意命运"};
+const unsigned char cy_mb_9529  []={"自己已经修炼心理"};
+const unsigned char cy_mb_2329  []={"部份办法不放不妨拜佛"};
+const unsigned char cy_mb_3329  []={"反对奋斗发达非得佛道得到等等多大道德大多地方大法"};
+const unsigned char cy_mb_2629  []={"不能本能"};
+const unsigned char cy_mb_2229  []={"出差常常从此层次超出传承"};
+const unsigned char cy_mb_4229  []={"过程刚才干脆高潮构成根本改变个别"};
+const unsigned char cy_mb_4329  []={"观点规定更多感到感到固定古代改动功法功夫很大很多活动好多"};
+const unsigned char cy_mb_4629  []={"功能观念国内概念"};
+const unsigned char cy_mb_5629  []={"里面"};
+const unsigned char cy_mb_8329  []={"他的徒弟它的特定"};
+const unsigned char cy_mb_8629  []={"他们她们它们"};
+const unsigned char cy_mb_7329  []={"是否十分师父说法手法书法四方"};
+const unsigned char cy_mb_7629  []={"什么人们生命上面说明奇门"};
+const unsigned char cy_mb_9229  []={"形成下次相差修成"};
+const unsigned char cy_mb_9329  []={"知道一定许多真的有点一点有的选定相当修佛"};
+const unsigned char cy_mb_9629  []={"怎么这么咱们我们外面文明只能之内在哪总能"};
+const unsigned char cy_mb_6629  []={"你们那么农民"};
+const unsigned char cy_mb_3729  []={"但是当时地上当然打人而是"};
 const unsigned char cy_mb_2429  []={"成功超过传功"};
 const unsigned char cy_mb_2829  []={"不同把它白天帮他本体不疼"};
 const unsigned char cy_mb_5429  []={"两个练功炼功"};
-const unsigned char cy_mb_5729  []={"历史来说老师老是"};
+const unsigned char cy_mb_5729  []={"历史来说老师老是可是开始看书"};
 const unsigned char cy_mb_6429  []={"那个哪个能够难过"};
 const unsigned char cy_mb_8429  []={"通过提高通过天国"};
 const unsigned char cy_mb_3829  []={"独特"};
-const unsigned char cy_mb_7442  []={"时候生活社会"};
-const unsigned char cy_mb_7429  []={"全国奇怪去过气功"};
+const unsigned char cy_mb_7429  []={"全国奇怪去过气功时候生活社会"};
 const unsigned char cy_mb_9829  []={"问题"};
 const unsigned char cy_mb_9429  []={"这个以后中国整个最高也会也好也很一个英国应该有关一共严格"};
 
 const py_index cy_index[]=
 {
-    {"27","fl",  sizeof(cy_mb_27  ),(unsigned char*)cy_mb_27  },
-    {"29","bx",  sizeof(cy_mb_29  ),(unsigned char*)cy_mb_29  },
-    {"89","fl",  sizeof(cy_mb_89  ),(unsigned char*)cy_mb_89  },
-    {"87","fl",  sizeof(cy_mb_87  ),(unsigned char*)cy_mb_87  },
-    {"35","fl",  sizeof(cy_mb_35  ),(unsigned char*)cy_mb_35  },
-    {"39","fx",  sizeof(cy_mb_39  ),(unsigned char*)cy_mb_39  },
-    {"97","ys",  sizeof(cy_mb_97  ),(unsigned char*)cy_mb_97  },
-    {"75","pj",  sizeof(cy_mb_75  ),(unsigned char*)cy_mb_75  },
-    {"77","pj",  sizeof(cy_mb_77  ),(unsigned char*)cy_mb_77  },
-    {"79","sy",  sizeof(cy_mb_79  ),(unsigned char*)cy_mb_79  },
-    {"55","kj",  sizeof(cy_mb_55  ),(unsigned char*)cy_mb_55  },
-    {"57","ao",  sizeof(cy_mb_57  ),(unsigned char*)cy_mb_57  },
-    {"25","ba",  sizeof(cy_mb_25  ),(unsigned char*)cy_mb_25  },
-    {"59","bi",  sizeof(cy_mb_59  ),(unsigned char*)cy_mb_59  },
-    {"99","bo",  sizeof(cy_mb_99  ),(unsigned char*)cy_mb_99  },
-    {"69","bu",  sizeof(cy_mb_69  ),(unsigned char*)cy_mb_69  },
-    {"95","ca",  sizeof(cy_mb_95  ),(unsigned char*)cy_mb_95  },
-    {"232","bf", sizeof(cy_mb_232 ),(unsigned char*)cy_mb_232 },
-    {"332","fd", sizeof(cy_mb_332 ),(unsigned char*)cy_mb_332 },
-    {"262","cc", sizeof(cy_mb_262 ),(unsigned char*)cy_mb_262 },
-    {"222","cc", sizeof(cy_mb_222 ),(unsigned char*)cy_mb_222 },
-    {"422","cc", sizeof(cy_mb_422 ),(unsigned char*)cy_mb_422 },
-    {"432","cc", sizeof(cy_mb_432 ),(unsigned char*)cy_mb_432 },
-    {"462","cc", sizeof(cy_mb_462 ),(unsigned char*)cy_mb_462 },
-    {"562","cc", sizeof(cy_mb_562 ),(unsigned char*)cy_mb_562 },
-    {"832","ce", sizeof(cy_mb_832 ),(unsigned char*)cy_mb_832 },
-    {"862","ce", sizeof(cy_mb_862 ),(unsigned char*)cy_mb_862 },
-    {"732","cu", sizeof(cy_mb_732 ),(unsigned char*)cy_mb_732 },
-    {"762","cu", sizeof(cy_mb_762 ),(unsigned char*)cy_mb_762 },
-    {"922","da", sizeof(cy_mb_922 ),(unsigned char*)cy_mb_922 },
-    {"932","da", sizeof(cy_mb_932 ),(unsigned char*)cy_mb_932 },
-    {"962","de", sizeof(cy_mb_962 ),(unsigned char*)cy_mb_962 },
-    {"662","di", sizeof(cy_mb_662 ),(unsigned char*)cy_mb_662 },
-    {"372","du", sizeof(cy_mb_372 ),(unsigned char*)cy_mb_372 },
-    {"745","en", sizeof(cy_mb_745 ),(unsigned char*)cy_mb_745 },
+    {"25","ba",  sizeof(cy_mb_2529),(unsigned char*)cy_mb_2529},
+    {"27","fl",  sizeof(cy_mb_2729),(unsigned char*)cy_mb_2729},
+    {"29","bx",  sizeof(cy_mb_2929),(unsigned char*)cy_mb_2929},
+    {"35","fl",  sizeof(cy_mb_3529),(unsigned char*)cy_mb_3529},
+    {"39","fx",  sizeof(cy_mb_3929),(unsigned char*)cy_mb_3929},
+    {"55","kj",  sizeof(cy_mb_5529),(unsigned char*)cy_mb_5529},
+    {"59","bi",  sizeof(cy_mb_5929),(unsigned char*)cy_mb_5929},
+    {"69","bu",  sizeof(cy_mb_6929),(unsigned char*)cy_mb_6929},
+    {"75","pj",  sizeof(cy_mb_7529),(unsigned char*)cy_mb_7529},
+    {"77","pj",  sizeof(cy_mb_7729),(unsigned char*)cy_mb_7729},
+    {"79","sy",  sizeof(cy_mb_7929),(unsigned char*)cy_mb_7929},
+    {"89","fl",  sizeof(cy_mb_8929),(unsigned char*)cy_mb_8929},
+    {"87","fl",  sizeof(cy_mb_8729),(unsigned char*)cy_mb_8729},
+    {"97","ys",  sizeof(cy_mb_9729),(unsigned char*)cy_mb_9729},
+    {"99","bo",  sizeof(cy_mb_9929),(unsigned char*)cy_mb_9929},
+    {"95","ca",  sizeof(cy_mb_9529),(unsigned char*)cy_mb_9529},
+    {"232","bf", sizeof(cy_mb_2329),(unsigned char*)cy_mb_2329},
+    {"332","fd", sizeof(cy_mb_3329),(unsigned char*)cy_mb_3329},
+    {"262","cc", sizeof(cy_mb_2629),(unsigned char*)cy_mb_2629},
+    {"222","cc", sizeof(cy_mb_2229),(unsigned char*)cy_mb_2229},
+    {"422","cc", sizeof(cy_mb_4229),(unsigned char*)cy_mb_4229},
+    {"432","cc", sizeof(cy_mb_4329),(unsigned char*)cy_mb_4329},
+    {"462","cc", sizeof(cy_mb_4629),(unsigned char*)cy_mb_4629},
+    {"562","cc", sizeof(cy_mb_5629),(unsigned char*)cy_mb_5629},
+    {"832","ce", sizeof(cy_mb_8329),(unsigned char*)cy_mb_8329},
+    {"862","ce", sizeof(cy_mb_8629),(unsigned char*)cy_mb_8629},
+    {"732","cu", sizeof(cy_mb_7329),(unsigned char*)cy_mb_7329},
+    {"762","cu", sizeof(cy_mb_7629),(unsigned char*)cy_mb_7629},
+    {"922","da", sizeof(cy_mb_9229),(unsigned char*)cy_mb_9229},
+    {"932","da", sizeof(cy_mb_9329),(unsigned char*)cy_mb_9329},
+    {"962","de", sizeof(cy_mb_9629),(unsigned char*)cy_mb_9629},
+    {"662","di", sizeof(cy_mb_6629),(unsigned char*)cy_mb_6629},
+    {"372","du", sizeof(cy_mb_3729),(unsigned char*)cy_mb_3729},
     {"2429","er",sizeof(cy_mb_2429),(unsigned char*)cy_mb_2429},
     {"2829","er",sizeof(cy_mb_2829),(unsigned char*)cy_mb_2829},
     {"5429","er",sizeof(cy_mb_5429),(unsigned char*)cy_mb_5429},
@@ -539,7 +534,6 @@ const py_index cy_index[]=
     {"6429","er",sizeof(cy_mb_6429),(unsigned char*)cy_mb_6429},
     {"8429","er",sizeof(cy_mb_8429),(unsigned char*)cy_mb_8429},
     {"3829","er",sizeof(cy_mb_3829),(unsigned char*)cy_mb_3829},
-    {"7442","er",sizeof(cy_mb_7442),(unsigned char*)cy_mb_7442},
     {"7429","er",sizeof(cy_mb_7429),(unsigned char*)cy_mb_7429},
     {"9829","er",sizeof(cy_mb_9829),(unsigned char*)cy_mb_9829},
     {"9429","er",sizeof(cy_mb_9429),(unsigned char*)cy_mb_9429},
