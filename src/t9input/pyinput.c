@@ -109,7 +109,7 @@ void update_dyn(unsigned char*s)
         if(py_index3[i].grp_n<=2)continue;
         for(j=0;j<py_index3[i].num;j+=2){
             if(s[0]==py_index3[i].pymb_ch[j] && s[1]==py_index3[i].pymb_ch[j+1]
-                    && (0!=(j/2+1)%py_index3[i].grp_n)){
+                    && (0!=(j+2)%py_index3[i].grp_n)){
                 dyn_mb[dynp-1]=py_index3[i].pymb_ch[j+2];
                 dyn_mb[dynp]=py_index3[i].pymb_ch[j+3];
                 dynp-=2;
@@ -125,7 +125,7 @@ void update_dyn(unsigned char*s)
             dynp-=2;
         }
     }
-    mem_print(dyn_mb, 0, DYN_MB_SIZE);
+    mem_print((char*)dyn_mb, 0, DYN_MB_SIZE);
 }
 
 //获取匹配的拼音码表
