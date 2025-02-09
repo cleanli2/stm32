@@ -1823,8 +1823,8 @@ void do_tipt(void*cfp)
                     uint8*rp;
                     of=get_env_uint("tiptpo", 0);//tipt progress offset
                     ui_buf[7]=get_env_uint("tiptsz", 0x100);//tipt size
-                    if(ptg>0&&ptg<100){
-                        of=ptg*ui_buf[7]/100;
+                    if(ptg>0&&ptg<ui_buf[7]){
+                        of=ptg;
                         of&=0xfffffffe;
                     }
 
