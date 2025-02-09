@@ -71,7 +71,7 @@ unsigned char str_match(unsigned char*str1,unsigned char*str2)
 
 #define DYN_HISTORY_SIZE 40
 int dyn_his_p=0;
-unsigned char dyn_mb[73]={"的一是不了在人有我他这个上们来到时大地为子中你说生着就那要也得里后自以会"};
+unsigned char dyn_mb[110]={"的是不人一这了你有个就在他我能功么来修炼也那都到们大法上中去要出它为可看讲说什以心时会多样种体还好高常想气"};
 py_index dyn_index={"dynch","words",2,73,dyn_mb};
 unsigned char dyn_his_mb[DYN_HISTORY_SIZE+1]={"的一是不了在人有我他这个上们来到时大地为"};
 py_index dyn_his_index={"history","histywds",2,40,dyn_his_mb};
@@ -119,7 +119,8 @@ unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
         }
     }
     else{
-        if(!chs_is_in_list((char*)strin, (char*)dyn_his_mb, DYN_HISTORY_SIZE)){
+        if(!chs_is_in_list((char*)strin, (char*)dyn_his_mb, DYN_HISTORY_SIZE)&&
+                !chs_is_in_list((char*)strin, (char*)dyn_mb, 110)){
             chs_put_in_list((char*)strin, (char*)dyn_his_mb);
         }
         matchlist[mcnt++]=&dyn_index;
