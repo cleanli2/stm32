@@ -1569,7 +1569,7 @@ void do_tipt(void*cfp)
     int u_txt=0;
     int btidx=*(int*)cfp;
     char *inputs=(char*)ui_buf;
-    char rs[7]={0};
+    char rs[11]={0};
     signed char *choose_idx=(signed char*)&ui_buf[3];//0-py index 1-char index 2-mode:input/py_choose/char_choose 3-eng/chs
     win tiptw={TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y, TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_H,
         TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_DY};
@@ -1707,6 +1707,40 @@ void do_tipt(void*cfp)
                         if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
                             str_leftmove(book_buf, 4);
                             str_leftmove(tipt_buf, 4);
+                        }
+                    }
+                    else if(t9.mwdth==6){
+                        int tmpidx=choose_idx[1]/3;
+                        rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*6];
+                        rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*6+1];
+                        rs[2]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*6+2];
+                        rs[3]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*6+3];
+                        rs[4]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*6+4];
+                        rs[5]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*6+5];
+                        rs[6]=0xa1;
+                        rs[7]=0xfd;
+                        rs[8]=0;
+                        if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
+                            str_leftmove(book_buf, 6);
+                            str_leftmove(tipt_buf, 6);
+                        }
+                    }
+                    else if(t9.mwdth==8){
+                        int tmpidx=choose_idx[1]/4;
+                        rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*8];
+                        rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*8+1];
+                        rs[2]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*8+2];
+                        rs[3]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*8+3];
+                        rs[4]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*8+4];
+                        rs[5]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*8+5];
+                        rs[6]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*8+6];
+                        rs[7]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*8+7];
+                        rs[8]=0xa1;
+                        rs[9]=0xfd;
+                        rs[10]=0;
+                        if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
+                            str_leftmove(book_buf, 8);
+                            str_leftmove(tipt_buf, 8);
                         }
                     }
                 }
@@ -1881,9 +1915,9 @@ void do_tipt(void*cfp)
                     FONT_SIZE*10, FONT_SIZE+TIPT_SHOW_WIN_DY/2, BLACK);
         }
         if(t9.mwdth==4){
-            for(int i=0;i<t9.pymb[(int)choose_idx[0]]->num/2-2;i+=2){
-                LCD_DrawLine(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*((i+2)%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+i/N_EACH_LINE),
-                        TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*((i+2)%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+i/N_EACH_LINE+1));
+            for(int i=0;i<t9.pymb[(int)choose_idx[0]]->num/2-t9.mwdth/2;i+=t9.mwdth/2){
+                LCD_DrawLine(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*((i+t9.mwdth/2)%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+i/N_EACH_LINE),
+                        TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*((i+t9.mwdth/2)%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+i/N_EACH_LINE+1));
             }
         }
         if(choose_idx[2]>=1){
