@@ -114,19 +114,7 @@ unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
             if(temp > 0 && ((mcnt<MAX_PY_OPS)||(0x80&temp)))
             {
                 matchlist[mcnt++]=(py_index*)&py_index3[i];
-                t9.mwdth=2;
-            }
-        }
-        if(mcnt==0){
-            pyindex_len=size_of_cyindex();
-            for(i=0;i<pyindex_len;i++)
-            {
-                temp=str_match(strin,(unsigned char*)cy_index[i].py_input);
-                if(temp > 0 && ((mcnt<MAX_PY_OPS)||(0x80&temp)))
-                {
-                    matchlist[mcnt++]=(py_index*)&cy_index[i];
-                    t9.mwdth=4;
-                }
+                t9.mwdth=py_index3[i].grp_n;
             }
         }
     }
