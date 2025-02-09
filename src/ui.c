@@ -1655,7 +1655,8 @@ void do_tipt(void*cfp)
             }
         }
         else{
-            if(0==inputs[0]||0x80>(unsigned char)inputs[0]){
+            mem_print(inputs, 0, 16);
+            if(0==inputs[0]||0x80<(unsigned char)inputs[0]){
                 inputs[0]='h';
                 inputs[1]=0;
             }
@@ -1722,6 +1723,8 @@ void do_tipt(void*cfp)
                             str_leftmove(book_buf, 2);
                             str_leftmove(tipt_buf, 2);
                         }
+                        lastchar[0]=rs[0];
+                        lastchar[1]=rs[1];
                     }
                     else if(t9.mwdth==4){
                         int tmpidx=choose_idx[1]/2;
@@ -1736,6 +1739,8 @@ void do_tipt(void*cfp)
                             str_leftmove(book_buf, 4);
                             str_leftmove(tipt_buf, 4);
                         }
+                        lastchar[0]=rs[2];
+                        lastchar[1]=rs[3];
                     }
                     else if(t9.mwdth==6){
                         int tmpidx=choose_idx[1]/3;
@@ -1752,6 +1757,8 @@ void do_tipt(void*cfp)
                             str_leftmove(book_buf, 6);
                             str_leftmove(tipt_buf, 6);
                         }
+                        lastchar[0]=rs[4];
+                        lastchar[1]=rs[5];
                     }
                     else if(t9.mwdth==8){
                         int tmpidx=choose_idx[1]/4;
@@ -1770,6 +1777,8 @@ void do_tipt(void*cfp)
                             str_leftmove(book_buf, 8);
                             str_leftmove(tipt_buf, 8);
                         }
+                        lastchar[0]=rs[6];
+                        lastchar[1]=rs[7];
                     }
                 }
                 strcat(book_buf, rs);
@@ -1782,9 +1791,9 @@ void do_tipt(void*cfp)
                 choose_idx[0]=0;
                 //provide common input char
                 if(0==choose_idx[3]){
-                    inputs[0]=rs[0];
-                    inputs[1]=rs[1];
-                    inputs[2]=rs[2];
+                    inputs[0]=lastchar[0];
+                    inputs[1]=lastchar[1];
+                    inputs[2]=0;
                     ui_buf[15]=1;
                     t9.mwdth=2;
                 }
