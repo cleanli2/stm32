@@ -480,7 +480,7 @@ const unsigned char cy_mb_5329  []={"看法看到绝对就得"};
 const unsigned char cy_mb_5429  []={"两个练功炼功就会经过"};
 const unsigned char cy_mb_5529  []={"看见空间科技可见力量理论来了历来讲了将来"};
 const unsigned char cy_mb_5629  []={"里面可能就能"};
-const unsigned char cy_mb_5729  []={"精神开始老师老是极其历史来说可是开始看书就是"};
+const unsigned char cy_mb_5729  []={"精神开始老师老是极其历史来说可是开始看书就是進去",
 const unsigned char cy_mb_5829  []={"今天"};
 const unsigned char cy_mb_5929  []={"另外叫作利益科学觉者就象就要可以可笑价值"};
 const unsigned char cy_mb_6229  []={"明白"};
@@ -704,7 +704,6 @@ const char ciyu2_list[][4]=
     "特殊",
     "谈到",
     "也要",
-    "?M去",
     "脑袋",
     "开悟",
     "道德",
