@@ -1655,7 +1655,7 @@ void do_tipt(void*cfp)
             }
         }
         else{
-            mem_print(inputs, 0, 16);
+            //mem_print(inputs, 0, 16);
             if(0==inputs[0]||0x80<(unsigned char)inputs[0]){
                 inputs[0]='h';
                 inputs[1]=0;
@@ -1901,7 +1901,7 @@ void do_tipt(void*cfp)
             }
         }
     }
-    mem_print(inputs, 0, 16);
+    //mem_print(inputs, 0, 16);
     lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*11, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%s", inputs);
     if(ui_buf[5]<0xffffff){
         lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*16, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%d%", (ui_buf[5]-ui_buf[6])*100/ui_buf[7]);

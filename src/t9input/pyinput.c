@@ -131,7 +131,7 @@ void update_dyn(unsigned char*s)
             dynp-=2;
         }
     }
-    mem_print((char*)dyn_mb, 0, DYN_MB_SIZE);
+    //mem_print((char*)dyn_mb, 0, DYN_MB_SIZE);
 }
 
 //获取匹配的拼音码表
