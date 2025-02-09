@@ -1739,7 +1739,7 @@ void do_tipt(void*cfp)
                         rs[4]=0xa1;
                         rs[5]=0xfd;
                         rs[6]=0;
-                        if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
+                        if(strlen(book_buf)>=TIPT_BUF_SIZE-7){
                             str_leftmove(book_buf, 4);
                             str_leftmove(tipt_buf, 4);
                         }
@@ -1757,7 +1757,7 @@ void do_tipt(void*cfp)
                         rs[6]=0xa1;
                         rs[7]=0xfd;
                         rs[8]=0;
-                        if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
+                        if(strlen(book_buf)>=TIPT_BUF_SIZE-9){
                             str_leftmove(book_buf, 6);
                             str_leftmove(tipt_buf, 6);
                         }
@@ -1777,7 +1777,7 @@ void do_tipt(void*cfp)
                         rs[8]=0xa1;
                         rs[9]=0xfd;
                         rs[10]=0;
-                        if(strlen(book_buf)>=TIPT_BUF_SIZE-5){
+                        if(strlen(book_buf)>=TIPT_BUF_SIZE-11){
                             str_leftmove(book_buf, 8);
                             str_leftmove(tipt_buf, 8);
                         }
