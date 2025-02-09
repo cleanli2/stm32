@@ -172,7 +172,7 @@ const unsigned char PY_mb_jian  []={"½¨¼û¼ş¼ò½¡¼õ¼ß¼ö¼à¼ñ¼ó¼ô¼á¼â¼ä¼å¼æ¼ç¼è¼é¼ê¼
 const unsigned char PY_mb_jiang []={"½²ºç½©½ª½«½¬½­½®½¯½°½±½³½´½µÇ¿Üüä®ç­çÖêñíäñğôİôø"};
 const unsigned char PY_mb_jiao  []={"½Ğ½Ï¾õ½ÇĞ£½¶½·½¸½¹½º½»½¼½½½¾½¿½À½Á½Â½Ã½Ä½Å½Æ½È½É½Ê½Ë½Ì½Í½Î½ÑÙ®ÙÕÜ´ÜúŞØàİá½áèæ¯ë¸ğ¨ğÔòÔõ´õÓöŞ"};
 const unsigned char PY_mb_jie   []={"½Ó½ç½à½á½â½ã½ä½Ò½Ü½Ô½è½é½İ½Ş½Õ½Ö½×½Ø½Ù½Ú½Û½ß½å½æ½ê½ë½ìÙÊÚ¦ÚµÚàŞ×à®àµæ¼æİèîíÙïÇğÜò¡ò»ôÉöÚ÷º"};
-const unsigned char PY_mb_jin   []={"¾¡½ñ½ğ½í½î½ï½ò½ô½õ½ö½÷½ø½ù½ú½û½ü½ı½ş¾¢½óÚáİ£İÀàäâËâÛæ¡çÆèªéÈêáêîîÄñÆñæ"};
+const unsigned char PY_mb_jin   []={"¾¡½ñßM½ğ½í½î½ï½ò½ô½õ½ö½÷½ø½ù½ú½û½ü½ı½ş¾¢½óÚáİ£İÀàäâËâÛæ¡çÆèªéÈêáêîîÄñÆñæ"};
 const unsigned char PY_mb_jing  []={"¾©¾ª¾«¾­¾®¾¦¾§¾°¾»¾±¾²¾³¾´¾¯¾µ¾¶¾¹¾º¾¢¾£¾¤¾¥¾¨¾¬¾·¾¸ØÙÙÓÚåÚêİ¼â°ã½ãşåÉåòæºëÂëÖëæìºö¦"};
 const unsigned char PY_mb_jiong []={"¾¼¾½ØçåÄìç"};
 const unsigned char PY_mb_jiu   []={"¾Í¾Å¾È¾Æ¾Ã¾¾¾¿¾À¾Á¾Â¾Ä¾É¾Ê¾Ë¾Ì¾Î¾ÇÙÖà±ãÎèÑèêğ¯ğÕôñ÷İ"};
@@ -480,7 +480,7 @@ const unsigned char cy_mb_5329  []={"¿´·¨¿´µ½¾ø¶Ô¾ÍµÃ"};
 const unsigned char cy_mb_5429  []={"Á½¸öÁ·¹¦Á¶¹¦¾Í»á¾­¹ı"};
 const unsigned char cy_mb_5529  []={"¿´¼û¿Õ¼ä¿Æ¼¼¿É¼ûÁ¦Á¿ÀíÂÛÀ´ÁËÀúÀ´½²ÁË½«À´"};
 const unsigned char cy_mb_5629  []={"ÀïÃæ¿ÉÄÜ¾ÍÄÜ"};
-const unsigned char cy_mb_5729  []={"¾«Éñ¿ªÊ¼ÀÏÊ¦ÀÏÊÇ¼«ÆäÀúÊ·À´Ëµ¿ÉÊÇ¿ªÊ¼¿´Êé¾ÍÊÇßMÈ¥",
+const unsigned char cy_mb_5729  []={"¾«Éñ¿ªÊ¼ÀÏÊ¦ÀÏÊÇ¼«ÆäÀúÊ·À´Ëµ¿ÉÊÇ¿ªÊ¼¿´Êé¾ÍÊÇßMÈ¥"};
 const unsigned char cy_mb_5829  []={"½ñÌì"};
 const unsigned char cy_mb_5929  []={"ÁíÍâ½Ğ×÷ÀûÒæ¿ÆÑ§¾õÕß¾ÍÏó¾ÍÒª¿ÉÒÔ¿ÉĞ¦¼ÛÖµ"};
 const unsigned char cy_mb_6229  []={"Ã÷°×"};
@@ -1328,6 +1328,7 @@ const py_index py_index3[]=
     {"9629","ciyu", 4, sizeof(cy_mb_9629),(unsigned char*)cy_mb_9629},
     {"9729","ciyu", 4, sizeof(cy_mb_9729),(unsigned char*)cy_mb_9729},
     {"9829","ciyu", 4, sizeof(cy_mb_9829),(unsigned char*)cy_mb_9829},
+    {"9929","ciyu", 4, sizeof(cy_mb_9929),(unsigned char*)cy_mb_9929},
 
     //3 words
 
