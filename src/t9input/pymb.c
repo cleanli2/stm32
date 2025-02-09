@@ -540,14 +540,46 @@ const unsigned char cy_mb_7487  []={"松果体"};
 const unsigned char cy_mb_3227  []={"低层次"};
 const unsigned char cy_mb_9247  []={"只不过"};
 
-const py_index cy_index[]=
-{
-};
 
-int size_of_cyindex()
-{
-	return sizeof(cy_index)/sizeof(cy_index[0]);
-}
+//4 words
+const unsigned char cy_mb_75667 []={"释迦牟尼"};
+const unsigned char cy_mb_72577 []={"祛病健身"};
+const unsigned char cy_mb_95777 []={"也就是说"};
+const unsigned char cy_mb_99337 []={"许许多多"};
+const unsigned char cy_mb_94767 []={"走火入魔"};
+const unsigned char cy_mb_57477 []={"假气功师"};
+const unsigned char cy_mb_54597 []={"举个例子"};
+const unsigned char cy_mb_89467 []={"特异功能"};
+const unsigned char cy_mb_96797 []={"性命双修"};
+const unsigned char cy_mb_32497 []={"返本归真"};
+const unsigned char cy_mb_66797 []={"男女双修"};
+const unsigned char cy_mb_73977 []={"普度众生"};
+const unsigned char cy_mb_77997 []={"实实在在"};
+const unsigned char cy_mb_99767 []={"自心生魔"};
+const unsigned char cy_mb_37757 []={"大千世界"};
+const unsigned char cy_mb_26837 []={"阿弥陀佛"};
+const unsigned char cy_mb_77777 []={"确确实实"};
+const unsigned char cy_mb_77947 []={"史前文化"};
+const unsigned char cy_mb_75277 []={"生老病死"};
+const unsigned char cy_mb_84797 []={"谈何容易"};
+const unsigned char cy_mb_99957 []={"修在自己"};
+const unsigned char cy_mb_49737 []={"功在师父"};
+const unsigned char cy_mb_73757 []={"十方世界"};
+const unsigned char cy_mb_57547 []={"劳其筋骨"};
+const unsigned char cy_mb_49357 []={"勾心斗角"};
+const unsigned char cy_mb_57297 []={"乱七八糟"};
+const unsigned char cy_mb_95487 []={"稀里糊涂"};
+const unsigned char cy_mb_59957 []={"苦中之苦"};
+const unsigned char cy_mb_37997 []={"大忍之心"};
+const unsigned char cy_mb_94797 []={"玄关设位"};
+const unsigned char cy_mb_95787 []={"唯利是图"};
+const unsigned char cy_mb_77597 []={"七情六欲"};
+const unsigned char cy_mb_99947 []={"无缘无故"};
+const unsigned char cy_mb_93927 []={"相辅相成"};
+const unsigned char cy_mb_25947 []={"从今以后"};
+const unsigned char cy_mb_99997 []={"沾沾自喜"};
+const unsigned char cy_mb_99797 []={"直指人心"};
+const unsigned char cy_mb_88997 []={"堂堂正正"};
 
 //拼音索引表
 const py_index py_index3[]=
@@ -1019,33 +1051,73 @@ const py_index py_index3[]=
 
     //3 words
 
-    {"7477","ciyu", 6, sizeof(cy_mb_747 ),(unsigned char*)cy_mb_747 },
-    {"9767","ciyu", 6, sizeof(cy_mb_976 ),(unsigned char*)cy_mb_976 },
-    {"5477","ciyu", 6, sizeof(cy_mb_547 ),(unsigned char*)cy_mb_547 },
-    {"9937","ciyu", 6, sizeof(cy_mb_993 ),(unsigned char*)cy_mb_993 },
-    {"9477","ciyu", 6, sizeof(cy_mb_947 ),(unsigned char*)cy_mb_947 },
-    {"9997","ciyu", 6, sizeof(cy_mb_999 ),(unsigned char*)cy_mb_999 },
-    {"3977","ciyu", 6, sizeof(cy_mb_397 ),(unsigned char*)cy_mb_397 },
-    {"4657","ciyu", 6, sizeof(cy_mb_465 ),(unsigned char*)cy_mb_465 },
-    {"9557","ciyu", 6, sizeof(cy_mb_955 ),(unsigned char*)cy_mb_955 },
-    {"9977","ciyu", 6, sizeof(cy_mb_997 ),(unsigned char*)cy_mb_997 },
-    {"3597","ciyu", 6, sizeof(cy_mb_359 ),(unsigned char*)cy_mb_359 },
-    {"7537","ciyu", 6, sizeof(cy_mb_753 ),(unsigned char*)cy_mb_753 },
-    {"5747","ciyu", 6, sizeof(cy_mb_574 ),(unsigned char*)cy_mb_574 },
-    {"9957","ciyu", 6, sizeof(cy_mb_995 ),(unsigned char*)cy_mb_995 },
-    {"7257","ciyu", 6, sizeof(cy_mb_725 ),(unsigned char*)cy_mb_725 },
-    {"9757","ciyu", 6, sizeof(cy_mb_975 ),(unsigned char*)cy_mb_975 },
-    {"7737","ciyu", 6, sizeof(cy_mb_773 ),(unsigned char*)cy_mb_773 },
-    {"7697","ciyu", 6, sizeof(cy_mb_769 ),(unsigned char*)cy_mb_769 },
-    {"6577","ciyu", 6, sizeof(cy_mb_657 ),(unsigned char*)cy_mb_657 },
+    {"7477","ciyu3", 6, sizeof(cy_mb_747 ),(unsigned char*)cy_mb_747 },
+    {"9767","ciyu3", 6, sizeof(cy_mb_976 ),(unsigned char*)cy_mb_976 },
+    {"5477","ciyu3", 6, sizeof(cy_mb_547 ),(unsigned char*)cy_mb_547 },
+    {"9937","ciyu3", 6, sizeof(cy_mb_993 ),(unsigned char*)cy_mb_993 },
+    {"9477","ciyu3", 6, sizeof(cy_mb_947 ),(unsigned char*)cy_mb_947 },
+    {"9997","ciyu3", 6, sizeof(cy_mb_999 ),(unsigned char*)cy_mb_999 },
+    {"3977","ciyu3", 6, sizeof(cy_mb_397 ),(unsigned char*)cy_mb_397 },
+    {"4657","ciyu3", 6, sizeof(cy_mb_465 ),(unsigned char*)cy_mb_465 },
+    {"9557","ciyu3", 6, sizeof(cy_mb_955 ),(unsigned char*)cy_mb_955 },
+    {"9977","ciyu3", 6, sizeof(cy_mb_997 ),(unsigned char*)cy_mb_997 },
+    {"3597","ciyu3", 6, sizeof(cy_mb_359 ),(unsigned char*)cy_mb_359 },
+    {"7537","ciyu3", 6, sizeof(cy_mb_753 ),(unsigned char*)cy_mb_753 },
+    {"5747","ciyu3", 6, sizeof(cy_mb_574 ),(unsigned char*)cy_mb_574 },
+    {"9957","ciyu3", 6, sizeof(cy_mb_995 ),(unsigned char*)cy_mb_995 },
+    {"7257","ciyu3", 6, sizeof(cy_mb_725 ),(unsigned char*)cy_mb_725 },
+    {"9757","ciyu3", 6, sizeof(cy_mb_975 ),(unsigned char*)cy_mb_975 },
+    {"7737","ciyu3", 6, sizeof(cy_mb_773 ),(unsigned char*)cy_mb_773 },
+    {"7697","ciyu3", 6, sizeof(cy_mb_769 ),(unsigned char*)cy_mb_769 },
+    {"6577","ciyu3", 6, sizeof(cy_mb_657 ),(unsigned char*)cy_mb_657 },
 
-    {"9377","ciyu", 6, sizeof(cy_mb_9377 ),(unsigned char*)cy_mb_9377 },
-    {"4227","ciyu", 6, sizeof(cy_mb_4227 ),(unsigned char*)cy_mb_4227 },
-    {"5867","ciyu", 6, sizeof(cy_mb_5867 ),(unsigned char*)cy_mb_5867 },
-    {"7487","ciyu", 6, sizeof(cy_mb_7487 ),(unsigned char*)cy_mb_7487 },
-    {"3227","ciyu", 6, sizeof(cy_mb_3227 ),(unsigned char*)cy_mb_3227 },
-    {"9247","ciyu", 6, sizeof(cy_mb_9247 ),(unsigned char*)cy_mb_9247 },
+    {"9377","ciyu3", 6, sizeof(cy_mb_9377 ),(unsigned char*)cy_mb_9377 },
+    {"4227","ciyu3", 6, sizeof(cy_mb_4227 ),(unsigned char*)cy_mb_4227 },
+    {"5867","ciyu3", 6, sizeof(cy_mb_5867 ),(unsigned char*)cy_mb_5867 },
+    {"7487","ciyu3", 6, sizeof(cy_mb_7487 ),(unsigned char*)cy_mb_7487 },
+    {"3227","ciyu3", 6, sizeof(cy_mb_3227 ),(unsigned char*)cy_mb_3227 },
+    {"9247","ciyu3", 6, sizeof(cy_mb_9247 ),(unsigned char*)cy_mb_9247 },
 
+    //4 words
+
+    {"75667","ciyu4", 8, sizeof(cy_mb_75667),(unsigned char*)cy_mb_75667},
+    {"72577","ciyu4", 8, sizeof(cy_mb_72577),(unsigned char*)cy_mb_72577},
+    {"95777","ciyu4", 8, sizeof(cy_mb_95777),(unsigned char*)cy_mb_95777},
+    {"99337","ciyu4", 8, sizeof(cy_mb_99337),(unsigned char*)cy_mb_99337},
+    {"94767","ciyu4", 8, sizeof(cy_mb_94767),(unsigned char*)cy_mb_94767},
+    {"57477","ciyu4", 8, sizeof(cy_mb_57477),(unsigned char*)cy_mb_57477},
+    {"54597","ciyu4", 8, sizeof(cy_mb_54597),(unsigned char*)cy_mb_54597},
+    {"89467","ciyu4", 8, sizeof(cy_mb_89467),(unsigned char*)cy_mb_89467},
+    {"96797","ciyu4", 8, sizeof(cy_mb_96797),(unsigned char*)cy_mb_96797},
+    {"32497","ciyu4", 8, sizeof(cy_mb_32497),(unsigned char*)cy_mb_32497},
+    {"66797","ciyu4", 8, sizeof(cy_mb_66797),(unsigned char*)cy_mb_66797},
+    {"73977","ciyu4", 8, sizeof(cy_mb_73977),(unsigned char*)cy_mb_73977},
+    {"77997","ciyu4", 8, sizeof(cy_mb_77997),(unsigned char*)cy_mb_77997},
+    {"99767","ciyu4", 8, sizeof(cy_mb_99767),(unsigned char*)cy_mb_99767},
+    {"37757","ciyu4", 8, sizeof(cy_mb_37757),(unsigned char*)cy_mb_37757},
+    {"26837","ciyu4", 8, sizeof(cy_mb_26837),(unsigned char*)cy_mb_26837},
+    {"77777","ciyu4", 8, sizeof(cy_mb_77777),(unsigned char*)cy_mb_77777},
+    {"77947","ciyu4", 8, sizeof(cy_mb_77947),(unsigned char*)cy_mb_77947},
+    {"75277","ciyu4", 8, sizeof(cy_mb_75277),(unsigned char*)cy_mb_75277},
+    {"84797","ciyu4", 8, sizeof(cy_mb_84797),(unsigned char*)cy_mb_84797},
+    {"99957","ciyu4", 8, sizeof(cy_mb_99957),(unsigned char*)cy_mb_99957},
+    {"49737","ciyu4", 8, sizeof(cy_mb_49737),(unsigned char*)cy_mb_49737},
+    {"73757","ciyu4", 8, sizeof(cy_mb_73757),(unsigned char*)cy_mb_73757},
+    {"57547","ciyu4", 8, sizeof(cy_mb_57547),(unsigned char*)cy_mb_57547},
+    {"49357","ciyu4", 8, sizeof(cy_mb_49357),(unsigned char*)cy_mb_49357},
+    {"57297","ciyu4", 8, sizeof(cy_mb_57297),(unsigned char*)cy_mb_57297},
+    {"95487","ciyu4", 8, sizeof(cy_mb_95487),(unsigned char*)cy_mb_95487},
+    {"59957","ciyu4", 8, sizeof(cy_mb_59957),(unsigned char*)cy_mb_59957},
+    {"37997","ciyu4", 8, sizeof(cy_mb_37997),(unsigned char*)cy_mb_37997},
+    {"94797","ciyu4", 8, sizeof(cy_mb_94797),(unsigned char*)cy_mb_94797},
+    {"95787","ciyu4", 8, sizeof(cy_mb_95787),(unsigned char*)cy_mb_95787},
+    {"77597","ciyu4", 8, sizeof(cy_mb_77597),(unsigned char*)cy_mb_77597},
+    {"99947","ciyu4", 8, sizeof(cy_mb_99947),(unsigned char*)cy_mb_99947},
+    {"93927","ciyu4", 8, sizeof(cy_mb_93927),(unsigned char*)cy_mb_93927},
+    {"25947","ciyu4", 8, sizeof(cy_mb_25947),(unsigned char*)cy_mb_25947},
+    {"99997","ciyu4", 8, sizeof(cy_mb_99997),(unsigned char*)cy_mb_99997},
+    {"99797","ciyu4", 8, sizeof(cy_mb_99797),(unsigned char*)cy_mb_99797},
+    {"88997","ciyu4", 8, sizeof(cy_mb_88997),(unsigned char*)cy_mb_88997},
 };
 
 int size_of_pyindex()
