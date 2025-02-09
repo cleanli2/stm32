@@ -73,7 +73,8 @@ unsigned char str_match(unsigned char*str1,unsigned char*str2)
 #define DYN_HISTORY_SIZE 40
 #define DYN_MB_SIZE 213
 int dyn_his_p=0;
-unsigned char dyn_mb[DYN_MB_SIZE]={"的是不人一这了你有个就在他我能功么来修炼也那都到们大法上中去要出它为可看讲说什以心时会多样种体还好高常想气所现家下没很身自西过事得东次层生真道些间给把正里着当佛子做己天因病后往性之开成发物用情候师学本呢和起化作只"};
+const unsigned char const_dyn_mb[DYN_MB_SIZE]={"的是不人一这了你有个就在他我能功么来修炼也那都到们大法上中去要出它为可看讲说什以心时会多样种体还好高常想气所现家下没很身自西过事得东次层生真道些间给把正里着当佛子做己天因病后往性之开成发物用情候师学本呢和起化作只"};
+unsigned char dyn_mb[DYN_MB_SIZE]={0};
 unsigned char most_mb[MOST_MB_SIZE]={"些间给把正里着当佛子做己天因病后往性之开成发物用情候师学本呢和起化作只现家下没很身自西过事得东次层生真道些间给把正里着当佛子做己天因病后往性之开成发物用情候师学本呢和起化作只其问空许够实理别对而动题怎定质点意教"};
 py_index dyn_index={"dynch","words",2,213,dyn_mb};
 py_index most_index={"dynch","words",2,213,most_mb};
@@ -105,6 +106,7 @@ void update_dyn(unsigned char*s)
 	int pyindex_len, listlen;
 	int i, j, dynp=DYN_MB_SIZE-2;
     pyindex_len=size_of_pyindex();//得到py索引表的大小.
+    memcpy(dyn_mb, const_dyn_mb, DYN_MB_SIZE);
     for(i=0;i<pyindex_len;i++)
     {
         if(py_index3[i].grp_n<=2)continue;
