@@ -72,7 +72,8 @@ unsigned char str_match(unsigned char*str1,unsigned char*str2)
 #define DYN_HISTORY_SIZE 40
 int dyn_his_p=0;
 unsigned char most_mb[213]={"的是不人一这了你有个就在他我能功么来修炼也那都到们大法上中去要出它为可看讲说什以心时会多样种体还好高常想气所现家下没很身自西过事得东次层生真道些间给把正里着当佛子做己天因病后往性之开成发物用情候师学本呢和起化作只"};
-unsigned char dyn_mb[141]={"现家下没很身自西过事得东次层生真道些间给把正里着当佛子做己天因病后往性之开成发物用情候师学本呢和起化作只其问空许够实理别对而动题怎定质点意教"};
+#define DYN_MB_SIZE 141
+unsigned char dyn_mb[DYN_MB_SIZE]={"现家下没很身自西过事得东次层生真道些间给把正里着当佛子做己天因病后往性之开成发物用情候师学本呢和起化作只其问空许够实理别对而动题怎定质点意教"};
 py_index dyn_index={"dynch","words",2,213,dyn_mb};
 py_index most_index={"dynch","words",2,213,most_mb};
 unsigned char dyn_his_mb[DYN_HISTORY_SIZE+1]={"的一是不了在人有我他这个上们来到时大地为"};
@@ -100,6 +101,21 @@ void chs_put_in_list(char*ch, char*list)
 
 void update_dyn(unsigned char*s)
 {
+	int pyindex_len;
+	int i, j, dynp=DYN_MB_SIZE-2;
+    pyindex_len=size_of_pyindex();//得到py索引表的大小.
+    for(i=0;i<pyindex_len;i++)
+    {
+        if(py_index3[i].grp_n<=2)continue;
+        for(j=0;j<py_index3[i].num;j+=2){
+            if(s[0]==py_index3[i].pymb_ch[j] && s[1]==py_index3[i].pymb_ch[j+1]
+                    && (0!=(j-1)%py_index3[i].grp_n)){
+                dyn_mb[dynp-1]=py_index3[i].pymb_ch[j+2];
+                dyn_mb[dynp]=py_index3[i].pymb_ch[j+3];
+                dynp-=2;
+            }
+        }
+    }
 }
 
 //获取匹配的拼音码表
