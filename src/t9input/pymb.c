@@ -514,8 +514,6 @@ const unsigned char cy_mb_9829  []={"问题"};
 const unsigned char cy_mb_9929  []={"这样现在这些因为以为有些一些也许一直一种宇宙学校相信信息现象详细信心显现危险真正这种组织最终坐在战争总之种种心性"};
 
 //3 words
-const unsigned char cy_mb_9377  []={"有的人"};
-const unsigned char cy_mb_4227  []={"高层次"};
 const unsigned char cy_mb_747   []={"气功师"};
 const unsigned char cy_mb_976   []={"为什么"};
 const unsigned char cy_mb_547   []={"炼功人"};
@@ -529,16 +527,18 @@ const unsigned char cy_mb_997   []={"主元神主意识"};
 const unsigned char cy_mb_359   []={"大觉者妒嫉心"};
 const unsigned char cy_mb_753   []={"世间法"};
 const unsigned char cy_mb_574   []={"假气功"};
-const unsigned char cy_mb_3227  []={"低层次"};
 const unsigned char cy_mb_975   []={"有人讲"};
-const unsigned char cy_mb_9247  []={"只不过"};
 const unsigned char cy_mb_773   []={"所说的"};
 const unsigned char cy_mb_769   []={"什么样"};
 const unsigned char cy_mb_657   []={"那就是"};
-const unsigned char cy_mb_5867  []={"开天目"};
-const unsigned char cy_mb_7487  []={"松果体"};
 const unsigned char cy_mb_995   []={"望远镜"};
 const unsigned char cy_mb_725   []={"说白了"};
+const unsigned char cy_mb_9377  []={"有的人"};
+const unsigned char cy_mb_4227  []={"高层次"};
+const unsigned char cy_mb_5867  []={"开天目"};
+const unsigned char cy_mb_7487  []={"松果体"};
+const unsigned char cy_mb_3227  []={"低层次"};
+const unsigned char cy_mb_9247  []={"只不过"};
 
 const py_index cy_index[]=
 {
@@ -1038,6 +1038,13 @@ const py_index py_index3[]=
     {"7737","ciyu", 6, sizeof(cy_mb_773 ),(unsigned char*)cy_mb_773 },
     {"7697","ciyu", 6, sizeof(cy_mb_769 ),(unsigned char*)cy_mb_769 },
     {"6577","ciyu", 6, sizeof(cy_mb_657 ),(unsigned char*)cy_mb_657 },
+
+    {"9377","ciyu", 6, sizeof(cy_mb_9377 ),(unsigned char*)cy_mb_9377 },
+    {"4227","ciyu", 6, sizeof(cy_mb_4227 ),(unsigned char*)cy_mb_4227 },
+    {"5867","ciyu", 6, sizeof(cy_mb_5867 ),(unsigned char*)cy_mb_5867 },
+    {"7487","ciyu", 6, sizeof(cy_mb_7487 ),(unsigned char*)cy_mb_7487 },
+    {"3227","ciyu", 6, sizeof(cy_mb_3227 ),(unsigned char*)cy_mb_3227 },
+    {"9247","ciyu", 6, sizeof(cy_mb_9247 ),(unsigned char*)cy_mb_9247 },
 
 };
 
