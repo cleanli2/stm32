@@ -10,6 +10,7 @@
 //版本：V1.0			    
 //广州市星翼电子科技有限公司  	 												    								  
 //////////////////////////////////////////////////////////////////////////////////
+#include <stdint.h>
 
 
 //拼音码表与拼音的对应表
@@ -17,7 +18,8 @@ typedef struct
 {
   char *py_input;//输入的字符串
   char *py;	   //对应的拼音
-  int num;
+  uint16_t grp_n;
+  uint16_t num;
   unsigned char *pymb_ch;
 }py_index;
 
