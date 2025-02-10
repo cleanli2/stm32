@@ -1500,6 +1500,7 @@ int check_same(const char*s)
     int n=strlen(s), m;
     if(n<3)return 1;
 
+    lprintf("strlen = %d\r\n", n);
     //handle compare buf update
     if(ui_buf[5]<0xffffff){
         int e2rom_need_n=n-2-strlen(tipt_buf);
@@ -1531,8 +1532,8 @@ int check_same(const char*s)
         }
     }
 
-    //mem_print(s, 0, n-2);
-    //mem_print(tipt_buf, 0, n-2);
+    mem_print(s, 0, n-2);
+    mem_print(tipt_buf, 0, n-2);
     
     if(0==strncmp(tipt_buf, s, n-2)){
         //read more 2 bytes, if p mark, cp to bookbuf
@@ -1592,7 +1593,7 @@ void do_tipt(void*cfp)
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5);
     draw_sq(TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5, BLACK);
-    lprintf("\r\nbtidx=%d u4=%d u3=%d\r\n",btidx, ui_buf[4], ui_buf[3]);
+    lprintf("\r\nbtidx=%d u4=%d u3=0x%x\r\n",btidx, ui_buf[4], ui_buf[3]);
     if(btidx<0 || btidx>=12){
         lprintf("error btidx\r\n");
         return;
@@ -1765,6 +1766,7 @@ void do_tipt(void*cfp)
                         lastchar[1]=rs[5];
                     }
                     else if(t9.mwdth==8){
+                        lprintf("ciyu4\r\n");
                         int tmpidx=choose_idx[1]/4;
                         rs[0]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*8];
                         rs[1]=t9.pymb[(int)choose_idx[0]]->pymb_ch[tmpidx*8+1];
