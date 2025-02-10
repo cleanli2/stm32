@@ -1664,14 +1664,14 @@ void do_tipt(void*cfp)
                 inputs[1]=0;
             }
             else if('h'==inputs[0]){
-                inputs[0]='m';
-                inputs[1]=0;
-            }
-            else if('m'==inputs[0]){
                 inputs[0]='M';
                 inputs[1]=0;
             }
             else if('M'==inputs[0]){
+                inputs[0]='m';
+                inputs[1]=0;
+            }
+            else if('m'==inputs[0]){
                 if(choose_idx[3]){
                     inputs[0]=0;
                     inputs[1]=0;
