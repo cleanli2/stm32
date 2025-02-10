@@ -1504,7 +1504,9 @@ int check_same(const char*s)
     //handle compare buf update
     if(ui_buf[5]<0xffffff){
         int e2rom_need_n=n-2-strlen(tipt_buf);
-        if(e2rom_need_n>4)return 0;
+        if(e2rom_need_n>10){
+            return 0;
+        }
         if(ui_buf[5]-ui_buf[6]+e2rom_need_n>ui_buf[7]){
             e2rom_need_n = ui_buf[7]-(ui_buf[5]-ui_buf[6]);
         }
