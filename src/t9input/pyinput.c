@@ -80,7 +80,7 @@ py_index const_dyn_index={"dynch","words",2,213,(unsigned char*)const_dyn_mb};
 py_index dyn_index={"dynch","words",2,213,dyn_mb};
 py_index most_index={"dynch","words",2,213,most_mb};
 unsigned char dyn_his_mb[DYN_HISTORY_SIZE+1]={"的一是不了在人有我他这个上们来到时大地为"};
-py_index dyn_his_index={"history","histywds",2,40,dyn_his_mb};
+py_index dyn_his_index={"history","histywds",2,DYN_HISTORY_SIZE,dyn_his_mb};
 
 int chs_is_in_list(char*ch, char*list, int len)
 {
