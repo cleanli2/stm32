@@ -1423,7 +1423,7 @@ void tipt_ui_process_event(void*vp)
             if(liney<(int)ui_buf[9]){
                 choose_idx[0]=liney;
                 if(ui_buf[9]==1){
-                    btidx=10;
+                    btidx=-1;
                 }
                 else{
                     if(choose_idx[0]==0){
@@ -1447,7 +1447,7 @@ void tipt_ui_process_event(void*vp)
                 }
                 choose_idx[2]=0;
             }
-            do_tipt(&btidx);
+            if(btidx>=0)do_tipt(&btidx);
         }
     }
     common_process_event(vp);
