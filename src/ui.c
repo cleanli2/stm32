@@ -1788,6 +1788,7 @@ void do_tipt(void*cfp)
                     }
                 }
                 strcat(book_buf, rs);
+                put_his_buf((unsigned char*)rs);
                 ui_buf[0] = 0;
                 ui_buf[1] = 0;
                 ui_buf[2] = 0;

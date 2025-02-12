@@ -82,10 +82,15 @@ py_index most_index={"dynch","words",2,213,most_mb};
 unsigned char dyn_his_mb[DYN_HISTORY_SIZE+1]={"的一是不了在人有我他这个上们来到时大地为"};
 py_index dyn_his_index={"history","histywds",2,DYN_HISTORY_SIZE,dyn_his_mb};
 
+void str_leftmove(char*s, int n);
 int chs_is_in_list(char*ch, char*list, int len)
 {
     for(int i=0;i<len;i+=2){
         if((ch[0]==list[i])&&(ch[1]==list[i+1])){
+            str_leftmove(list+i, 2);
+            dyn_his_p-=2;
+            list[dyn_his_p]=ch[0];
+            list[dyn_his_p+1]=ch[1];
             return 1;
         }
     }
@@ -94,12 +99,15 @@ int chs_is_in_list(char*ch, char*list, int len)
 
 void chs_put_in_list(char*ch, char*list)
 {
+    if(dyn_his_p>=DYN_HISTORY_SIZE){
+        while(dyn_his_p>=DYN_HISTORY_SIZE){
+            str_leftmove(list, 2);
+            dyn_his_p-=2;
+        }
+    }
     list[dyn_his_p]=ch[0];
     list[dyn_his_p+1]=ch[1];
     dyn_his_p+=2;
-    if(dyn_his_p>=DYN_HISTORY_SIZE){
-        dyn_his_p=0;
-    }
 }
 
 void update_dyn(unsigned char*s)
@@ -134,6 +142,16 @@ void update_dyn(unsigned char*s)
     //mem_print((char*)dyn_mb, 0, DYN_MB_SIZE);
 }
 
+void put_his_buf(unsigned char *strin)
+{
+    while(*strin){
+        if(!chs_is_in_list((char*)strin, (char*)dyn_his_mb, DYN_HISTORY_SIZE)){
+            chs_put_in_list((char*)strin, (char*)dyn_his_mb);
+        }
+        strin+=2;
+    }
+}
+
 //获取匹配的拼音码表
 //*strin,输入的字符串,形如:"726"
 unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
@@ -163,10 +181,6 @@ unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist)
         }
     }
     else{
-        if(!chs_is_in_list((char*)strin, (char*)dyn_his_mb, DYN_HISTORY_SIZE)&&
-                !chs_is_in_list((char*)strin, (char*)most_mb, 213)){
-            chs_put_in_list((char*)strin, (char*)dyn_his_mb);
-        }
         update_dyn(strin);
         matchlist[mcnt++]=&dyn_index;
     }
