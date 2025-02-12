@@ -79,7 +79,7 @@ unsigned char most_mb[MOST_MB_SIZE]={"些间给把正里着当佛子做己天因病后往性之开成
 py_index const_dyn_index={"dynch","words",2,213,(unsigned char*)const_dyn_mb};
 py_index dyn_index={"dynch","words",2,213,dyn_mb};
 py_index most_index={"dynch","words",2,213,most_mb};
-unsigned char dyn_his_mb[DYN_HISTORY_SIZE+1]={"的一是不了在人有我他这个上们来到时大地为"};
+unsigned char dyn_his_mb[DYN_HISTORY_SIZE+1]={0};
 py_index dyn_his_index={"history","histywds",2,DYN_HISTORY_SIZE,dyn_his_mb};
 
 void str_leftmove(char*s, int n);
@@ -144,7 +144,8 @@ void update_dyn(unsigned char*s)
 
 void put_his_buf(unsigned char *strin)
 {
-    lprintf("dyn_his_p=%d\r\n", dyn_his_p);
+    lprintf("++dyn_his_p=%d\r\n", dyn_his_p);
+    mem_print(dyn_his_mb,0, 30);
     while(*strin){
         if(!(strin[0]==0xa1&&strin[1]==0xfd)){
             if(!chs_is_in_list((char*)strin, (char*)dyn_his_mb, DYN_HISTORY_SIZE)){
@@ -153,6 +154,8 @@ void put_his_buf(unsigned char *strin)
         }
         strin+=2;
     }
+    lprintf("--dyn_his_p=%d\r\n", dyn_his_p);
+    mem_print(dyn_his_mb,0, 30);
 }
 
 //获取匹配的拼音码表
