@@ -88,9 +88,8 @@ int chs_is_in_list(char*ch, char*list, int len)
     for(int i=0;i<len;i+=2){
         if((ch[0]==list[i])&&(ch[1]==list[i+1])){
             str_leftmove(list+i, 2);
-            dyn_his_p-=2;
-            list[dyn_his_p]=ch[0];
-            list[dyn_his_p+1]=ch[1];
+            list[dyn_his_p-2]=ch[0];
+            list[dyn_his_p-1]=ch[1];
             return 1;
         }
     }
@@ -144,8 +143,8 @@ void update_dyn(unsigned char*s)
 
 void put_his_buf(unsigned char *strin)
 {
-    lprintf("++dyn_his_p=%d\r\n", dyn_his_p);
-    mem_print(dyn_his_mb,0, 30);
+    //lprintf("++dyn_his_p=%d\r\n", dyn_his_p);
+    //mem_print(dyn_his_mb,0, 30);
     while(*strin){
         if(!(strin[0]==0xa1&&strin[1]==0xfd)){
             if(!chs_is_in_list((char*)strin, (char*)dyn_his_mb, DYN_HISTORY_SIZE)){
@@ -154,8 +153,8 @@ void put_his_buf(unsigned char *strin)
         }
         strin+=2;
     }
-    lprintf("--dyn_his_p=%d\r\n", dyn_his_p);
-    mem_print(dyn_his_mb,0, 30);
+    //lprintf("--dyn_his_p=%d\r\n", dyn_his_p);
+    //mem_print(dyn_his_mb,0, 30);
 }
 
 //获取匹配的拼音码表
