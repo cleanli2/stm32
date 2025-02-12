@@ -1788,7 +1788,6 @@ void do_tipt(void*cfp)
                     }
                 }
                 strcat(book_buf, rs);
-                put_his_buf((unsigned char*)rs);
                 ui_buf[0] = 0;
                 ui_buf[1] = 0;
                 ui_buf[2] = 0;
@@ -1798,6 +1797,7 @@ void do_tipt(void*cfp)
                 choose_idx[0]=0;
                 //provide common input char
                 if(0==choose_idx[3]){
+                    put_his_buf((unsigned char*)rs);
                     inputs[0]=lastchar[0];
                     inputs[1]=lastchar[1];
                     inputs[2]=0;
