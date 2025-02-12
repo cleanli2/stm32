@@ -545,6 +545,7 @@ const unsigned char cy_mb_4429 []={"很高很好好坏刚刚后果"};
 const unsigned char cy_mb_4529 []={"感觉关系环境好了根基衡量国家高级功力后来关键回来回家赶快概括"};
 const unsigned char cy_mb_4629 []={"功能很难观念还没概念毁灭国内光年"};
 const unsigned char cy_mb_4729 []={"过去告诉坏事干扰还是和尚好事黑色害怕回去好人高深行事"};
+const unsigned char cy_mb_4829  []={"给他"};
 const unsigned char cy_mb_4929 []={"还有或者高兴好象功柱很小很有贵州国外"};
 const unsigned char cy_mb_5229 []={"就不里边可不看病具备流传基本基础可悲"};
 const unsigned char cy_mb_5329 []={"看到就得绝对讲法肯定领导决定强大经典基督"};
