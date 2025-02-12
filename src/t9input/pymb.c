@@ -588,10 +588,11 @@ const unsigned char cy_mb_9729 []={"有人也是元神形式这是只是下去意识要求完全追求
 const unsigned char cy_mb_9829 []={"问题状态我说周天一条学说再说"};
 const unsigned char cy_mb_9929 []={"这样因为真正宇宙物质心性这些现在一样有些执著一些学员也有作用一下往往允许作为只要医院只有一直信息现象相信欲望危险以为坐在悟性主要原因元婴影响显现制约主意永远原子植物站在至于真相专一旋转完整注意阴阳形像意义最终也许组织中心消灾详细战争信心"};
 //3 words
+const unsigned char cy_mb_223   []={"差不多"};
 const unsigned char cy_mb_747   []={"气功师"};
 const unsigned char cy_mb_976   []={"为什么"};
 const unsigned char cy_mb_547   []={"炼功人"};
-const unsigned char cy_mb_993   []={"有许多"};
+const unsigned char cy_mb_993   []={"有许多卍字符"};
 const unsigned char cy_mb_947   []={"这个人"};
 const unsigned char cy_mb_999   []={"执著心"};
 const unsigned char cy_mb_397   []={"副元神副意识"};
@@ -627,6 +628,7 @@ const unsigned char cy_mb_89467 []={"特异功能"};
 const unsigned char cy_mb_96797 []={"性命双修"};
 const unsigned char cy_mb_32497 []={"返本归真"};
 const unsigned char cy_mb_66797 []={"男女双修"};
+const unsigned char cy_mb_67327 []={"名山大川"};
 const unsigned char cy_mb_73977 []={"普度众生"};
 const unsigned char cy_mb_77997 []={"实实在在"};
 const unsigned char cy_mb_99767 []={"自心生魔"};
@@ -651,9 +653,11 @@ const unsigned char cy_mb_77597 []={"七情六欲"};
 const unsigned char cy_mb_99947 []={"无缘无故"};
 const unsigned char cy_mb_93927 []={"相辅相成"};
 const unsigned char cy_mb_25947 []={"从今以后"};
+const unsigned char cy_mb_97247 []={"一丝不挂"};
 const unsigned char cy_mb_99997 []={"沾沾自喜"};
 const unsigned char cy_mb_99797 []={"直指人心"};
 const unsigned char cy_mb_88997 []={"堂堂正正"};
+const unsigned char cy_mb_77497 []={"亲朋好友"};
 
 //拼音索引表
 const py_index py_index3[]=
@@ -1126,6 +1130,7 @@ const py_index py_index3[]=
 
     //3 words
 
+    {"2237","ciyu3", 6, sizeof(cy_mb_223 ),(unsigned char*)cy_mb_223 },
     {"7477","ciyu3", 6, sizeof(cy_mb_747 ),(unsigned char*)cy_mb_747 },
     {"9767","ciyu3", 6, sizeof(cy_mb_976 ),(unsigned char*)cy_mb_976 },
     {"5477","ciyu3", 6, sizeof(cy_mb_547 ),(unsigned char*)cy_mb_547 },
@@ -1165,6 +1170,7 @@ const py_index py_index3[]=
     {"89467","ciyu4", 8, sizeof(cy_mb_89467),(unsigned char*)cy_mb_89467},
     {"96797","ciyu4", 8, sizeof(cy_mb_96797),(unsigned char*)cy_mb_96797},
     {"32497","ciyu4", 8, sizeof(cy_mb_32497),(unsigned char*)cy_mb_32497},
+    {"67327","ciyu4", 8, sizeof(cy_mb_67327),(unsigned char*)cy_mb_67327},
     {"66797","ciyu4", 8, sizeof(cy_mb_66797),(unsigned char*)cy_mb_66797},
     {"73977","ciyu4", 8, sizeof(cy_mb_73977),(unsigned char*)cy_mb_73977},
     {"77997","ciyu4", 8, sizeof(cy_mb_77997),(unsigned char*)cy_mb_77997},
@@ -1190,9 +1196,11 @@ const py_index py_index3[]=
     {"99947","ciyu4", 8, sizeof(cy_mb_99947),(unsigned char*)cy_mb_99947},
     {"93927","ciyu4", 8, sizeof(cy_mb_93927),(unsigned char*)cy_mb_93927},
     {"25947","ciyu4", 8, sizeof(cy_mb_25947),(unsigned char*)cy_mb_25947},
+    {"97247","ciyu4", 8, sizeof(cy_mb_97247),(unsigned char*)cy_mb_97247},
     {"99997","ciyu4", 8, sizeof(cy_mb_99997),(unsigned char*)cy_mb_99997},
     {"99797","ciyu4", 8, sizeof(cy_mb_99797),(unsigned char*)cy_mb_99797},
     {"88997","ciyu4", 8, sizeof(cy_mb_88997),(unsigned char*)cy_mb_88997},
+    {"77497","ciyu4", 8, sizeof(cy_mb_77497),(unsigned char*)cy_mb_77497},
 };
 
 int size_of_pyindex()
