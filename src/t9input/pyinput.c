@@ -144,9 +144,12 @@ void update_dyn(unsigned char*s)
 
 void put_his_buf(unsigned char *strin)
 {
+    lprintf("dyn_his_p=%d\r\n", dyn_his_p);
     while(*strin){
-        if(!chs_is_in_list((char*)strin, (char*)dyn_his_mb, DYN_HISTORY_SIZE)){
-            chs_put_in_list((char*)strin, (char*)dyn_his_mb);
+        if(!(strin[0]==0xa1&&strin[1]==0xfd)){
+            if(!chs_is_in_list((char*)strin, (char*)dyn_his_mb, DYN_HISTORY_SIZE)){
+                chs_put_in_list((char*)strin, (char*)dyn_his_mb);
+            }
         }
         strin+=2;
     }
