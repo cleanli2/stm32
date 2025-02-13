@@ -1567,7 +1567,7 @@ int check_same(const char*s)
                 break;
             }
         }
-        ui_buf[8]=ui_buf[5];
+        ui_buf[8]=ui_buf[5]-(strlen(tipt_buf)-(n-2));
         return 1;
     }
     else{
