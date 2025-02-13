@@ -1659,14 +1659,14 @@ void do_tipt(void*cfp)
         else{
             //mem_print(inputs, 0, 16);
             if(0==inputs[0]||0x80<(unsigned char)inputs[0]){
-                inputs[0]='h';
-                inputs[1]=0;
-            }
-            else if('h'==inputs[0]){
                 inputs[0]='M';
                 inputs[1]=0;
             }
             else if('M'==inputs[0]){
+                inputs[0]='h';
+                inputs[1]=0;
+            }
+            else if('h'==inputs[0]){
                 inputs[0]='m';
                 inputs[1]=0;
             }
