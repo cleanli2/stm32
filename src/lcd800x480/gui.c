@@ -789,6 +789,7 @@ void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode,int 
 {
     unsigned char Msk[72], mask;
     int tmpc1, tmpc2;
+    (void)mode;
 
     int ziku_offset = ((s[0]-(int)0xb0)*94+s[1]-(int)0xa1u)*72;
     //lprintf("zikuoff=%d\r\n", ziku_offset);
@@ -796,7 +797,7 @@ void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode,int 
     //lprintf("in ziku24 %d\r\n", mode);
     //mem_print(Msk,0,72);
 
-    LCD_SetWindows(x,y,x+24*LCD_Char_scale-1,y+24*LCD_Char_scale-1);
+    LCD_SetWindows(x,y,x+24*scale-1,y+24*scale-1);
     for(int i=0;i<3;i++){
         mask=0x80;
         for(int k=0;k<8;k++){
@@ -812,7 +813,7 @@ void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode,int 
                     else{
                         tmpc2=LCD_Char_scale;
                         while(tmpc2--){
-                            if(!mode)Lcd_WriteData_16Bit(bc);
+                            Lcd_WriteData_16Bit(bc);
                         }
                     }
                 }
