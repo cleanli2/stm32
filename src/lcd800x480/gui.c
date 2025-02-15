@@ -919,8 +919,8 @@ const char* Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, 
                     }
                     if(size>16)//no12X24 16X32 english font, use 8X16
                     {
-                        if(!is_dummy)LCD_ShowChar(x,y,fc,bc,*str,16,mode);
-                        x+=(8+dx)*LCD_Char_scale;
+                        if(!is_dummy)LCD_ShowChar(x+(size/2-8)/2,y+size-16,fc,bc,*str,16,mode);
+                        x+=(size/2+dx)*LCD_Char_scale;
                     }
                     else
                     {
@@ -949,7 +949,7 @@ const char* Show_Str_win_raw(u32 *xp, u32 *yp, u32 fc, u32 bc, const char *str, 
             if(size==32)
                 GUI_DrawFont32(x,y,fc,bc,str,mode);
             else if(size==24)
-                GUI_DrawFont24(x,y,fc,bc,str,mode);
+                GUI_DrawZikuFont24(x,y,fc,bc,str,mode, LCD_Char_scale);
             else
                 GUI_DrawZikuFont16(x,y,fc,bc,str,mode);
             }
@@ -981,6 +981,15 @@ const char* area_show_str(win_pt wdp, u32 *xp, u32 *yp, const char*string, int i
     const char* ret;
     //lprintf("ass>x %d y %d\n", *xp, *yp);
     ret = Show_Str_win_raw(xp, yp, POINT_COLOR, WHITE, string, 16, 0, wdp, is_dummy);
+    //lprintf("ass<x %d y %d\n", *xp, *yp);
+    return ret;
+}
+
+const char* area_show_str_new(win_pt wdp, u32 *xp, u32 *yp, const char*string, int is_dummy)
+{
+    const char* ret;
+    //lprintf("ass>x %d y %d\n", *xp, *yp);
+    ret = Show_Str_win_raw(xp, yp, POINT_COLOR, WHITE, string, 24, 0, wdp, is_dummy);
     //lprintf("ass<x %d y %d\n", *xp, *yp);
     return ret;
 }

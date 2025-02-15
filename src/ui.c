@@ -1366,7 +1366,7 @@ button_t random_button[]={
 #define TIPT_SHOW_WIN_H 200
 #define TIPT_SHOW_WIN_DX 2
 #define TIPT_SHOW_WIN_DY 2
-#define FONT_SIZE 16
+#define FONT_SIZE 24
 #define HINT_SIZE 16
 #define N_EACH_LINE (TIPT_SHOW_WIN_W/(FONT_SIZE+TIPT_SHOW_WIN_DX*2))
 #define N_TEXT_EACH_LINE (TIPT_TEXT_SHOW_WIN_W/(FONT_SIZE+TIPT_TEXT_SHOW_WIN_DX*2))
@@ -1884,7 +1884,7 @@ void do_tipt(void*cfp)
                             TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5, BLACK);
                     t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
                     t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
-                    next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
+                    next_show_char=area_show_str_new(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
                     memset(book_buf, 0, 512);
                 }
                 else{
@@ -1933,7 +1933,7 @@ void do_tipt(void*cfp)
                 next_show_char=(const char*)t9.pymb[i]->py;
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
-            next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
+            next_show_char=area_show_str_new(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
 		}
         if(ui_buf[9]==1){
             if(choose_idx[3])
@@ -1943,7 +1943,7 @@ void do_tipt(void*cfp)
             t9.mwdth=t9.pymb[(int)choose_idx[0]]->grp_n;
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
-            next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
+            next_show_char=area_show_str_new(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
             if(choose_idx[2]==0 && t9.mwdth==4) choose_idx[2]=1;
             choose_idx[0]=0;
         }
@@ -1957,7 +1957,7 @@ void do_tipt(void*cfp)
             t9.mwdth=t9.pymb[(int)choose_idx[0]]->grp_n;
             t_show_x=TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX;
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
-            next_show_char=area_show_str(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
+            next_show_char=area_show_str_new(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
             draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*choose_idx[0],
                     FONT_SIZE*10, FONT_SIZE+TIPT_SHOW_WIN_DY/2, BLACK);
         }
@@ -1993,7 +1993,7 @@ void do_tipt(void*cfp)
         next_show_char=book_buf;
         t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
         t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
-        next_show_char=area_show_str(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
+        next_show_char=area_show_str_new(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
         POINT_COLOR=BLACK;
     }
 #endif
