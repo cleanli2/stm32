@@ -1355,13 +1355,13 @@ button_t random_button[]={
 
 /****start of tipt ui*****/
 #define TIPT_TEXT_SHOW_WIN_X 25
-#define TIPT_TEXT_SHOW_WIN_Y 30
+#define TIPT_TEXT_SHOW_WIN_Y 27
 #define TIPT_TEXT_SHOW_WIN_W 430
-#define TIPT_TEXT_SHOW_WIN_H 100
+#define TIPT_TEXT_SHOW_WIN_H 105
 #define TIPT_TEXT_SHOW_WIN_DX 1
 #define TIPT_TEXT_SHOW_WIN_DY 2
 #define TIPT_SHOW_WIN_X 25
-#define TIPT_SHOW_WIN_Y 140
+#define TIPT_SHOW_WIN_Y 142
 #define TIPT_SHOW_WIN_W 430
 #define TIPT_SHOW_WIN_H 340
 #define TIPT_SHOW_WIN_DX 2
@@ -1371,7 +1371,7 @@ button_t random_button[]={
 #define N_EACH_LINE (TIPT_SHOW_WIN_W/(FONT_SIZE+TIPT_SHOW_WIN_DX*2))
 #define N_TEXT_EACH_LINE (TIPT_TEXT_SHOW_WIN_W/(FONT_SIZE+TIPT_TEXT_SHOW_WIN_DX*2))
 #define N_TEXT_LINES (TIPT_TEXT_SHOW_WIN_H/(FONT_SIZE+TIPT_TEXT_SHOW_WIN_DY))
-#define TIPT_BUF_SIZE ((N_TEXT_EACH_LINE)*N_TEXT_LINES*2)
+#define TIPT_BUF_SIZE ((N_TEXT_EACH_LINE-1)*N_TEXT_LINES*2)
 char tipt_buf[TIPT_BUF_SIZE];
 void do_tipt(void*cfp);
 
