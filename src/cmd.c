@@ -736,9 +736,12 @@ void lcdsuebstep(char *p)
     }
     else if(cmdindex == 0x15){//
         char tc[3]={0xc9, 0xee, 0};
+        para2=1;
         if(tmp>=2)
             p = str_to_hex(p, &para1);
-        GUI_DrawZikuFont24(400, 400, BLUE, WHITE, tc,para1);
+        if(tmp>=3)
+            p = str_to_hex(p, &para2);
+        GUI_DrawZikuFont24(400, 400, BLUE, BLACK, tc,para1, para2);
     }
     else if(cmdindex == 0x16){//
     }
