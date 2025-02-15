@@ -795,21 +795,22 @@ void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
     unsigned char Msk[72]=
     {0x00, 0x00, 0x00, 0x08, 0x00, 0x01, 0x08, 0x04, 0x02, 0x08, 0x7e, 0x02, 0x09, 0x3c, 0x04, 0x09, 0x24, 0x0c, 0x09, 0x24, 0x18, 0x09, 0x24, 0x30, 0x09, 0x24, 0xe0, 0x09, 0x27, 0xc0, 0xff, 0xff, 0x00, 0x7f, 0xfc, 0x00, 0x49, 0x27, 0x00, 0x09, 0x24, 0xc0, 0x09, 0x24, 0x30, 0x09, 0x24, 0x18, 0x09, 0x24, 0x98, 0x0b, 0xe4, 0x8c, 0x0b, 0xe4, 0xec, 0x09, 0x0f, 0xc6, 0x18, 0x0f, 0x86, 0x18, 0x04, 0x04, 0x08, 0x00, 0x04, 0x00, 0x00, 0x00};
     */
-    unsigned char Msk[72];
+    unsigned char Msk[72], mask;
 
     int ziku_offset = ((s[0]-(int)0xb0)*94+s[1]-(int)0xa1u)*72;
     lprintf("zikuoff=%d\r\n", ziku_offset);
     SPI_Flash_Read((uint8_t*)(&Msk[0]), SPI_FLASH_ZIKU24_START+ziku_offset, 72);
     lprintf("in ziku24 %d\r\n", mode);
-    mem_print(Msk,0,72);
+    //mem_print(Msk,0,72);
 
             LCD_SetWindows(x,y,x+24-1,y+24-1);
+#if 0
             for(i=0;i<24*3;i++)
             {
                 lprintf("i=%d\r\n", i);
                 for(j=0;j<8;j++)
                 {
-                    lprintf("j=%d\r\n", i);
+                    lprintf("j=%d\r\n", j);
                     if(!mode) //非叠加方式
                     {
                         if(Msk[i]&(0x80>>j)){
@@ -836,8 +837,21 @@ void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
                     }
                 }
             }
-
-
+#endif
+    for(int i=0;i<3;i++){
+        mask=0x80;
+        for(int k=0;k<8;k++){
+            for(int j=0;j<24;j++){
+                if(mask&Msk[j*3+i]){
+                    Lcd_WriteData_16Bit(fc);
+                }
+                else{
+                    Lcd_WriteData_16Bit(bc);
+                }
+            }
+            mask>>=1;
+        }
+    }
 
     LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//恢复窗口为全屏  
 }
