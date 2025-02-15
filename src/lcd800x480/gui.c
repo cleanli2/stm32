@@ -811,7 +811,7 @@ void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode,int 
                         }
                     }
                     else{
-                        tmpc2=LCD_Char_scale;
+                        tmpc2=scale;
                         while(tmpc2--){
                             Lcd_WriteData_16Bit(bc);
                         }
