@@ -1355,7 +1355,7 @@ button_t random_button[]={
 
 /****start of tipt ui*****/
 #define TIPT_TEXT_SHOW_WIN_X 25
-#define TIPT_TEXT_SHOW_WIN_Y 40
+#define TIPT_TEXT_SHOW_WIN_Y 30
 #define TIPT_TEXT_SHOW_WIN_W 430
 #define TIPT_TEXT_SHOW_WIN_H 100
 #define TIPT_TEXT_SHOW_WIN_DX 1
@@ -1363,7 +1363,7 @@ button_t random_button[]={
 #define TIPT_SHOW_WIN_X 25
 #define TIPT_SHOW_WIN_Y 140
 #define TIPT_SHOW_WIN_W 430
-#define TIPT_SHOW_WIN_H 345
+#define TIPT_SHOW_WIN_H 340
 #define TIPT_SHOW_WIN_DX 2
 #define TIPT_SHOW_WIN_DY 2
 #define FONT_SIZE 24
@@ -1965,7 +1965,7 @@ void do_tipt(void*cfp)
         }
         if(t9.mwdth>=4){
             for(int i=0;i<t9.pymb[(int)choose_idx[0]]->num/2-t9.mwdth/2;i+=t9.mwdth/2){
-                if((TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+i/N_EACH_LINE))<(TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H)){
+                if((TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+i/N_EACH_LINE))<(TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H)){
                     LCD_DrawLine(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*((i+t9.mwdth/2)%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+i/N_EACH_LINE),
                             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*((i+t9.mwdth/2)%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+i/N_EACH_LINE+1));
                 }
@@ -2005,7 +2005,7 @@ void do_tipt(void*cfp)
 }
 
 #define TIPT_OX 25
-#define TIPT_OY 505
+#define TIPT_OY 500
 
 button_t tipt_button[]={
 #ifdef LARGE_SCREEN
