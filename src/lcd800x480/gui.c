@@ -801,6 +801,10 @@ void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode,int 
         }
     }
     if(zklc==0){
+        if((unsigned char)s[0]<0xb0){//missed mask in current ziku
+            GUI_DrawZikuFont16(x, y+8, fc, bc, s, mode);
+            return;
+        }
         int ziku_offset = ((s[0]-(int)0xb0)*94+s[1]-(int)0xa1u)*72;
         //lprintf("zikuoff=%d\r\n", ziku_offset);
         SPI_Flash_Read((uint8_t*)(&Msk[0]), SPI_FLASH_ZIKU24_START+ziku_offset, 72);
