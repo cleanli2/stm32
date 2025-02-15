@@ -735,7 +735,9 @@ void lcdsuebstep(char *p)
         }
     }
     else if(cmdindex == 0x15){//
-        GUI_DrawZikuFont24(400, 400, BLUE, WHITE, "深圆测试",0);
+        if(tmp>=2)
+            p = str_to_hex(p, &para1);
+        GUI_DrawZikuFont24(400, 400, BLUE, WHITE, "深圆测试",para1);
     }
     else if(cmdindex == 0x16){//
     }

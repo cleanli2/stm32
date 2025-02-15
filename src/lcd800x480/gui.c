@@ -787,50 +787,53 @@ void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 
 void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 {
-	u8 i,j;
-	u16 k;
-	u16 HZnum;
-	u16 x0=x;
-	HZnum=sizeof(tfont24)/sizeof(typFNT_GB24);	//自动统计汉字数目
-		
-			for (k=0;k<HZnum;k++) 
-			{
-			  if ((tfont24[k].Index[0]==*(s))&&(tfont24[k].Index[1]==*(s+1)))
-			  { 	LCD_SetWindows(x,y,x+24-1,y+24-1);
-				    for(i=0;i<24*3;i++)
-				    {
-							for(j=0;j<8;j++)
-							{
-								if(!mode) //非叠加方式
-								{
-									if(tfont24[k].Msk[i]&(0x80>>j)){
-                                        Lcd_WriteData_16Bit(fc);
-                                    }
-									else{
-                                        Lcd_WriteData_16Bit(bc);
-                                    }
-								}
-							else
-							{
-								POINT_COLOR=fc;
-								if(tfont24[k].Msk[i]&(0x80>>j))	LCD_DrawPoint(x,y);//画一个点
-								x++;
-								if((x-x0)==24)
-								{
-									x=x0;
-									y++;
-									break;
-								}
-							}
-						}
-					}
-					
-					
-				}				  	
-				continue;  //查找到对应点阵字库立即退出，防止多个汉字重复取模带来影响
-			}
+    u8 i,j;
+    u16 k=0;
+    u16 HZnum;
+    u16 x0=x;
+    unsigned char Msk[72]={0};
 
-	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//恢复窗口为全屏  
+    HZnum=sizeof(tfont24)/sizeof(typFNT_GB24);	//自动统计汉字数目
+    lprintf("in ziku24 %d\r\n", HZnum);
+    memset(Msk, 0x1, 72);
+
+            LCD_SetWindows(x,y,x+24-1,y+24-1);
+            for(i=0;i<24*3;i++)
+            {
+                lprintf("i=%d\r\n", i);
+                for(j=0;j<8;j++)
+                {
+                    lprintf("j=%d\r\n", i);
+                    if(!mode) //非叠加方式
+                    {
+                        if(Msk[i]&(0x80>>j)){
+                            lprintf("1\r\n");
+                            Lcd_WriteData_16Bit(fc);
+                        }
+                        else{
+                            lprintf("2\r\n");
+                            Lcd_WriteData_16Bit(bc);
+                        }
+                    }
+                    else
+                    {
+                        lprintf("3\r\n");
+                        POINT_COLOR=fc;
+                        if(Msk[i]&(0x80>>j))LCD_DrawPoint(x,y);
+                        x++;
+                        if((x-x0)==24)
+                        {
+                            x=x0;
+                            y++;
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+
+    LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//恢复窗口为全屏  
 }
 
 /*****************************************************************************
