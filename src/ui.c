@@ -1905,19 +1905,19 @@ void do_tipt(void*cfp)
         }
     }
     //mem_print(inputs, 0, 16);
-    lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*11, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%s", inputs);
+    lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*6, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%s", inputs);
     if(ui_buf[5]<0xffffff){
-        lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*16, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%d%", (ui_buf[5]-ui_buf[6])*100/ui_buf[7]);
-        lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*18, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "0x%x", (ui_buf[5]-ui_buf[6]));
+        lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*9, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%d%", (ui_buf[5]-ui_buf[6])*100/ui_buf[7]);
+        lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*12, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "0x%x", (ui_buf[5]-ui_buf[6]));
     }
     if(choose_idx[3])
     {
-        lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*22, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "English");
+        lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*15, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "En");
         ui_buf[9]=eng.getpymb((unsigned char*)inputs);
     }
     else
     {
-        lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*22, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "Chinese");
+        lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*15, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "Ch");
         ui_buf[9]=t9.getpymb((unsigned char*)inputs);
     }
 	if(ui_buf[9])
