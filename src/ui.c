@@ -1959,7 +1959,7 @@ void do_tipt(void*cfp)
             t_show_y+=FONT_SIZE+TIPT_SHOW_WIN_DY;
             next_show_char=area_show_str_new(&tiptw, &t_show_x, &t_show_y, next_show_char, 0);
             draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*choose_idx[0],
-                    FONT_SIZE*10, FONT_SIZE+TIPT_SHOW_WIN_DY/2, BLACK);
+                    FONT_SIZE*5, FONT_SIZE+TIPT_SHOW_WIN_DY/2, BLACK);
         }
         if(t9.mwdth>=4){
             for(int i=0;i<t9.pymb[(int)choose_idx[0]]->num/2-t9.mwdth/2;i+=t9.mwdth/2){
@@ -1979,6 +1979,7 @@ void do_tipt(void*cfp)
                 while(choose_idx[1]<0)choose_idx[1]+=t9.pymb[(int)choose_idx[0]]->num/2;
                 while(choose_idx[1]>=(t9.pymb[(int)choose_idx[0]]->num/2))choose_idx[1]-=t9.pymb[(int)choose_idx[0]]->num/2;
                 draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE), FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
+                draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE)+1, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE)+1, FONT_SIZE+TIPT_SHOW_WIN_DX-2, FONT_SIZE+TIPT_SHOW_WIN_DY-2, BLACK);
             }
         }
 	}else lprintf("no matched results\r\n");
