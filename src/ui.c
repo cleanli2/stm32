@@ -1873,10 +1873,12 @@ void do_tipt(void*cfp)
                             }
                         }
                     }
-                    rs[0]=0xa1;
-                    rs[1]=0xf5;
-                    rs[2]=0;
-                    strcat(book_buf, rs);
+                    if(rn==0){
+                        rs[0]=0xa1;
+                        rs[1]=0xf5;
+                        rs[2]=0;
+                        strcat(book_buf, rs);
+                    }
                     next_show_char=book_buf;
                     lcd_clr_window(WHITE, TIPT_TEXT_SHOW_WIN_X-5, TIPT_TEXT_SHOW_WIN_Y-5,
                             TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_W+5, TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_H+5);
