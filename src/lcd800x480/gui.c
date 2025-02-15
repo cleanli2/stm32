@@ -788,14 +788,25 @@ void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode,int scale)
 {
     unsigned char Msk[72], mask;
-    int tmpc1, tmpc2;
+    int tmpc1, tmpc2, n, zklc=0;
     (void)mode;
 
-    int ziku_offset = ((s[0]-(int)0xb0)*94+s[1]-(int)0xa1u)*72;
-    //lprintf("zikuoff=%d\r\n", ziku_offset);
-    SPI_Flash_Read((uint8_t*)(&Msk[0]), SPI_FLASH_ZIKU24_START+ziku_offset, 72);
-    //lprintf("in ziku24 %d\r\n", mode);
-    //mem_print(Msk,0,72);
+    for (n=0;n<get_size_lc24();n++)
+    {
+        if ((tfont24[n].Index[0]==*(s))&&(tfont24[n].Index[1]==*(s+1)))
+        {
+            zklc=1;
+            memcpy(Msk, tfont24[n].Msk, 72);
+            break;
+        }
+    }
+    if(zklc==0){
+        int ziku_offset = ((s[0]-(int)0xb0)*94+s[1]-(int)0xa1u)*72;
+        //lprintf("zikuoff=%d\r\n", ziku_offset);
+        SPI_Flash_Read((uint8_t*)(&Msk[0]), SPI_FLASH_ZIKU24_START+ziku_offset, 72);
+        //lprintf("in ziku24 %d\r\n", mode);
+        //mem_print(Msk,0,72);
+    }
 
     LCD_SetWindows(x,y,x+24*scale-1,y+24*scale-1);
     for(int i=0;i<3;i++){
