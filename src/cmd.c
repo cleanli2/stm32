@@ -1558,14 +1558,14 @@ void cam(char *p)
         p2=1;
         p3=1;
         char fs[16];
-        if(np<2){
+        if(np<1){
             lprintf("please input filename\n");
             return;
         }
-        if(np>3){
+        if(np>=2){
             p = str_to_hex(p, &p2);
         }
-        if(np>4){
+        if(np>=3){
             p = str_to_hex(p, &p3);
         }
         lprintf("%d %d %s\n", p2, p3, fs);
