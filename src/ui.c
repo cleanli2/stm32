@@ -1995,6 +1995,25 @@ void do_tipt(void*cfp)
         if(!check_same(book_buf)){
             POINT_COLOR=RED;
         }
+        while(1){
+            next_show_char=book_buf;
+            t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
+            t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
+            next_show_char=area_show_str_new(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 1);
+            if(t_show_y<(u32)(TIPT_SHOW_WIN_Y-FONT_SIZE-TIPT_SHOW_WIN_DY)){
+                break;
+            }
+            else{
+                if(book_buf[0]>0x80 || (book_buf[0]==0x0d &&book_buf[1]==0x0a)){
+                    str_leftmove(book_buf, 2);
+                    str_leftmove(tipt_buf, 2);
+                }
+                else{
+                    str_leftmove(book_buf, 1);
+                    str_leftmove(tipt_buf, 1);
+                }
+            }
+        }
         next_show_char=book_buf;
         t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
         t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
