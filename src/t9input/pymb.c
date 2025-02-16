@@ -37,7 +37,7 @@ int size_of_engmbindex()
 	return sizeof(eng_mb_index)/sizeof(eng_mb_index[0]);
 }
 //ºº×ÖÅÅÁĞ±í
-const unsigned char PY_mb_space []={"£¬¡££»¡ı¡¢£¡£¿¡¶¡·¡¡£º£¨£©¡°¡±¡õ"};
+const unsigned char PY_mb_space []={"£¬¡££»¡ı¡¢£¡£¿¡¶¡·¡¡£º£¨£©¡°¡±¡ª¡õ"};
 const unsigned char PY_mb_a     []={"°¡°¢ºÇëçß¹ï¹àÄåHëç"};
 const unsigned char PY_mb_ai    []={"°®°¥°­°¯°¤°©°¦°£°§°¨°ª°«°¬ŞßàÈàÉæÈè¨êÓíÁïÍö°"};
 const unsigned char PY_mb_an    []={"°´°²°¸°¶°µ°³°°°±ÚÏ°·ÛûŞîáíâÖèñï§ğÆ÷ö"};
@@ -1210,6 +1210,7 @@ int size_of_pyindex()
 
 const char ciyu2_list[][4]=
 {
+    "×ö»µ",
     "Ëû½²",
     "ÓĞÁË",
     "ÄÇÊÇ",
