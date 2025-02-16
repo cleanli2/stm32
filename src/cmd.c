@@ -1554,6 +1554,36 @@ void cam(char *p)
             return;
         }
     }
+    if(!strcmp(p1, "nflcd")){
+        p2=1;
+        p3=1;
+        char fs[16];
+        if(np<2){
+            lprintf("please input filename\n");
+            return;
+        }
+        if(np>3){
+            p = str_to_hex(p, &p2);
+        }
+        if(np>4){
+            p = str_to_hex(p, &p3);
+        }
+        lprintf("%d %d %s\n", p2, p3, fs);
+        while(p3--){
+            slprintf(fs, "V%d/YUV%d.BIN", p2/100, p2);
+            if(FS_OK==open_file_r(fs)){
+                lprintf("open file ok\n");
+                file_to_lcd();
+                close_file();
+                lprintf("\n===============file %s to lcd done\n", fs);
+            }
+            else{
+                lprintf("open file fail:%s\n", fs);
+                return;
+            }
+            p2++;
+        }
+    }
     if(!strcmp(p1, "sdlcd")){
         p2 = 1;
         if(np>=2){
