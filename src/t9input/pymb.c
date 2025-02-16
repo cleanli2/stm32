@@ -1210,6 +1210,7 @@ int size_of_pyindex()
 
 const char ciyu2_list[][4]=
 {
+    "他讲",
     "有了",
     "那是",
     "一层",
