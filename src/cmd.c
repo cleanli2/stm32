@@ -1576,12 +1576,16 @@ void cam(char *p)
                 file_to_lcd();
                 close_file();
                 lprintf("\n===============file %s to lcd done\n", fs);
+                lprintf("Anykey quit\r\n");
             }
             else{
                 lprintf("open file fail:%s\n", fs);
                 return;
             }
             p2++;
+            if(con_is_recved()){
+                break;
+            }
         }
     }
     if(!strcmp(p1, "sdlcd")){
