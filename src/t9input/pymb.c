@@ -37,7 +37,7 @@ int size_of_engmbindex()
 	return sizeof(eng_mb_index)/sizeof(eng_mb_index[0]);
 }
 //ºº×ÖÅÅÁĞ±í
-const unsigned char PY_mb_space []={"£¬¡££»¡ı¡¢£¡£¿¡¶¡·¡¡£º£¨£©¡°¡±¡ª¡õ"};
+const unsigned char PY_mb_space []={"£¬¡££»¡ı¡¢£¡£¿£º¡­¡¶¡·¡¡£¨£©¡°¡±¡ª¡õ"};
 const unsigned char PY_mb_a     []={"°¡°¢ºÇëçß¹ï¹àÄåHëç"};
 const unsigned char PY_mb_ai    []={"°®°¥°­°¯°¤°©°¦°£°§°¨°ª°«°¬ŞßàÈàÉæÈè¨êÓíÁïÍö°"};
 const unsigned char PY_mb_an    []={"°´°²°¸°¶°µ°³°°°±ÚÏ°·ÛûŞîáíâÖèñï§ğÆ÷ö"};
@@ -226,8 +226,8 @@ const unsigned char PY_mb_lun   []={"ÂÖÂÛÂÕÂØÂ×ÂÙÂÚàğ"};
 const unsigned char PY_mb_luo   []={"ÂäÂŞÂİŞûíÑÂßÂåÂçÂã¸õ¿©ÀÓÂÜÂàÂáÂâÂæÙÀÙùÜıŞÛâ¤ãøäğçóé¡ëáïİñ§öÃ"};
 const unsigned char PY_mb_m     []={"ß¼"};  
 const unsigned char PY_mb_ma    []={"ÂğÂíÂéÂîÂïÄ¦Ä¨ÂëÂêÂìÂèßéáïæÖè¿ó¡"};
-const unsigned char PY_mb_mai   []={"ÂıÂúÂşÂøÂñÂ÷ÂùÂûÂüÃ¡Ü¬á£çÏì×ïÜò©òı÷©÷´"};
-const unsigned char PY_mb_man   []={"ÂıÂúÂşÂøÂùÂ÷ÂüÃ¡Âû"};
+const unsigned char PY_mb_mai   []={"ÂòÂóÂôÂñ"};
+const unsigned char PY_mb_man   []={"ÂıÂúÂşÂøÂùÂ÷ÂüÃ¡ÂûÜ¬á£çÏì×ïÜò©òı÷©÷´"};
 const unsigned char PY_mb_mang  []={"Ã¦Ã¢Ã£Ã¤Ã¥Ã§ÚøäİíËòş"};
 const unsigned char PY_mb_mao   []={"Ã¬Ã«Ã±Ã®Ã°Ã²Ã­Ã¨Ã©Ãª÷ÖÃ¯Ã³ÙóÜâá¹ã÷è£êÄêóë£ì¸í®î¦òúó±"};
 const unsigned char PY_mb_me    []={"Ã´"};
