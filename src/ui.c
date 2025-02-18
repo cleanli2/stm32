@@ -2037,9 +2037,9 @@ button_t tipt_button[]={
     {TIPT_OX, TIPT_OY+160, 80,  60, do_tipt, -1, 0, "7 pqrs", 0, NULL},
     {TIPT_OX+115, TIPT_OY+160, 80,  60, do_tipt, -1, 0, "8 tuv", 0, NULL},
     {TIPT_OX+230, TIPT_OY+160, 80,  60, do_tipt, -1, 0, "9 wxyz", 0, NULL},
-    {TIPT_OX+345, TIPT_OY, 80,  60, do_tipt, -1, 0, "up", 0, NULL},//9
-    {TIPT_OX+345, TIPT_OY+80, 80,  60, do_tipt, -1, 0, "down", 0, NULL},//10
-    {TIPT_OX+345, TIPT_OY+160, 80,  60, do_tipt, -1, 0, "enter", 0, NULL},//11
+    {TIPT_OX+345, TIPT_OY+80, 80,  60, do_tipt, -1, 0, "up", 0, NULL},//9
+    {TIPT_OX+345, TIPT_OY+160, 80,  60, do_tipt, -1, 0, "down", 0, NULL},//10
+    {TIPT_OX+345, TIPT_OY, 80,  60, do_tipt, -1, 0, "enter", 0, NULL},//11
 #endif
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
