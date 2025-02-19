@@ -46,7 +46,8 @@ void str_del_last(char* s)
     }
     *--s=0;
     if(l>=2){
-        if(*--s>0x80){
+        s--;
+        if(*s>0x80 || *s==0x0d){
             *s=0;
         }
     }
@@ -1613,10 +1614,15 @@ void do_tipt(void*cfp)
             else{
                 str_del_last(book_buf);//del indicator
                 str_del_last(book_buf);//del real one
+                lastchar[0]=book_buf[strlen(book_buf)-2];
+                lastchar[1]=book_buf[strlen(book_buf)-1];
                 rs[0]=0xa1;
                 rs[1]=0xfd;
                 rs[2]=0;
                 strcat(book_buf, rs);
+                inputs[0]=lastchar[0];
+                inputs[1]=lastchar[1];
+                inputs[2]=0;
                 u_txt=1;
             }
             choose_idx[2]=0;
