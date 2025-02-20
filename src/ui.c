@@ -1620,9 +1620,6 @@ void do_tipt(void*cfp)
                 rs[1]=0xfd;
                 rs[2]=0;
                 strcat(book_buf, rs);
-                inputs[0]=lastchar[0];
-                inputs[1]=lastchar[1];
-                inputs[2]=0;
                 u_txt=1;
             }
             choose_idx[2]=0;
