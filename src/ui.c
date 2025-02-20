@@ -1661,7 +1661,7 @@ void do_tipt(void*cfp)
         }
         else{
             //mem_print(inputs, 0, 16);
-            if(0==inputs[0]||0x80<(unsigned char)inputs[0]){
+            if(0x80<(unsigned char)inputs[0]){
                 inputs[0]='M';
                 inputs[1]=0;
             }
@@ -1673,7 +1673,7 @@ void do_tipt(void*cfp)
                 inputs[0]='m';
                 inputs[1]=0;
             }
-            else if('m'==inputs[0]){
+            else if('m'==inputs[0] || 0==inputs[0]){
                 if(choose_idx[3]){
                     inputs[0]=0;
                     inputs[1]=0;
