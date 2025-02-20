@@ -1679,9 +1679,15 @@ void do_tipt(void*cfp)
                     inputs[1]=0;
                 }
                 else{
-                    inputs[0]=lastchar[0];
-                    inputs[1]=lastchar[1];
-                    inputs[2]=0;
+                    if(inputs[0]){
+                        inputs[0]=lastchar[0];
+                        inputs[1]=lastchar[1];
+                        inputs[2]=0;
+                    }
+                    else{
+                        inputs[0]='M';
+                        inputs[1]=0;
+                    }
                 }
             }
             ui_buf[15]=1;
