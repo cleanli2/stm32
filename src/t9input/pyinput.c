@@ -80,7 +80,7 @@ py_index const_dyn_index={"dynch","words",2,DYN_MB_SIZE,(unsigned char*)const_dy
 py_index dyn_index={"dynch","words",2,DYN_MB_SIZE,dyn_mb};
 py_index most_index={"dynch","words",2,DYN_MB_SIZE,most_mb};
 unsigned char dyn_his_mb[DYN_HISTORY_SIZE+1]={0};
-py_index dyn_his_index={"history","histywds",2,DYN_HISTORY_SIZE,dyn_his_mb};
+py_index dyn_his_index={"history","histywds",2,DYN_HISTORY_SIZE+1,dyn_his_mb};
 
 void str_leftmove(char*s, int n);
 int chs_is_in_list(char*ch, char*list, int len)
