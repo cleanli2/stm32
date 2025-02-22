@@ -545,8 +545,8 @@ void task_misc(struct task*vp)
         touch_status = 0;
         if(last_touch_status == 1){
             cur_task_event_flag |= 1<<EVENT_TOUCH_UP;
-            TP_Draw_Big_Point(draw_x,draw_y,WHITE);
-            TP_Draw_Big_Point(cached_touch_x,cached_touch_y,BLACK);
+            //TP_Draw_Big_Point(draw_x,draw_y,WHITE);
+            //TP_Draw_Big_Point(cached_touch_x,cached_touch_y,BLACK);
             draw_x = cached_touch_x;
             draw_y = cached_touch_y;
             lprintf_time("tpup:%d,%d\n", (uint32_t)draw_x, (uint32_t)draw_y);
