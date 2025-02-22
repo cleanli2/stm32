@@ -517,6 +517,7 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
     beep(800, 3000);
 }
 #define AUTO_POWER_OFF_COUNT 100000
+void f24map_init();
 //static uint32_t single_timer_len = 16;
 /**
   * @brief  Main program.
@@ -686,6 +687,7 @@ void main_init(void)
   SD_LowLevel_Init();
   lprintf("w25 flash ID:%x\n", SPI_Flash_ReadID());
   TP_Init();
+  f24map_init();
 
   /*1us/timer_count, 10ms/timer_intrpt*/
   //while (looptimes--)

@@ -785,32 +785,19 @@ void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//恢复窗口为全屏  
 }
 
+char* get_f24_cch_mask(const char*cch);
 void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode,int scale)
 {
-    unsigned char Msk[72], mask;
-    int tmpc1, tmpc2, n, zklc=0;
+    unsigned char *Msk, mask;
+    int tmpc1, tmpc2;
     (void)mode;
 
-    for (n=0;n<get_size_lc24();n++)
-    {
-        if ((tfont24[n].Index[0]==*(s))&&(tfont24[n].Index[1]==*(s+1)))
-        {
-            zklc=1;
-            memcpy(Msk, tfont24[n].Msk, 72);
-            break;
-        }
+    if((unsigned char)s[0]<0xb0){//missed mask in current ziku
+        GUI_DrawZikuFont16(x, y+8, fc, bc, s, mode);
+        return;
     }
-    if(zklc==0){
-        if((unsigned char)s[0]<0xb0){//missed mask in current ziku
-            GUI_DrawZikuFont16(x, y+8, fc, bc, s, mode);
-            return;
-        }
-        int ziku_offset = ((s[0]-(int)0xb0)*94+s[1]-(int)0xa1u)*72;
-        //lprintf("zikuoff=%d\r\n", ziku_offset);
-        SPI_Flash_Read((uint8_t*)(&Msk[0]), SPI_FLASH_ZIKU24_START+ziku_offset, 72);
-        //lprintf("in ziku24 %d\r\n", mode);
-        //mem_print(Msk,0,72);
-    }
+
+    Msk = (unsigned char*)get_f24_cch_mask(s);
 
     LCD_SetWindows(x,y,x+24*scale-1,y+24*scale-1);
     for(int i=0;i<3;i++){
@@ -1125,4 +1112,79 @@ void Gui_Drawbmp16(u16 x,u16 y,u16 w,u16 h,const unsigned char *p) //显示40*40 Q
 		Lcd_WriteData_16Bit(picH<<8|picL);  						
 	}	
 	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//恢复显示窗口为全屏	
+}
+
+/*****************font24 cache******************/
+#define F24_CCH_SIZE 512
+char font24_cache[F24_CCH_SIZE][72];
+
+typedef struct t_f24map {
+    uint16_t cch_v;
+    uint16_t cch_idx;
+} f24map_ps;
+
+f24map_ps f24map[F24_CCH_SIZE]={0};
+
+void f24map_init()
+{
+    for(int i=0;i<F24_CCH_SIZE;i++){
+        f24map[i].cch_idx=i;
+        f24map[i].cch_v=0xffff;
+    }
+}
+
+void f24map_switch_first(uint16_t i)
+{
+    f24map_ps t;
+    if(i>=F24_CCH_SIZE)return;
+    t=f24map[i];
+    for(int j=i;j>0;j--){
+        f24map[j]=f24map[j-1];
+    }
+    f24map[0]=t;
+}
+
+void get_f24(char*s, const char*in)
+{
+    int n, zklc=0;
+    //lprintf("f");
+    for (n=0;n<get_size_lc24();n++)
+    {
+        if ((tfont24[n].Index[0]==*(in))&&(tfont24[n].Index[1]==*(in+1)))
+        {
+            zklc=1;
+            memcpy(s, tfont24[n].Msk, 72);
+            break;
+        }
+    }
+    if(zklc==0){
+        int ziku_offset = ((in[0]-(int)0xb0)*94+in[1]-(int)0xa1u)*72;
+        //lprintf("zikuoff=%d\r\n", ziku_offset);
+        SPI_Flash_Read((uint8_t*)(s), SPI_FLASH_ZIKU24_START+ziku_offset, 72);
+        //lprintf("in ziku24 %d\r\n", mode);
+        //mem_print(Msk,0,72);
+    }
+}
+
+char* get_f24_cch_mask(const char*cch)
+{
+    int i;
+    uint16_t*up=(uint16_t*)cch;
+    for(i=0;i<F24_CCH_SIZE;i++){
+        //lprintf("%x ", f24map[i].cch_v);
+        if(0xffff==f24map[i].cch_v)break;
+        if(*up==f24map[i].cch_v){
+            //lprintf(".");
+            f24map_switch_first(i);
+            return font24_cache[f24map[0].cch_idx];
+        }
+    }
+    if(i==F24_CCH_SIZE){//full, replace last one
+        i=F24_CCH_SIZE-1;
+        //lprintf("missed\r\n");
+    }
+    f24map_switch_first(i);
+    get_f24(font24_cache[f24map[0].cch_idx],cch);
+    f24map[0].cch_v=*up;
+    return font24_cache[f24map[0].cch_idx];
 }
