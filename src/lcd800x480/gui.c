@@ -793,8 +793,11 @@ void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode,int 
     (void)mode;
 
     if((unsigned char)s[0]<0xb0){//missed mask in current ziku
-        GUI_DrawZikuFont16(x, y+8, fc, bc, s, mode);
-        return;
+        uint16_t*upt=(uint16_t*)s;
+        if(*upt!=0xf5a1 && *upt!=0xfda1 && *upt!=0x6485){
+            GUI_DrawZikuFont16(x, y+8, fc, bc, s, mode);
+            return;
+        }
     }
 
     Msk = (unsigned char*)get_f24_cch_mask(s);
