@@ -1441,12 +1441,17 @@ void tipt_ui_process_event(void*vp)
                 if(choose_idx[3]){//english mode
                     choose_idx[1]=((x-TIPT_SHOW_WIN_X-TIPT_SHOW_WIN_DX)/(FONT_SIZE/2+TIPT_SHOW_WIN_DX))+(liney-ui_buf[9])*2*N_EACH_LINE;
                     btidx=11;
+                    choose_idx[2]=0;
                 }
                 else{
+                    draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE), FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, WHITE);
+                    draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE)+1, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE)+1, FONT_SIZE+TIPT_SHOW_WIN_DX-2, FONT_SIZE+TIPT_SHOW_WIN_DY-2, WHITE);
                     choose_idx[1]=((x-TIPT_SHOW_WIN_X-TIPT_SHOW_WIN_DX)/(FONT_SIZE+TIPT_SHOW_WIN_DX*2))+(liney-ui_buf[9])*N_EACH_LINE;
-                    btidx=11;
+                    draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE), FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
+                    draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE)+1, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE)+1, FONT_SIZE+TIPT_SHOW_WIN_DX-2, FONT_SIZE+TIPT_SHOW_WIN_DY-2, BLACK);
+                    btidx=-1;
+                    choose_idx[2]=1;
                 }
-                choose_idx[2]=0;
             }
             if(btidx>=0)do_tipt(&btidx);
         }
