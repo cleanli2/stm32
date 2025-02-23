@@ -75,10 +75,11 @@
  * 0x180000
  * ziku24
  * 0x200000
- * ENV Help
  * 0x203000
- * ENV
+ * ENV Help
  * 0x206000
+ * ENV
+ * 0x209000
  */
 //spi flash damaged now 2022/3/6
 //ENV offset changed to OK flash addr
