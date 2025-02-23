@@ -67,14 +67,18 @@
  * 0x0F0000
  * log
  * 0x0FA000
- * ENV Help
+ * ENV Help X --> NONE
  * 0x0FD000
- * ENV
+ * ENV      X --> NONE
  * 0x100000
  * Not used
  * 0x180000
  * ziku24
  * 0x200000
+ * ENV Help
+ * 0x203000
+ * ENV
+ * 0x206000
  */
 //spi flash damaged now 2022/3/6
 //ENV offset changed to OK flash addr
@@ -83,20 +87,13 @@
 #define SPI_FLASH_ZIKU16_START 0x7E000
 #define SPI_FLASH_ZIKU12_START 0xC0000
 
-#define SPI_FLASH_DAMAGED
-
 #define TOTAL_SPI_FLASH_SIZE 0x200000
 #define SPI_FLASH_SECTOR_SIZE 0x1000
 #define GET_SECTOR_ADDR(addr) ((addr)>>12)
 #define SECTORS_PER_ENV_BLOCK 3
 #define ENV_STORE_SIZE (SPI_FLASH_SECTOR_SIZE*SECTORS_PER_ENV_BLOCK)
 
-#ifdef SPI_FLASH_DAMAGED
-#define ENV_STORE_START_ADDR (TOTAL_SPI_FLASH_SIZE/2-ENV_STORE_SIZE)
-#else
-//env store at end of flash
-#define ENV_STORE_START_ADDR (TOTAL_SPI_FLASH_SIZE-ENV_STORE_SIZE)
-#endif //SPI_FLASH_DAMAGED
+#define ENV_STORE_START_ADDR (0x206000)
 #define ENV_HELP_STORE_START_ADDR (ENV_STORE_START_ADDR-ENV_STORE_SIZE)
 
 #define SPI_FLASH_LOG_START 0x0F0000
