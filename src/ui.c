@@ -1409,6 +1409,17 @@ void tipt_ui_init(void*vp)
     book_buf[0]=0xa1;
     book_buf[1]=0xfd;//indicator in text
 }
+void draw_rect_on_choose_char(uint16_t color)
+{
+    int x, y, w, h;
+    signed char *choose_idx=(signed char*)&ui_buf[3];//0-py index 1-char index 2-mode:input/py_choose/char_choose 3-eng/chs
+    x = TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE);
+    y = TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE);
+    w = FONT_SIZE+TIPT_SHOW_WIN_DX;
+    h = FONT_SIZE+TIPT_SHOW_WIN_DY;
+    draw_sq2(x, y, w, h, color);
+    draw_sq2(x+1, y+1, w-2, h-2, color);
+}
 void tipt_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
@@ -1444,11 +1455,9 @@ void tipt_ui_process_event(void*vp)
                     choose_idx[2]=0;
                 }
                 else{
-                    draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE), FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, WHITE);
-                    draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE)+1, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE)+1, FONT_SIZE+TIPT_SHOW_WIN_DX-2, FONT_SIZE+TIPT_SHOW_WIN_DY-2, WHITE);
+                    draw_rect_on_choose_char(WHITE);
                     choose_idx[1]=((x-TIPT_SHOW_WIN_X-TIPT_SHOW_WIN_DX)/(FONT_SIZE+TIPT_SHOW_WIN_DX*2))+(liney-ui_buf[9])*N_EACH_LINE;
-                    draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE), FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
-                    draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE)+1, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE)+1, FONT_SIZE+TIPT_SHOW_WIN_DX-2, FONT_SIZE+TIPT_SHOW_WIN_DY-2, BLACK);
+                    draw_rect_on_choose_char(BLACK);
                     btidx=-1;
                     choose_idx[2]=1;
                 }
@@ -1581,6 +1590,14 @@ int check_same(const char*s)
     }
 }
 
+void clear_show_win()
+{
+    lcd_clr_window(WHITE, TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
+            TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5);
+    draw_sq(TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
+            TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5, BLACK);
+}
+
 void do_tipt(void*cfp)
 {
 #ifdef LARGE_SCREEN
@@ -1596,10 +1613,6 @@ void do_tipt(void*cfp)
         TIPT_TEXT_SHOW_WIN_DX, TIPT_TEXT_SHOW_WIN_DY};
     u32 t_show_x=TIPT_SHOW_WIN_X, t_show_y=TIPT_SHOW_WIN_Y-FONT_SIZE-TIPT_SHOW_WIN_DY;
 	unsigned char i=0;
-    lcd_clr_window(WHITE, TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
-            TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5);
-    draw_sq(TIPT_SHOW_WIN_X-5, TIPT_SHOW_WIN_Y-5,
-            TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5, BLACK);
     lprintf("\r\nbtidx=%d u4=%d u3=%d\r\n",btidx, ui_buf[4], ui_buf[3]);
     if(btidx<0 || btidx>=12){
         lprintf("error btidx\r\n");
@@ -1718,6 +1731,8 @@ void do_tipt(void*cfp)
         if(ui_buf[4]>0 || ui_buf[15]==1){
             if(0==choose_idx[2]){
                 choose_idx[2]=1;
+                draw_rect_on_choose_char(BLACK);
+                return;
             }
             else{
                 lprintf("final enter, clear\r\n");
@@ -1920,6 +1935,7 @@ void do_tipt(void*cfp)
             }
         }
     }
+    clear_show_win();
     //mem_print(inputs, 0, 16);
     lcd_lprintf(TIPT_SHOW_WIN_X+FONT_SIZE*6, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY, "%s", inputs);
     if(ui_buf[5]<0xffffff){
@@ -1996,8 +2012,7 @@ void do_tipt(void*cfp)
             else{
                 while(choose_idx[1]<0)choose_idx[1]+=t9.pymb[(int)choose_idx[0]]->num/2;
                 while(choose_idx[1]>=(t9.pymb[(int)choose_idx[0]]->num/2))choose_idx[1]-=t9.pymb[(int)choose_idx[0]]->num/2;
-                draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE), FONT_SIZE+TIPT_SHOW_WIN_DX, FONT_SIZE+TIPT_SHOW_WIN_DY, BLACK);
-                draw_sq2(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*(choose_idx[1]%N_EACH_LINE)+1, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+choose_idx[1]/N_EACH_LINE)+1, FONT_SIZE+TIPT_SHOW_WIN_DX-2, FONT_SIZE+TIPT_SHOW_WIN_DY-2, BLACK);
+                draw_rect_on_choose_char(BLACK);
             }
         }
 	}else lprintf("no matched results\r\n");
