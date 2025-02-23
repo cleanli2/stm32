@@ -1731,8 +1731,11 @@ void do_tipt(void*cfp)
         if(ui_buf[4]>0 || ui_buf[15]==1){
             if(0==choose_idx[2]){
                 choose_idx[2]=1;
-                draw_rect_on_choose_char(BLACK);
-                return;
+                if(choose_idx[3]==0)//chs mode
+                {
+                    draw_rect_on_choose_char(BLACK);
+                    return;
+                }
             }
             else{
                 lprintf("final enter, clear\r\n");
