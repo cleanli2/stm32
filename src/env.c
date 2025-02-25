@@ -502,7 +502,7 @@ void find_log_write_addr()
             return;
         }
         flash_log_write_addr++;
-        if(SPI_FLASH_LOG_END == flash_log_write_addr){
+        if(SPI_FLASH_LOG_END <= flash_log_write_addr){
             lprintf("full of log, erase first sector to start\n");
             flash_log_write_addr = SPI_FLASH_LOG_START;
             SPI_Flash_Erase_Sector(flash_log_write_addr/SPI_FLASH_SECTOR_SIZE);//erase sector
