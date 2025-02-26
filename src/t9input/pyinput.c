@@ -69,9 +69,6 @@ unsigned char str_match(unsigned char*str1,unsigned char*str2)
 	}
 }
 
-#define MOST_MB_SIZE 241
-#define DYN_HISTORY_SIZE 211
-#define DYN_MB_SIZE 241
 int dyn_his_p=0;
 const unsigned char const_dyn_mb[DYN_MB_SIZE+1]={"的是不人一这了你有个就在他我能功么来修炼也那都到们大法上中去要出它为可看讲说什以心时会多样种体还好高常想气所现家下没很身自西过事得东次层生真道些间给把正里着当佛子做己天因病后往性之开成发物用情候师学本呢和起化作只其问空许够实理别对而动题怎定"};
 unsigned char dyn_mb[DYN_MB_SIZE+1]={0};
@@ -82,7 +79,19 @@ py_index most_index={"dynch","words",2,DYN_MB_SIZE,most_mb};
 unsigned char dyn_his_mb[DYN_HISTORY_SIZE+1]={0};
 py_index dyn_his_index={"history","histywds",2,DYN_HISTORY_SIZE+1,dyn_his_mb};
 
+const char htcdm[]={"这个字在'M'组第%d个"};
+const char htmm[]={"这个字在'm'组第%d个"};
 void str_leftmove(char*s, int n);
+int find_wd(const char*list, char*ch)
+{
+    int l=strlen(list);
+    for(int i=0;i<l;i+=2){
+        if((ch[0]==list[i])&&(ch[1]==list[i+1])){
+            return i/2;
+        }
+    }
+    return -1;
+}
 int chs_is_in_list(char*ch, char*list, int len)
 {
     for(int i=0;i<len;i+=2){

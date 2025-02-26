@@ -1598,9 +1598,12 @@ void clear_show_win()
             TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_W+5, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H+5, BLACK);
 }
 
+extern const unsigned char const_dyn_mb[MOST_MB_SIZE+1];
+extern const unsigned char most_mb[MOST_MB_SIZE+1];
 void do_tipt(void*cfp)
 {
 #ifdef LARGE_SCREEN
+    int mbidx=-1;
     int u_txt=0;
     int btidx=*(int*)cfp;
     char *inputs=(char*)ui_buf;
@@ -1763,6 +1766,16 @@ void do_tipt(void*cfp)
                         }
                         lastchar[0]=rs[0];
                         lastchar[1]=rs[1];
+                        if(strcmp((const char*)t9.pymb[i]->py, "words") &&
+                                strcmp((const char*)t9.pymb[i]->py, "histywds")){
+                            lprintf("input from pinyin\r\n");
+                            if(0<=(mbidx=find_wd((const char*)const_dyn_mb, lastchar))){
+                                mbidx+=2000;
+                            }
+                            else if(0<=(mbidx=find_wd((const char*)most_mb, lastchar))){
+                                mbidx+=1000;
+                            }
+                        }
                     }
                     else if(t9.mwdth==4){
                         int tmpidx=choose_idx[1]/2;
@@ -2051,6 +2064,14 @@ void do_tipt(void*cfp)
         t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
         next_show_char=area_show_str_new(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
         POINT_COLOR=BLACK;
+    }
+    if(2000<=mbidx){
+        mbidx=mbidx-2000+1;
+        lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, htcdm, mbidx);
+    }
+    else if(1000<=mbidx){
+        mbidx=mbidx-1000+1;
+        lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, htmm, mbidx);
     }
 #endif
 }

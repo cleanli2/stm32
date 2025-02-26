@@ -37,6 +37,12 @@ typedef struct
 
 extern pyinput t9;
 extern pyinput eng;
+extern const char htcdm[];
+extern const char htmm[];
+#define MOST_MB_SIZE 241
+#define DYN_HISTORY_SIZE 211
+#define DYN_MB_SIZE 241
+int find_wd(const char*list, char*ch);
 unsigned char str_match(unsigned char*str1,unsigned char*str2);
 unsigned char get_matched_pymb(unsigned char *strin,py_index **matchlist);
 unsigned char get_pymb(unsigned char* str);
