@@ -2091,16 +2091,28 @@ char hint_buf[32];
 void do_hint(void*cfp)
 {
     (void)cfp;
-    int i = 0, j;
-    char prec[11]={0}, postc[3];
-    while(book_buf[i]==tipt_buf[i])i++;
-    j=get_pre_posi((unsigned char*)book_buf, i, 5);
-    postc[0]=tipt_buf[i];
-    postc[1]=tipt_buf[i+1];
-    postc[2]=0;
-    memcpy(prec, &book_buf[j], i-j);
-    slprintf(hint_buf, "'%s'<-'%s', %d Bs", prec, postc, (ui_buf[5]-ui_buf[6]));
-    lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, "%s      ", hint_buf);
+    int i = 0, j, bl;
+    if(ui_buf[5]!=0xffffffff){
+        char prec[11]={0}, postc[3];
+        //do check to get more to tipt_buf
+        bl=strlen(book_buf);
+        book_buf[bl]=' ';
+        book_buf[bl+1]=' ';
+        book_buf[bl+2]=0;
+        check_same(book_buf);
+        book_buf[bl]=0;
+        book_buf[bl+1]=0;
+        book_buf[bl+2]=0;
+
+        while(book_buf[i]==tipt_buf[i])i++;
+        j=get_pre_posi((unsigned char*)book_buf, i, 5);
+        postc[0]=tipt_buf[i];
+        postc[1]=tipt_buf[i+1];
+        postc[2]=0;
+        memcpy(prec, &book_buf[j], i-j);
+        slprintf(hint_buf, "'%s'<-'%s', %d Bs", prec, postc, (ui_buf[5]-ui_buf[6]));
+        lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, "%s      ", hint_buf);
+    }
 }
 
 #define TIPT_OX 25
@@ -2120,7 +2132,7 @@ button_t tipt_button[]={
     {TIPT_OX+345, TIPT_OY+80, 80,  60, do_tipt, -1, 0, "up", 0, NULL},//9
     {TIPT_OX+345, TIPT_OY+160, 80,  60, do_tipt, -1, 0, "down", 0, NULL},//10
     {TIPT_OX+345, TIPT_OY, 80,  60, do_tipt, -1, 0, "enter", 0, NULL},//11
-    {225, 765, 30,  30, do_hint, -1, 0, "H", 0, NULL},//12
+    {225, 755, 30,  30, do_hint, -1, 0, "H", 0, NULL},//12
 #endif
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
