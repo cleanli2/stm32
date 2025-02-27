@@ -2088,11 +2088,29 @@ int get_pre_posi(unsigned char*s, int ps, int n)
 }
 
 char hint_buf[32];
+#define FLASH_HINT_START_ADDR 0x201000
+#define FLASH_HINT_SIZE 0x1000
+int save_hint()
+{
+    char rd;
+    uint32_t flash_hint_addr=FLASH_HINT_START_ADDR;
+    for(flash_hint_addr=FLASH_HINT_START_ADDR;
+            FLASH_HINT_START_ADDR<FLASH_HINT_START_ADDR+FLASH_HINT_SIZE;
+            flash_hint_addr+=32){
+        SPI_Flash_Read((uint8*)&rd, flash_hint_addr, 1);
+        if(rd==0xff){
+            lprintf("write to flash 0x%x\r\n", flash_hint_addr);
+            SPI_Flash_Write((uint8*)hint_buf, flash_hint_addr, 32);
+            return 0;
+        }
+    }
+    return -1;
+}
 void do_hint(void*cfp)
 {
     (void)cfp;
     int i = 0, j, bl;
-    if(ui_buf[5]!=0xffffffff){
+    if(ui_buf[5]!=0xffffffff && strlen(book_buf)>10){
         char prec[11]={0}, postc[3];
         //do check to get more to tipt_buf
         bl=strlen(book_buf);
@@ -2111,7 +2129,12 @@ void do_hint(void*cfp)
         postc[2]=0;
         memcpy(prec, &book_buf[j], i-j);
         slprintf(hint_buf, "'%s'<-'%s', %d Bs", prec, postc, (ui_buf[5]-ui_buf[6]));
-        lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, "%s      ", hint_buf);
+        if(save_hint()<0){
+            lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, "%s. Hint save failed!     ", hint_buf);
+        }
+        else{
+            lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, "%s. Hint save OK!      ", hint_buf);
+        }
     }
 }
 
