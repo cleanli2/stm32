@@ -2100,7 +2100,10 @@ int save_hint()
         SPI_Flash_Read((uint8*)&rd, flash_hint_addr, 1);
         if(rd==0xff){
             lprintf("write to flash 0x%x\r\n", flash_hint_addr);
-            SPI_Flash_Write((uint8*)hint_buf, flash_hint_addr, 32);
+            //SPI_Flash_Write((uint8*)hint_buf, flash_hint_addr, 32);
+            for(int i=0;i<32;i++){
+                SPI_Flash_Write_Byte(hint_buf[i], flash_hint_addr++);
+            }
             return 0;
         }
     }
