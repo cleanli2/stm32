@@ -2104,7 +2104,13 @@ int save_hint()
             for(int i=0;i<32;i++){
                 SPI_Flash_Write_Byte(hint_buf[i], flash_hint_addr++);
             }
-            return 0;
+            SPI_Flash_Read((uint8*)&rd, flash_hint_addr-32, 1);
+            if(rd==hint_buf[0]){
+                return 0;
+            }
+            else{
+                return 1;
+            }
         }
     }
     return -1;
