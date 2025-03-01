@@ -1405,9 +1405,10 @@ void tipt_ui_init(void*vp)
     ui_buf[5]=0xffffffff;
     ui_buf[9]=0;//py list length
     ui_buf[15]=0;//lianxiang
-    ui_buf[14]=0;//timer of seconds
+    ui_buf[14]=0;//last char
     ui_buf[13]=0;//count of input
     ui_buf[12]=0;//count of delete
+    ui_buf[11]=0;//timer of seconds
 
     memset(book_buf, 0, 512);
     memset(tipt_buf, 0, TIPT_BUF_SIZE-1);
@@ -1471,7 +1472,7 @@ void tipt_ui_process_event(void*vp)
         }
     }
     if(g_flag_1s){
-        ui_buf[14]++;
+        ui_buf[11]++;
     }
     common_process_event(vp);
 }
@@ -2086,8 +2087,8 @@ void do_tipt(void*cfp)
         lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, htmm, mbidx);
     }
     else{
-        lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, "%dm%ds, %dB, %B/m, Del %dB",
-                ui_buf[14]/60, ui_buf[14]%60, ui_buf[13], ui_buf[13]*60/ui_buf[14], ui_buf[12]);
+        lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, "%dm%ds, %dB, %dB/m, Del %dB",
+                ui_buf[11]/60, ui_buf[11]%60, ui_buf[13], ui_buf[13]*60/ui_buf[11], ui_buf[12]);
     }
 #endif
 }
@@ -2133,8 +2134,8 @@ int save_hint()
 }
 void show_hishint()
 {
-    int x=TIPT_SHOW_WIN_X-5;
-    int y=TIPT_SHOW_WIN_Y-5;
+    int x=TIPT_SHOW_WIN_X+5;
+    int y=TIPT_SHOW_WIN_Y+5;
     uint32_t flash_hint_addr=FLASH_HINT_START_ADDR;
     for(flash_hint_addr=FLASH_HINT_START_ADDR; FLASH_HINT_START_ADDR<FLASH_HINT_START_ADDR+FLASH_HINT_SIZE; flash_hint_addr+=32){
         SPI_Flash_Read((uint8*)hint_buf, flash_hint_addr, 32);
