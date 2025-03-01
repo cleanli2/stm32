@@ -37,10 +37,10 @@ void draw_sq2(int x1, int y1, int w, int h, int color);
 void common_ui_uninit(void*vp);
 uint get_howmany_para(char *s);
 
-void str_del_last(char* s)
+int str_del_last(char* s)
 {
     int l=strlen(s);
-    if(l==0)return;
+    if(l==0)return 0;
     while(*s){
         s++;
     }
@@ -49,8 +49,10 @@ void str_del_last(char* s)
         s--;
         if(*s>0x80 || *s==0x0d){
             *s=0;
+            return 2;
         }
     }
+    return 1;
 }
 
 void timer_set_ui_init(void*vp)
@@ -1403,6 +1405,9 @@ void tipt_ui_init(void*vp)
     ui_buf[5]=0xffffffff;
     ui_buf[9]=0;//py list length
     ui_buf[15]=0;//lianxiang
+    ui_buf[14]=0;//timer of seconds
+    ui_buf[13]=0;//count of input
+    ui_buf[12]=0;//count of delete
 
     memset(book_buf, 0, 512);
     memset(tipt_buf, 0, TIPT_BUF_SIZE-1);
@@ -1464,6 +1469,9 @@ void tipt_ui_process_event(void*vp)
             }
             if(btidx>=0)do_tipt(&btidx);
         }
+    }
+    if(g_flag_1s){
+        ui_buf[14]++;
     }
     common_process_event(vp);
 }
@@ -1634,7 +1642,7 @@ void do_tipt(void*cfp)
             }
             else{
                 str_del_last(book_buf);//del indicator
-                str_del_last(book_buf);//del real one
+                ui_buf[12]+=str_del_last(book_buf);//del real one
                 lastchar[0]=book_buf[strlen(book_buf)-2];
                 lastchar[1]=book_buf[strlen(book_buf)-1];
                 rs[0]=0xa1;
@@ -1776,6 +1784,7 @@ void do_tipt(void*cfp)
                                 mbidx+=1000;
                             }
                         }
+                        ui_buf[13]+=2;
                     }
                     else if(t9.mwdth==4){
                         int tmpidx=choose_idx[1]/2;
@@ -1792,6 +1801,7 @@ void do_tipt(void*cfp)
                         }
                         lastchar[0]=rs[2];
                         lastchar[1]=rs[3];
+                        ui_buf[13]+=4;
                     }
                     else if(t9.mwdth==6){
                         int tmpidx=choose_idx[1]/3;
@@ -1810,6 +1820,7 @@ void do_tipt(void*cfp)
                         }
                         lastchar[0]=rs[4];
                         lastchar[1]=rs[5];
+                        ui_buf[13]+=6;
                     }
                     else if(t9.mwdth==8){
                         int tmpidx=choose_idx[1]/4;
@@ -1830,6 +1841,7 @@ void do_tipt(void*cfp)
                         }
                         lastchar[0]=rs[6];
                         lastchar[1]=rs[7];
+                        ui_buf[13]+=8;
                     }
                 }
                 strcat(book_buf, rs);
@@ -2073,6 +2085,10 @@ void do_tipt(void*cfp)
         mbidx=mbidx-1000+1;
         lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, htmm, mbidx);
     }
+    else{
+        lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, "%dm%ds, %dB, %B/m, Del %dB",
+                ui_buf[14]/60, ui_buf[14]%60, ui_buf[13], ui_buf[13]*60/ui_buf[14], ui_buf[12]);
+    }
 #endif
 }
 int get_pre_posi(unsigned char*s, int ps, int n)
@@ -2115,6 +2131,25 @@ int save_hint()
     }
     return -1;
 }
+void show_hishint()
+{
+    int x=TIPT_SHOW_WIN_X-5;
+    int y=TIPT_SHOW_WIN_Y-5;
+    uint32_t flash_hint_addr=FLASH_HINT_START_ADDR;
+    for(flash_hint_addr=FLASH_HINT_START_ADDR; FLASH_HINT_START_ADDR<FLASH_HINT_START_ADDR+FLASH_HINT_SIZE; flash_hint_addr+=32){
+        SPI_Flash_Read((uint8*)hint_buf, flash_hint_addr, 32);
+        if(hint_buf[0]!=0xff){
+            lcd_lprintf(x, y, "%s     ", hint_buf);
+        }
+        else{
+            break;
+        }
+        y+=18;
+        if(y>TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-16){
+            break;
+        }
+    }
+}
 void do_hint(void*cfp)
 {
     (void)cfp;
@@ -2144,6 +2179,10 @@ void do_hint(void*cfp)
         else{
             lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, "%s. Hint save OK!      ", hint_buf);
         }
+    }
+    else{
+        clear_show_win();
+        show_hishint();
     }
 }
 
