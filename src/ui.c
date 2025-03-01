@@ -2136,6 +2136,8 @@ void show_hishint()
 {
     int x=TIPT_SHOW_WIN_X+5;
     int y=TIPT_SHOW_WIN_Y+5;
+    lcd_lprintf(x, y, "History hints:");
+    y+=18;
     uint32_t flash_hint_addr=FLASH_HINT_START_ADDR;
     for(flash_hint_addr=FLASH_HINT_START_ADDR; FLASH_HINT_START_ADDR<FLASH_HINT_START_ADDR+FLASH_HINT_SIZE; flash_hint_addr+=32){
         SPI_Flash_Read((uint8*)hint_buf, flash_hint_addr, 32);
