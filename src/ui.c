@@ -1931,6 +1931,7 @@ void do_tipt(void*cfp)
                             }
                         }
                     }
+                    strcpy(tipt_buf, book_buf);
                     if(rn==0){
                         rs[0]=0xa1;
                         rs[1]=0xf5;
@@ -1945,7 +1946,6 @@ void do_tipt(void*cfp)
                     t_show_x=TIPT_TEXT_SHOW_WIN_X+TIPT_TEXT_SHOW_WIN_DX;
                     t_show_y=TIPT_TEXT_SHOW_WIN_Y+TIPT_TEXT_SHOW_WIN_DY;
                     next_show_char=area_show_str_new(&tiptw_text, &t_show_x, &t_show_y, next_show_char, 0);
-                    memset(book_buf, 0, 512);
                 }
                 else{
                     lprintf("NOT hint in\r\n");
@@ -2174,6 +2174,7 @@ void do_hint(void*cfp)
         postc[0]=tipt_buf[i];
         postc[1]=tipt_buf[i+1];
         postc[2]=0;
+        put_his_buf((unsigned char*)postc);
         memcpy(prec, &book_buf[j], i-j);
         slprintf(hint_buf, "'%s'<-'%s', %d Bs", prec, postc, (ui_buf[5]-ui_buf[6]));
         if(save_hint()<0){
