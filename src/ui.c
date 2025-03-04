@@ -1409,6 +1409,7 @@ void tipt_ui_init(void*vp)
     ui_buf[13]=0;//count of input
     ui_buf[12]=0;//count of delete
     ui_buf[11]=0;//timer of seconds
+    ui_buf[10]=0;//init of tiptpo
 
     memset(book_buf, 0, 512);
     memset(tipt_buf, 0, TIPT_BUF_SIZE-1);
@@ -1891,6 +1892,7 @@ void do_tipt(void*cfp)
 
                     ui_buf[5]=ui_buf[6]+of;
                     ui_buf[8]=ui_buf[5];
+                    ui_buf[10]=ui_buf[8];
 
                     memset(book_buf, 0, 512);
                     if(of>HINT_SIZE){
@@ -2087,8 +2089,8 @@ void do_tipt(void*cfp)
         lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, htmm, mbidx);
     }
     else{
-        lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, "%dm%ds, %dB, %dB/m, Del %dB",
-                ui_buf[11]/60, ui_buf[11]%60, ui_buf[13], ui_buf[13]*60/ui_buf[11], ui_buf[12]);
+        lcd_lprintf(TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18, "%dm%ds, %dB, %dB, %dB/m, Del %dB",
+                ui_buf[11]/60, ui_buf[11]%60, ui_buf[8]-ui_buf[10], ui_buf[13], ui_buf[13]*60/ui_buf[11], ui_buf[12]);
     }
 #endif
 }
