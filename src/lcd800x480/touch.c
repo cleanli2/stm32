@@ -718,7 +718,7 @@ void set_touch_need_reinit()
     tp_inited = 0;
 }
 
-#define TOUCH_POOL_SIZE 5
+#define TOUCH_POOL_SIZE 9
 uint32_t tp_pool[TOUCH_POOL_SIZE];
 uint32_t tp_rp=0;
 uint32_t tp_wp=0;
