@@ -708,6 +708,7 @@ u8 get_TP_point(uint16_t * x, uint16_t * y)
     {	
         *x = tp_dev.x;
         *y = tp_dev.y;
+        lprintf("|");
         return 1;
     }
     return 0;
@@ -725,7 +726,9 @@ uint32_t tp_wp=0;
 
 int get_touch_size()
 {
-    return sub_with_limit(tp_wp, tp_rp, TOUCH_POOL_SIZE);
+    int ret=sub_with_limit(tp_wp, tp_rp, TOUCH_POOL_SIZE);
+    if(ret)lprintf("gts:%d\r\n", ret);
+    return ret;
 }
 
 uint32_t get_touch()
@@ -735,7 +738,7 @@ uint32_t get_touch()
         return 0xffffffff;;
     }
     ret = tp_pool[tp_rp];
-    //lprintf("gtp:%x\r\n", ret);
+    lprintf("gtp:%x\r\n", ret);
     tp_rp = add_with_limit(tp_rp, 1, TOUCH_POOL_SIZE);
     return ret;
 }
