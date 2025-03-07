@@ -295,12 +295,14 @@ void TP_Draw_Big_Point(u16 x,u16 y,u16 color)
 								1-touch
 ******************************************************************************/  					  
 #define TP_READ_RETRY 20
+int tp_debug=0;
 u8 TP_Scan(u8 tp)
 {			   
 	//u8 ret;
     int touched_and_position=0, retry=TP_READ_RETRY;
 	if(PEN==0)
     {
+        if(tp_debug)lprintf("PEN=0\r\n");
         while(retry--){
             if(TP_Read_XY2(&tp_dev.x,&tp_dev.y)){
                 touched_and_position=1;
@@ -308,14 +310,14 @@ u8 TP_Scan(u8 tp)
             }
         }
         if(!touched_and_position){
-            //lprintf("tp fail after tried %d times\r\n", touched_and_position);
+            if(tp_debug)lprintf("tp fail after tried %d times\r\n", touched_and_position);
             if(PEN==0){
                 //lprintf("PEN=0, need reinit spi\r\n");
                 set_touch_need_reinit();
             }
         }
         else{
-            //lprintf("tprtl %d\r\n", retry);
+            if(tp_debug)lprintf("tprtl %d\r\n", retry);
         }
     }
 	if(touched_and_position)

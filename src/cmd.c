@@ -721,9 +721,12 @@ void lcdsuebstep(char *p)
         set_touch_need_reinit();
     }
     else if(cmdindex == 0x14){//
+        extern int tp_debug;
+        tp_debug=1;
         while(1){
             uint16_t touch_x, touch_y;
             uint64_t t1=get_system_us(), t2;
+            if(PEN==0)lprintf("pd-\r\n");
             if(get_TP_point(&touch_x, &touch_y)){
                 t2=get_system_us();
                 lprintf("txy=%d,%d, time %d us\n", (uint32_t)touch_x, (uint32_t)touch_y,
@@ -736,6 +739,7 @@ void lcdsuebstep(char *p)
                 break;
             }
         }
+        tp_debug=0;
     }
     else if(cmdindex == 0x15){//
         char tc[3]={0xc9, 0xee, 0};
@@ -745,6 +749,7 @@ void lcdsuebstep(char *p)
         GUI_DrawZikuFont24(400, 400, WHITE, BLACK, tc,0,para1);
     }
     else if(cmdindex == 0x16){//
+        set_touch_need_reinit();
     }
     con_send('\n');
 
