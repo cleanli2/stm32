@@ -729,7 +729,12 @@ void lcdsuebstep(char *p)
                 lprintf("txy=%d,%d, time %d us\n", (uint32_t)touch_x, (uint32_t)touch_y,
                         (uint32_t)(t2-t1));
             }
-            if(con_recv())break;
+            t2=get_system_us();
+            if(con_is_recved()){
+                lprintf("txy=%d,%d, time %d us\n", (uint32_t)touch_x, (uint32_t)touch_y,
+                        (uint32_t)(t2-t1));
+                break;
+            }
         }
     }
     else if(cmdindex == 0x15){//
