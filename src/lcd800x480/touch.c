@@ -184,8 +184,14 @@ u8 TP_Read_XY(u16 *x,u16 *y)
 #ifdef TS_SPI_USE_COMMON
     uint16_t spi_sp = spi_speed(SPI_BaudRatePrescaler_128);
 #endif
+
+#if 0
 	xtemp=TP_Read_XOY(CMD_RDX);
 	ytemp=TP_Read_XOY(CMD_RDY);	  												   
+#else
+	xtemp=TP_Read_AD(CMD_RDX);
+	ytemp=TP_Read_AD(CMD_RDY);	  												   
+#endif
     //lprintf("xt %x yt %x\n", (u32)xtemp, (u32)ytemp);
 #ifdef TS_SPI_USE_COMMON
     spi_speed(spi_sp);
@@ -234,7 +240,6 @@ u8 TP_Read_XY2(u16 *x,u16 *y)
 fail:
     if(PEN==0){//only when touch still pressed then report error
         lprintf("tp err, reinit tp\n");
-        set_touch_need_reinit();
     }
     return 0;
 } 
@@ -289,10 +294,31 @@ void TP_Draw_Big_Point(u16 x,u16 y,u16 color)
 								0-no touch
 								1-touch
 ******************************************************************************/  					  
+#define TP_READ_RETRY 20
 u8 TP_Scan(u8 tp)
 {			   
-	u8 ret;
-	if(PEN==0 && (ret=TP_Read_XY2(&tp_dev.x,&tp_dev.y)))//有按键按下
+	//u8 ret;
+    int touched_and_position=0, retry=TP_READ_RETRY;
+	if(PEN==0)
+    {
+        while(retry--){
+            if(TP_Read_XY2(&tp_dev.x,&tp_dev.y)){
+                touched_and_position=1;
+                break;
+            }
+        }
+        if(!touched_and_position){
+            lprintf("tp fail after tried %d times\r\n", touched_and_position);
+            if(PEN==0){
+                lprintf("PEN=0, need reinit spi\r\n");
+                set_touch_need_reinit();
+            }
+        }
+        else{
+            lprintf("tprtl %d\r\n", retry);
+        }
+    }
+	if(touched_and_position)
 	{
 		//lprintf("line%d:x %x y %x ret %d\n", __LINE__,tp_dev.x, tp_dev.y, ret);
 		if(!tp)
