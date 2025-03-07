@@ -199,7 +199,7 @@ u8 TP_Read_XY(u16 *x,u16 *y)
 	return 1;//¶ÁÊý³É¹¦
 }
 
-#define ERR_RANGE 100 //Îó²î·¶Î§ 
+#define ERR_RANGE 50 //Îó²î·¶Î§ 
 /*****************************************************************************
  * @name       :u8 TP_Read_XY2(u16 *x,u16 *y) 
  * @date       :2018-08-09 
@@ -228,13 +228,8 @@ u8 TP_Read_XY2(u16 *x,u16 *y)
         *y=(y1+y2)/2;
         return 1;
     }else{
-        if(PEN==0){//only when touch still pressed then report error
-            lprintf("out of err range %d %d, y %d %d\n", x1, x2, y1, y2);
-            goto fail;
-        }
-        else{
-            return 0;
-        }
+        //lprintf("out of err range %d %d, y %d %d\n", x1, x2, y1, y2);
+        return 0;
     }
 fail:
     if(PEN==0){//only when touch still pressed then report error
