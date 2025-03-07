@@ -308,14 +308,14 @@ u8 TP_Scan(u8 tp)
             }
         }
         if(!touched_and_position){
-            lprintf("tp fail after tried %d times\r\n", touched_and_position);
+            //lprintf("tp fail after tried %d times\r\n", touched_and_position);
             if(PEN==0){
-                lprintf("PEN=0, need reinit spi\r\n");
+                //lprintf("PEN=0, need reinit spi\r\n");
                 set_touch_need_reinit();
             }
         }
         else{
-            lprintf("tprtl %d\r\n", retry);
+            //lprintf("tprtl %d\r\n", retry);
         }
     }
 	if(touched_and_position)
