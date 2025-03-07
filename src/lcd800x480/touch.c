@@ -119,7 +119,7 @@ u16 TP_Read_AD(u8 CMD)
 #endif
     Num>>=3;//first bit is not data
 	TCS(1);		// Õ∑≈∆¨—°	 
-	//lprintf("TPr:%x\n", Num);
+	//lprintf("TPr:%x of %d\n", Num, CMD);
 	return(Num);  
 //#endif
 }
@@ -191,7 +191,7 @@ u8 TP_Read_XY(u16 *x,u16 *y)
     spi_speed(spi_sp);
 #endif
 	if(xtemp==0||ytemp==0||xtemp==0xfff||ytemp==0xfff){
-        lprintf("tprxy fail\n");
+        //lprintf("tprxy fail\n");
         return 0;//∂¡ ˝ ß∞‹
     }
 	*x=xtemp;
@@ -228,12 +228,19 @@ u8 TP_Read_XY2(u16 *x,u16 *y)
         *y=(y1+y2)/2;
         return 1;
     }else{
-        lprintf("out of err range\n");
-        goto fail;
+        if(PEN==0){//only when touch still pressed then report error
+            lprintf("out of err range\n");
+            goto fail;
+        }
+        else{
+            return 0;
+        }
     }
 fail:
-    lprintf("tp err, reinit tp\n");
-    set_touch_need_reinit();
+    if(PEN==0){//only when touch still pressed then report error
+        lprintf("tp err, reinit tp\n");
+        set_touch_need_reinit();
+    }
     return 0;
 } 
 
