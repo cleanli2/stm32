@@ -735,6 +735,7 @@ uint32_t get_touch()
         return 0xffffffff;;
     }
     ret = tp_pool[tp_rp];
+    //lprintf("gtp:%x\r\n", ret);
     tp_rp = add_with_limit(tp_rp, 1, TOUCH_POOL_SIZE);
     return ret;
 }
@@ -747,6 +748,7 @@ int touch_pool_full()
 int put_touch(u32 tp)
 {
     tp_pool[tp_wp] = tp;
+    //lprintf("ptp:%x\r\n", tp);
     tp_wp = add_with_limit(tp_wp, 1, TOUCH_POOL_SIZE);
     return 0;
 }

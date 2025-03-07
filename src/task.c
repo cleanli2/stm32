@@ -534,13 +534,13 @@ void task_misc(struct task*vp)
     int get_touch_size();
     uint32_t get_touch();
 #if 1//touch pool enable
-    cached_touch_x = touch_x;
-    cached_touch_y = touch_y;
     if(get_touch_size()>0){
         uint32_t t=get_touch();
         uint16_t *tmp16p=(uint16_t*)&t;
         touch_x=tmp16p[0];
         touch_y=tmp16p[1];
+        cached_touch_x = touch_x;
+        cached_touch_y = touch_y;
         no_key_down_ct_lcd = 0;
         no_key_down_ct = 0;
         enable_power_save(false);
