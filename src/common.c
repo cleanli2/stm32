@@ -109,12 +109,26 @@ uint64_t get_system_us()
     return system_us_count;
 }
 
+int touch_pool_full();
+int put_touch(u32 tp);
 void TIM2_IRQHandler(void)
 {
 	//if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
 	{
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
         g_10ms_count++;
+        if(g_10ms_count&0x1){//touch handle every 20ms
+            static uint32_t tp_d=0xffffffff;
+            uint16_t *tmp16p=(uint16_t*)&tp_d;
+            if(!touch_pool_full()){
+                if(!get_TP_point(&tmp16p[0], &tmp16p[1])){
+                    if(tp_d!=0xffffffff){//touch up
+                        put_touch(tp_d);
+                        tp_d=0xffffffff;
+                    }
+                }
+            }
+        }
 	}
     if(SOUND_BEEP_MODE==get_sound_mode()){
         sound_execute();

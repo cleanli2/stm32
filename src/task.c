@@ -21,8 +21,8 @@ uint16_t cached_touch_x = 0;
 uint16_t cached_touch_y = 0;
 uint16_t draw_x = 0;
 uint16_t draw_y = 0;
-uint16_t touch_status = 0;
-uint16_t last_touch_status = 0;
+//uint16_t touch_status = 0;
+//uint16_t last_touch_status = 0;
 uint no_touch_down_ct = 0;
 uint32_t cur_task_event_flag;
 uint cur_task_timeout_ct;
@@ -531,6 +531,42 @@ void task_misc(struct task*vp)
         }
     }
     //touch screen
+    int get_touch_size();
+    uint32_t get_touch();
+#if 1//touch pool enable
+    cached_touch_x = touch_x;
+    cached_touch_y = touch_y;
+    if(get_touch_size()>0){
+        uint32_t t=get_touch();
+        uint16_t *tmp16p=(uint16_t*)&t;
+        touch_x=tmp16p[0];
+        touch_y=tmp16p[1];
+        no_key_down_ct_lcd = 0;
+        no_key_down_ct = 0;
+        enable_power_save(false);
+        cur_task_event_flag |= 1<<EVENT_TOUCH_UP;
+        //TP_Draw_Big_Point(draw_x,draw_y,WHITE);
+        //TP_Draw_Big_Point(cached_touch_x,cached_touch_y,BLACK);
+        draw_x = cached_touch_x;
+        draw_y = cached_touch_y;
+        lprintf_time("tpup:%d,%d\n", (uint32_t)draw_x, (uint32_t)draw_y);
+        if(g_flag_1s){
+            no_key_down_ct++;
+            if(save_power_mode){
+                no_key_down_ct_lcd++;
+            }
+            if(no_key_down_ct > NO_KEY_DOWN_PWSAVE_MAX){
+                if(!save_power_mode){
+                    enable_power_save(true);
+                }
+            }
+            if(no_key_down_ct > NO_KEY_DOWN_CT_MAX){
+                cur_task_event_flag |= 1<<EVENT_NOKEYCT_MAXREACHED;
+                no_key_down_ct = 0;
+            }
+        }
+    }
+#else
     cached_touch_x = touch_x;
     cached_touch_y = touch_y;
     last_touch_status = touch_status;
@@ -567,4 +603,5 @@ void task_misc(struct task*vp)
             }
         }
     }
+#endif
 }

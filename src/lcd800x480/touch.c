@@ -717,3 +717,36 @@ void set_touch_need_reinit()
 {
     tp_inited = 0;
 }
+
+#define TOUCH_POOL_SIZE 5
+uint32_t tp_pool[TOUCH_POOL_SIZE];
+uint32_t tp_rp=0;
+uint32_t tp_wp=0;
+
+int get_touch_size()
+{
+    return sub_with_limit(tp_wp, tp_rp, TOUCH_POOL_SIZE);
+}
+
+uint32_t get_touch()
+{
+    uint32_t ret;
+    if(tp_wp == tp_rp){
+        return 0xffffffff;;
+    }
+    ret = tp_pool[tp_rp];
+    tp_rp = add_with_limit(tp_rp, 1, TOUCH_POOL_SIZE);
+    return ret;
+}
+
+int touch_pool_full()
+{
+    return add_with_limit(tp_wp, 1, TOUCH_POOL_SIZE) == tp_rp;
+}
+
+int put_touch(u32 tp)
+{
+    tp_pool[tp_wp] = tp;
+    tp_wp = add_with_limit(tp_wp, 1, TOUCH_POOL_SIZE);
+    return 0;
+}
