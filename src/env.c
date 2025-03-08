@@ -393,10 +393,10 @@ uint32_t set_env(const char* name, const char*value)
 int go_through_env(int operation)
 {
     uint32_t i, ret=ENV_OK, posi_name, posi;
-    char buf[128], *name, *value, *posi_eq;
+    char buf[64], *name, *value, *posi_eq;
 
     i = 0;
-    buf[64] = '\0';
+    memset(buf, 0, 64);
     get_cur_env_area();
     lprintf("env_store_start %x size %x\n\n", get_env_start_addr(), ENV_STORE_SIZE);
 
@@ -414,6 +414,7 @@ int go_through_env(int operation)
         i++;
         if(PRINT_RAW_ENV==operation){
             lprintf("%x:", posi);
+            mem_print(buf, 0, 64);
             lprintf("%s\n", buf);
         }
         else{
