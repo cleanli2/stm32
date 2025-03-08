@@ -28,6 +28,7 @@ uint32_t get_env_start_addr()
 
 int erase_env_area()
 {
+    uint8_t r;
     int ct = SECTORS_PER_ENV_BLOCK;
     uint32_t i=0;
     uint32_t sector_addr = GET_SECTOR_ADDR(get_env_start_addr());
@@ -37,10 +38,15 @@ int erase_env_area()
     }
     ct = ENV_STORE_SIZE;
     while(ct--){
-        if(env_get_char(i)!=0xff){
-            lprintf("%x@flash=%b!=0xff, erase fail\n", i,
-                    env_get_char(i));
-            return ENV_FAIL;
+        if((r=env_get_char(i))!=0xff){
+            lprintf("%x@flash=%b!=0xff, retry\n", i, r);
+            r=env_get_char(i);
+            if(r!=0xff){
+                return ENV_FAIL;
+            }
+            else{
+                lprintf("retry OK\r\n");
+            }
         }
         i++;
     }
