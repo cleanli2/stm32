@@ -710,7 +710,7 @@ u8 get_TP_point(uint16_t * x, uint16_t * y)
     {	
         *x = tp_dev.x;
         *y = tp_dev.y;
-        lprintf("|");
+        //lprintf("|");
         return 1;
     }
     return 0;
