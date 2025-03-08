@@ -129,9 +129,6 @@ void TIM2_IRQHandler(void)
                 }
             }
         }
-        if(g_10ms_count%1000==0){//init touch every 10s, workaround for TP PEN!=0 issue
-            set_touch_need_reinit();
-        }
 	}
     if(SOUND_BEEP_MODE==get_sound_mode()){
         sound_execute();
