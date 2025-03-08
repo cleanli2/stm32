@@ -100,10 +100,19 @@ void switch_env_area()
 
 uint8_t env_get_char(uint32_t offset)
 {
+    uint8_t td[2];
     uint8_t ret;
-    SPI_Flash_Read(&ret, get_env_start_addr()+offset, 1);
-    //lprintf("sf_read %x@%x\n", ret, get_env_start_addr()+offset);
-    return ret;
+retry:
+    SPI_Flash_Read(td, get_env_start_addr()+offset, 2);
+    ret=td[0];
+    SPI_Flash_Read(td, get_env_start_addr()+offset-1, 2);
+    if(ret==td[1]){
+        return ret;
+    }
+    else{
+        lprintf("env_get_char err\n");
+        goto retry;
+    }
 }
 
 void env_set_char(uint32_t offset, uint8_t d)
