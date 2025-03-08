@@ -267,7 +267,7 @@ uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
     i = find_env_data_start();
     if(i > ENV_ABNORMAL){
         ret = ENV_FAIL;
-        lprintf("enverr%d\n",__LINE__);
+        lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
     for (i++; env_get_char(i) != '\0'; i=nxt+1) {
@@ -276,7 +276,6 @@ uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
         for (nxt=i; env_get_char(nxt) != '\0'; ++nxt) {
             if (nxt >= ENV_STORE_SIZE) {
                 ret = ENV_FAIL;
-                lprintf("enverr%d\n",__LINE__);
                 goto end;
             }
         }
@@ -284,14 +283,13 @@ uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
             continue;
         if(p_position!=NULL){
             *p_position = i;
-            lprintf("enverr%d\n",__LINE__);
             goto end;
         }
         if(value!=NULL){
             strcpy2mem((uint8_t*)value, val);
             if(*value==0){//null str
                 ret = ENV_FAIL;
-                lprintf("enverr%d\n",__LINE__);
+                lprintf("--enverr%d\n",__LINE__);
                 goto end;
             }
         }
@@ -322,7 +320,7 @@ uint32_t set_env_raw(const char* name, const char*value)
     if(!name){
         lprintf("name=NULL\n");
         ret = ENV_FAIL;
-        lprintf("enverr%d\n",__LINE__);
+        lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
     if(!value){
@@ -331,7 +329,7 @@ uint32_t set_env_raw(const char* name, const char*value)
     if(strchr(name, '=')!=NULL || strchr(value, '=')){
         lprintf("'=' can't be in name or value\n");
         ret = ENV_FAIL;
-        lprintf("enverr%d\n",__LINE__);
+        lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
     char ev[ENV_MAX_VALUE_LEN];
@@ -349,7 +347,7 @@ uint32_t set_env_raw(const char* name, const char*value)
     }
     else if(i > ENV_ABNORMAL){
         ret = ENV_FAIL;
-        lprintf("enverr%d\n",__LINE__);
+        lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
     lprintf("env used %d%\n", (ENV_STORE_SIZE - i)*100/ENV_STORE_SIZE);
@@ -357,7 +355,7 @@ uint32_t set_env_raw(const char* name, const char*value)
     if(i<n){
         lprintf("env full\n");
         ret = ENV_FULL;
-        lprintf("enverr%d\n",__LINE__);
+        lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
     i -= n;
@@ -399,7 +397,7 @@ int go_through_env(int operation)
     i = find_env_data_start();
     if(i > ENV_ABNORMAL){
         ret = ENV_FAIL;
-        lprintf("enverr%d\n",__LINE__);
+        lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
     lprintf("env used %d%\n", (ENV_STORE_SIZE - i)*100/ENV_STORE_SIZE);
@@ -441,7 +439,7 @@ int go_through_env(int operation)
             }
         }
         if(i>=ENV_STORE_SIZE){
-            lprintf("enverr%d\n",__LINE__);
+            //lprintf("--enverr%d\n",__LINE__);
             goto end;
         }
     }
