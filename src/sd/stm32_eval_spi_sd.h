@@ -238,6 +238,8 @@ typedef struct
 #define CMD58   58      //ÃüÁî58£¬¶ÁOCRÐÅÏ¢
 #define CMD59   59      //ÃüÁî59£¬Ê¹ÄÜ/½ûÖ¹CRC£¬Ó¦·µ»Ø0x00
 
+
+extern int spiusing;
 /**
   * @}
   */ 
@@ -248,21 +250,21 @@ typedef struct
 /** 
   * @brief  Select SD Card: ChipSelect pin low   
   */  
-#define SD_CS_LOW()     GPIO_ResetBits(SD_CS_GPIO_PORT, SD_CS_PIN)
+#define SD_CS_LOW()     {spiusing=1;GPIO_ResetBits(SD_CS_GPIO_PORT, SD_CS_PIN);}
 /** 
   * @brief  Deselect SD Card: ChipSelect pin high   
   */ 
-#define SD_CS_HIGH()    GPIO_SetBits(SD_CS_GPIO_PORT, SD_CS_PIN)
+#define SD_CS_HIGH()    {spiusing=0;GPIO_SetBits(SD_CS_GPIO_PORT, SD_CS_PIN);}
 /**
   * @}
   */ 
 
 //SPI Flash
-#define SF_CS_LOW()     GPIO_ResetBits(SF_CS_GPIO_PORT, SF_CS_PIN)
+#define SF_CS_LOW()     {spiusing=1;GPIO_ResetBits(SF_CS_GPIO_PORT, SF_CS_PIN);}
 /** 
   * @brief  Deselect SD Card: ChipSelect pin high   
   */ 
-#define SF_CS_HIGH()    GPIO_SetBits(SF_CS_GPIO_PORT, SF_CS_PIN)
+#define SF_CS_HIGH()    {spiusing=0;GPIO_SetBits(SF_CS_GPIO_PORT, SF_CS_PIN);}
 /** @defgroup STM32_EVAL_SPI_SD_Exported_Functions
   * @{
   */ 

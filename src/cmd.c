@@ -221,10 +221,12 @@ void sd(char *p)
     else if(cmdindex == 1){//cs high/low
 	lprintf("line %d\n", __LINE__);
         str_to_hex(p, &para1);
-	if(para1)
-		SD_CS_HIGH();
-	else
-		SD_CS_LOW();
+        if(para1){
+            SD_CS_HIGH();
+        }
+        else{
+            SD_CS_LOW();
+        }
     }
     else if(cmdindex == 2){//
 	lprintf("line %d\n", __LINE__);

@@ -55,49 +55,49 @@ void SPI_Flash_Init(void)
 u8 SPI_Flash_ReadSR(void)   
 {  
 	u8 byte=0;   
-	SPI_FLASH_CS=0;                            //使能器件   
+	SF_CS_LOW();                            //使能器件   
 	SPI1_ReadWriteByte(W25X_ReadStatusReg);    //发送读取状态寄存器命令    
 	byte=SPI1_ReadWriteByte(0Xff);             //读取一个字节  
-	SPI_FLASH_CS=1;                            //取消片选     
+	SF_CS_HIGH();                            //取消片选     
 	return byte;   
 } 
 //写SPI_FLASH状态寄存器
 //只有SPR,TB,BP2,BP1,BP0(bit 7,5,4,3,2)可以写!!!
 void SPI_FLASH_Write_SR(u8 sr)   
 {   
-	SPI_FLASH_CS=0;                            //使能器件   
+	SF_CS_LOW();                            //使能器件   
 	SPI1_ReadWriteByte(W25X_WriteStatusReg);   //发送写取状态寄存器命令    
 	SPI1_ReadWriteByte(sr);               //写入一个字节  
-	SPI_FLASH_CS=1;                            //取消片选     	      
+	SF_CS_HIGH();                            //取消片选     	      
 }   
 //SPI_FLASH写使能	
 //将WEL置位   
 void SPI_FLASH_Write_Enable(void)   
 {
-	SPI_FLASH_CS=0;                            //使能器件   
+	SF_CS_LOW();                            //使能器件   
     SPI1_ReadWriteByte(W25X_WriteEnable);      //发送写使能  
-	SPI_FLASH_CS=1;                            //取消片选     	      
+	SF_CS_HIGH();                            //取消片选     	      
 } 
 //SPI_FLASH写禁止	
 //将WEL清零  
 void SPI_FLASH_Write_Disable(void)   
 {  
-	SPI_FLASH_CS=0;                            //使能器件   
+	SF_CS_LOW();                            //使能器件   
     SPI1_ReadWriteByte(W25X_WriteDisable);     //发送写禁止指令    
-	SPI_FLASH_CS=1;                            //取消片选     	      
+	SF_CS_HIGH();                            //取消片选     	      
 } 			    
 //读取芯片ID W25X16的ID:0XEF14
 u16 SPI_Flash_ReadID(void)
 {
 	u16 Temp = 0;	  
-	SPI_FLASH_CS=0;				    
+	SF_CS_LOW();				    
 	SPI1_ReadWriteByte(0x90);//发送读取ID命令	    
 	SPI1_ReadWriteByte(0x00); 	    
 	SPI1_ReadWriteByte(0x00); 	    
 	SPI1_ReadWriteByte(0x00); 	 			   
 	Temp|=SPI1_ReadWriteByte(0xFF)<<8;  
 	Temp|=SPI1_ReadWriteByte(0xFF);	 
-	SPI_FLASH_CS=1;				    
+	SF_CS_HIGH();				    
     lprintf("W25Flash ID=%x\n", Temp);
     switch(Temp){
         case W25Q80:
@@ -125,7 +125,7 @@ u16 SPI_Flash_ReadID(void)
 void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u16 NumByteToRead)   
 { 
  	u16 i;    												    
-	SPI_FLASH_CS=0;                            //使能器件   
+	SF_CS_LOW();                            //使能器件   
     SPI1_ReadWriteByte(W25X_ReadData);         //发送读取命令   
     SPI1_ReadWriteByte((u8)((ReadAddr)>>16));  //发送24bit地址    
     SPI1_ReadWriteByte((u8)((ReadAddr)>>8));   
@@ -134,7 +134,7 @@ void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u16 NumByteToRead)
 	{ 
         pBuffer[i]=SPI1_ReadWriteByte(0XFF);   //循环读数  
     }
-	SPI_FLASH_CS=1;                            //取消片选     	      
+	SF_CS_HIGH();                            //取消片选     	      
 }  
 //SPI在一页(0~65535)内写入少于256个字节的数据
 //在指定地址开始写入最大256字节的数据
@@ -145,13 +145,13 @@ void SPI_Flash_Write_Page(const u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
 {
  	u16 i;  
     SPI_FLASH_Write_Enable();                  //SET WEL 
-	SPI_FLASH_CS=0;                            //使能器件   
+	SF_CS_LOW();                            //使能器件   
     SPI1_ReadWriteByte(W25X_PageProgram);      //发送写页命令   
     SPI1_ReadWriteByte((u8)((WriteAddr)>>16)); //发送24bit地址    
     SPI1_ReadWriteByte((u8)((WriteAddr)>>8));   
     SPI1_ReadWriteByte((u8)WriteAddr);   
     for(i=0;i<NumByteToWrite;i++)SPI1_ReadWriteByte(pBuffer[i]);//循环写数  
-	SPI_FLASH_CS=1;                            //取消片选 
+	SF_CS_HIGH();                            //取消片选 
 	SPI_Flash_Wait_Busy();					   //等待写入结束
 } 
 //无检验写SPI FLASH 
@@ -316,9 +316,9 @@ void SPI_Flash_Erase_Chip(void)
     SPI_Flash_Wait_Busy();   
     lprintf("done.\n");
     lprintf("sending erase cmd...\n");
-  	SPI_FLASH_CS=0;                            //使能器件   
+  	SF_CS_LOW();                            //使能器件   
     SPI1_ReadWriteByte(W25X_ChipErase);        //发送片擦除命令  
-	SPI_FLASH_CS=1;                            //取消片选     	      
+	SF_CS_HIGH();                            //取消片选     	      
     lprintf("done.\nWaiting...\n");
 	SPI_Flash_Wait_Busy();   				   //等待芯片擦除结束
     lprintf("done.\n");
@@ -332,12 +332,12 @@ void SPI_Flash_Erase_Sector(u32 Dst_Addr)
 	Dst_Addr*=4096;
     SPI_FLASH_Write_Enable();                  //SET WEL 	 
     SPI_Flash_Wait_Busy();   
-  	SPI_FLASH_CS=0;                            //使能器件   
+  	SF_CS_LOW();                            //使能器件   
     SPI1_ReadWriteByte(W25X_SectorErase);      //发送扇区擦除指令 
     SPI1_ReadWriteByte((u8)((Dst_Addr)>>16));  //发送24bit地址    
     SPI1_ReadWriteByte((u8)((Dst_Addr)>>8));   
     SPI1_ReadWriteByte((u8)Dst_Addr);  
-	SPI_FLASH_CS=1;                            //取消片选     	      
+	SF_CS_HIGH();                            //取消片选     	      
     SPI_Flash_Wait_Busy();   				   //等待擦除完成
 }  
 //等待空闲
@@ -348,17 +348,17 @@ void SPI_Flash_Wait_Busy(void)
 //进入掉电模式
 void SPI_Flash_PowerDown(void)   
 { 
-  	SPI_FLASH_CS=0;                            //使能器件   
+  	SF_CS_LOW();                            //使能器件   
     SPI1_ReadWriteByte(W25X_PowerDown);        //发送掉电命令  
-	SPI_FLASH_CS=1;                            //取消片选     	      
+	SF_CS_HIGH();                            //取消片选     	      
     delay_us(3);                               //等待TPD  
 }   
 //唤醒
 void SPI_Flash_WAKEUP(void)   
 {  
-  	SPI_FLASH_CS=0;                            //使能器件   
+  	SF_CS_LOW();                            //使能器件   
     SPI1_ReadWriteByte(W25X_ReleasePowerDown); //  send W25X_PowerDown command 0xAB    
-	SPI_FLASH_CS=1;                            //取消片选     	      
+	SF_CS_HIGH();                            //取消片选     	      
     delay_us(3);                               //等待TRES1
 }   
 u8 SPI_Flash_Read_Byte(u32 ReadAddr)

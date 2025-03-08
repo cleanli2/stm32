@@ -120,7 +120,7 @@ void TIM2_IRQHandler(void)
         if(g_10ms_count&0x1){//touch handle every 20ms
             static uint32_t tp_d=0xffffffff;
             uint16_t *tmp16p=(uint16_t*)&tp_d;
-            if(!touch_pool_full()){
+            if(!touch_pool_full() && !spiusing){
                 if(!get_TP_point(&tmp16p[0], &tmp16p[1])){
                     if(tp_d!=0xffffffff){//touch up
                         put_touch(tp_d);

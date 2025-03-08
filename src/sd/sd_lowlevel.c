@@ -7,6 +7,7 @@
 #define NO_SPI_INITED 0
 static uint32_t stm32_spi_choose = 1;
 static uint32_t spi_inited = NO_SPI_INITED;
+int spiusing=0;
 
 int spi_is_stm32_type()
 {

@@ -274,9 +274,6 @@ static inline uint16_t DATAIN()
 #define SD_CS_GPIO_PORT           GPIOC
 #define SD_CS_GPIO_CLK            RCC_APB2Periph_GPIOC
 
-#define	SPI_FLASH_CS PCout(4)  //choose spi flash
-
-
 
 #else//default
 /////////////////////////////////////HAMMER//////////////////////////////////////////////
