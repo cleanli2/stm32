@@ -3152,6 +3152,9 @@ void ui_start()
     lprintf_time("ui small_screen start\n");
 #endif
     memcpy(&working_ui_t, &ui_list[0], sizeof(ui_t));
+    if(get_env_uint("soundon", 0)){
+        enable_sound(1);
+    }
     current_ui = & working_ui_t;
     if(current_ui->ui_init){
         current_ui->ui_init(current_ui);

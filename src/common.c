@@ -27,7 +27,7 @@ USART_InitTypeDef USART_InitStructure;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
-static int sound_enable=1;
+static int sound_enable=0;
 static u8  fac_us=0;
 static u16 fac_ms=0;
 static uint32_t g_10ms_count = 0;
