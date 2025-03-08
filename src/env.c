@@ -110,7 +110,7 @@ retry:
         return ret;
     }
     else{
-        lprintf("env_get_char err\n");
+        lprintf("env_get_char err %b vs %b\n", ret, td[1]);
         goto retry;
     }
 }
@@ -143,7 +143,7 @@ uint32_t strcpy2mem(uint8_t *s, uint32_t env_offset)
     uint32_t len = 0;
     uint8_t c;
     while((c = env_get_char(env_offset))){
-        lprintf("c=%b off=%x\r\n", c, env_offset);
+        //lprintf("c=%b off=%x\r\n", c, env_offset);
         len++;
         *s++ = c;
         env_offset++;
@@ -424,7 +424,7 @@ int go_through_env(int operation)
         i++;
         if(PRINT_RAW_ENV==operation){
             lprintf("%x:", posi);
-            mem_print(buf, 0, 64);
+            //mem_print(buf, 0, 64);
             lprintf("%s\n", buf);
         }
         else{
