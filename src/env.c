@@ -134,6 +134,7 @@ uint32_t strcpy2mem(uint8_t *s, uint32_t env_offset)
     uint32_t len = 0;
     uint8_t c;
     while((c = env_get_char(env_offset))){
+        lprintf("c=%b off=%x\r\n", c, env_offset);
         len++;
         *s++ = c;
         env_offset++;

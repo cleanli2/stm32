@@ -37,6 +37,8 @@ extern const uint8_t ziku12[];
 extern const uint8_t ziku[];
 uint32_t get_ziku12_size();
 uint32_t get_ziku_size();
+uint32_t get_env_start_addr();
+uint8_t env_get_char(uint32_t offset);
 void w25f(char *p)
 {
     uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
@@ -172,6 +174,15 @@ void w25f(char *p)
     else if(cmdindex == 0xc){//
         lprintf("print log in spi flash:\n");
         spi_flash_log_print();
+    }
+    else if(cmdindex == 0xd){
+        para1=0;
+        if(tmp>=2){
+            p = str_to_hex(p, &para1);
+        }
+        lprintf("para1=%x\n", para1);
+        lprintf("envgetchar=%b@%x_%x\r\n", env_get_char(para1),
+                para1, get_env_start_addr()+para1);
     }
     con_send('\n');
 
