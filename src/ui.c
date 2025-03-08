@@ -1619,7 +1619,7 @@ void do_tipt(void*cfp)
     char *inputs=(char*)ui_buf;
     char *lastchar=(char*)&ui_buf[14];
     char rs[11]={0};
-    int skip_show=get_touch_size();
+    int skip_show=(get_touch_size()>1);
     signed char *choose_idx=(signed char*)&ui_buf[3];//0-py index 1-char index 2-mode:input/py_choose/char_choose 3-eng/chs
     win tiptw={TIPT_SHOW_WIN_X, TIPT_SHOW_WIN_Y, TIPT_SHOW_WIN_W, TIPT_SHOW_WIN_H,
         TIPT_SHOW_WIN_DX, TIPT_SHOW_WIN_DY};
