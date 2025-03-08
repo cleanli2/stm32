@@ -2141,19 +2141,25 @@ void show_hishint()
     int y=TIPT_SHOW_WIN_Y+5;
     lcd_lprintf(x, y, "History hints:");
     y+=18;
-    uint32_t flash_hint_addr=FLASH_HINT_START_ADDR;
-    for(flash_hint_addr=FLASH_HINT_START_ADDR; FLASH_HINT_START_ADDR<FLASH_HINT_START_ADDR+FLASH_HINT_SIZE; flash_hint_addr+=32){
+    static uint32_t flash_hint_addr=FLASH_HINT_START_ADDR;
+    static int hidx=0;
+    for(; FLASH_HINT_START_ADDR<FLASH_HINT_START_ADDR+FLASH_HINT_SIZE; flash_hint_addr+=32){
+        if(y>TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-18*2){
+            lcd_lprintf(x, y, "To be continue");
+            break;
+        }
         SPI_Flash_Read((uint8*)hint_buf, flash_hint_addr, 32);
         if(hint_buf[0]!=0xff){
-            lcd_lprintf(x, y, "%s     ", hint_buf);
+            hidx++;
+            lcd_lprintf(x, y, "%d:%x:%s     ", hidx, flash_hint_addr, hint_buf);
         }
         else{
+            lcd_lprintf(x, y, "End of all hints, %d in total", hidx);
+            flash_hint_addr=FLASH_HINT_START_ADDR;
+            hidx=0;
             break;
         }
         y+=18;
-        if(y>TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H-16){
-            break;
-        }
     }
 }
 void do_hint(void*cfp)
