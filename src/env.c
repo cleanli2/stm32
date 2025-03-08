@@ -238,7 +238,7 @@ uint32_t find_env_data_start()
             return env_data_start_i;
         }
         else{
-            lprintf("env_data_start_i err:0x%b 0x%a\n", db, da);
+            lprintf("env_data_start_i err:0x%b 0x%b\n", db, da);
         }
     }
     ret = find_env_data_start_raw();
@@ -403,7 +403,7 @@ int go_through_env(int operation)
     i = find_env_data_start();
     if(i > ENV_ABNORMAL){
         ret = ENV_FAIL;
-        lprintf("--enverr%d\n",__LINE__);
+        //lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
     lprintf("env used %d%\n", (ENV_STORE_SIZE - i)*100/ENV_STORE_SIZE);
