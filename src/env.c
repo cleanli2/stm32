@@ -495,9 +495,9 @@ uint32_t set_env_uint(const char*name, uint32_t value)
 void find_log_write_addr()
 {
     flash_log_write_addr = SPI_FLASH_LOG_START+SPI_FLASH_SECTOR_SIZE-1;
+    lprintf_time("la_search:0x%x\n", flash_log_write_addr);
     while(1)
     {
-        lprintf_time("la_search:0x%x\n", flash_log_write_addr);
         if(0xff==SPI_Flash_Read_Byte(flash_log_write_addr))
         {
             while(0xff==SPI_Flash_Read_Byte(--flash_log_write_addr));
