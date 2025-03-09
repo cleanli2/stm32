@@ -108,6 +108,8 @@ int main()
         close_file();
         lprintf_time("\nstafn.txt=%s done\n", fbf);
     }
+    lprintf_time("loginflash:log start:0x%x end:0x%x size:0x%x\n",
+            SPI_FLASH_LOG_START, SPI_FLASH_LOG_END, SPI_FLASH_LOG_SIZE);
     task_log(NULL);
     run_cmd_interface();
     lprintf_time("start working loop.\n");
