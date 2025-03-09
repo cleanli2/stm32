@@ -40,6 +40,8 @@ uint32_t get_ziku_size();
 void save_sd_log()
 {
     lprintf("save log to sd card:stmlog.txt\n");
+    lprintf_time("save_sd_log:log start:0x%x end:0x%x size:0x%x\n",
+            SPI_FLASH_LOG_START, SPI_FLASH_LOG_END, SPI_FLASH_LOG_SIZE);
     u32 ch_cnt = 0, i512_ct=0, show_ct=0;
     u32 addr = SPI_FLASH_LOG_START;
     if(FS_OK!=open_file_for_write("STMLOG", "TXT")){
