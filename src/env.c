@@ -497,6 +497,7 @@ void find_log_write_addr()
     flash_log_write_addr = SPI_FLASH_LOG_START+SPI_FLASH_SECTOR_SIZE-1;
     while(1)
     {
+        lprintf_time("la_search:0x%x\n", flash_log_write_addr);
         if(0xff==SPI_Flash_Read_Byte(flash_log_write_addr))
         {
             while(0xff==SPI_Flash_Read_Byte(--flash_log_write_addr));
@@ -505,7 +506,7 @@ void find_log_write_addr()
         }
         flash_log_write_addr+=SPI_FLASH_SECTOR_SIZE;
         if(SPI_FLASH_LOG_END <= flash_log_write_addr){
-            lprintf("full of log, erase first sector to start\n");
+            lprintf_time("full of log, erase first sector to start\n");
             flash_log_write_addr = SPI_FLASH_LOG_START;
             SPI_Flash_Erase_Sector(flash_log_write_addr/SPI_FLASH_SECTOR_SIZE);//erase sector
             break;
@@ -534,6 +535,11 @@ void log_to_flash(const char*lgbuf, u32 ri, u32 len, u32 buf_size)
         }
         flash_left = SPI_FLASH_LOG_END - flash_log_write_addr;
         w_len = MIN(buf_left, flash_left);
+        if(flash_log_write_addr >= SPI_FLASH_LOG_END || flash_log_write_addr<SPI_FLASH_LOG_START){
+            while(1){
+                lprintf("flash log addr=0x%x, outof (0x%x, 0x%x) range\n", SPI_FLASH_LOG_START,SPI_FLASH_LOG_END);
+            }
+        }
         //lprintf("wl %d %d %x\n", w_len, buf_left, flash_left);
         SPI_Flash_Write_direct_erase((const u8*)lgbuf+ri, flash_log_write_addr, w_len);
         flash_log_write_addr += w_len;
