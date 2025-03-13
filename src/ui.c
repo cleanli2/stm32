@@ -2028,8 +2028,8 @@ void do_tipt(void*cfp)
         if(t9.mwdth>=4){
             for(int i=0;i<t9.pymb[(int)choose_idx[0]]->num/2-t9.mwdth/2;i+=t9.mwdth/2){
                 if((TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+i/N_EACH_LINE))<(TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_H)){
-                    LCD_DrawLine(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*((i+t9.mwdth/2)%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+i/N_EACH_LINE),
-                            TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*((i+t9.mwdth/2)%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+i/N_EACH_LINE+1));
+                    LCD_DrawLine(TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*((i+t9.mwdth/2)%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+(2+i)/N_EACH_LINE),
+                            TIPT_SHOW_WIN_X+TIPT_SHOW_WIN_DX/2+(TIPT_SHOW_WIN_DX*2+FONT_SIZE)*((i+t9.mwdth/2)%N_EACH_LINE), TIPT_SHOW_WIN_Y+TIPT_SHOW_WIN_DY/2+(TIPT_SHOW_WIN_DY+FONT_SIZE)*(ui_buf[9]+(2+i)/N_EACH_LINE+1));
                 }
             }
         }
