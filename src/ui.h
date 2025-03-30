@@ -30,6 +30,7 @@ enum UI_NAME_INDEX {
     UI_RANDOM,
     UI_SET,
     UI_TIPT,
+    UI_ELOCK,
 #ifdef DAC_SUPPORT
     UI_WAV,
 #endif

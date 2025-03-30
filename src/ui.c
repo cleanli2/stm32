@@ -281,6 +281,7 @@ button_t main_menu_button[]={
 #ifdef DAC_SUPPORT
     {350,180,80, 60, NULL, UI_WAV, 0, "WavFile", 0, NULL},
 #endif
+    {350,110,80, 60, NULL, UI_ELOCK, 0, "E-lock", 0, NULL},
     {350,250,80, 60, NULL, UI_TIPT, 0, "TextInput", 0, NULL},
     {350,460,80, 60, NULL, UI_POWER, 0, "PowerMonitor", 0, power_cch_str},
     {350,390,80, 60, NULL, UI_RANDOM, 0, "Random", 0, NULL},
@@ -2222,6 +2223,62 @@ button_t tipt_button[]={
 };
 /****end of tipt ui*****/
 
+
+/***start of elock***/
+#define ELOCK_OX 25
+#define ELOCK_OY 340
+
+void elock_ui_init(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    (void)uif;
+    common_ui_init(vp);
+    ui_buf[0] = 0;//flag
+    ui_buf[1] = 0;
+    ui_buf[2] = 0;
+    ui_buf[3] = 0;
+    ui_buf[4] = get_env_uint("elockpw", 0x1234abcd);
+}
+void elock_ui_process_event(void*vp)
+{
+    ui_t* uif =(ui_t*)vp;
+    (void)uif;
+    common_process_event(vp);
+}
+
+void do_elock()
+{
+#ifdef LARGE_SCREEN
+#endif
+}
+
+button_t elock_button[]={
+#ifdef LARGE_SCREEN
+    {ELOCK_OX, ELOCK_OY, 80,  60, do_elock, -1, 0, "0", 0, NULL},
+    {ELOCK_OX, ELOCK_OY+80, 80,  60, do_elock, -1, 0, "1", 0, NULL},
+    {ELOCK_OX, ELOCK_OY+160, 80,  60, do_elock, -1, 0, "2", 0, NULL},
+    {ELOCK_OX, ELOCK_OY+240, 80,  60, do_elock, -1, 0, "3", 0, NULL},
+    {ELOCK_OX, ELOCK_OY+320, 80,  60, do_elock, -1, 0, "4", 0, NULL},
+    {ELOCK_OX+115, ELOCK_OY, 80,  60, do_elock, -1, 0, "5", 0, NULL},
+    {ELOCK_OX+115, ELOCK_OY+80, 80,  60, do_elock, -1, 0, "6", 0, NULL},
+    {ELOCK_OX+115, ELOCK_OY+160, 80,  60, do_elock, -1, 0, "7", 0, NULL},
+    {ELOCK_OX+115, ELOCK_OY+240, 80,  60, do_elock, -1, 0, "8", 0, NULL},
+    {ELOCK_OX+115, ELOCK_OY+320, 80,  60, do_elock, -1, 0, "9", 0, NULL},
+    {ELOCK_OX+230, ELOCK_OY, 80,  60, do_elock, -1, 0, "A", 0, NULL},
+    {ELOCK_OX+230, ELOCK_OY+80, 80,  60, do_elock, -1, 0, "B", 0, NULL},
+    {ELOCK_OX+230, ELOCK_OY+160, 80,  60, do_elock, -1, 0, "C", 0, NULL},
+    {ELOCK_OX+230, ELOCK_OY+240, 80,  60, do_elock, -1, 0, "D", 0, NULL},
+    {ELOCK_OX+230, ELOCK_OY+320, 80,  60, do_elock, -1, 0, "E", 0, NULL},
+    {ELOCK_OX+345, ELOCK_OY, 80,  60, do_elock, -1, 0, "F", 0, NULL},
+    {ELOCK_OX+345, ELOCK_OY+80, 80,  60, do_elock, -1, 0, "cancel", 0, NULL},
+    {ELOCK_OX+345, ELOCK_OY+160, 80,  60, do_elock, -1, 0, "enter", 0, NULL},
+    {ELOCK_OX+345, ELOCK_OY+240, 80,  60, do_elock, -1, 0, "start", 0, NULL},
+    {ELOCK_OX+345, ELOCK_OY+320, 80,  60, do_elock, -1, 0, "off", 0, NULL},
+#endif
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+};
+/***end of elock***/
+
 /****start of set ui*****/
 nedt_t ui_set_nedt[]={
 #ifdef LARGE_SCREEN
@@ -2668,6 +2725,18 @@ ui_t ui_list[]={
         tipt_ui_uninit,
         tipt_button,
         UI_TIPT,
+        220, //timeout
+        0,
+        NULL,//char*timeout_music;
+        NULL,
+        NULL,//nedt_t*
+    },
+    {
+        elock_ui_init,
+        NULL,
+        NULL,
+        elock_button,
+        UI_ELOCK,
         220, //timeout
         0,
         NULL,//char*timeout_music;
