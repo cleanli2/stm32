@@ -2258,6 +2258,7 @@ void do_elock(void*cfp)
 {
 #ifdef LARGE_SCREEN
     int btidx=*(int*)cfp;
+    lprintf("btidx=%d\r\n", btidx);
     if(PSFB==ui_buf[0]){//forbidden
         lcd_lprintf(25,200,"Forbidden             ");
         return;
