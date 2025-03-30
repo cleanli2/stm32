@@ -2227,6 +2227,7 @@ button_t tipt_button[]={
 /***start of elock***/
 #define ELOCK_OX 25
 #define ELOCK_OY 340
+#define PSOK 0x9a554d03
 
 void elock_ui_init(void*vp)
 {
@@ -2234,8 +2235,8 @@ void elock_ui_init(void*vp)
     (void)uif;
     common_ui_init(vp);
     ui_buf[0] = 0;//flag
-    ui_buf[1] = 0;
-    ui_buf[2] = 0;
+    ui_buf[1] = 0;//input
+    ui_buf[2] = 0;//input bak
     ui_buf[3] = 0;
     ui_buf[4] = get_env_uint("elockpw", 0x1234abcd);
 }
@@ -2246,9 +2247,23 @@ void elock_ui_process_event(void*vp)
     common_process_event(vp);
 }
 
-void do_elock()
+void do_elock(void*cfp)
 {
 #ifdef LARGE_SCREEN
+    int btidx=*(int*)cfp;
+    if(btidx<0 || btidx>=20){
+        lprintf("error btidx\r\n");
+        return;
+    }
+    else if(btidx<0x10){
+        ui_buf[1]<<=4;
+        ui_buf[1]+=btidx;
+        lcd_lprintf(25,100,"%X", ui_buf[1]);
+        if(ui_buf[1]==ui_buf[4]){
+            lcd_lprintf(25,200,"PASS");
+            ui_buf[0]=PSOK;
+        }
+    }
 #endif
 }
 
