@@ -2230,6 +2230,8 @@ button_t tipt_button[]={
 #define PSOK 0x9a554d03
 #define PSFB 0x9a55f04b
 
+void elock_motor_on();
+void elock_motor_off();
 void elock_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;

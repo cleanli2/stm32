@@ -274,6 +274,9 @@ static inline uint16_t DATAIN()
 #define SD_CS_GPIO_PORT           GPIOC
 #define SD_CS_GPIO_CLK            RCC_APB2Periph_GPIOC
 
+#define ELOCK_FUNC_ON
+#define ELOCK_GG GPIOC
+#define ELOCK_PIN GPIO_Pin_9
 
 #else//default
 /////////////////////////////////////HAMMER//////////////////////////////////////////////

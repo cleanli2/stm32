@@ -532,6 +532,16 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
 }
 #define AUTO_POWER_OFF_COUNT 100000
 void f24map_init();
+
+void elock_motor_on()
+{
+  GPIO_ResetBits(ELOCK_GG, ELOCK_PIN);
+}
+
+void elock_motor_off()
+{
+  GPIO_SetBits(ELOCK_GG, ELOCK_PIN);
+}
 //static uint32_t single_timer_len = 16;
 /**
   * @brief  Main program.
@@ -548,7 +558,19 @@ void main_init(void)
      */     
   //int looptimes = 3;
   //uint32_t ict;
+  GPIO_InitTypeDef GPIO_InitStructure;
   RCC_ClocksTypeDef RCC_ClocksStatus;
+
+#if defined ELOCK_FUNC_ON
+  //elock start
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Pin = ELOCK_PIN;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(ELOCK_GG, &GPIO_InitStructure);
+  GPIO_SetBits(ELOCK_GG, ELOCK_PIN);
+  //elock end
+#endif
 
   delay_init();
 
@@ -578,7 +600,6 @@ void main_init(void)
   syshour_init();
   lprintf("date:%s\n", get_rtc_time(0));
 
-  GPIO_InitTypeDef GPIO_InitStructure;
   //led
 #ifdef RTC_SOC
   RTC_Init();
