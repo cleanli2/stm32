@@ -2316,7 +2316,7 @@ void do_elock(void*cfp)
             lcd_lprintf(25,200,"input passwd first");
         }
     }
-    lcd_lprintf(25,100,"%X", ui_buf[1]);
+    //lcd_lprintf(25,100,"%X", ui_buf[1]);
 #endif
 }
 
