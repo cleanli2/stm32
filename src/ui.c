@@ -2270,7 +2270,6 @@ void do_elock(void*cfp)
     else if(btidx<0x10){
         ui_buf[1]<<=4;
         ui_buf[1]+=btidx;
-        lcd_lprintf(25,100,"%X", ui_buf[1]);
         if(ui_buf[1]==ui_buf[4]){
             lcd_lprintf(25,200,"PASS             ");
             ui_buf[0]=PSOK;
@@ -2308,11 +2307,16 @@ void do_elock(void*cfp)
                     lcd_lprintf(25,200,"NEW PASS update fail");
                 }
             }
+            else{
+                ui_buf[2]=ui_buf[1];
+                ui_buf[1]=0;
+            }
         }
         else{
             lcd_lprintf(25,200,"input passwd first");
         }
     }
+    lcd_lprintf(25,100,"%X", ui_buf[1]);
 #endif
 }
 
