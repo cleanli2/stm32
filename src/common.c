@@ -563,7 +563,7 @@ void main_init(void)
 
 #if defined ELOCK_FUNC_ON
   //elock start
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Pin = ELOCK_PIN;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
