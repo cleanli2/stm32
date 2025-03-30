@@ -2228,6 +2228,7 @@ button_t tipt_button[]={
 #define ELOCK_OX 25
 #define ELOCK_OY 340
 #define PSOK 0x9a554d03
+#define PSFB 0x9a55f04b
 
 void elock_ui_init(void*vp)
 {
@@ -2239,6 +2240,10 @@ void elock_ui_init(void*vp)
     ui_buf[2] = 0;//input bak
     ui_buf[3] = 0;
     ui_buf[4] = get_env_uint("elockpw", 0x1234abcd);
+    if(get_env_uint("elocksts", 0)!=0x900d){
+        lcd_lprintf(25,200,"Forbidden             ");
+        ui_buf[0]=PSFB;
+    }
 }
 void elock_ui_process_event(void*vp)
 {
@@ -2251,6 +2256,10 @@ void do_elock(void*cfp)
 {
 #ifdef LARGE_SCREEN
     int btidx=*(int*)cfp;
+    if(PSFB==ui_buf[0]){//forbidden
+        lcd_lprintf(25,200,"Forbidden             ");
+        return;
+    }
     if(btidx<0 || btidx>=20){
         lprintf("error btidx\r\n");
         return;
@@ -2260,8 +2269,45 @@ void do_elock(void*cfp)
         ui_buf[1]+=btidx;
         lcd_lprintf(25,100,"%X", ui_buf[1]);
         if(ui_buf[1]==ui_buf[4]){
-            lcd_lprintf(25,200,"PASS");
+            lcd_lprintf(25,200,"PASS             ");
             ui_buf[0]=PSOK;
+        }
+    }
+    else if(btidx==0x10){//cancel
+        ui_buf[1]=0;
+    }
+    else if(btidx==18){//start
+        if(PSOK==ui_buf[0]){
+            lcd_lprintf(25,200,"motor on      ");
+            elock_motor_on();
+        }
+        else{
+            lcd_lprintf(25,200,"input passwd first");
+        }
+    }
+    else if(btidx==19){//end
+        if(PSOK==ui_buf[0]){
+            lcd_lprintf(25,200,"motor off     ");
+            elock_motor_off();
+        }
+        else{
+            lcd_lprintf(25,200,"input passwd first");
+        }
+    }
+    else if(btidx==17){//enter
+        if(PSOK==ui_buf[0]){
+            if(ui_buf[1]==ui_buf[2]){
+                set_env_uint("elockpw", ui_buf[1]);
+                if(ui_buf[1] == get_env_uint("elockpw", 0x1234abcd)){
+                    lcd_lprintf(25,200,"NEW PASS         ");
+                }
+                else{
+                    lcd_lprintf(25,200,"NEW PASS update fail");
+                }
+            }
+        }
+        else{
+            lcd_lprintf(25,200,"input passwd first");
         }
     }
 #endif
@@ -2270,25 +2316,25 @@ void do_elock(void*cfp)
 button_t elock_button[]={
 #ifdef LARGE_SCREEN
     {ELOCK_OX, ELOCK_OY, 80,  60, do_elock, -1, 0, "0", 0, NULL},
-    {ELOCK_OX, ELOCK_OY+80, 80,  60, do_elock, -1, 0, "1", 0, NULL},
-    {ELOCK_OX, ELOCK_OY+160, 80,  60, do_elock, -1, 0, "2", 0, NULL},
-    {ELOCK_OX, ELOCK_OY+240, 80,  60, do_elock, -1, 0, "3", 0, NULL},
-    {ELOCK_OX, ELOCK_OY+320, 80,  60, do_elock, -1, 0, "4", 0, NULL},
-    {ELOCK_OX+115, ELOCK_OY, 80,  60, do_elock, -1, 0, "5", 0, NULL},
-    {ELOCK_OX+115, ELOCK_OY+80, 80,  60, do_elock, -1, 0, "6", 0, NULL},
-    {ELOCK_OX+115, ELOCK_OY+160, 80,  60, do_elock, -1, 0, "7", 0, NULL},
-    {ELOCK_OX+115, ELOCK_OY+240, 80,  60, do_elock, -1, 0, "8", 0, NULL},
-    {ELOCK_OX+115, ELOCK_OY+320, 80,  60, do_elock, -1, 0, "9", 0, NULL},
-    {ELOCK_OX+230, ELOCK_OY, 80,  60, do_elock, -1, 0, "A", 0, NULL},
-    {ELOCK_OX+230, ELOCK_OY+80, 80,  60, do_elock, -1, 0, "B", 0, NULL},
-    {ELOCK_OX+230, ELOCK_OY+160, 80,  60, do_elock, -1, 0, "C", 0, NULL},
-    {ELOCK_OX+230, ELOCK_OY+240, 80,  60, do_elock, -1, 0, "D", 0, NULL},
-    {ELOCK_OX+230, ELOCK_OY+320, 80,  60, do_elock, -1, 0, "E", 0, NULL},
-    {ELOCK_OX+345, ELOCK_OY, 80,  60, do_elock, -1, 0, "F", 0, NULL},
-    {ELOCK_OX+345, ELOCK_OY+80, 80,  60, do_elock, -1, 0, "cancel", 0, NULL},
-    {ELOCK_OX+345, ELOCK_OY+160, 80,  60, do_elock, -1, 0, "enter", 0, NULL},
-    {ELOCK_OX+345, ELOCK_OY+240, 80,  60, do_elock, -1, 0, "start", 0, NULL},
-    {ELOCK_OX+345, ELOCK_OY+320, 80,  60, do_elock, -1, 0, "off", 0, NULL},
+    {ELOCK_OX+115, ELOCK_OY, 80,  60, do_elock, -1, 0, "1", 0, NULL},
+    {ELOCK_OX+230, ELOCK_OY, 80,  60, do_elock, -1, 0, "2", 0, NULL},
+    {ELOCK_OX+345, ELOCK_OY, 80,  60, do_elock, -1, 0, "3", 0, NULL},
+    {ELOCK_OX, ELOCK_OY+80, 80,  60, do_elock, -1, 0, "4", 0, NULL},
+    {ELOCK_OX+115, ELOCK_OY+80, 80,  60, do_elock, -1, 0, "5", 0, NULL},
+    {ELOCK_OX+230, ELOCK_OY+80, 80,  60, do_elock, -1, 0, "6", 0, NULL},
+    {ELOCK_OX+345, ELOCK_OY+80, 80,  60, do_elock, -1, 0, "7", 0, NULL},
+    {ELOCK_OX, ELOCK_OY+160, 80,  60, do_elock, -1, 0, "8", 0, NULL},
+    {ELOCK_OX+345, ELOCK_OY+160, 80,  60, do_elock, -1, 0, "9", 0, NULL},
+    {ELOCK_OX+230, ELOCK_OY+160, 80,  60, do_elock, -1, 0, "A", 0, NULL},
+    {ELOCK_OX+115, ELOCK_OY+160, 80,  60, do_elock, -1, 0, "B", 0, NULL},
+    {ELOCK_OX, ELOCK_OY+240, 80,  60, do_elock, -1, 0, "C", 0, NULL},
+    {ELOCK_OX+115, ELOCK_OY+240, 80,  60, do_elock, -1, 0, "D", 0, NULL},
+    {ELOCK_OX+230, ELOCK_OY+240, 80,  60, do_elock, -1, 0, "E", 0, NULL},
+    {ELOCK_OX+345, ELOCK_OY+240, 80,  60, do_elock, -1, 0, "F", 0, NULL},//15
+    {ELOCK_OX, ELOCK_OY+320, 80,  60, do_elock, -1, 0, "cancel", 0, NULL},//16
+    {ELOCK_OX+115, ELOCK_OY+320, 80,  60, do_elock, -1, 0, "enter", 0, NULL},//17
+    {ELOCK_OX+230, ELOCK_OY+320, 80,  60, do_elock, -1, 0, "start", 0, NULL},//18
+    {ELOCK_OX+345, ELOCK_OY+320, 80,  60, do_elock, -1, 0, "end", 0, NULL},//19
 #endif
     {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
 };
