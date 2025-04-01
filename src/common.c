@@ -533,12 +533,12 @@ void my_repeat_timer(uint32_t w_repts, uint32_t seconds)
 #define AUTO_POWER_OFF_COUNT 100000
 void f24map_init();
 
-void elock_motor_on()
+void elock_motor_off()
 {
   GPIO_ResetBits(ELOCK_GG, ELOCK_PIN);
 }
 
-void elock_motor_off()
+void elock_motor_on()
 {
   GPIO_SetBits(ELOCK_GG, ELOCK_PIN);
 }
@@ -568,7 +568,7 @@ void main_init(void)
   GPIO_InitStructure.GPIO_Pin = ELOCK_PIN;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(ELOCK_GG, &GPIO_InitStructure);
-  GPIO_SetBits(ELOCK_GG, ELOCK_PIN);
+  GPIO_ResetBits(ELOCK_GG, ELOCK_PIN);
   //elock end
 #endif
 
