@@ -288,7 +288,7 @@ void P8563_init()
     puthexch(rtc_read_reg(1));
     rtc_write_reg(0x0,0x00);
     //       writeData(0xa,0x8); /*8:00报警*/
-    rtc_write_reg(0x1,0x12|rtc_read_reg(0x1)); /*报警有效*/
+    rtc_write_reg(0x1,0xed|rtc_read_reg(0x1)); /*报警有效*/
     //      writeData(0xd,0xf0);  //编程输出32.768K的频率
     //  }
     rtc_inited = 1;
