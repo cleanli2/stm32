@@ -109,7 +109,7 @@ void led8s_task(void*p)
             o2=otc&0xffffffff;
             slprintf(showstr, "%X%X    ", o1, o2);
             intv=LED8S_INTV*5;
-            slprintf(showstr+20, "%d", switch_count);
+            slprintf(showstr+17, "%d", switch_count);
             len_ss=strlen(showstr);
             while(len_ss<SHOWSTR_LEN-1){
                 showstr[len_ss++]=' ';
