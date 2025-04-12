@@ -82,6 +82,7 @@ void get_otc()
     lprintf("%X %X   \n", o1, o2);
     lprintf("%X%X   \n", 0x33445566, 0xaabbccdd);
 }
+int led8s_debug=0;
 void led8s_task(void*p)
 {
     uint intv;
@@ -92,6 +93,7 @@ void led8s_task(void*p)
     (void)p;
     while(1){
         os_ms_delay(50);
+        if(led8s_debug)continue;
 
         switch_status=GET_SWITCH_STA();
         //lprintf("sw%d\n", switch_status);

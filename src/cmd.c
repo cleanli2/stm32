@@ -448,11 +448,16 @@ error:
 }
 #endif
 
+extern int led8s_debug;
 void buzztest(char *p)
 {
     uint para = 1, para1=2, tmp;
 
     tmp = get_howmany_para(p);
+    if(tmp==0){
+        led8s_debug=1-led8s_debug;
+        lprintf("led8s_debug=%d\r\n", led8s_debug);
+    }
     if(tmp>=1){
 	    p = str_to_hex(p, &para);
     }
