@@ -54,10 +54,16 @@ uint32_t get_uint_offset(char* buf_base, uint32_t off, uint32_t num)
     return ret;
 }
 
-int recover_sd()
+static int recover_sd(uint32_t sector_no)
 {
     int rty = 1;
+    static uint32_t last_err_scno=0;
     lprintf("try re init sd\n");
+    if(last_err_scno==sector_no){
+        lprintf("repower sd for same err scno\n");
+        SD_repower(8);
+    }
+    last_err_scno=sector_no;
     while(SD_OK != g_fs->disk_init()){
         lprintf("fail, try repower %d*100ms\n", rty);
         SD_repower(rty);
@@ -89,7 +95,7 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
         if(retry--==0){
             lprintf("\n!!Fwde-scno:%d-0x%x!!\n", sector_no, sector_no);
 
-            if(recover_sd()){
+            if(recover_sd(sector_no)){
                 lprintf("recover OK, retry write\n");
                 retry = disk_retry;
             }
@@ -119,7 +125,7 @@ char* disk_read_sector(uint32_t sector_no)
         }
         if(retry--==0){
             lprintf_time("\n!!Frde-scno:%d-0x%x!!\n", sector_no, sector_no);
-            if(recover_sd()){
+            if(recover_sd(sector_no)){
                 lprintf("recover OK, retry read\n");
                 retry = disk_retry;
             }
