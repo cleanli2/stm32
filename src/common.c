@@ -835,7 +835,7 @@ void main_init(void)
       led_flash(0x3, 100);
   }
   beep_by_timer_100(0);
-  run_cmd_interface();
+  //run_cmd_interface();
 #if 0
     while(1){
         run_cmd_interface();

@@ -92,6 +92,8 @@ int main()
     char stopreason[64];
     memset(stopreason, 0, 64);
     main_init();
+    g_fnn = get_env_uint("fsno", 0);
+    lprintf_time("start g_fnn=%d\n", g_fnn);
     auto_time_correct2();
     cam_deinit();
     if(adc_test()){
@@ -100,8 +102,6 @@ int main()
         prepare_pic_trsf();
         power_off();
     }
-    g_fnn = get_env_uint("fsno", 0);
-    lprintf_time("start g_fnn=%d\n", g_fnn);
     if(FS_OK==open_file_w("STAFN.TXT")){
         slprintf(fbf, "%d        ", g_fnn);
         write_sec_to_file((const char*)fbf);
