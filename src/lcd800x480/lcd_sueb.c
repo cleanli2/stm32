@@ -72,6 +72,7 @@ void BL_PWM_init();
 void BL_PWM_deinit();
 void LCD_BUS_To_write(int write);
 void bus_to_lcd(int mode_to_lcd);
+void pre_cam_to_lcd();
 
 //管理LCD重要参数
 //默认为竖屏
@@ -1324,6 +1325,7 @@ int cam_dump_lines(u32 l)
 void cam_save_1_frame(u32 only_uart_dump)
 {
     fbfs=0;
+    pre_cam_to_lcd();
     if(cam_save_lines(0, 300, only_uart_dump))return;
     cam_save_lines(300, 480, only_uart_dump);
     memset(vbf, 0xff, 640*2);
@@ -1333,6 +1335,10 @@ void cam_save_1_frame(u32 only_uart_dump)
 void pre_cam_to_lcd()
 {
     bus_to_lcd(1);
+    lcd_clr_window(WHITE, 0, 0, 5, 479);
+    lcd_clr_window(BLACK, 6, 0, 10, 479);
+    lcd_clr_window(WHITE, 635, 0, 639, 479);
+    lcd_clr_window(BLACK, 631, 0, 634, 479);
 	LCD_SetWindows(0,0,639,479);   
     bus_to_lcd(0);
 }
