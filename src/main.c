@@ -177,12 +177,13 @@ int main()
     return 0;
 }
 
+#define FPM_LOW_LIMIT 4
 //called every 1/2 minute
 void cam_working_confirm()
 {
     static uint32_t last_g_fnn=0;
     if(cam_workingloop_on){
-        if((last_g_fnn+3)>g_fnn){
+        if((last_g_fnn+(FPM_LOW_LIMIT/2))>g_fnn){
             cam_workloop_stucked++;
         }
         last_g_fnn=g_fnn;

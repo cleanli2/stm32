@@ -1336,10 +1336,10 @@ void cam_save_1_frame(u32 only_uart_dump)
     abs_time=l_time;
     bus_to_lcd(1);
     lcd_lprintf(1, 645, 8, "%s", get_rtc_time(0));
-    lcd_lprintf(1, 645, 38, "gfnn=%d", g_fnn);
-    lcd_lprintf(1, 645, 68, "%d.%d fpm", fpm/10, fpm%10);
-    lcd_lprintf(1, 645, 98, "Stuck times:");
-    lcd_lprintf(2, 645, 128, "%d", cam_workloop_stucked);
+    lcd_lprintf(1, 645, 48, "gfnn=%d", g_fnn);
+    lcd_lprintf(1, 645, 88, "%d.%d fpm", fpm/10, fpm%10);
+    lcd_lprintf(1, 645, 128, "Stuck times:");
+    lcd_lprintf(2, 645, 168, "%d", cam_workloop_stucked);
     bus_to_lcd(0);
     pre_cam_to_lcd();
     if(cam_save_lines(0, 300, only_uart_dump))return;
