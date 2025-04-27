@@ -1322,9 +1322,25 @@ int cam_dump_lines(u32 l)
     return ret;
 
 }
+extern uint32_t g_fnn;
+extern int cam_workloop_stucked;
 void cam_save_1_frame(u32 only_uart_dump)
 {
     fbfs=0;
+    static uint64_t abs_time=0;
+    uint64_t l_time=get_system_us();
+    int fpm=0;
+    if(abs_time!=0){
+        fpm=600000000/(l_time-abs_time);
+    }
+    abs_time=l_time;
+    bus_to_lcd(1);
+    lcd_lprintf(1, 645, 8, "%s", get_rtc_time(0));
+    lcd_lprintf(1, 645, 38, "gfnn=%d", g_fnn);
+    lcd_lprintf(1, 645, 68, "%d.%d fpm", fpm/10, fpm%10);
+    lcd_lprintf(1, 645, 98, "Stuck times:");
+    lcd_lprintf(2, 645, 128, "%d", cam_workloop_stucked);
+    bus_to_lcd(0);
     pre_cam_to_lcd();
     if(cam_save_lines(0, 300, only_uart_dump))return;
     cam_save_lines(300, 480, only_uart_dump);

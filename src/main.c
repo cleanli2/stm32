@@ -85,6 +85,8 @@ uint8_t cam_r_reg(uint8_t addr);
 void cam_save_1_frame(u32 only_uart_dump);
 int cam_w_reg(uint8_t addr, uint8_t data);
 int loop_stop=0;
+int cam_workingloop_on=0;
+int cam_workloop_stucked=0;
 int main()
 {
     uint32_t end_loop=50;
@@ -114,6 +116,7 @@ int main()
     run_cmd_interface();
     lprintf_time("start working loop.\n");
     cam_init(7);
+    cam_workingloop_on=1;
     while(!loop_stop){
         slprintf(file_name, "V%d/YUV%d.BIN", g_fnn/100, g_fnn);
         if(g_fnn%20==0){
@@ -155,6 +158,7 @@ int main()
         //task log
         task_log(NULL);
     }
+    cam_workingloop_on=0;
     cam_deinit();
     lprintf_time("end working loop.\n");
     prepare_pic_trsf();
@@ -171,4 +175,16 @@ int main()
     power_off();
     while(1);
     return 0;
+}
+
+//called every 1/2 minute
+void cam_working_confirm()
+{
+    static uint32_t last_g_fnn=0;
+    if(cam_workingloop_on){
+        if((last_g_fnn+3)>g_fnn){
+            cam_workloop_stucked++;
+        }
+        last_g_fnn=g_fnn;
+    }
 }

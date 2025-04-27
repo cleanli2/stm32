@@ -255,6 +255,7 @@ u32 dt_us_last()
     return dt;
 }
 
+void cam_working_confirm();
 u32*TIM2_IRQHandler_local(u32*stack_data)
 {
     (void)stack_data;
@@ -269,6 +270,9 @@ u32*TIM2_IRQHandler_local(u32*stack_data)
 	//if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
     g_10ms_count++;
+    if((g_10ms_count%3000)==0){//30seconds
+        cam_working_confirm();
+    }
     sound_execute();
     //*(u32*)0xe000ed04=0x10000000;
     os_switch_trigger();
