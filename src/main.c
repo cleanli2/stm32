@@ -87,6 +87,7 @@ int cam_w_reg(uint8_t addr, uint8_t data);
 int loop_stop=0;
 int cam_workingloop_on=0;
 int cam_workloop_stucked=0;
+int stuck_gfnn[RECORD_CAM_STUCK_SIZE]={0};
 int main()
 {
     uint32_t end_loop=50;
@@ -184,6 +185,9 @@ void cam_working_confirm()
     static uint32_t last_g_fnn=0;
     if(cam_workingloop_on){
         if((last_g_fnn+(FPM_LOW_LIMIT/2))>g_fnn){
+            if(cam_workloop_stucked<RECORD_CAM_STUCK_SIZE){
+                stuck_gfnn[cam_workloop_stucked]=g_fnn;
+            }
             cam_workloop_stucked++;
         }
         last_g_fnn=g_fnn;
