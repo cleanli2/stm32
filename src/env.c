@@ -500,8 +500,15 @@ void find_log_write_addr()
     {
         if(0xff==SPI_Flash_Read_Byte(flash_log_write_addr))
         {
-            while(0xff==SPI_Flash_Read_Byte(--flash_log_write_addr));
-            flash_log_write_addr++;
+            uint32_t this_sector_start_addr=flash_log_write_addr-SPI_FLASH_SECTOR_SIZE+1;
+            do
+            {
+                flash_log_write_addr--;
+                if(0xff!=SPI_Flash_Read_Byte(flash_log_write_addr)){
+                    flash_log_write_addr++;
+                    break;
+                }
+            } while(flash_log_write_addr>this_sector_start_addr);
             break;
         }
         flash_log_write_addr+=SPI_FLASH_SECTOR_SIZE;
