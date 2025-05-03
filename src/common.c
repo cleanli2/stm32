@@ -812,6 +812,7 @@ void main_init(void)
 		  RCC_ClocksStatus.PCLK1_Frequency,
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
+  TP_Init();
   lprintf_time("SD init\n");
   SD_Init();
   {
