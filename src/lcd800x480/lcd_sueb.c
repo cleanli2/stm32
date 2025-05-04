@@ -1342,11 +1342,13 @@ void cam_save_1_frame(u32 only_uart_dump)
     lcd_lprintf(1, 645, 128, "Stuck times:");
     lcd_lprintf(2, 645, 168, "%d", cam_workloop_stucked);
     if(cam_workloop_stucked>0){
-        int py=208, sti=cam_workloop_stucked;
+        int py=208, sti=cam_workloop_stucked, cwsi=cam_workloop_stucked;
         if(sti>RECORD_CAM_STUCK_SIZE)sti=RECORD_CAM_STUCK_SIZE;
         while(sti--){
-            lcd_lprintf(1, 645, py, "%d", stuck_gfnn[sti]);
+            lcd_lprintf(1, 645, py, "stuck[%d]=%d", cwsi,
+                    stuck_gfnn[cwsi%RECORD_CAM_STUCK_SIZE]);
             py+=40;
+            cwsi--;
         }
     }
     bus_to_lcd(0);
