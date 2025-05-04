@@ -1725,6 +1725,7 @@ void bus_to_lcd(int mode_to_lcd)
         //cam data port end
     }
 }
+extern u32 g_pcf8574_hw;
 void cam_init(int choose)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -1766,6 +1767,14 @@ void cam_init(int choose)
 
     //cam_i2c_init();
     //cam_xclk_on();
+
+    //out of pwdn
+    if(g_pcf8574_hw){
+        //bit 7 of pcf8574 = cam pdwn
+        //bit 6 of pcf8574 = cam reset
+        lprintf("cam pdwn=0\n");
+        pcf8574t_writeData(0x7f);
+    }
     delay_ms(2);
     lprintf_time("cam reset return %x\n", cam_w_reg(0x12, 0x80));
     delay_ms(20);

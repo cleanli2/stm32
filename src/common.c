@@ -42,6 +42,7 @@ u32 interv_systick;
 u32 g_cam_r70p_e=0;
 u32 g_cam_r71p_e=0;
 u32 g_tlcd=0;
+u32 g_pcf8574_hw=0;
 static int sound_enable=1;
 static uint32_t g_10ms_count = 0;
 uint32_t g_ms_count = 0;
@@ -805,6 +806,19 @@ void main_init(void)
   get_mcu_id();
   lprintf_time("Version %s%s\n", VERSION, GIT_SHA1);
   get_rtc_time(0);
+
+  //pcf8574t
+  {
+      uint8_t t;
+      if(1==pcf8574t_readData1(&t)){
+          lprintf("pcf8574 on\r\n");
+          g_pcf8574_hw=1;
+      }
+      else{
+          lprintf("pcf8574 off\r\n");
+      }
+  }
+
   lprintf_time("%s\n", get_rtc_time(0));
   lprintf("clk %d %d %d %d %d Hz\n\r",
 		  RCC_ClocksStatus.SYSCLK_Frequency,
