@@ -121,6 +121,7 @@ void Enable_BL(int en)//µ„¡¡±≥π‚
 #define WRST GPIO_Pin_2
 
 
+#define EG_RRST 4
 #define EG_OE 5
 #define EG_RESET 6
 #define EG_PWDN 7
@@ -1216,12 +1217,18 @@ void reset_al422_read()
     //GPIO_ResetBits(AL422_WG,OE);
     //al422 rrst = 0
     GPIO_ResetBits(RRST_G,RRST);
+    if(g_pcf8574_hw){
+        pcf8574t_set(EG_RRST, 0);
+    }
     //rck=0
     GPIO_ResetBits(AL422_WG,RCK);
     //rck=1
     GPIO_SetBits(AL422_WG,RCK);
     //al422 rrst = 1
     GPIO_SetBits(RRST_G,RRST);
+    if(g_pcf8574_hw){
+        pcf8574t_set(EG_RRST, 1);
+    }
 
 }
 int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
@@ -1240,16 +1247,7 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
 
 
     //prepare read
-    //al422 oe = 0
-    //GPIO_ResetBits(AL422_WG,OE);
-    //al422 rrst = 0
-    GPIO_ResetBits(RRST_G,RRST);
-    //rck=0
-    GPIO_ResetBits(AL422_WG,RCK);
-    //rck=1
-    GPIO_SetBits(AL422_WG,RCK);
-    //al422 rrst = 1
-    GPIO_SetBits(RRST_G,RRST);
+    reset_al422_read();
 
     //prepare for read
     //al422 OE=0
@@ -1325,14 +1323,7 @@ int cam_dump_lines(u32 l)
     if(g_pcf8574_hw){
         pcf8574t_set(EG_OE, 0);
     }
-    //al422 rrst = 0
-    GPIO_ResetBits(RRST_G,RRST);
-    //rck=0
-    GPIO_ResetBits(AL422_WG,RCK);
-    //rck=1
-    GPIO_SetBits(AL422_WG,RCK);
-    //al422 rrst = 1
-    GPIO_SetBits(RRST_G,RRST);
+    reset_al422_read();
 
     cam_read_line(l,1);
 
@@ -1664,9 +1655,15 @@ void cam_al422(const char*ps, uint32_t p2)
     if(!strcmp(ps, "rrst")){
         if(p2){
             GPIO_SetBits(RRST_G,RRST);
+            if(g_pcf8574_hw){
+                pcf8574t_set(EG_RRST, 1);
+            }
         }
         else{
             GPIO_ResetBits(RRST_G,RRST);
+            if(g_pcf8574_hw){
+                pcf8574t_set(EG_RRST, 0);
+            }
         }
     }
     if(!strcmp(ps, "rck")){
