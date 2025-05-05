@@ -121,6 +121,7 @@ void Enable_BL(int en)//点亮背光
 #define WRST GPIO_Pin_2
 
 
+#define EG_STOP 3
 #define EG_RRST 4
 #define EG_OE 5
 #define EG_RESET 6
@@ -129,6 +130,7 @@ void Enable_BL(int en)//点亮背光
 extern u32 g_pcf8574_hw;
 u32 gs_eg_data=0xff;
 void  pcf8574t_set(int bit, int v);
+int pcf8574t_get(int bit);
 
 void i2c_init();
 uint8_t cam_r_reg(uint8_t addr);
@@ -1304,6 +1306,15 @@ quit:
     if(g_pcf8574_hw){
         pcf8574t_set(EG_OE, 1);
     }
+    if(g_pcf8574_hw){//stop handling
+        if(!pcf8574t_get(EG_STOP)){
+            delay_ms(5);
+            if(!pcf8574t_get(EG_STOP)){
+                lprintf("stop manually\r\n");
+                loop_stop=1;
+            }
+        }
+    }
     return ret;
 
 }
@@ -1767,6 +1778,13 @@ void  pcf8574t_set(int bit, int v)
         gs_eg_data&=~(1<<bit);
     }
     pcf8574t_writeData(gs_eg_data);
+}
+int pcf8574t_get(int bit)
+{
+    u8 tv=1;
+    pcf8574t_readData1(&tv);
+    tv>>=bit;
+    return tv&0x1;
 }
 void cam_init(int choose)
 {
