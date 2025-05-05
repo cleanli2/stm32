@@ -1112,11 +1112,6 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
 
     while(linen--){
         if(rec_count==0){
-            GPIO_ResetBits(AL422_WG,OE);
-            //rck=0
-            GPIO_ResetBits(AL422_WG,RCK);
-            //rck=1
-            GPIO_SetBits(AL422_WG,RCK);
         }
         while(rec_count<640*2){
             vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
@@ -1125,7 +1120,6 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
             //rck=0
             GPIO_ResetBits(AL422_WG,RCK);
             if(rec_count==640*2){
-                GPIO_SetBits(AL422_WG,OE);
             }
             //rck=1
             GPIO_SetBits(AL422_WG,RCK);
@@ -1201,6 +1195,8 @@ void end_al422_read()
     //disable output
     //al422 oe = 1
     GPIO_SetBits(AL422_WG,OE);
+    pcf8574t_writeData(0x7f);
+    lprintf("OE=1\r\n");
     //rck=0
     GPIO_ResetBits(AL422_WG,RCK);
     //rck=1
@@ -1249,6 +1245,13 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
     //al422 rrst = 1
     GPIO_SetBits(RRST_G,RRST);
 
+            GPIO_ResetBits(AL422_WG,OE);
+            pcf8574t_writeData(0x5f);
+            lprintf("OE=0\r\n");
+            //rck=0
+            GPIO_ResetBits(AL422_WG,RCK);
+            //rck=1
+            GPIO_SetBits(AL422_WG,RCK);
     for(w_start_line = ls; (u32)w_start_line <= le-rn; w_start_line+=rn){
         cam_read_line(w_start_line,only_uart_dump);
         if(TO_LCD==only_uart_dump)continue;
@@ -1288,8 +1291,13 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
         }
     }
 quit:
+                GPIO_SetBits(AL422_WG,OE);
+                pcf8574t_writeData(0x7f);
+                lprintf("OE=1\r\n");
     //al422 oe = 1
     GPIO_SetBits(AL422_WG,OE);
+    pcf8574t_writeData(0x7f);
+    lprintf("OE=1\r\n");
     return ret;
 
 }
@@ -1306,6 +1314,8 @@ int cam_dump_lines(u32 l)
     //prepare read
     //al422 oe = 0
     GPIO_ResetBits(AL422_WG,OE);
+    pcf8574t_writeData(0x5f);
+    lprintf("OE=0\r\n");
     //al422 rrst = 0
     GPIO_ResetBits(RRST_G,RRST);
     //rck=0
@@ -1319,6 +1329,8 @@ int cam_dump_lines(u32 l)
 
     //al422 oe = 1
     GPIO_SetBits(AL422_WG,OE);
+    pcf8574t_writeData(0x7f);
+    lprintf("OE=1\r\n");
     return ret;
 
 }
@@ -1628,9 +1640,13 @@ void cam_al422(const char*ps, uint32_t p2)
     if(!strcmp(ps, "oe")){
         if(p2){
             GPIO_SetBits(AL422_WG,OE);
+            lprintf("OE=1\r\n");
+            pcf8574t_writeData(0x7f);
         }
         else{
             GPIO_ResetBits(AL422_WG,OE);
+            lprintf("OE=0\r\n");
+            pcf8574t_writeData(0x5f);
         }
     }
     if(!strcmp(ps, "rrst")){
@@ -1774,6 +1790,7 @@ void cam_init(int choose)
     if(g_pcf8574_hw){
         //bit 7 of pcf8574 = cam pdwn
         //bit 6 of pcf8574 = cam reset
+        //bit 5 of pcf8574 = cam al422 OE
         lprintf("cam pdwn=0\n");
         pcf8574t_writeData(0x7f);
     }
