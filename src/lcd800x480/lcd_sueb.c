@@ -1369,8 +1369,8 @@ void cam_save_1_frame(u32 only_uart_dump)
         int py=208, sti=cam_workloop_stucked, cwsi=cam_workloop_stucked;
         if(sti>RECORD_CAM_STUCK_SIZE)sti=RECORD_CAM_STUCK_SIZE;
         while(sti--){
-            lcd_lprintf(1, 645, py, "stuck[%d]=%d", cwsi,
-                    stuck_gfnn[cwsi%RECORD_CAM_STUCK_SIZE]);
+            lcd_lprintf(1, 645, py, "stuck[%d]=%d", cwsi-1,
+                    stuck_gfnn[(cwsi-1)%RECORD_CAM_STUCK_SIZE]);
             py+=40;
             cwsi--;
         }
