@@ -1202,10 +1202,10 @@ void end_al422_read()
 {
     //disable output
     //al422 oe = 1
-    GPIO_SetBits(AL422_WG,OE);
     if(g_pcf8574_hw){
         pcf8574t_set(EG_OE, 1);
     }
+    GPIO_SetBits(AL422_WG,OE);
     //rck=0
     GPIO_ResetBits(AL422_WG,RCK);
     //rck=1
@@ -1218,19 +1218,19 @@ void reset_al422_read()
     //al422 oe = 0
     //GPIO_ResetBits(AL422_WG,OE);
     //al422 rrst = 0
-    GPIO_ResetBits(RRST_G,RRST);
     if(g_pcf8574_hw){
         pcf8574t_set(EG_RRST, 0);
     }
+    GPIO_ResetBits(RRST_G,RRST);
     //rck=0
     GPIO_ResetBits(AL422_WG,RCK);
     //rck=1
     GPIO_SetBits(AL422_WG,RCK);
     //al422 rrst = 1
-    GPIO_SetBits(RRST_G,RRST);
     if(g_pcf8574_hw){
         pcf8574t_set(EG_RRST, 1);
     }
+    GPIO_SetBits(RRST_G,RRST);
 
 }
 int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
@@ -1253,10 +1253,10 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
 
     //prepare for read
     //al422 OE=0
-    GPIO_ResetBits(AL422_WG,OE);
     if(g_pcf8574_hw){
         pcf8574t_set(EG_OE, 0);
     }
+    GPIO_ResetBits(AL422_WG,OE);
     //rck=0
     GPIO_ResetBits(AL422_WG,RCK);
     //rck=1, OE take effect after one read clock
@@ -1302,10 +1302,10 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
     }
 quit:
     //al422 oe = 1
-    GPIO_SetBits(AL422_WG,OE);
     if(g_pcf8574_hw){
         pcf8574t_set(EG_OE, 1);
     }
+    GPIO_SetBits(AL422_WG,OE);
     if(g_pcf8574_hw){//stop handling
         if(!pcf8574t_get(EG_STOP)){
             delay_ms(5);
@@ -1330,19 +1330,19 @@ int cam_dump_lines(u32 l)
 
     //prepare read
     //al422 oe = 0
-    GPIO_ResetBits(AL422_WG,OE);
     if(g_pcf8574_hw){
         pcf8574t_set(EG_OE, 0);
     }
+    GPIO_ResetBits(AL422_WG,OE);
     reset_al422_read();
 
     cam_read_line(l,1);
 
     //al422 oe = 1
-    GPIO_SetBits(AL422_WG,OE);
     if(g_pcf8574_hw){
         pcf8574t_set(EG_OE, 1);
     }
+    GPIO_SetBits(AL422_WG,OE);
     return ret;
 
 }
@@ -1651,30 +1651,30 @@ void cam_al422(const char*ps, uint32_t p2)
     }
     if(!strcmp(ps, "oe")){
         if(p2){
-            GPIO_SetBits(AL422_WG,OE);
             if(g_pcf8574_hw){
                 pcf8574t_set(EG_OE, 1);
             }
+            GPIO_SetBits(AL422_WG,OE);
         }
         else{
-            GPIO_ResetBits(AL422_WG,OE);
             if(g_pcf8574_hw){
                 pcf8574t_set(EG_OE, 0);
             }
+            GPIO_ResetBits(AL422_WG,OE);
         }
     }
     if(!strcmp(ps, "rrst")){
         if(p2){
-            GPIO_SetBits(RRST_G,RRST);
             if(g_pcf8574_hw){
                 pcf8574t_set(EG_RRST, 1);
             }
+            GPIO_SetBits(RRST_G,RRST);
         }
         else{
-            GPIO_ResetBits(RRST_G,RRST);
             if(g_pcf8574_hw){
                 pcf8574t_set(EG_RRST, 0);
             }
+            GPIO_ResetBits(RRST_G,RRST);
         }
     }
     if(!strcmp(ps, "rck")){
