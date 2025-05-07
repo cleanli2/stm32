@@ -1349,6 +1349,8 @@ int cam_dump_lines(u32 l)
 extern uint32_t g_fnn;
 extern int cam_workloop_stucked;
 extern int stuck_gfnn[RECORD_CAM_STUCK_SIZE];
+extern uint32_t v_bat;
+extern int32_t g_ict;
 void cam_save_1_frame(u32 only_uart_dump)
 {
     fbfs=0;
@@ -1361,17 +1363,18 @@ void cam_save_1_frame(u32 only_uart_dump)
     abs_time=l_time;
     bus_to_lcd(1);
     lcd_lprintf(1, 645, 8, "%s", get_rtc_time(0));
-    lcd_lprintf(1, 645, 48, "gfnn=%d", g_fnn);
-    lcd_lprintf(1, 645, 88, "%d.%d fpm", fpm/10, fpm%10);
-    lcd_lprintf(1, 645, 128, "Stuck times:");
-    lcd_lprintf(2, 645, 168, "%d", cam_workloop_stucked);
+    lcd_lprintf(1, 645, 43, "gfnn=%d", g_fnn);
+    lcd_lprintf(1, 645, 78, "%d.%d fpm", fpm/10, fpm%10);
+    lcd_lprintf(1, 645, 113, "%dmv,%dmA", v_bat, g_ict);
+    lcd_lprintf(1, 645, 148, "Stuck times:");
+    lcd_lprintf(2, 645, 183, "%d", cam_workloop_stucked);
     if(cam_workloop_stucked>0){
-        int py=208, sti=cam_workloop_stucked, cwsi=cam_workloop_stucked;
+        int py=218, sti=cam_workloop_stucked, cwsi=cam_workloop_stucked;
         if(sti>RECORD_CAM_STUCK_SIZE)sti=RECORD_CAM_STUCK_SIZE;
         while(sti--){
             lcd_lprintf(1, 645, py, "stuck[%d]=%d", cwsi-1,
                     stuck_gfnn[(cwsi-1)%RECORD_CAM_STUCK_SIZE]);
-            py+=40;
+            py+=35;
             cwsi--;
         }
     }

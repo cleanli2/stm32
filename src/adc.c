@@ -7,7 +7,8 @@
 #else
 #define Debug_LOG_ADC(...)
 #endif
-uint32_t v_bat = 0;
+uint32_t v_bat = 0, v_core=0;
+int32_t g_ict=0;
 
 static int adc_inited = 0;
 static int adci_cali = 0;
@@ -122,7 +123,7 @@ int adc_test()
 {
     int ret = 0;
 #ifdef POWER_MONITOR
-    uint32_t v_core, i_currt;
+    uint32_t i_currt;
     int32_t i;
     char in_charge;
 
@@ -134,6 +135,7 @@ int adc_test()
     }
 
     get_myadc_value(&v_core, &v_bat, &i);
+    g_ict=i;
     if(i>=0){
         in_charge = '+';
         i_currt = i;
