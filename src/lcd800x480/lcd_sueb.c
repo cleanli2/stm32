@@ -73,6 +73,7 @@ void BL_PWM_deinit();
 void LCD_BUS_To_write(int write);
 void bus_to_lcd(int mode_to_lcd);
 void pre_cam_to_lcd();
+int g_last_call_readline=0;
 
 //管理LCD重要参数
 //默认为竖屏
@@ -1123,10 +1124,26 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
     linect=in_dump_line;
 
     while(linen--){
+        if(rec_count==0){
+            if(g_pcf8574_hw){
+                pcf8574t_set(EG_OE, 0);
+            }
+            GPIO_ResetBits(AL422_WG,OE);
+            //rck=0
+            GPIO_ResetBits(AL422_WG,RCK);
+            //rck=1
+            GPIO_SetBits(AL422_WG,RCK);
+        }
         while(rec_count<640*2){
             vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
             rec_count++;
 
+            if(rec_count==640*2){
+                if(g_pcf8574_hw){
+                    pcf8574t_set(EG_OE, 0);
+                }
+                GPIO_SetBits(AL422_WG,OE);
+            }
             //rck=0
             GPIO_ResetBits(AL422_WG,RCK);
             //rck=1
@@ -1251,6 +1268,7 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
     //prepare read
     reset_al422_read();
 
+#if 0
     //prepare for read
     //al422 OE=0
     if(g_pcf8574_hw){
@@ -1261,6 +1279,7 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
     GPIO_ResetBits(AL422_WG,RCK);
     //rck=1, OE take effect after one read clock
     GPIO_SetBits(AL422_WG,RCK);
+#endif
 
     for(w_start_line = ls; (u32)w_start_line <= le-rn; w_start_line+=rn){
         cam_read_line(w_start_line,only_uart_dump);
@@ -1306,10 +1325,12 @@ quit:
         pcf8574t_set(EG_OE, 1);
     }
     GPIO_SetBits(AL422_WG,OE);
+#if 0
     //rck=0
     GPIO_ResetBits(AL422_WG,RCK);
     //rck=1, OE take effect after one read clock
     GPIO_SetBits(AL422_WG,RCK);
+#endif
 
     if(g_pcf8574_hw){//stop handling
         if(!pcf8574t_get(EG_STOP)){
