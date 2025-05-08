@@ -540,6 +540,9 @@ void log_to_flash(const char*lgbuf, u32 ri, u32 len, u32 buf_size)
         else{
             buf_left = len;
         }
+        if(flash_log_write_addr >= SPI_FLASH_LOG_END){
+            flash_log_write_addr = SPI_FLASH_LOG_START;
+        }
         flash_left = SPI_FLASH_LOG_END - flash_log_write_addr;
         w_len = MIN(buf_left, flash_left);
         if(flash_log_write_addr >= SPI_FLASH_LOG_END || flash_log_write_addr<SPI_FLASH_LOG_START){
@@ -555,9 +558,6 @@ void log_to_flash(const char*lgbuf, u32 ri, u32 len, u32 buf_size)
         len -= w_len;
         if(0 == len){
             break;
-        }
-        if(flash_log_write_addr >= SPI_FLASH_LOG_END){
-            flash_log_write_addr = SPI_FLASH_LOG_START;
         }
         if(ri >= buf_size){
             ri = 0;
