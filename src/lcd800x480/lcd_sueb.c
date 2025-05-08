@@ -1306,6 +1306,11 @@ quit:
         pcf8574t_set(EG_OE, 1);
     }
     GPIO_SetBits(AL422_WG,OE);
+    //rck=0
+    GPIO_ResetBits(AL422_WG,RCK);
+    //rck=1, OE take effect after one read clock
+    GPIO_SetBits(AL422_WG,RCK);
+
     if(g_pcf8574_hw){//stop handling
         if(!pcf8574t_get(EG_STOP)){
             delay_ms(5);
