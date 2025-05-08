@@ -1124,10 +1124,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
     linect=in_dump_line;
 
     while(linen--){
-        if(rec_count==0){
-            if(g_pcf8574_hw){
-                pcf8574t_set(EG_OE, 0);
-            }
+        if(rec_count==0 && !g_pcf8574_hw){
             GPIO_ResetBits(AL422_WG,OE);
             //rck=0
             GPIO_ResetBits(AL422_WG,RCK);
@@ -1138,10 +1135,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
             vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
             rec_count++;
 
-            if(rec_count==640*2){
-                if(g_pcf8574_hw){
-                    pcf8574t_set(EG_OE, 0);
-                }
+            if(rec_count==640*2 && !g_pcf8574_hw){
                 GPIO_SetBits(AL422_WG,OE);
             }
             //rck=0
@@ -1268,18 +1262,15 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
     //prepare read
     reset_al422_read();
 
-#if 0
     //prepare for read
     //al422 OE=0
     if(g_pcf8574_hw){
         pcf8574t_set(EG_OE, 0);
+        //rck=0
+        GPIO_ResetBits(AL422_WG,RCK);
+        //rck=1, OE take effect after one read clock
+        GPIO_SetBits(AL422_WG,RCK);
     }
-    GPIO_ResetBits(AL422_WG,OE);
-    //rck=0
-    GPIO_ResetBits(AL422_WG,RCK);
-    //rck=1, OE take effect after one read clock
-    GPIO_SetBits(AL422_WG,RCK);
-#endif
 
     for(w_start_line = ls; (u32)w_start_line <= le-rn; w_start_line+=rn){
         cam_read_line(w_start_line,only_uart_dump);
