@@ -93,7 +93,10 @@ void file_to_lcd();
 void check_ui()
 {
     uint s_fnn=g_fnn;
+    uint16_t touch_x, touch_y;
+    uint16_t touch_status = 0, lastts=0;
     char fs[19];
+    int touch_up=0;
     while(s_fnn){
         slprintf(fs, "V%d/YUV%d.BIN", s_fnn/100, s_fnn);
         if(FS_OK==open_file_r(fs)){
@@ -109,6 +112,25 @@ void check_ui()
         }
         if(con_is_recved()){
             break;
+        }
+        lastts=touch_status;
+        if(get_TP_point(&touch_x, &touch_y)){
+            touch_status = 1;
+        }
+        else{
+            touch_status = 0;
+            if(lastts==1){
+                touch_up=1;
+            }
+            else{
+                touch_up=0;
+            }
+        }
+        if(touch_status==1){
+            lprintf("touch down %d %d\r\n", touch_x, touch_y);
+            if(touch_x==1022 && touch_y==0){
+                break;
+            }
         }
         s_fnn--;
     }
