@@ -90,13 +90,43 @@ int cam_workloop_stucked=0;
 int stuck_gfnn[RECORD_CAM_STUCK_SIZE]={0};
 void file_to_lcd();
 
+#define CAMBT_X 660
+#define CAMBT_Y 80
+#define CAMBT_W 50
+#define CAMBT_H 50
+#define CAMBT_I 20
+char ss;
+char camss_table[]={'1', '2', 'q', 'w', 'a', 's', 'z', 'x', '0'};
+void cambt_detect(void*ip)
+{
+    int i = *(int*)ip;
+    lprintf("cambt:%d\r\n", i);
+    if((uint32_t)i>sizeof(camss_table))return;
+    ss=camss_table[i];
+}
+button_t camui_button[]={
+    {CAMBT_X, CAMBT_Y, CAMBT_W,  CAMBT_H, cambt_detect, -1, 0, NULL, 0, NULL},
+    {CAMBT_X+CAMBT_W+CAMBT_I, CAMBT_Y, CAMBT_W,  CAMBT_H, cambt_detect, -1, 0, NULL, 0, NULL},
+    {CAMBT_X, CAMBT_Y+1*(CAMBT_H+CAMBT_I), CAMBT_W,  CAMBT_H, cambt_detect, -1, 0, NULL, 0, NULL},
+    {CAMBT_X+CAMBT_W+CAMBT_I, CAMBT_Y+1*(CAMBT_H+CAMBT_I), CAMBT_W,  CAMBT_H, cambt_detect, -1, 0, NULL, 0, NULL},
+    {CAMBT_X, CAMBT_Y+2*(CAMBT_H+CAMBT_I), CAMBT_W,  CAMBT_H, cambt_detect, -1, 0, NULL, 0, NULL},
+    {CAMBT_X+CAMBT_W+CAMBT_I, CAMBT_Y+2*(CAMBT_H+CAMBT_I), CAMBT_W,  CAMBT_H, cambt_detect, -1, 0, NULL, 0, NULL},
+    {CAMBT_X, CAMBT_Y+3*(CAMBT_H+CAMBT_I), CAMBT_W,  CAMBT_H, cambt_detect, -1, 0, NULL, 0, NULL},
+    {CAMBT_X+CAMBT_W+CAMBT_I, CAMBT_Y+3*(CAMBT_H+CAMBT_I), CAMBT_W,  CAMBT_H, cambt_detect, -1, 0, NULL, 0, NULL},
+    {CAMBT_X, CAMBT_Y+4*(CAMBT_H+CAMBT_I), CAMBT_W,  CAMBT_H, cambt_detect, -1, 0, NULL, 0, NULL},
+    {-1,-1,-1, -1,NULL, -1, 0, NULL, 1, NULL},
+};
+
+void draw_button(button_t*pbt);
+void process_button(ui_t* uif, button_t*pbt);
+void bus_to_lcd(int mode_to_lcd);
 void check_ui()
 {
-    char ss;
     int s_fnn=g_fnn;
     uint16_t touch_x, touch_y;
     uint16_t touch_status = 0, lastts=0;
     char fs[19];
+    draw_button(camui_button);
     //int touch_up=0;
     while(s_fnn){
         lcd_lprintf(1, 645, 43, "sfnn=%d", s_fnn);
@@ -105,6 +135,7 @@ void check_ui()
             lprintf("open file ok\n");
             file_to_lcd();
             close_file();
+            bus_to_lcd(1);
             lprintf("\n===============file %s to lcd done\n", fs);
             lprintf("Anykey quit\r\n");
         }
@@ -133,6 +164,7 @@ void check_ui()
             if(touch_x==1022 && touch_y==0){
                 break;
             }
+            process_button(NULL, camui_button);
         }
         switch(ss){
             case '1':
@@ -170,6 +202,8 @@ void check_ui()
             default:
                 lcd_lprintf(1, 645, 5, "                 ");
         }
+        if(ss=='0')break;
+        ss=' ';
         s_fnn--;
         if(s_fnn<0){
             s_fnn+=9999;
@@ -178,6 +212,7 @@ void check_ui()
             s_fnn-=10000;
         }
     }
+    LCD_Clear(WHITE);	//fill all screen with some color
 }
 int main()
 {

@@ -1244,8 +1244,10 @@ void update_prgb(ui_t* uif, prgb_t*pip)
 
 void process_button(ui_t* uif, button_t*pbt)
 {
+    int i=-1;
     uint16_t x = cached_touch_x, y = cached_touch_y;
     while(pbt->x >=0 ){
+        i++;
         if(pbt->disable){
             pbt++;
             continue;
@@ -1264,11 +1266,11 @@ void process_button(ui_t* uif, button_t*pbt)
             udelay(100*1000);
             Proxy_draw_sq(pbt->x, pbt->y, pbt->x+pbt->w, pbt->y+pbt->h, 0xffff);
 #endif
-            if(pbt->need_re_init_ui){
+            if(pbt->need_re_init_ui && uif){
                 uif->ui_init(uif);
             }
             if(pbt->click_func){
-                pbt->click_func(NULL);
+                pbt->click_func(&i);
             }
             lprintf_time("uigot %x\n", pbt->ui_goto);
             if(pbt->ui_goto != -1){

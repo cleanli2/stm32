@@ -60,6 +60,10 @@ void Proxy_draw_sq(int x1, int y1, int x2, int y2, int color)
 {
     disp_func_para*rbdpp;
 
+    if(!os_is_running){
+        draw_sq(x1, y1, x2, y2, color);
+        return;
+    }
     os_lock(&oslk_disp_para);
     rbdpp=RB_W_GET_wait(disp_func_para, rb_disp_para);
     rbdpp->type = DISPFUNC_DRAW_SQ;
