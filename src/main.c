@@ -88,6 +88,31 @@ int loop_stop=0;
 int cam_workingloop_on=0;
 int cam_workloop_stucked=0;
 int stuck_gfnn[RECORD_CAM_STUCK_SIZE]={0};
+void file_to_lcd();
+
+void check_ui()
+{
+    uint s_fnn=g_fnn;
+    char fs[19];
+    while(s_fnn){
+        slprintf(fs, "V%d/YUV%d.BIN", s_fnn/100, s_fnn);
+        if(FS_OK==open_file_r(fs)){
+            lprintf("open file ok\n");
+            file_to_lcd();
+            close_file();
+            lprintf("\n===============file %s to lcd done\n", fs);
+            lprintf("Anykey quit\r\n");
+        }
+        else{
+            lprintf("open file fail:%s\n", fs);
+            return;
+        }
+        if(con_is_recved()){
+            break;
+        }
+        s_fnn--;
+    }
+}
 int main()
 {
     uint32_t end_loop=50;
@@ -115,6 +140,7 @@ int main()
             SPI_FLASH_LOG_START, SPI_FLASH_LOG_END, SPI_FLASH_LOG_SIZE);
     task_log(NULL);
     run_cmd_interface();
+    check_ui();
     lprintf_time("start working loop.\n");
     cam_init(7);
     cam_workingloop_on=1;
