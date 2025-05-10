@@ -161,6 +161,8 @@ void check_ui()
         }
         if(touch_status==1){
             lprintf("touch down %d %d\r\n", touch_x, touch_y);
+            cached_touch_x=800-touch_y;
+            cached_touch_y=touch_x;
             if(touch_x==1022 && touch_y==0){
                 break;
             }
