@@ -93,7 +93,7 @@ void file_to_lcd();
 void check_ui()
 {
     char ss;
-    uint s_fnn=g_fnn;
+    int s_fnn=g_fnn;
     uint16_t touch_x, touch_y;
     uint16_t touch_status = 0, lastts=0;
     char fs[19];
@@ -137,30 +137,46 @@ void check_ui()
         switch(ss){
             case '1':
                 s_fnn--;
+                lcd_lprintf(1, 645, 5, "back 1 frame");
                 break;
             case '2':
                 s_fnn+=2;
+                lcd_lprintf(1, 645, 5, "forward 1 frame");
                 break;
             case 'q':
                 s_fnn-=8;
+                lcd_lprintf(1, 645, 5, "back 1 min");
                 break;
             case 'w':
                 s_fnn+=10;
+                lcd_lprintf(1, 645, 5, "forward 1 min");
                 break;
             case 'a':
                 s_fnn-=77;
+                lcd_lprintf(1, 645, 5, "back 10 min");
                 break;
             case 's':
                 s_fnn+=79;
+                lcd_lprintf(1, 645, 5, "forward 10 min");
                 break;
             case 'z':
                 s_fnn-=462;
+                lcd_lprintf(1, 645, 5, "back 1 hour");
                 break;
             case 'x':
                 s_fnn+=464;
+                lcd_lprintf(1, 645, 5, "forward 1 hour");
                 break;
+            default:
+                lcd_lprintf(1, 645, 5, "                 ");
         }
         s_fnn--;
+        if(s_fnn<0){
+            s_fnn+=9999;
+        }
+        if(s_fnn>9999){
+            s_fnn-=10000;
+        }
     }
 }
 int main()
