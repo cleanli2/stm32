@@ -92,12 +92,14 @@ void file_to_lcd();
 
 void check_ui()
 {
+    char ss;
     uint s_fnn=g_fnn;
     uint16_t touch_x, touch_y;
     uint16_t touch_status = 0, lastts=0;
     char fs[19];
-    int touch_up=0;
+    //int touch_up=0;
     while(s_fnn){
+        lcd_lprintf(1, 645, 43, "sfnn=%d", s_fnn);
         slprintf(fs, "V%d/YUV%d.BIN", s_fnn/100, s_fnn);
         if(FS_OK==open_file_r(fs)){
             lprintf("open file ok\n");
@@ -111,7 +113,7 @@ void check_ui()
             return;
         }
         if(con_is_recved()){
-            break;
+            ss=con_recv();
         }
         lastts=touch_status;
         if(get_TP_point(&touch_x, &touch_y)){
@@ -120,10 +122,10 @@ void check_ui()
         else{
             touch_status = 0;
             if(lastts==1){
-                touch_up=1;
+                //touch_up=1;
             }
             else{
-                touch_up=0;
+                //touch_up=0;
             }
         }
         if(touch_status==1){
@@ -131,6 +133,32 @@ void check_ui()
             if(touch_x==1022 && touch_y==0){
                 break;
             }
+        }
+        switch(ss){
+            case '1':
+                s_fnn--;
+                break;
+            case '2':
+                s_fnn+=2;
+                break;
+            case 'q':
+                s_fnn-=8;
+                break;
+            case 'w':
+                s_fnn+=10;
+                break;
+            case 'a':
+                s_fnn-=77;
+                break;
+            case 's':
+                s_fnn+=79;
+                break;
+            case 'z':
+                s_fnn-=462;
+                break;
+            case 'x':
+                s_fnn+=464;
+                break;
         }
         s_fnn--;
     }
