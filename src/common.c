@@ -870,6 +870,17 @@ void main_init(void)
       }
   }
 #endif
+  //pcf8574t
+  {
+      uint8_t t;
+      if(1==pcf8574t_readData1(&t)){
+          lprintf("pcf8574 on\r\n");
+      }
+      else{
+          lprintf("pcf8574 off\r\n");
+      }
+  }
+
 }
 
 void soft_reset_system()

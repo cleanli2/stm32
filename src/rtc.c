@@ -674,3 +674,34 @@ void do_time_correct()
         lprintf_time("corrected time sec %d, out of range, wait next\n", t_s);
     }
 }
+
+uint8_t pcf8574t_writeData(uchar mdata)
+{
+    uint8_t ret;
+    Start();
+    ret=writebyte(0x40); /*Ğ´ÃüÁî*/
+    if(ret==0)goto err;
+    ret=writebyte(mdata); /*Ğ´Êı¾İ*/
+    Stop();
+    return ret;
+err:
+    Stop();
+    lprintf("pcf8574t writeData data %b error\n", mdata);
+    return ret;
+}
+uint8_t pcf8574t_readData1(uchar * buff) /*¶à×Ö½Ú*/
+{  
+    uint8_t ret;
+    Start();
+    ret=writebyte(0x41); /*¶ÁÃüÁî*/
+    if(ret==0){
+        lprintf("pcf8574t readData data error\n");
+        goto err;
+    }
+    buff[0]=Readbyte();
+    WriteACK(1);
+    return ret;
+err:
+    Stop();
+    return ret;
+}  
