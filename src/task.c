@@ -6,8 +6,9 @@
 #include "ui.h"
 #include "task.h"
 
+#define KEYBUF_SIZE 32
 unsigned int keypressed=0;
-unsigned int keyvalue=0;
+uint8_t keyvalue[KEYBUF_SIZE]={0};
 void keyboard_main();
 
 uint last_count_1s = 0;
@@ -568,4 +569,13 @@ int pcf8574t_get(int bit)
 }
 void keyboard_main()
 {
+    int i, j;
+    u8 tv=1;
+    for(i=0;i<5;i++){
+        pcf8574t_set(i, 0);
+        pcf8574t_readData1(1, &tv);
+        if(tv&0xf != 0xf){
+            lprintf("key pressed\r\n");
+        }
+    }
 }
