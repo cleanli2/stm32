@@ -885,6 +885,7 @@ void main_init(void)
       else{
           lprintf("pcf8574 1 not available\r\n");
       }
+      pcf8574t_init();
   }
 
 }

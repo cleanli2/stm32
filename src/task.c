@@ -6,6 +6,10 @@
 #include "ui.h"
 #include "task.h"
 
+unsigned int keypressed=0;
+unsigned int keyvalue=0;
+void keyboard_main();
+
 uint last_count_1s = 0;
 uint last_count_10ms = 0;
 uint count_1s=0;
@@ -530,78 +534,38 @@ void task_misc(struct task*vp)
             }
         }
     }
-    //touch screen
-    int get_touch_size();
-    uint32_t get_touch();
-#if 1//touch pool enable
-    if(get_touch_size()>0){
-        uint32_t t=get_touch();
-        uint16_t *tmp16p=(uint16_t*)&t;
-        touch_x=tmp16p[0];
-        touch_y=tmp16p[1];
-        cached_touch_x = touch_x;
-        cached_touch_y = touch_y;
-        no_key_down_ct_lcd = 0;
-        no_key_down_ct = 0;
-        enable_power_save(false);
-        cur_task_event_flag |= 1<<EVENT_TOUCH_UP;
-        //TP_Draw_Big_Point(draw_x,draw_y,WHITE);
-        //TP_Draw_Big_Point(cached_touch_x,cached_touch_y,BLACK);
-        draw_x = cached_touch_x;
-        draw_y = cached_touch_y;
-        lprintf_time("tpup:%d,%d\n", (uint32_t)draw_x, (uint32_t)draw_y);
-        if(g_flag_1s){
-            no_key_down_ct++;
-            if(save_power_mode){
-                no_key_down_ct_lcd++;
-            }
-            if(no_key_down_ct > NO_KEY_DOWN_PWSAVE_MAX){
-                if(!save_power_mode){
-                    enable_power_save(true);
-                }
-            }
-            if(no_key_down_ct > NO_KEY_DOWN_CT_MAX){
-                cur_task_event_flag |= 1<<EVENT_NOKEYCT_MAXREACHED;
-                no_key_down_ct = 0;
-            }
-        }
-    }
-#else
-    cached_touch_x = touch_x;
-    cached_touch_y = touch_y;
-    last_touch_status = touch_status;
-    if(get_TP_point(&touch_x, &touch_y)){
-        touch_status = 1;
-        cur_task_event_flag |= 1<<EVENT_TOUCH_DOWN;
-        no_key_down_ct_lcd = 0;
-        no_key_down_ct = 0;
-        enable_power_save(false);
+    //getkey
+    keyboard_main();
+}
+
+//keyboard of pcf
+uint8_t gs_eg_data[2]={0xff, 0xff};
+void pcf8574t_init()
+{
+    gs_eg_data[0] = 0xff;
+    gs_eg_data[1] = 0x0f;
+    pcf8574t_writeData(0, gs_eg_data[0]);
+    pcf8574t_writeData(1, gs_eg_data[1]);
+}
+void  pcf8574t_set(int bit, int v)
+{
+    int index=bit/8;
+    if(v){//set 1
+        gs_eg_data[index]|=1<<bit;
     }
     else{
-        touch_status = 0;
-        if(last_touch_status == 1){
-            cur_task_event_flag |= 1<<EVENT_TOUCH_UP;
-            //TP_Draw_Big_Point(draw_x,draw_y,WHITE);
-            //TP_Draw_Big_Point(cached_touch_x,cached_touch_y,BLACK);
-            draw_x = cached_touch_x;
-            draw_y = cached_touch_y;
-            lprintf_time("tpup:%d,%d\n", (uint32_t)draw_x, (uint32_t)draw_y);
-        }
-        if(g_flag_1s){
-            no_key_down_ct++;
-            if(save_power_mode){
-                no_key_down_ct_lcd++;
-            }
-            if(no_key_down_ct > NO_KEY_DOWN_PWSAVE_MAX){
-                if(!save_power_mode){
-                    enable_power_save(true);
-                }
-            }
-            if(no_key_down_ct > NO_KEY_DOWN_CT_MAX){
-                cur_task_event_flag |= 1<<EVENT_NOKEYCT_MAXREACHED;
-                no_key_down_ct = 0;
-            }
-        }
+        gs_eg_data[index]&=~(1<<bit);
     }
-#endif
+    pcf8574t_writeData(index, gs_eg_data[index]);
+}
+int pcf8574t_get(int bit)
+{
+    u8 tv=1;
+    int index=bit/8;
+    pcf8574t_readData1(index, &tv);
+    tv>>=bit;
+    return tv&0x1;
+}
+void keyboard_main()
+{
 }

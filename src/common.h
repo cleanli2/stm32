@@ -50,6 +50,7 @@ void Dac1_DeInit(void);
 void dac_set_freq(uint32_t freq);
 uint8_t pcf8574t_writeData(int di, uint8_t mdata);
 uint8_t pcf8574t_readData1(int di, uint8_t * buff);
+void pcf8574t_init();
 
 #define LED_R_C 0x1
 #define LED_Y_C 0x2
