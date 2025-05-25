@@ -788,6 +788,7 @@ void GUI_DrawFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 char* get_f24_cch_mask(const char*cch);
 void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode,int scale)
 {
+#if 0
     unsigned char *Msk, mask;
     int tmpc1, tmpc2;
     (void)mode;
@@ -828,6 +829,7 @@ void GUI_DrawZikuFont24(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode,int 
     }
 
     LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//恢复窗口为全屏  
+#endif
 }
 
 /*****************************************************************************
@@ -1118,6 +1120,7 @@ void Gui_Drawbmp16(u16 x,u16 y,u16 w,u16 h,const unsigned char *p) //显示40*40 Q
 }
 
 /*****************font24 cache******************/
+#if 0
 #define F24_CCH_SIZE 512
 char font24_cache[F24_CCH_SIZE][72];
 
@@ -1191,3 +1194,4 @@ char* get_f24_cch_mask(const char*cch)
     f24map[0].cch_v=*up;
     return font24_cache[f24map[0].cch_idx];
 }
+#endif

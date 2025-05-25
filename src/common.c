@@ -713,6 +713,7 @@ void main_init(void)
 		  RCC_ClocksStatus.PCLK1_Frequency,
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
+#if 0
   lprintf_time("lcd init\n");
   lcd_sueb_init(0);
   lprintf_time("lcd init done.\n");
@@ -723,6 +724,7 @@ void main_init(void)
   lprintf("w25 flash ID:%x\n", SPI_Flash_ReadID());
   TP_Init();
   f24map_init();
+#endif
 
   /*1us/timer_count, 10ms/timer_intrpt*/
   //while (looptimes--)
