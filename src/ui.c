@@ -2236,6 +2236,7 @@ void elock_ui_init(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     (void)uif;
+    lprintf("elock enter\r\n");
     common_ui_init(vp);
     ui_buf[0] = 0;//flag
     ui_buf[1] = 0;//input
@@ -2251,6 +2252,9 @@ void elock_ui_process_event(void*vp)
 {
     ui_t* uif =(ui_t*)vp;
     (void)uif;
+    if(g_flag_1s){
+        lprintf("1 second tick\r\n");
+    }
     common_process_event(vp);
 }
 
@@ -3294,7 +3298,7 @@ void ui_start()
 #else
     lprintf_time("ui small_screen start\n");
 #endif
-    memcpy(&working_ui_t, &ui_list[0], sizeof(ui_t));
+    memcpy(&working_ui_t, &ui_list[UI_ELOCK], sizeof(ui_t));
     if(get_env_uint("soundon", 0)){
         enable_sound(1);
     }
