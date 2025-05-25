@@ -567,15 +567,37 @@ int pcf8574t_get(int bit)
     tv>>=bit;
     return tv&0x1;
 }
+uint8_t g_key_p=0;
 void keyboard_main()
 {
     int i, j;
     u8 tv=1;
     for(i=0;i<5;i++){
         pcf8574t_set(i, 0);
-        pcf8574t_readData1(1, &tv);
-        if(tv&0xf != 0xf){
-            lprintf("key pressed\r\n");
+        for(j=8;j<12;j++){
+            if(!pcf8574t_get(j)){
+                keyvalue[g_key_p++]=i*4+j;
+                if(g_key_p>KEYBUF_SIZE){
+                    g_key_p=0;
+                }
+            }
         }
+    }
+}
+int get_keypressed()
+{
+    static int lastkeyvalue=0xff;
+    for(int i=0;i<KEYBUF_SIZE-1;i++){
+        if(keyvalue[i]!=keyvalue[i+1]){
+            lastkeyvalue=0xff;
+            return 0xff;
+        }
+    }
+    if(lastkeyvalue!=keyvalue[0]){
+        lastkeyvalue=keyvalue[0];
+        return keyvalue[0];
+    }
+    else{
+        return 0xff;
     }
 }

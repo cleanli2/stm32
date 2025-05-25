@@ -2251,6 +2251,7 @@ void elock_ui_init(void*vp)
 }
 void elock_ui_process_event(void*vp)
 {
+    int kv;
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     if(g_flag_1s){
@@ -2259,6 +2260,11 @@ void elock_ui_process_event(void*vp)
     if(ui_buf[5]==0){
         lprintf("poff from elock\r\n");
         power_off();
+    }
+    kv=get_keypressed();
+    if(kv!=0xff){
+        lprintf("kv=%d\r\n", kv);
+        do_elock(&kv);
     }
     common_process_event(vp);
 }
