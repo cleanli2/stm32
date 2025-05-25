@@ -321,7 +321,7 @@ uint32_t get_name_position(const char* name)
 int fm_save(uint32_t i, const char*name, const char*value)
 {
     unsigned int len, ci;
-    char tbt[2];
+    char tbt[2]={0};
     uint16_t*wdp=(uint16_t*)tbt;
     len = strlen(name)+strlen(value)+2;
     if(len&1){
@@ -338,21 +338,21 @@ int fm_save(uint32_t i, const char*name, const char*value)
     if(ci==0){
         return ENV_FAIL;
     }
-    tbt[0]=name[len-ci--];
-    tbt[1]='\0';
-    if(ENV_FAIL==env_set_2char(i+2, tbt)){
+    tbt[1]=name[len-ci--];
+    tbt[0]='\0';
+    if(ENV_FAIL==env_set_2char(i, tbt)){
         return ENV_FAIL;
     }
     i+=2;
     while(ci){
-        tbt[1]=name[len-ci--];
+        tbt[0]=name[len-ci--];
         if(ci==0){
-            tbt[0]='=';
+            tbt[1]='=';
         }
         else{
-            tbt[0]=name[len-ci--];
+            tbt[1]=name[len-ci--];
         }
-        if(ENV_FAIL==env_set_2char(i+2, tbt)){
+        if(ENV_FAIL==env_set_2char(i, tbt)){
             return ENV_FAIL;
         }
         i+=2;
@@ -366,7 +366,7 @@ int fm_save(uint32_t i, const char*name, const char*value)
         else{
             tbt[1]='=';
             tbt[0]='\0';
-            if(ENV_FAIL==env_set_2char(i+2, tbt)){
+            if(ENV_FAIL==env_set_2char(i, tbt)){
                 return ENV_FAIL;
             }
             else{
@@ -375,8 +375,16 @@ int fm_save(uint32_t i, const char*name, const char*value)
         }
     }
     else{
+        if(tbt[0]!='='){
+            tbt[0]='=';
+            tbt[1]=value[len-ci--];
+            if(ENV_FAIL==env_set_2char(i, tbt)){
+                return ENV_FAIL;
+            }
+            i+=2;
+        }
         while(ci>=2){
-            if(ENV_FAIL==env_set_2char(i+2, &value[ci])){
+            if(ENV_FAIL==env_set_2char(i, &value[ci])){
                 return ENV_FAIL;
             }
             i+=2;
@@ -389,7 +397,7 @@ int fm_save(uint32_t i, const char*name, const char*value)
             tbt[1]='\0';
             tbt[0]='\0';
         }
-        if(ENV_FAIL==env_set_2char(i+2, tbt)){
+        if(ENV_FAIL==env_set_2char(i, tbt)){
             return ENV_FAIL;
         }
         else{
