@@ -297,13 +297,23 @@ void P8563_init()
 }
 void rtc_write(uint8_t*ip)
 {
-    P8563_init();
-    P8563_settime(ip);
+    //P8563_init();
+    //P8563_settime(ip);
 }
 void rtc_read(uint8_t*ip)
 {
+#if 0
     P8563_init();
     P8563_gettime(ip);
+#else
+    ip[0]=0;
+    ip[1]=0;
+    ip[2]=0;
+    ip[3]=1;
+    ip[4]=1;
+    ip[5]=0x81;
+    ip[6]=0x25;
+#endif
 }
 char t_d[24];
 uint8_t hex2bcd(uint8_t ipt)
