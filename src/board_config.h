@@ -191,7 +191,7 @@
 #define SDA_PIN GPIO_Pin_11
 #define SCL_PIN1 GPIO_Pin_10
 #define SCL_PIN2 GPIO_Pin_12
-#define SCL_PIN (use_SCL_1?SCL_PIN1:SCL_PIN2)
+#define SCL_PIN SCL_PIN2
 
 //如果使用官方库函数定义下列底层，速度将会下降到14帧每秒，建议采用我司推荐方法
 //以下IO定义直接操作寄存器，快速IO操作，刷屏速率可以达到28帧每秒！ 
