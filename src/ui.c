@@ -2243,6 +2243,7 @@ void elock_ui_init(void*vp)
     ui_buf[2] = 0;//input bak
     ui_buf[3] = 0;
     ui_buf[4] = get_env_uint("elockpw", 0x1234abcd);
+    ui_buf[5] = 60;
     if(get_env_uint("elocksts", 0)!=0x900d){
         lcd_lprintf(25,200,"Forbidden             ");
         ui_buf[0]=PSFB;
@@ -2253,7 +2254,11 @@ void elock_ui_process_event(void*vp)
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     if(g_flag_1s){
-        lprintf("1 second tick\r\n");
+        lprintf("%d second left\r\n", ui_buf[5]--);
+    }
+    if(ui_buf[5]==0){
+        lprintf("poff from elock\r\n");
+        power_off();
     }
     common_process_event(vp);
 }
@@ -2262,6 +2267,7 @@ void do_elock(void*cfp)
 {
 #ifdef LARGE_SCREEN
     int btidx=*(int*)cfp;
+    ui_buf[5] = 60;
     lprintf("btidx=%d\r\n", btidx);
     if(PSFB==ui_buf[0]){//forbidden
         lcd_lprintf(25,200,"Forbidden             ");
@@ -2805,7 +2811,7 @@ ui_t ui_list[]={
     },
     {
         elock_ui_init,
-        NULL,
+        elock_ui_process_event,
         NULL,
         elock_button,
         UI_ELOCK,
