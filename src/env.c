@@ -113,7 +113,7 @@ int env_set_2char(uint32_t offset, const char*dp)
     uint32_t faddr;
     uint16_t*wdp=(uint16_t*)dp;
     faddr=offset+get_env_start_addr();
-    lprintf("fphw:%x=%b %b\r\n", faddr, dp[1],dp[0]);
+    //lprintf("fphw:%x=%b %b\r\n", faddr, dp[1],dp[0]);
     FLASH_Unlock();
     if(FLASH_COMPLETE != FLASH_ProgramHalfWord(faddr, *wdp)){
         lprintf("flash program halfword fail!addr=%x\r\n", faddr);
@@ -121,10 +121,10 @@ int env_set_2char(uint32_t offset, const char*dp)
         return ENV_FAIL;
     }
     else{
-        lprintf("flash ok\r\n");
+        //lprintf("flash ok\r\n");
     }
     FLASH_Lock();
-    lprintf("read %x from %x\r\n", *(uint16_t*)faddr, faddr);
+    //lprintf("read %x from %x\r\n", *(uint16_t*)faddr, faddr);
     return ENV_OK;
 }
 
