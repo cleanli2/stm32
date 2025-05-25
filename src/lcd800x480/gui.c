@@ -627,6 +627,7 @@ extern void puthexch(char c);
  ******************************************************************************/
 void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
 {
+#if 0
     u8 i,j,n;
     u16 k;
     u16 HZnum;
@@ -723,6 +724,7 @@ void GUI_DrawZikuFont16(u16 x, u16 y, u16 fc, u16 bc, const char *s,u8 mode)
     }
 
     LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//»Ö¸´´°¿ÚÎªÈ«ÆÁ
+#endif
 }
 
 /*****************************************************************************

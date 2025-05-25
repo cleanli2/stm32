@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include"type.h"
 
+#if 0
 #ifdef ALIENTEK_MINI
 //SPI Flash devide
 /*
@@ -146,6 +147,23 @@
 #define SPI_FLASH_LOG_START 0x0F0000
 #define SPI_FLASH_LOG_END 0x0FA000
 #endif//ALIENTEK_MINI
+
+#endif
+
+
+//Flash memory define
+#define FM_FLASH_SECTOR_SIZE 0x400
+#define FM_GET_SECTOR_ADDR(addr) ((addr)&0xfffffc00)
+#define FM_SECTORS_PER_ENV_BLOCK 12
+#define FM_ENV_STORE_SIZE (FM_FLASH_SECTOR_SIZE*FM_SECTORS_PER_ENV_BLOCK)
+
+#define FM_ENV_STORE_START_ADDR (0x8073000)
+#define FM_ENV_HELP_STORE_START_ADDR (FM_ENV_STORE_START_ADDR-FM_ENV_STORE_SIZE)
+//Flash memory define end
+
+#define GET_SECTOR_ADDR(addr) ((addr)>>12)
+#define SPI_FLASH_LOG_START 0x0F0000
+#define SPI_FLASH_LOG_END 0x0FA000
 
 #define SPI_FLASH_LOG_SIZE (SPI_FLASH_LOG_END-SPI_FLASH_LOG_START)
 #define ENV_OK 0
