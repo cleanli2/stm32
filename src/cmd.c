@@ -875,14 +875,15 @@ void fmwtest(char *p)
         if(tmp>=3) p = str_to_hex(p, &len);
         FLASH_Unlock();
         while(len){
-            if(FLASH_COMPLETE == (fret=FLASH_ProgramWord(addr, data))){
+            lprintf("len=%d\r\n", len);
+            if(FLASH_COMPLETE == (fret=FLASH_ProgramHalfWord(addr, data))){
                 //lprintf("flash oper done\n");
             }
             else{
                 lprintf("flash oper err:%d adr %X\n", fret, addr);
             }
-            addr+=4;
-            len-=4;
+            addr+=2;
+            len-=2;
         }
         FLASH_Lock();
     }

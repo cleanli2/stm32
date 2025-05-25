@@ -113,10 +113,18 @@ int env_set_2char(uint32_t offset, const char*dp)
     uint32_t faddr;
     uint16_t*wdp=(uint16_t*)dp;
     faddr=offset+get_env_start_addr();
+    lprintf("fphw:%x=%b %b\r\n", faddr, dp[1],dp[0]);
+    FLASH_Unlock();
     if(FLASH_COMPLETE != FLASH_ProgramHalfWord(faddr, *wdp)){
         lprintf("flash program halfword fail!addr=%x\r\n", faddr);
+        FLASH_Lock();
         return ENV_FAIL;
     }
+    else{
+        lprintf("flash ok\r\n");
+    }
+    FLASH_Lock();
+    lprintf("read %x from %x\r\n", *(uint16_t*)faddr, faddr);
     return ENV_OK;
 }
 
@@ -394,6 +402,7 @@ uint32_t set_env_raw(const char* name, const char*value)
 {
     uint32_t i = 0, n, ret = ENV_OK;
     uint8_t zero_str = 0;
+    uint16_t wd=0;
 
     if(!name){
         lprintf("name=NULL\n");
@@ -421,7 +430,7 @@ uint32_t set_env_raw(const char* name, const char*value)
     i = find_env_data_start();
     if(i == ENV_EMPTY_DATA){
         i = FM_ENV_STORE_SIZE - 2;
-        env_set_2char(i, 0);
+        env_set_2char(i, &wd);
     }
     else if(i > ENV_ABNORMAL){
         ret = ENV_FAIL;
