@@ -586,6 +586,7 @@ void keyboard_main()
                 }
             }
         }
+        pcf8574t_set(i, 1);
     }
 }
 int get_keypressed()
