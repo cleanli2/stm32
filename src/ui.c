@@ -2251,7 +2251,7 @@ void elock_ui_init(void*vp)
     pcf8574t_set(13, 1);
     pcf8574t_set(12, 1);
     if(get_env_uint("elocksts", 0)!=0x900d){
-        lcd_lprintf(25,200,"Forbidden             ");
+        lprintf("Forbidden             ");
         ui_buf[0]=PSFB;
     }
 }
@@ -2288,7 +2288,7 @@ void do_elock(void*cfp)
     ui_buf[5] = 60;
     lprintf("btidx=%d\r\n", btidx);
     if(PSFB==ui_buf[0]){//forbidden
-        lcd_lprintf(25,200,"Forbidden             ");
+        lprintf("Forbidden             ");
         pcf8574t_set(14, 0);
         return;
     }
@@ -2300,7 +2300,7 @@ void do_elock(void*cfp)
         ui_buf[1]<<=4;
         ui_buf[1]+=btidx;
         if(ui_buf[1]==ui_buf[4]){
-            lcd_lprintf(25,200,"PASS             ");
+            lprintf("PASS             ");
             pcf8574t_set(13, 0);
             ui_buf[0]=PSOK;
         }
@@ -2310,20 +2310,20 @@ void do_elock(void*cfp)
     }
     else if(btidx==18){//start
         if(PSOK==ui_buf[0]){
-            lcd_lprintf(25,200,"motor on      ");
+            lprintf("motor on      ");
             elock_motor_on();
         }
         else{
-            lcd_lprintf(25,200,"input passwd first");
+            lprintf("input passwd first");
         }
     }
     else if(btidx==19){//end
         if(PSOK==ui_buf[0]){
-            lcd_lprintf(25,200,"motor off     ");
+            lprintf("motor off     ");
             elock_motor_off();
         }
         else{
-            lcd_lprintf(25,200,"input passwd first");
+            lprintf("input passwd first");
         }
     }
     else if(btidx==17){//enter
@@ -2332,10 +2332,10 @@ void do_elock(void*cfp)
                 set_env_uint("elockpw", ui_buf[1]);
                 if(ui_buf[1] == get_env_uint("elockpw", 0x1234abcd)){
                     pcf8574t_revert(12);
-                    lcd_lprintf(25,200,"NEW PASS         ");
+                    lprintf("NEW PASS         ");
                 }
                 else{
-                    lcd_lprintf(25,200,"NEW PASS update fail");
+                    lprintf("NEW PASS update fail");
                 }
             }
             else{
@@ -2344,10 +2344,10 @@ void do_elock(void*cfp)
             }
         }
         else{
-            lcd_lprintf(25,200,"input passwd first");
+            lprintf("input passwd first");
         }
     }
-    //lcd_lprintf(25,100,"%X", ui_buf[1]);
+    //lprintf(25,100,"%X", ui_buf[1]);
 #endif
 }
 
