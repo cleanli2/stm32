@@ -32,14 +32,17 @@ int erase_env_area()
     int ct = FM_SECTORS_PER_ENV_BLOCK;
     uint32_t i=0;
     uint32_t sector_addr = FM_GET_SECTOR_ADDR(get_env_start_addr());
+    FLASH_Unlock();
     while(ct--){
         lprintf("env_erase:sector %x\n", sector_addr);
         if(FLASH_COMPLETE != FLASH_ErasePage(sector_addr)){
             lprintf("env_erase:sector 0x%x fail!\n", sector_addr);
+            FLASH_Lock();
             return ENV_FAIL;
         }
         sector_addr+=FM_FLASH_SECTOR_SIZE;
     }
+    FLASH_Lock();
     ct = FM_ENV_STORE_SIZE;
     while(ct--){
         if((r=env_get_char(i))!=0xff){
