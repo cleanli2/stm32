@@ -386,25 +386,18 @@ int fm_save(uint32_t i, const char*name, const char*value)
             }
             i+=2;
         }
-        while(ci>=2){
-            if(ENV_FAIL==env_set_2char(i, &value[ci])){
+        while(ci){
+            tbt[0]=value[len-ci--];
+            if(ci==0){
+                tbt[1]='\0';
+            }
+            else{
+                tbt[1]=name[len-ci--];
+            }
+            if(ENV_FAIL==env_set_2char(i, tbt)){
                 return ENV_FAIL;
             }
             i+=2;
-        }
-        if(ci==1){
-            tbt[1]=value[0];
-            tbt[0]='\0';
-        }
-        else{
-            tbt[1]='\0';
-            tbt[0]='\0';
-        }
-        if(ENV_FAIL==env_set_2char(i, tbt)){
-            return ENV_FAIL;
-        }
-        else{
-            return ENV_OK;
         }
     }
 }
