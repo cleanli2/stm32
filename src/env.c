@@ -556,7 +556,7 @@ uint32_t get_env_uint(const char*name, uint32_t def_value)
     uint32_t ret;
     if(ENV_OK == get_env(name, t)){
         str_to_hex(p, &ret);
-        lprintf("envgetint %s=%x\n", name, ret);
+        //lprintf("envgetint %s=%x\n", name, ret);
         return ret;
     }
     else{

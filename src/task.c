@@ -598,9 +598,14 @@ void keyboard_main()
                 if(g_key_p>KEYBUF_SIZE){
                     g_key_p=0;
                 }
+                return;
             }
         }
         pcf8574t_set(i, 1);
+    }
+    keyvalue[g_key_p++]=0xff;
+    if(g_key_p>KEYBUF_SIZE){
+        g_key_p=0;
     }
 }
 int get_keypressed()
