@@ -363,7 +363,7 @@ int fm_save(uint32_t i, const char*name, const char*value)
     len=strlen(value);
     ci=len;
     if(len==0){
-        if(tbt[0]=='='){
+        if(tbt[1]=='='){
             return ENV_OK;
         }
         else{
@@ -378,7 +378,7 @@ int fm_save(uint32_t i, const char*name, const char*value)
         }
     }
     else{
-        if(tbt[0]!='='){
+        if(tbt[1]!='='){
             tbt[0]='=';
             tbt[1]=value[len-ci--];
             if(ENV_FAIL==env_set_2char(i, tbt)){
