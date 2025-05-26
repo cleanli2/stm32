@@ -487,6 +487,7 @@ int go_through_env(int operation)
         posi = i;
         i+=strcpy2mem((uint8_t*)buf, i);
         i++;
+        if(env_get_char(i)=='\0')i++;
         if(PRINT_RAW_ENV==operation){
             lprintf("%x:", posi);
             //mem_print(buf, 0, 64);
