@@ -288,6 +288,7 @@ uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
                 goto end;
             }
         }
+        if(env_get_char(nxt+1)=='\0')nxt++;
         if ((val=envmatch((uint8_t *)name, i)) < 0)
             continue;
         if(p_position!=NULL){
