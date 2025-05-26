@@ -560,6 +560,20 @@ void  pcf8574t_set(int bit, int v)
     }
     pcf8574t_writeData(index, gs_eg_data[index]);
 }
+void  pcf8574t_revert(int bit)
+{
+    int v;
+    int index=bit/8;
+    if(index==1)bit-=8;
+    v=!(gs_eg_data[index]&(1<<bit));
+    if(v){//set 1
+        gs_eg_data[index]|=1<<bit;
+    }
+    else{
+        gs_eg_data[index]&=~(1<<bit);
+    }
+    pcf8574t_writeData(index, gs_eg_data[index]);
+}
 int pcf8574t_get(int bit)
 {
     u8 tv=1;
@@ -579,8 +593,8 @@ void keyboard_main()
         pcf8574t_set(i, 0);
         for(j=8;j<12;j++){
             if(!pcf8574t_get(j)){
-                lprintf("key down %d\r\n", i*4+j);
-                keyvalue[g_key_p++]=i*4+j;
+                //lprintf("key down %d\r\n", i*4+j-8);
+                keyvalue[g_key_p++]=i*4+j-8;
                 if(g_key_p>KEYBUF_SIZE){
                     g_key_p=0;
                 }
