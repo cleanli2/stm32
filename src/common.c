@@ -562,7 +562,6 @@ void main_init(void)
   RCC_ClocksTypeDef RCC_ClocksStatus;
 
 #if defined ELOCK_FUNC_ON
-      while(1);
   //elock start
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
