@@ -2261,9 +2261,9 @@ void elock_ui_process_event(void*vp)
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     if(g_flag_1s){
-        pcf8574t_set(14, 0);
+        pcf8574t_set(12, 0);
         lprintf("%d second left\r\n", ui_buf[5]--);
-        pcf8574t_set(14, 1);
+        pcf8574t_set(12, 1);
     }
     if(ui_buf[5]==0){
         lprintf("poff from elock\r\n");
@@ -2289,7 +2289,7 @@ void do_elock(void*cfp)
     lprintf("btidx=%d\r\n", btidx);
     if(PSFB==ui_buf[0]){//forbidden
         lprintf("Forbidden             ");
-        pcf8574t_set(14, 0);
+        pcf8574t_set(12, 0);
         return;
     }
     if(btidx<0 || btidx>=20){
@@ -2301,7 +2301,7 @@ void do_elock(void*cfp)
         ui_buf[1]+=btidx;
         if(ui_buf[1]==ui_buf[4]){
             lprintf("PASS             ");
-            pcf8574t_set(13, 0);
+            pcf8574t_set(14, 0);
             ui_buf[0]=PSOK;
         }
     }
@@ -2331,7 +2331,7 @@ void do_elock(void*cfp)
             if(ui_buf[1]==ui_buf[2]){
                 set_env_uint("elockpw", ui_buf[1]);
                 if(ui_buf[1] == get_env_uint("elockpw", 0x1234abcd)){
-                    pcf8574t_revert(12);
+                    pcf8574t_revert(13);
                     lprintf("NEW PASS         ");
                 }
                 else{
