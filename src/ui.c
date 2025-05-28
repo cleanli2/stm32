@@ -2267,7 +2267,7 @@ void elock_ui_process_event(void*vp)
     }
     if(ui_buf[5]==0){
         lprintf("poff from elock\r\n");
-        //power_off();
+        power_off();
     }
     kv=get_keypressed();
     if(kv!=0xff){

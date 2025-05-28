@@ -52,7 +52,7 @@ void adc_init()
     while(ADC_GetCalibrationStatus(ADC1));
     lprintf("adc1 calibration done\n");
     adc_inited = ADC_INITED;
-    g_v4_2_ratio_option = get_env_uint("v42rt", 0);
+    g_v4_2_ratio_option = get_env_uint("v42rt", 1);
 }
 
 uint32_t get_adc_value(int my_index)
