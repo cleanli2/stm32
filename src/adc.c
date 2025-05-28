@@ -92,6 +92,7 @@ void get_myadc_value(uint32_t*v_core_mv_p, uint32_t*v_bat_mv_p, int32_t*i_mA_p)
 
     if(g_adc_log_en)Debug_LOG_ADC("start adc1 V4_2 convertion\n");
     raw_v_bat=get_adc_value(V4_2);
+    if(g_adc_log_en)Debug_LOG_ADC("vbat = %x\n", raw_v_bat);
     v_bat_mv = V_REV_mv * raw_v_bat / raw_v_ref;
     switch(g_v4_2_ratio_option){
         case 1:
