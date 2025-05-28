@@ -2255,15 +2255,18 @@ void elock_ui_init(void*vp)
         ui_buf[0]=PSFB;
     }
 }
+#define ELOCK_VBAT_ALERT 3650
 void elock_ui_process_event(void*vp)
 {
+    uint32_t vbat_mv;
     int kv;
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     if(g_flag_1s){
         pcf8574t_set(12, 0);
-        lprintf("%d second left\r\n", ui_buf[5]--);
-        pcf8574t_set(12, 1);
+        get_myadc_value(0, &vbat_mv, 0);
+        lprintf("%d second left vbatmv=%d\r\n", ui_buf[5]--, vbat_mv);
+        if(vbat_mv>ELOCK_VBAT_ALERT)pcf8574t_set(12, 1);
     }
     if(ui_buf[5]==0){
         lprintf("poff from elock\r\n");

@@ -94,6 +94,7 @@ void get_myadc_value(uint32_t*v_core_mv_p, uint32_t*v_bat_mv_p, int32_t*i_mA_p)
     raw_v_bat=get_adc_value(V4_2);
     if(g_adc_log_en)Debug_LOG_ADC("vbat = %x\n", raw_v_bat);
     v_bat_mv = V_REV_mv * raw_v_bat / raw_v_ref;
+    if(g_adc_log_en)Debug_LOG_ADC("v_bat_mv=%d\r\n", v_bat_mv);
     switch(g_v4_2_ratio_option){
         case 1:
             v_bat_mv = v_bat_mv * V4_2_RATIO_1;
@@ -113,9 +114,9 @@ void get_myadc_value(uint32_t*v_core_mv_p, uint32_t*v_bat_mv_p, int32_t*i_mA_p)
     if(g_adc_log_en)Debug_LOG_ADC("real v_currt = %dmv\n", v_currt_mv);
     i_mA = v_currt_mv;
     i_mA = (i_mA-V_REV_mv) * CURRENT_MEASUREMENT_CALIBRATION;
-    *v_core_mv_p = v_core_mv;
-    *v_bat_mv_p = v_bat_mv;
-    *i_mA_p = i_mA;
+    if(v_core_mv_p)*v_core_mv_p = v_core_mv;
+    if(v_bat_mv_p)*v_bat_mv_p = v_bat_mv;
+    if(i_mA_p)*i_mA_p = i_mA;
 }
 
 int adc_test(int log_en)
