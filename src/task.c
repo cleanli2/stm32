@@ -593,11 +593,12 @@ void keyboard_main()
         pcf8574t_set(i, 0);
         for(j=8;j<12;j++){
             if(!pcf8574t_get(j)){
-                //lprintf("key down %d\r\n", i*4+j-8);
+                //lprintf("key down %d %d %d\r\n", i, j, i*4+j-8);
                 keyvalue[g_key_p++]=i*4+j-8;
                 if(g_key_p>=KEYBUF_SIZE){
                     g_key_p=0;
                 }
+                pcf8574t_set(i, 1);
                 return;
             }
         }
