@@ -2266,8 +2266,11 @@ void elock_ui_process_event(void*vp)
     (void)uif;
     if(g_flag_1s){
         get_myadc_value(0, &vbat_mv, 0);
+        lprintf("vbat=%d\r\n", vbat_mv);
+        vbat_mv=get_env_uint("vbattest", 3700);
         vblv=(vbat_mv-3500)/100;
         if(vblv>5)vblv=5;
+        lprintf("vblv=%d %d\r\n", vblv, ui_buf[6]);
         if(ui_buf[6]<vblv){
             pcf8574t_set(12, 0);
         }
@@ -2302,7 +2305,7 @@ void do_elock(void*cfp)
     lprintf("btidx=%d\r\n", btidx);
     if(PSFB==ui_buf[0]){//forbidden
         lprintf("Forbidden             ");
-        pcf8574t_set(12, 0);
+        pcf8574t_set(15, 0);
         return;
     }
     if(btidx<0 || btidx>=20){
