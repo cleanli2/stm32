@@ -2265,10 +2265,8 @@ void elock_ui_process_event(void*vp)
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     if(g_flag_1s){
-        lprintf(">> %d\r\n", ui_buf[6]);
         get_myadc_value(0, &vbat_mv, 0);
         lprintf("vbat=%d\r\n", vbat_mv);
-        vbat_mv=get_env_uint("vbattest", 3700);
         vblv=(vbat_mv-3500)/100;
         if(vblv>5)vblv=5;
         lprintf("vblv=%d %d\r\n", vblv, ui_buf[6]);
@@ -2281,7 +2279,6 @@ void elock_ui_process_event(void*vp)
         lprintf("%d second left vbatmv=%d\r\n", ui_buf[5]--, vbat_mv);
         ui_buf[6]++;
         if(ui_buf[6]>=5)ui_buf[6]=0;
-        lprintf("<< %d\r\n", ui_buf[6]);
     }
     if(ui_buf[5]==0){
         lprintf("poff from elock\r\n");
