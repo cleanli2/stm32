@@ -2264,9 +2264,10 @@ void elock_ui_process_event(void*vp)
     (void)uif;
     if(g_flag_1s){
         get_myadc_value(0, &vbat_mv, 0);
+        if(vbat_mv>ELOCK_VBAT_ALERT)pcf8574t_set(12, 0);
+        else pcf8574t_set(12, 1);
         lprintf("%d second left vbatmv=%d\r\n", ui_buf[5]--, vbat_mv);
-        if(vbat_mv>ELOCK_VBAT_ALERT)pcf8574t_set(12, 1);
-        else pcf8574t_set(12, 0);
+        pcf8574t_set(12, 0);
     }
     if(ui_buf[5]==0){
         lprintf("poff from elock\r\n");
@@ -2275,6 +2276,7 @@ void elock_ui_process_event(void*vp)
     kv=get_keypressed();
     if(kv!=0xff){
         pcf8574t_set(15, 0);
+        delay_ms(500);
         lprintf("kv=%d\r\n", kv);
         do_elock(&kv);
     }
@@ -2306,6 +2308,7 @@ void do_elock(void*cfp)
             lprintf("PASS             ");
             pcf8574t_set(14, 0);
             ui_buf[0]=PSOK;
+            set_env("LastPSOK", get_rtc_time(NULL));
         }
     }
     else if(btidx==0x10){//cancel
