@@ -2265,6 +2265,7 @@ void elock_ui_process_event(void*vp)
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     if(g_flag_1s){
+        lprintf(">> %d\r\n", ui_buf[6]);
         get_myadc_value(0, &vbat_mv, 0);
         lprintf("vbat=%d\r\n", vbat_mv);
         vbat_mv=get_env_uint("vbattest", 3700);
@@ -2278,7 +2279,9 @@ void elock_ui_process_event(void*vp)
             pcf8574t_set(12, 1);
         }
         lprintf("%d second left vbatmv=%d\r\n", ui_buf[5]--, vbat_mv);
-        if(ui_buf[6]++>=5)ui_buf[6]=0;
+        ui_buf[6]++;
+        if(ui_buf[6]>=5)ui_buf[6]=0;
+        lprintf("<< %d\r\n", ui_buf[6]);
     }
     if(ui_buf[5]==0){
         lprintf("poff from elock\r\n");
