@@ -2246,6 +2246,7 @@ void elock_ui_init(void*vp)
     ui_buf[3] = 0;
     ui_buf[4] = get_env_uint("elockpw", 0x1234abcd);
     ui_buf[5] = 60;
+    ui_buf[6] = 0;//adc counter
     pcf8574t_set(15, 1);
     pcf8574t_set(14, 1);
     pcf8574t_set(13, 1);
@@ -2259,15 +2260,22 @@ void elock_ui_init(void*vp)
 void elock_ui_process_event(void*vp)
 {
     uint32_t vbat_mv;
+    uint32_t vblv=1;
     int kv;
     ui_t* uif =(ui_t*)vp;
     (void)uif;
     if(g_flag_1s){
         get_myadc_value(0, &vbat_mv, 0);
-        if(vbat_mv>ELOCK_VBAT_ALERT)pcf8574t_set(12, 0);
-        else pcf8574t_set(12, 1);
+        vblv=(vbat_mv-3500)/100;
+        if(vblv>5)vblv=5;
+        if(ui_buf[6]<vblv){
+            pcf8574t_set(12, 0);
+        }
+        else{
+            pcf8574t_set(12, 1);
+        }
         lprintf("%d second left vbatmv=%d\r\n", ui_buf[5]--, vbat_mv);
-        pcf8574t_set(12, 0);
+        if(ui_buf[6]++>=5)ui_buf[6]=0;
     }
     if(ui_buf[5]==0){
         lprintf("poff from elock\r\n");
