@@ -1380,7 +1380,7 @@ void cam_save_1_frame(u32 only_uart_dump)
     abs_time=l_time;
     bus_to_lcd(1);
     lcd_lprintf(1, 645, 8, "%s", get_rtc_time(0));
-    lcd_lprintf(1, 645, 43, "gfnn=%d", g_fnn);
+    lcd_lprintf(1, 645, 43, "gfnn=%d   ", g_fnn);
     lcd_lprintf(1, 645, 78, "%d.%d fpm", fpm/10, fpm%10);
     lcd_lprintf(1, 645, 113, "%dmv,%dmA", v_bat, g_ict);
     lcd_lprintf(1, 645, 148, "Stuck times:");

@@ -129,7 +129,7 @@ void check_ui()
     draw_button(camui_button);
     //int touch_up=0;
     while(s_fnn){
-        lcd_lprintf(1, 645, 43, "sfnn=%d", s_fnn);
+        lcd_lprintf(1, 645, 43, "sfnn=%d    ", s_fnn);
         slprintf(fs, "V%d/YUV%d.BIN", s_fnn/100, s_fnn);
         if(FS_OK==open_file_r(fs)){
             lprintf("open file ok\n");
@@ -141,7 +141,6 @@ void check_ui()
         }
         else{
             lprintf("open file fail:%s\n", fs);
-            return;
         }
         if(con_is_recved()){
             ss=con_recv();
