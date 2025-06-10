@@ -278,6 +278,11 @@ static inline uint16_t DATAIN()
 #define ELOCK_GG GPIOC
 #define ELOCK_PIN GPIO_Pin_9
 
+#define SDPOW_CTRL
+#define SD_POWEROFF_GPIO_PERPH RCC_APB2Periph_GPIOC
+#define SD_POWEROFF_GPIO_PIN GPIO_Pin_9
+#define SD_POWEROFF_GPIO_GROUP GPIOC
+
 #else//default
 /////////////////////////////////////HAMMER//////////////////////////////////////////////
 

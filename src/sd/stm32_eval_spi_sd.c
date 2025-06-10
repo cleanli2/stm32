@@ -330,6 +330,54 @@ void SD_DeInit(void)
   SD_LowLevel_DeInit();
 }
 
+void SD_power_on()
+{
+    lprintf_time("sd power on\n");
+    SD_CS_HIGH();
+#ifdef SDPOW_CTRL
+    GPIO_ResetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
+#endif
+}
+
+
+void SD_power_off()
+{
+    GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
+
+    lprintf_time("sd power off\n");
+
+    GPIO_InitStructure.GPIO_Pin = TCLK_PIN;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(TCLK_GG, &GPIO_InitStructure);
+    GPIO_ResetBits(TCLK_GG, TCLK_PIN);
+
+    GPIO_InitStructure.GPIO_Pin = TDIN_PIN ;
+    GPIO_Init(TDIN_GG, &GPIO_InitStructure);
+    GPIO_ResetBits(TDIN_GG, TDIN_PIN);
+
+    GPIO_InitStructure.GPIO_Pin = DOUT_PIN;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_Init(DOUT_GG, &GPIO_InitStructure);
+    GPIO_SetBits(DOUT_GG, DOUT_PIN);
+
+    SD_CS_LOW();
+#ifdef SDPOW_CTRL
+    GPIO_SetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
+#endif
+
+    SD_DeInit();
+}
+
+void SD_repower(int n)
+{
+    SD_power_off();
+    delay_ms(100*n);
+    SD_power_on();
+    SD_LowLevel_Init();
+    delay_ms(100);
+}
+
 /**
   * @brief  Initializes the SD/SD communication.
   * @param  None
