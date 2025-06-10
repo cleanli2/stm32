@@ -223,6 +223,8 @@ void sd(char *p)
 		    else{
 			    lprintf("block size %d\n", mycard.CardBlockSize);
 			    lprintf("block capacity %d\n", mycard.CardCapacity);
+			    lprintf("total capacity %dM\n",
+                        mycard.CardCapacity/1024*mycard.CardBlockSize/1024);
 		    }
 	    }
 
