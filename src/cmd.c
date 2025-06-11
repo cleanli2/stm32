@@ -1286,7 +1286,7 @@ u32 fnn=0;
 extern char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 int cam_dump_lines(u32 l);
 void check_lines();
-void cam_init(int);
+int cam_init(int);
 void end_al422_read();
 void reset_al422_read();
 void cam_al422(const char*ps, uint32_t p2);

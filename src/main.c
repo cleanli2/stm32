@@ -75,7 +75,7 @@ void prepare_pic_trsf()
 
 #define MIN_YUV_FILES_NUM 100
 void save_sd_log();
-void cam_init(int);
+int cam_init(int);
 void cam_deinit();
 void cam_read_frame(int);
 void cam_read_line(int);
@@ -241,10 +241,14 @@ int main()
     lprintf_time("loginflash:log start:0x%x end:0x%x size:0x%x\n",
             SPI_FLASH_LOG_START, SPI_FLASH_LOG_END, SPI_FLASH_LOG_SIZE);
     task_log(NULL);
+runcmd:
     run_cmd_interface();
     check_ui();
     lprintf_time("start working loop.\n");
-    cam_init(7);
+    if(0!=cam_init(7)){
+        lprintf("open camera failed\r\n");
+        goto runcmd;
+    }
     cam_workingloop_on=1;
     while(!loop_stop){
         slprintf(file_name, "V%d/YUV%d.BIN", g_fnn/100, g_fnn);

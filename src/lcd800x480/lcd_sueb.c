@@ -1644,7 +1644,7 @@ err:
 #endif
 uint8_t cam_r_reg(uint8_t addr)
 {
-    uint8_t ret;
+    uint8_t ret=0xa5;
     cam_r_regn(addr,1,&ret);
     return ret;
 }
@@ -1806,8 +1806,9 @@ int pcf8574t_get(int bit)
     tv>>=bit;
     return tv&0x1;
 }
-void cam_init(int choose)
+int cam_init(int choose)
 {
+    int rcam_rty=9;
     GPIO_InitTypeDef  GPIO_InitStructure;
     int clks=100;
 
@@ -1869,6 +1870,12 @@ void cam_init(int choose)
         if(0x76==cam_r_reg(0x0A)){
             break;
         }
+        else{
+            rcam_rty--;
+            if(rcam_rty==0){
+                return -1;
+            }
+        }
         lprintf("cam read 0x0A=%b\n", cam_r_reg(0x0A));
         delay_ms(10);
     }
@@ -1917,7 +1924,7 @@ void cam_init(int choose)
     if(g_cam_r70p_e)lprintf("cam w 0x70 return %x\n", cam_w_reg(0x70, 0x80|cam_r_reg(0x70)));
     if(g_cam_r71p_e)lprintf("cam w 0x71 return %x\n", cam_w_reg(0x71, 0x80|cam_r_reg(0x71)));
     lprintf("cam read 0x12=%b\n", cam_r_reg(0x12));
-
+    return 0;
 }
 
 void LCD_BUS_To_write(int write)
