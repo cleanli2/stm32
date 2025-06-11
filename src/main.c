@@ -103,6 +103,7 @@ void cambt_detect(void*ip)
     lprintf("cambt:%d\r\n", i);
     if((uint32_t)i>sizeof(camss_table))return;
     ss=camss_table[i];
+    lprintf("cambt_detect ss=%c\r\n", ss);
 }
 button_t camui_button[]={
     {CAMBT_X, CAMBT_Y, CAMBT_W,  CAMBT_H, cambt_detect, -1, 0, NULL, 0, NULL},
@@ -144,6 +145,7 @@ void check_ui()
         }
         if(con_is_recved()){
             ss=con_recv();
+            lprintf("con_recv ss=%c\r\n", ss);
         }
         lastts=touch_status;
         if(get_TP_point(&touch_x, &touch_y)){
@@ -203,7 +205,10 @@ void check_ui()
             default:
                 lcd_lprintf(1, 645, 5, "                 ");
         }
-        if(ss=='0')break;
+        if(ss=='0'){
+            ss=' ';
+            break;
+        }
         ss=' ';
         s_fnn--;
         if(s_fnn<0){
