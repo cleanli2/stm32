@@ -127,6 +127,7 @@ void check_ui()
     uint16_t touch_x, touch_y;
     uint16_t touch_status = 0, lastts=0;
     char fs[19];
+    bus_to_lcd(1);
     draw_button(camui_button);
     //int touch_up=0;
     while(s_fnn){
@@ -136,7 +137,6 @@ void check_ui()
             lprintf("open file ok\n");
             file_to_lcd();
             close_file();
-            bus_to_lcd(1);
             lprintf("\n===============file %s to lcd done\n", fs);
             lprintf("Anykey quit\r\n");
         }
