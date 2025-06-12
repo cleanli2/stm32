@@ -137,6 +137,7 @@ void check_ui()
             lprintf("open file ok\n");
             file_to_lcd();
             close_file();
+            bus_to_lcd(1);
             lprintf("\n===============file %s to lcd done\n", fs);
             lprintf("Anykey quit\r\n");
         }
@@ -218,6 +219,9 @@ void check_ui()
             s_fnn-=10000;
         }
     }
+    prtline;
+    prt_dec(s_fnn);
+    prt_dec(g_fnn);
     LCD_Clear(WHITE);	//fill all screen with some color
 }
 int main()
