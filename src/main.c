@@ -130,7 +130,7 @@ void check_ui()
     bus_to_lcd(1);
     draw_button(camui_button);
     //int touch_up=0;
-    while(s_fnn){
+    while(1){
         lcd_lprintf(1, 645, 43, "sfnn=%d    ", s_fnn);
         slprintf(fs, "V%d/YUV%d.BIN", s_fnn/100, s_fnn);
         if(FS_OK==open_file_r(fs)){
