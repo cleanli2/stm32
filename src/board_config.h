@@ -284,8 +284,7 @@ static inline uint16_t DATAIN()
 #define PCF8574_EXTGPIO
 #define EG_ADDR 4
 
-#define DAC_SUPPORT
-
+//#define NO_LCD
 #define POWER_MONITOR
 #define GPIO_ADC_VREF_PIN GPIO_Pin_5
 #define GPIO_ADC_V4_2_PIN GPIO_Pin_2
@@ -295,10 +294,9 @@ static inline uint16_t DATAIN()
 #define ADC_Channel_IBAT ADC_Channel_3
 #define GPIO_GROUP_VREF GPIOC
 #define GPIO_GROUP_V4_2_IBAT GPIOA
-#define CURRENT_MEASUREMENT_CALIBRATION 570/1000
-#define V4_2_RATIO_1 (330+680)/330
-#define V4_2_RATIO V4_2_RATIO_1 
-#define ADC_DEBUG
+#define CURRENT_MEASUREMENT_CALIBRATION 285/1000
+#define V4_2_RATIO (681+330)/330
+//#define ADC_DEBUG
 
 
 #define BEEP_GPIO_PERIPH RCC_APB2Periph_GPIOA
@@ -331,9 +329,7 @@ static inline uint16_t DATAIN()
 #define SDA_GG GPIOC
 #define SCL_GG GPIOC
 #define SDA_PIN GPIO_Pin_11
-#define SCL_PIN1 GPIO_Pin_10
-#define SCL_PIN2 GPIO_Pin_12
-#define SCL_PIN (use_SCL_1?SCL_PIN1:SCL_PIN2)
+#define SCL_PIN GPIO_Pin_12
 
 //如果使用官方库函数定义下列底层，速度将会下降到14帧每秒，建议采用我司推荐方法
 //以下IO定义直接操作寄存器，快速IO操作，刷屏速率可以达到28帧每秒！ 
@@ -354,7 +350,7 @@ static inline uint16_t DATAIN()
 #define LCD_RD_CLR  GPIOC->BRR=1<<LCD_RD     //读	  		  
 #define LCD_LED_CLR  GPIOA->BRR=1<<LED      //读		  
 
-#define LCD_PORT_GPIO_Pins               ((uint16_t)0xFFFF)  /*!< High 8 pins selected */
+#define LCD_PORT_GPIO_Pins               ((uint16_t)0xFFFF)
 //PB0~15,作为数据线
 //注意：如果使用8位模式数据总线，则液晶屏的数据高8位是接到MCU的高8位总线上
 //举例：如果接8位模式则本示例接线为液晶屏DB10-DB17对应接至单片机GPIOB_Pin8-GPIOB_Pin15
@@ -416,11 +412,11 @@ static inline uint16_t DATAIN()
 #define SD_CS_GPIO_PORT           GPIOC
 #define SD_CS_GPIO_CLK            RCC_APB2Periph_GPIOC
 
-#define ELOCK_FUNC_ON
-#define ELOCK_GG GPIOC
-#define ELOCK_PIN GPIO_Pin_9
-
 #define SDPOW_CTRL
+
+#define	SPI_FLASH_CS PCout(4)  //choose spi flash
+
+
 
 #else//default
 /////////////////////////////////////HAMMER//////////////////////////////////////////////

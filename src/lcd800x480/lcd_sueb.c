@@ -1787,7 +1787,7 @@ void bus_to_lcd(int mode_to_lcd)
 void pcf8574t_init()
 {
     gs_eg_data = 0xff;
-    pcf8574t_writeData(gs_eg_data);
+    pcf8574t_writeData(0, gs_eg_data);
 }
 void  pcf8574t_set(int bit, int v)
 {
@@ -1797,12 +1797,12 @@ void  pcf8574t_set(int bit, int v)
     else{
         gs_eg_data&=~(1<<bit);
     }
-    pcf8574t_writeData(gs_eg_data);
+    pcf8574t_writeData(0, gs_eg_data);
 }
 int pcf8574t_get(int bit)
 {
     u8 tv=1;
-    pcf8574t_readData1(&tv);
+    pcf8574t_readData1(0, &tv);
     tv>>=bit;
     return tv&0x1;
 }

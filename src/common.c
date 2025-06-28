@@ -862,7 +862,7 @@ void main_init(void)
   //pcf8574t
   {
       uint8_t t;
-      if(1==pcf8574t_readData1(&t)){
+      if(1==pcf8574t_readData1(0, &t)){
           lprintf("pcf8574 on\r\n");
           g_pcf8574_hw=1;
       }

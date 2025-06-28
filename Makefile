@@ -28,6 +28,7 @@ CFLAGS =  -W -Wall -g -mcpu=cortex-m3 -mthumb -DUSE_STDPERIPH_DRIVER $(INC_FLAGS
 CFLAGS+=-DGIT_SHA1=\"$(GIT_SHA1)$(DIRTY)$(CLEAN)\"
 LDFLAGS =  -mthumb -mcpu=cortex-m3 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=Project.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80
 C_SRC= \
+src/eg.c                                                                                             \
 src/adc.c                                                                                             \
 src/cmd.c                                                                                             \
 src/CoIDE_startup.c                                                                                   \

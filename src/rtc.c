@@ -794,21 +794,6 @@ int min_zero()
 }
 
 
-uint8_t pcf8574t_writeData(uchar mdata)
-{
-    uint8_t ret;
-    Start();
-    ret=writebyte(0x40); /*Ğ´ÃüÁî*/
-    if(ret==0)goto err;
-    ret=writebyte(mdata); /*Ğ´Êı¾İ*/
-    Stop();
-    return ret;
-err:
-    Stop();
-    lprintf("pcf8574t writeData data %b error\n", mdata);
-    return ret;
-}
-
 uint8_t pcf8574t_writeData(int di, uchar mdata)
 {
     uint8_t ret;

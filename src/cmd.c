@@ -1094,10 +1094,10 @@ void i2ccmd(char *p)
         lprintf("p2=%d\n", p2);
     }
     if(!strcmp(p1, "w")){
-        pcf8574t_writeData(p2);
+        pcf8574t_writeData(EG_ADDR, p2);
     }
     if(!strcmp(p1, "r")){
-        pcf8574t_readData1((uint8_t*)&p2);
+        pcf8574t_readData1(EG_ADDR, (uint8_t*)&p2);
         lprintf("p2=%x\n", p2);
     }
     con_send('\n');
