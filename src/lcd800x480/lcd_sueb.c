@@ -108,7 +108,7 @@ void Enable_BL(int en)//µ„¡¡±≥π‚
 #define CAM_GPIO_GROUP GPIOB
 
 #define RRST_G GPIOA
-#define RRST GPIO_Pin_4
+#define RRST GPIO_Pin_15
 
 #define AL422_WG GPIOC
 #define VSNC GPIO_Pin_7
