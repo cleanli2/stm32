@@ -24,6 +24,7 @@
 #include "ui.h"
 #include "music.h"
 #include "os_task.h"
+#include "eg.h"
 
 //for camera
 #define RECORD_CAM_STUCK_SIZE 8
@@ -78,8 +79,14 @@ void enable_sound(int en);
 int get_sound_sta();
 uint add_with_limit(uint a, uint b, uint limit);
 uint sub_with_limit(uint a, uint b, uint limit);
-uint8_t pcf8574t_writeData(uint8_t mdata);
-uint8_t pcf8574t_readData1(uint8_t * buff);
+void Dac1_Init(void);
+void Dac1_Set_Vol(u32 vol);
+void Dac1_wave(u32 type, u32 para2);
+void Dac1_DeInit(void);
+void dac_set_freq(uint32_t freq);
+uint8_t pcf8574t_writeData(int di, uint8_t mdata);
+uint8_t pcf8574t_readData1(int di, uint8_t * buff);
+void pcf8574t_init();
 
 #define LED_R_C 0x1
 #define LED_Y_C 0x2

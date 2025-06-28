@@ -328,7 +328,11 @@ void SD_power_on()
     lprintf_time("sd power on\n");
     SD_CS_HIGH();
 #ifdef SDPOW_CTRL
+#ifndef SURPASS
     GPIO_ResetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
+#else
+    eg_set(EG_SDPWR, 0);
+#endif
 #endif
 }
 
@@ -356,7 +360,11 @@ void SD_power_off()
 
     SD_CS_LOW();
 #ifdef SDPOW_CTRL
+#ifndef SURPASS
     GPIO_SetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
+#else
+    eg_set(EG_SDPWR, 1);
+#endif
 #endif
 
     SD_DeInit();

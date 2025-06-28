@@ -267,10 +267,14 @@ void SD_LowLevel_Init(void)
     //sd power pin
     //
 #ifdef SDPOW_CTRL
+#ifndef SURPASS
     RCC_APB2PeriphClockCmd(SD_POWEROFF_GPIO_PERPH, ENABLE);
     GPIO_InitStructure.GPIO_Pin = SD_POWEROFF_GPIO_PIN;
     GPIO_Init(SD_POWEROFF_GPIO_GROUP, &GPIO_InitStructure);
     GPIO_ResetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
+#else
+    eg_set(EG_SDPWR, 0);
+#endif
 #endif
 }
 uint8_t SD_WriteByte(uint8_t Data)

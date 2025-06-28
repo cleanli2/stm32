@@ -11,6 +11,7 @@
 #include "os_task.h"
 #include "ring_buf.h"
 #include "display.h"
+#include "eg.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
@@ -561,6 +562,7 @@ void power_off()
     GPIO_SetBits(GPIOB,GPIO_Pin_0);
     lprintf_time("gpio setb done\n");
 #endif
+#ifndef SURPASS
     //power off pin set high to power down
     RCC_APB2PeriphClockCmd(POWEROFF_GPIO_PERIPH, ENABLE);
 
@@ -570,6 +572,9 @@ void power_off()
     GPIO_Init(POWEROFF_GPIO_GROUP, &GPIO_InitStructure);
     GPIO_SetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
     //
+#else
+    eg_set(EG_POFF, 0);
+#endif
 
     delay_ms(200);
     lprintf_time("power off done\n");
@@ -702,6 +707,21 @@ void main_init(void)
   //72M/72=1M, 1us/count
   //72M/12=6M, 1/6us / count
   timer_init(TIM2_RELOAD, 12-1);
+  lprintf("P8563_init\n");
+  P8563_init();
+#ifdef PCF8574_EXTGPIO
+  //pcf8574t
+  {
+      uint8_t t;
+      if(1==pcf8574t_readData1(EG_ADDR, &t)){
+          lprintf("External GPIO detected\r\n");
+          eg_init();
+      }
+      else{
+          lprintf("External GPIO NOT detected\r\n");
+      }
+  }
+#endif
 
   GPIO_InitTypeDef GPIO_InitStructure;
   //led
@@ -761,6 +781,34 @@ void main_init(void)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
   GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
+#elif defined SURPASS
+  lprintf_time("\n\n================Surpass board start================\n");
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+  /* Configure PD0 and PD2 in output pushpull mode */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  GPIO_ResetBits(GPIOA,GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13);
+
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+  /* Configure in output pushpull mode */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4|GPIO_Pin_0;//PB4 spi flash cs
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+  GPIO_ResetBits(GPIOC,GPIO_Pin_0);	
+  GPIO_SetBits(GPIOC,GPIO_Pin_4);//spi flash cs =1
+
+  RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
+
+  GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
+  GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
 #else
   lprintf_time("\n\n================Hamer board start================\n");
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
@@ -792,6 +840,7 @@ void main_init(void)
 #endif
   //led end
 
+#ifndef SURPASS
   //power off pin set low
   RCC_APB2PeriphClockCmd(POWEROFF_GPIO_PERIPH, ENABLE);
 
@@ -801,6 +850,9 @@ void main_init(void)
   GPIO_Init(POWEROFF_GPIO_GROUP, &GPIO_InitStructure);
   GPIO_ResetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
   //power off pin end
+#else
+  //eg_init done for surpass
+#endif
 
   RCC_GetClocksFreq(&RCC_ClocksStatus);
   get_mcu_id();

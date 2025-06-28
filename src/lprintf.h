@@ -29,4 +29,6 @@ void os_task_log(void*p);
 #define prt_hex(x) lprintf(#x"=%x\r\n", x)
 #define prt_dec(x) lprintf(#x"=%d\r\n", x)
 
+#define logline lprintf("%d:%s\r\n", __LINE__, __FILE__)
+
 #endif
