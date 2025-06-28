@@ -48,6 +48,11 @@ $(warning choose board sunrise)
 CFLAGS+=-DSUNRISE
 CFLAGS+=-DSTM32F10X_HD
 LDFILE=stm32_f103_512k_gcc
+else ifeq ($(board),surpass)
+$(warning choose board surpass)
+CFLAGS+=-DSURPASS
+CFLAGS+=-DSTM32F10X_HD
+LDFILE=stm32_f103_512k_gcc
 else
 $(warning choose board hammer)
 board=hammer

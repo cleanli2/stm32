@@ -22,4 +22,8 @@ void puthexch(char c);
 void reset_time_offset();
 void syshour_init();
 
+#define logline lprintf("%d:%s\r\n", __LINE__, __FILE__)
+#define prt_hex(x) lprintf(#x"=%x\r\n", #x)
+#define prt_dec(x) lprintf(#x"=%d\r\n", #x)
+
 #endif

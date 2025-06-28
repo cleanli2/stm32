@@ -23,6 +23,7 @@
 #include "soc_rtc.h"
 #include "ui.h"
 #include "music.h"
+#include "eg.h"
 
 extern uint32_t logv;
 
@@ -48,6 +49,9 @@ void Dac1_Set_Vol(u32 vol);
 void Dac1_wave(u32 type, u32 para2);
 void Dac1_DeInit(void);
 void dac_set_freq(uint32_t freq);
+uint8_t pcf8574t_writeData(int di, uint8_t mdata);
+uint8_t pcf8574t_readData1(int di, uint8_t * buff);
+void pcf8574t_init();
 
 #define LED_R_C 0x1
 #define LED_Y_C 0x2

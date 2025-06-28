@@ -53,7 +53,7 @@
 #define SPI_FLASH_LOG_START 0x414000
 #define SPI_FLASH_LOG_END 0x420000
 
-#elif defined SUNRISE
+#elif defined SUNRISE || defined SURPASS
 //SPI Flash devide
 /*
  * 0x000000
