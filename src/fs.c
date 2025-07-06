@@ -2,6 +2,10 @@
 
 #define FS_BUF_SIZE 512
 char disk_buf[FS_BUF_SIZE];
+#ifdef SD_WRITE_VERIFY
+int g_sdwf=0;
+int  g_random_wv=0;
+#endif
 char* fs_buf = NULL;
 FATFS g_fat32={0};
 FIL g_file={0};
@@ -16,6 +20,7 @@ disk_opers g_dops;
 
 #define CDB lprintf("line %d\n", __LINE__)
 uint32_t FAT_cache[2][8];
+char* disk_read_sector(uint32_t sector_no);
 
 void fs_hw_init(disk_opers * in_)
 {
@@ -85,6 +90,23 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
     }
     while(1){
         if(SD_RESPONSE_NO_ERROR == g_fs->wt_block((u8*)buf, sector_no, FS_BUF_SIZE)){
+#ifdef SD_WRITE_VERIFY
+            if(g_random_wv || ((g_ms_count&0x3ff)==0x15a)){
+                g_random_wv=0;
+                disk_read_sector(sector_no);
+                if(memcmp(buf, disk_buf, 512)){
+                    while(1){
+                        lprintf("FATAL:sd card write/read not meet:sectorno=%d. W vs R:\r\n", sector_no);
+                        mem_print(buf, 0, 512);
+                        mem_print(disk_buf,0, 512);
+                        delay_ms(1000);
+                    }
+                }
+                else{
+                    g_sdwf++;
+                }
+            }
+#endif
             return buf;
         }
         else{
