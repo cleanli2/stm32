@@ -284,6 +284,7 @@ static inline uint16_t DATAIN()
 #define PCF8574_EXTGPIO
 #define EG_ADDR 4
 
+#define SD_WRITE_VERIFY
 //#define NO_LCD
 #define POWER_MONITOR
 #define GPIO_ADC_VREF_PIN GPIO_Pin_5
