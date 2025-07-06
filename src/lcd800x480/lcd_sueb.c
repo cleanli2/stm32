@@ -1377,6 +1377,9 @@ extern int cam_workloop_stucked;
 extern int stuck_gfnn[RECORD_CAM_STUCK_SIZE];
 extern uint32_t v_bat;
 extern int32_t g_ict;
+#ifdef SD_WRITE_VERIFY
+extern int g_sdwf;
+#endif
 void cam_save_1_frame(u32 only_uart_dump)
 {
     fbfs=0;
@@ -1389,7 +1392,11 @@ void cam_save_1_frame(u32 only_uart_dump)
     abs_time=l_time;
     bus_to_lcd(1);
     lcd_lprintf(1, 645, 8, "%s", get_rtc_time(0));
+#ifdef SD_WRITE_VERIFY
+    lcd_lprintf(1, 645, 43, "gfnn=%d    gsdv=%d", g_fnn, g_sdwf);
+#else
     lcd_lprintf(1, 645, 43, "gfnn=%d   ", g_fnn);
+#endif
     lcd_lprintf(1, 645, 78, "%d.%d fpm", fpm/10, fpm%10);
     lcd_lprintf(1, 645, 113, "%dmv,%dmA", v_bat, g_ict);
     lcd_lprintf(1, 645, 148, "Stuck times:");

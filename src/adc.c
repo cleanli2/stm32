@@ -9,6 +9,9 @@
 #endif
 uint32_t v_bat = 0, v_core=0;
 int32_t g_ict=0;
+#ifdef SD_WRITE_VERIFY
+extern int  g_random_wv;
+#endif
 
 static int adc_inited = 0;
 static int adci_cali = 0;
@@ -117,6 +120,12 @@ void get_myadc_value(uint32_t*v_core_mv_p, uint32_t*v_bat_mv_p, int32_t*i_mA_p)
     *v_core_mv_p = v_core_mv;
     *v_bat_mv_p = v_bat_mv;
     *i_mA_p = i_mA;
+#ifdef SD_WRITE_VERIFY
+    //random get
+    if(((raw_v_ref&0x1)==1) && ((raw_v_bat&0x1)==0) && ((raw_v_currt&0x1)==1)){
+        g_random_wv=1;
+    }
+#endif
 }
 
 int adc_test()
