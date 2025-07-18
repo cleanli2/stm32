@@ -40,6 +40,10 @@ uint32_t task_mask = 0;
 int main()
 {
     main_init();
+    while(get_env_uint("elocksts", 0)!=0x900d){
+        lprintf("env elocksts not set!!!\r\n");
+        run_cmd_interface();
+    }
     ui_start();
     while(1){
         for(unsigned int i = 0; i<sizeof(all_tasks)/sizeof(struct task); i++){
