@@ -307,9 +307,6 @@ static inline uint16_t DATAIN()
 #define LED1_GPIO_PERIPH RCC_APB2Periph_GPIOA
 #define LED1_GPIO_GROUP GPIOA
 #define LED1_GPIO_PIN GPIO_Pin_14
-#define LED0_GPIO_PERIPH RCC_APB2Periph_GPIOA
-#define LED0_GPIO_GROUP GPIOA
-#define LED0_GPIO_PIN GPIO_Pin_15
 
 //lcd
 #define LCD_USE8BIT_MODEL   0	//定义数据总线是否使用8位模式 0,使用16位模式.1,使用8位模式

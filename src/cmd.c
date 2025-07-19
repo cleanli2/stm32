@@ -552,18 +552,7 @@ void ledtest(char *p)
     if( tmp >= 1){
 	    p = str_to_hex(p, &para);
     }
-    if(para){
-	    /* Set*/
-	    GPIO_ResetBits(GPIOA,GPIO_Pin_12);	
-	    GPIO_ResetBits(GPIOA,GPIO_Pin_2);	
-	    lprintf("\n\rSet\n\r");
-    }
-    else{
-	    /* ReSet PC13 */
-	    GPIO_SetBits(GPIOA,GPIO_Pin_12);	
-	    GPIO_SetBits(GPIOA,GPIO_Pin_2);	
-	    lprintf("\n\rClr\n\r");
-    }
+    toggle_led(para);
     con_send('\n');
 
     return;

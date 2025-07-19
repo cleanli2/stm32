@@ -289,6 +289,29 @@ u32*TIM2_IRQHandler_local(u32*stack_data)
     return stack_data;
 }
 
+static int g_led_cache=0;
+void toggle_led(int i)
+{
+    unsigned int cv;
+    //update cache
+    cv=g_led_cache&(1<<i);
+    cv=!cv;
+    if(cv){
+        g_led_cache|=(1<<i);
+    }
+    else{
+        g_led_cache&=~(1<<i);
+    }
+    if(i==0){//led0
+        if(cv) eg_set(EG_LED0, 0);
+        else eg_set(EG_LED0, 1);
+    }
+    else{//led1
+        if(cv) GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
+        else GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
+    }
+}
+
 /*low 4 bit: Pin14Value | Pin13Value | ToCtlPin14 | ToCtlPin13*/
 void led_raw_set(u32 led_flag)
 {
@@ -303,18 +326,23 @@ void led_raw_set(u32 led_flag)
     if(led_flag & 0x1){
         if(led_flag & 0x4){
             //GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
+            eg_set(EG_LED0, 0);
         }
         else{
             //GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
+            eg_set(EG_LED0, 1);
         }
     }
 }
 
 void led_flash(u32 led_flag, u32 ms_ct)
 {
-    led_raw_set(led_flag|0xc);
+    (void)led_flag;
+    toggle_led(0);
+    toggle_led(1);
     delay_ms(ms_ct);
-    led_raw_set(led_flag|0x0);
+    toggle_led(0);
+    toggle_led(1);
     delay_ms(ms_ct);
 }
 

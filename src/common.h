@@ -98,6 +98,7 @@ void P8563_init();
 #define MEM_SD_SIZE 0x2000
 #define usb_writable (0x80000000&logv)
 void led_raw_set(u32 led_flag);
+void toggle_led(int i);
 void usb_main_init(uint32_t flag);
 
 typedef uint16_t u16;
