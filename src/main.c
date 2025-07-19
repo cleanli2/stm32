@@ -39,10 +39,21 @@ struct task all_tasks[]=
 uint32_t task_mask = 0;
 int main()
 {
+    int retry=9;
     main_init();
     while(get_env_uint("elocksts", 0)!=0x900d){
+        pcf8574t_set(15, 1);
+        pcf8574t_set(14, 1);
+        pcf8574t_set(13, 1);
+        pcf8574t_set(12, 1);
         lprintf("env elocksts not set!!!\r\n");
         run_cmd_interface();
+        pcf8574t_set(15, 0);
+        pcf8574t_set(14, 0);
+        pcf8574t_set(13, 0);
+        pcf8574t_set(12, 0);
+        if(retry==0)power_off();
+        retry--;
     }
     ui_start();
     while(1){
