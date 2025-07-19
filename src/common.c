@@ -887,6 +887,7 @@ void main_init(void)
       }
       pcf8574t_init();
   }
+  run_cmd_interface();
 
 }
 
