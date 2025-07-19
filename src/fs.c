@@ -81,6 +81,8 @@ static int recover_sd(uint32_t sector_no)
 }
 
 static uint32_t current_r_sector_no = 0xffffffff;
+static uint32_t toverify_sector_no = 0xffffffff;
+char toverify_buf[FS_BUF_SIZE];
 
 const char* disk_write_sector(const char*buf, uint32_t sector_no)
 {
@@ -93,17 +95,26 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
 #ifdef SD_WRITE_VERIFY
             if(g_random_wv || ((g_ms_count&0x3ff)==0x15a)){
                 g_random_wv=0;
-                disk_read_sector(sector_no);
-                if(memcmp(buf, disk_buf, 512)){
-                    while(1){
-                        lprintf("FATAL:sd card write/read not meet:sectorno=%d. W vs R:\r\n", sector_no);
-                        mem_print(buf, 0, 512);
-                        mem_print(disk_buf,0, 512);
-                        delay_ms(1000);
-                    }
+                if(0xffffffff==toverify_sector_no){
+                    toverify_sector_no = sector_no;
+                    memcpy(toverify_buf, buf, FS_BUF_SIZE);
                 }
                 else{
-                    g_sdwf++;
+                    disk_read_sector(toverify_sector_no);
+                    if(memcmp(toverify_buf, disk_buf, 512)){
+                        while(1){
+                            lprintf("FATAL:sd card write/read not meet:sectorno=%d. W vs R:\r\n", toverify_sector_no);
+                            mem_print(toverify_buf, 0, 512);
+                            mem_print(disk_buf,0, 512);
+                            delay_ms(1000);
+                        }
+                    }
+                    else{
+                        g_sdwf++;
+                        toggle_led(0);
+                        toverify_sector_no = sector_no;
+                        memcpy(toverify_buf, buf, FS_BUF_SIZE);
+                    }
                 }
             }
 #endif

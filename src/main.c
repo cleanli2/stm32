@@ -300,6 +300,7 @@ runcmd:
         //task log
         task_log(NULL);
     }
+    toggle_led(1);
     cam_workingloop_on=0;
     cam_deinit();
     lprintf_time("end working loop.\n");
