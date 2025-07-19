@@ -1334,7 +1334,7 @@ quit:
 #ifdef SURPASS
     if(!eg_get(EG_KEY1)){
         delay_ms(5);
-        if(!pcf8574t_get(EG_KEY1)){
+        if(!eg_get(EG_KEY1)){
             lprintf("stop manually\r\n");
             loop_stop=1;
         }

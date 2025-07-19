@@ -73,7 +73,7 @@ void prepare_pic_trsf()
     }
 }
 
-#define MIN_YUV_FILES_NUM 100
+#define MIN_YUV_FILES_NUM 10000
 void save_sd_log();
 int cam_init(int);
 void cam_deinit();
@@ -216,7 +216,7 @@ void check_ui()
             s_fnn+=9999;
         }
         if(s_fnn>9999){
-            s_fnn-=10000;
+            s_fnn-= MIN_YUV_FILES_NUM;
         }
     }
     prtline;
@@ -299,6 +299,9 @@ runcmd:
         }
         //task log
         task_log(NULL);
+        if(!eg_get(EG_KEY2)){
+            run_cmd_interface();
+        }
     }
     toggle_led(1);
     cam_workingloop_on=0;
