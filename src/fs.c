@@ -4,7 +4,7 @@
 char disk_buf[FS_BUF_SIZE];
 #ifdef SD_WRITE_VERIFY
 int g_sdwf=0;
-int  g_random_wv=0;
+unsigned int  g_random_wv=0;
 #endif
 char* fs_buf = NULL;
 FATFS g_fat32={0};
@@ -93,8 +93,7 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
     while(1){
         if(SD_RESPONSE_NO_ERROR == g_fs->wt_block((u8*)buf, sector_no, FS_BUF_SIZE)){
 #ifdef SD_WRITE_VERIFY
-            if(g_random_wv || ((g_ms_count&0x3ff)==0x15a)){
-                g_random_wv=0;
+            if(((g_ms_count&0x1ff)==g_random_wv)){
                 if(0xffffffff==toverify_sector_no){
                     toverify_sector_no = sector_no;
                     memcpy(toverify_buf, buf, FS_BUF_SIZE);
