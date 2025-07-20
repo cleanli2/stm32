@@ -106,6 +106,8 @@ typedef uint8_t u8;
 
 
 extern u32 debug_mode;
+extern uint32_t g_fnn;
+extern uint32_t g_fnn_not_save;
 #if 0
 static inline u32 en_irq_save()
 {

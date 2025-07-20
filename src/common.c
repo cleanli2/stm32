@@ -567,10 +567,10 @@ void beep(uint32_t hz, uint32_t t_ms)
     GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
 }
 
-extern uint32_t g_fnn;
 void power_off()
 {
-    if(g_fnn!=get_env_uint("fsno", 0)){
+    if(g_fnn_not_save){
+        g_fnn_not_save=0;
         lprintf_time("save g_fnn %d\n", g_fnn);
         set_env_uint("fsno", g_fnn);
     }
@@ -934,7 +934,7 @@ void main_init(void)
       led_flash(0x3, 100);
   }
   beep_by_timer_100(0);
-  //run_cmd_interface();
+  if(con_is_recved())run_cmd_interface();
 #if 0
     while(1){
         run_cmd_interface();
@@ -1036,7 +1036,8 @@ void os_task2(void*p)
 void soft_reset_system()
 {
     lprintf_time("system reset\n");
-    if(g_fnn!=get_env_uint("fsno", 0)){
+    if(g_fnn_not_save){
+        g_fnn_not_save=0;
         lprintf_time("save g_fnn %d\n", g_fnn);
         set_env_uint("fsno", g_fnn);
     }

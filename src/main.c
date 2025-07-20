@@ -37,6 +37,7 @@ uint32_t task_mask = 0;
 int restarted=0;
 extern char fbf[512];
 uint32_t g_fnn=0;
+uint32_t g_fnn_not_save=0;
 void prepare_pic_trsf()
 {
     uint32_t n_s_fnn=0;
@@ -292,6 +293,7 @@ runcmd:
             }
         }
         g_fnn++;
+        g_fnn_not_save=1;
         if(adc_test()){
             slprintf(stopreason, "%s\n", "Battery low, power off");
             loop_stop=1;
