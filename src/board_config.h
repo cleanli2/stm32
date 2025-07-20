@@ -281,6 +281,8 @@ static inline uint16_t DATAIN()
 
 #elif defined SURPASS
 /////////////////////////////////////SURPASS//////////////////////////////////////////////
+#define LED_CAM_RUNNING_OK 1
+#define LED_CAM_SAVING 0
 #define PCF8574_EXTGPIO
 #define EG_ADDR 4
 

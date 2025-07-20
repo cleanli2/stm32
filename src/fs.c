@@ -110,7 +110,7 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
                     }
                     else{
                         g_sdwf++;
-                        toggle_led(0);
+                        toggle_led(LED_CAM_RUNNING_OK);
                         toverify_sector_no = sector_no;
                         memcpy(toverify_buf, buf, FS_BUF_SIZE);
                     }

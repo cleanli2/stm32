@@ -70,7 +70,7 @@ void save_sd_log()
         if(show_ct>(SPI_FLASH_LOG_SIZE/10)){
             lprintf("%d%%doing\n", ch_cnt*100/SPI_FLASH_LOG_SIZE);
             show_ct=0;
-            toggle_led(1);
+            toggle_led(LED_CAM_SAVING);
         }
         if(ch_cnt >= SPI_FLASH_LOG_SIZE){
             write_sec_to_file((const char*)read_buf);

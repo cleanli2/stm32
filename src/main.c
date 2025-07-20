@@ -305,7 +305,7 @@ runcmd:
             run_cmd_interface();
         }
     }
-    toggle_led(1);
+    toggle_led(LED_CAM_SAVING);
     cam_workingloop_on=0;
     cam_deinit();
     lprintf_time("end working loop.\n");
