@@ -138,6 +138,8 @@
 
 #elif defined SUNRISE
 /////////////////////////////////////SUNRISE//////////////////////////////////////////////
+#define LED_CAM_SAVING 1
+#define LED_CAM_RUNNING_OK 1
 #define SD_WRITE_VERIFY
 
 //#define NO_LCD
@@ -162,9 +164,6 @@
 #define LED1_GPIO_PERIPH RCC_APB2Periph_GPIOA
 #define LED1_GPIO_GROUP GPIOA
 #define LED1_GPIO_PIN GPIO_Pin_14
-#define LED0_GPIO_PERIPH RCC_APB2Periph_GPIOA
-#define LED0_GPIO_GROUP GPIOA
-#define LED0_GPIO_PIN GPIO_Pin_15
 
 #define POWEROFF_GPIO_PERIPH RCC_APB2Periph_GPIOC
 #define POWEROFF_GPIO_GROUP GPIOC

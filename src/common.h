@@ -90,6 +90,7 @@ uint8_t pcf8574t_readData1(uint8_t * buff);
 #define MEM_SD_SIZE 0x2000
 #define usb_writable (0x80000000&logv)
 void led_raw_set(u32 led_flag);
+void toggle_led(int i);
 void usb_main_init(uint32_t flag);
 
 typedef uint16_t u16;
@@ -97,6 +98,8 @@ typedef uint8_t u8;
 
 
 extern u32 debug_mode;
+extern uint32_t g_fnn;
+extern uint32_t g_fnn_not_save;
 #if 0
 static inline u32 en_irq_save()
 {

@@ -1305,7 +1305,6 @@ int cam_save_lines(u32 ls, u32 le, u32 only_uart_dump)
         if(endct == 4){
             lprintf_time("Get end button, abort!\n");
             loop_stop=1;
-            GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
             ret=1;//abort
             goto quit;
         }

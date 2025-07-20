@@ -37,6 +37,7 @@ uint32_t task_mask = 0;
 int restarted=0;
 extern char fbf[512];
 uint32_t g_fnn=0;
+uint32_t g_fnn_not_save=0;
 void prepare_pic_trsf()
 {
     uint32_t n_s_fnn=0;
@@ -73,7 +74,7 @@ void prepare_pic_trsf()
     }
 }
 
-#define MIN_YUV_FILES_NUM 100
+#define MIN_YUV_FILES_NUM 10000
 void save_sd_log();
 int cam_init(int);
 void cam_deinit();
@@ -216,7 +217,7 @@ void check_ui()
             s_fnn+=9999;
         }
         if(s_fnn>9999){
-            s_fnn-=10000;
+            s_fnn-= MIN_YUV_FILES_NUM;
         }
     }
     prtline;
@@ -292,6 +293,7 @@ runcmd:
             }
         }
         g_fnn++;
+        g_fnn_not_save=1;
         if(adc_test()){
             slprintf(stopreason, "%s\n", "Battery low, power off");
             loop_stop=1;
@@ -300,6 +302,7 @@ runcmd:
         //task log
         task_log(NULL);
     }
+    toggle_led(LED_CAM_SAVING);
     cam_workingloop_on=0;
     cam_deinit();
     lprintf_time("end working loop.\n");

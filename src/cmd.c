@@ -70,6 +70,7 @@ void save_sd_log()
         if(show_ct>(SPI_FLASH_LOG_SIZE/10)){
             lprintf("%d%%doing\n", ch_cnt*100/SPI_FLASH_LOG_SIZE);
             show_ct=0;
+            toggle_led(LED_CAM_SAVING);
         }
         if(ch_cnt >= SPI_FLASH_LOG_SIZE){
             write_sec_to_file((const char*)read_buf);
@@ -552,18 +553,7 @@ void ledtest(char *p)
     if( tmp >= 1){
 	    p = str_to_hex(p, &para);
     }
-    if(para){
-	    /* Set*/
-	    GPIO_ResetBits(GPIOA,GPIO_Pin_12);	
-	    GPIO_ResetBits(GPIOA,GPIO_Pin_2);	
-	    lprintf("\n\rSet\n\r");
-    }
-    else{
-	    /* ReSet PC13 */
-	    GPIO_SetBits(GPIOA,GPIO_Pin_12);	
-	    GPIO_SetBits(GPIOA,GPIO_Pin_2);	
-	    lprintf("\n\rClr\n\r");
-    }
+    toggle_led(para);
     con_send('\n');
 
     return;

@@ -288,6 +288,28 @@ u32*TIM2_IRQHandler_local(u32*stack_data)
     return stack_data;
 }
 
+static int g_led_cache=0;
+void toggle_led(int i)
+{
+    unsigned int cv;
+    //update cache
+    cv=g_led_cache&(1<<i);
+    cv=!cv;
+    if(cv){
+        g_led_cache|=(1<<i);
+    }
+    else{
+        g_led_cache&=~(1<<i);
+    }
+    if(i==0){//led0
+        //no led0
+    }
+    else{//led1
+        if(cv) GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
+        else GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
+    }
+}
+
 /*low 4 bit: Pin14Value | Pin13Value | ToCtlPin14 | ToCtlPin13*/
 void led_raw_set(u32 led_flag)
 {
@@ -311,9 +333,12 @@ void led_raw_set(u32 led_flag)
 
 void led_flash(u32 led_flag, u32 ms_ct)
 {
-    led_raw_set(led_flag|0xc);
+    (void)led_flag;
+    toggle_led(0);
+    toggle_led(1);
     delay_ms(ms_ct);
-    led_raw_set(led_flag|0x0);
+    toggle_led(0);
+    toggle_led(1);
     delay_ms(ms_ct);
 }
 
@@ -538,10 +563,10 @@ void beep(uint32_t hz, uint32_t t_ms)
     GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
 }
 
-extern uint32_t g_fnn;
 void power_off()
 {
-    if(g_fnn!=get_env_uint("fsno", 0)){
+    if(g_fnn_not_save){
+        g_fnn_not_save=0;
         lprintf_time("save g_fnn %d\n", g_fnn);
         set_env_uint("fsno", g_fnn);
     }
@@ -854,7 +879,7 @@ void main_init(void)
       led_flash(0x3, 100);
   }
   beep_by_timer_100(0);
-  //run_cmd_interface();
+  if(con_is_recved())run_cmd_interface();
 #if 0
     while(1){
         run_cmd_interface();
@@ -956,7 +981,8 @@ void os_task2(void*p)
 void soft_reset_system()
 {
     lprintf_time("system reset\n");
-    if(g_fnn!=get_env_uint("fsno", 0)){
+    if(g_fnn_not_save){
+        g_fnn_not_save=0;
         lprintf_time("save g_fnn %d\n", g_fnn);
         set_env_uint("fsno", g_fnn);
     }

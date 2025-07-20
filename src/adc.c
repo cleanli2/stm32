@@ -122,9 +122,7 @@ void get_myadc_value(uint32_t*v_core_mv_p, uint32_t*v_bat_mv_p, int32_t*i_mA_p)
     *i_mA_p = i_mA;
 #ifdef SD_WRITE_VERIFY
     //random get
-    if(((raw_v_ref&0x1)==1) && ((raw_v_bat&0x1)==0) && ((raw_v_currt&0x1)==1)){
-        g_random_wv=1;
-    }
+    g_random_wv=((raw_v_ref&0x7)<<6) | ((raw_v_bat&0x7)<<3) | ((raw_v_currt&0x7));
 #endif
 }
 
