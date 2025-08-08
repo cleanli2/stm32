@@ -550,6 +550,8 @@ void task_misc(struct task*vp)
         draw_x = cached_touch_x;
         draw_y = cached_touch_y;
         lprintf_time("tpup:%d,%d\n", (uint32_t)draw_x, (uint32_t)draw_y);
+    }
+    else{
         if(g_flag_1s){
             no_key_down_ct++;
             if(save_power_mode){
