@@ -1,6 +1,7 @@
 #include "eg.h"
 #include "common.h"
 
+#ifdef PCF8574_EXTGPIO
 /*init value
 enum egidx{ EG_LED0, EG_OUTEN, EG_POFF, EG_CAMRST, EG_SDPWR, EG_LCDRST, EG_KEY1, EG_KEY2 };
 enum egidx{       0,        0,       1,         1,        0,         1,       1,       1 };
@@ -47,3 +48,4 @@ int eg_get(int bit)
     tv>>=bit;
     return tv&0x1;
 }
+#endif
