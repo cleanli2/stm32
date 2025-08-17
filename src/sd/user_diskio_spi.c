@@ -153,11 +153,11 @@ void rcvr_spi_multi (
 
 #if _USE_WRITE
 /* Send multiple byte */
-static
 void xmit_spi_multi (
 	const BYTE *buff,	/* Pointer to the data */
 	UINT btx			/* Number of bytes to send (even number) */
-)
+);
+#if 0
 {
 	//HAL_SPI_Transmit(&SD_SPI_HANDLE, buff, btx, HAL_MAX_DELAY);
     while(btx--){
@@ -170,6 +170,7 @@ void xmit_spi_multi (
         SD_SPI->DR = *buff++;
     }
 }
+#endif
 #endif
 
 
