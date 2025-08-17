@@ -7,6 +7,7 @@
 .global USART1_IRQHandler
 .global atomic_inc
 .global rcvr_spi_multi
+.global xmit_spi_multi
 .code 16
 .syntax unified
 
@@ -110,6 +111,37 @@ adds r0, r0, #1
 subs r1, r1, #1
 cmp r1, #0
 bne.n wait_tx_done
+
+pop {r2-r3}
+bx lr
+
+.type xmit_spi_multi, function
+xmit_spi_multi:
+push {r2-r3}
+
+/*r0=char*buff, r1=lens*/
+/*r3=base of spi, r2=tmp data*/
+ldr r3, =0x40013000
+
+/*while((SD_SPI->SR & SPI_I2S_FLAG_TXE) == RESET);*/
+xwait_tx_done:
+nop
+ldrh r2, [r3, #8]
+uxth r2, r2
+and.w r2, r2, #2
+cmp r2, #0
+beq.n xwait_tx_done
+
+/*SD_SPI->DR = *buff++;*/
+ldrb r2, [r0, #0]
+uxth r2, r2
+strh r2, [r3, #12]
+adds r0, r0, #1
+
+/*len--*/
+subs r1, r1, #1
+cmp r1, #0
+bne.n xwait_tx_done
 
 pop {r2-r3}
 bx lr
