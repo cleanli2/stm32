@@ -135,18 +135,18 @@ void rcvr_spi_multi (
 )
 {
 	for(UINT i=0; i<btr; i++) {
-        while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
-        {
-        }
+        //while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
+        while((SD_SPI->SR&SPI_I2S_FLAG_TXE) == RESET);
 
         /*!< Send the byte */
-        SPI_I2S_SendData(SD_SPI, 0xff);
-        while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_RXNE) == RESET)
-        {
-        }
+        //SPI_I2S_SendData(SD_SPI, 0xff);
+        SD_SPI->DR = 0xff;
+        //while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_RXNE) == RESET)
+        while((SD_SPI->SR&SPI_I2S_FLAG_RXNE) == RESET);
 
         /*!< Return the byte read from the SPI bus */
-        *(buff+i) = SPI_I2S_ReceiveData(SD_SPI);
+        //*(buff+i) = SPI_I2S_ReceiveData(SD_SPI);
+        *(buff+i) = SD_SPI->DR;
 	}
 }
 
