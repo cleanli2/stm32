@@ -135,7 +135,18 @@ void rcvr_spi_multi (
 )
 {
 	for(UINT i=0; i<btr; i++) {
-		*(buff+i) = xchg_spi(0xFF);
+        while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
+        {
+        }
+
+        /*!< Send the byte */
+        SPI_I2S_SendData(SD_SPI, 0xff);
+        while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_RXNE) == RESET)
+        {
+        }
+
+        /*!< Return the byte read from the SPI bus */
+        *(buff+i) = SPI_I2S_ReceiveData(SD_SPI);
 	}
 }
 
