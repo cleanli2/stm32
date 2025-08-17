@@ -162,12 +162,12 @@ void xmit_spi_multi (
 	//HAL_SPI_Transmit(&SD_SPI_HANDLE, buff, btx, HAL_MAX_DELAY);
     while(btx--){
         /*!< Wait until the transmit buffer is empty */
-        while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
-        {
-        }
+        //while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET) { }
+        while((SD_SPI->SR&SPI_I2S_FLAG_TXE) == RESET);
 
         /*!< Send the byte */
-        SPI_I2S_SendData(SD_SPI, *buff++);
+        //SPI_I2S_SendData(SD_SPI, *buff++);
+        SD_SPI->DR = *buff++;
     }
 }
 #endif
