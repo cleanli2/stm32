@@ -27,6 +27,7 @@
 #include "stm32f10x_spi.h" /* Provide the low-level HAL functions */
 #include "user_diskio_spi.h"
 #include "common.h"
+
 #define HAL_GetTick() (get_system_us()/1000)
 
 //Make sure you set #define SD_SPI_HANDLE as some hspix in main.h
@@ -39,8 +40,8 @@
 #define FCLK_SLOW() { MODIFY_REG(SD_SPI_HANDLE.Instance->CR1, SPI_BAUDRATEPRESCALER_256, SPI_BAUDRATEPRESCALER_128); }	/* Set SCLK = slow, approx 280 KBits/s*/
 #define FCLK_FAST() { MODIFY_REG(SD_SPI_HANDLE.Instance->CR1, SPI_BAUDRATEPRESCALER_256, SPI_BAUDRATEPRESCALER_8); }	/* Set SCLK = fast, approx 4.5 MBits/s */
 
-#define CS_HIGH()	SD_CS_HIGH()
-#define CS_LOW()	SD_CS_LOW()
+#define CS_HIGH()	GPIO_SetBits(SD_CS_GPIO_PORT, SD_CS_PIN)
+#define CS_LOW()	GPIO_ResetBits(SD_CS_GPIO_PORT, SD_CS_PIN)
 
 /*--------------------------------------------------------------------------
 
