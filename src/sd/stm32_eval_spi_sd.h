@@ -193,6 +193,7 @@ typedef struct
 #define SD_NOT_PRESENT    ((uint8_t)0x00)
 
 
+#if 0
 /**
   * @brief  Commands: CMDxx = CMD-number | 0x40
   */
@@ -237,6 +238,7 @@ typedef struct
 #define CMD55   55      //ÃüÁî55£¬Ó¦·µ»Ø0x01
 #define CMD58   58      //ÃüÁî58£¬¶ÁOCRÐÅÏ¢
 #define CMD59   59      //ÃüÁî59£¬Ê¹ÄÜ/½ûÖ¹CRC£¬Ó¦·µ»Ø0x00
+#endif
 
 /**
   * @}
