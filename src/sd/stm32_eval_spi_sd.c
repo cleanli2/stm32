@@ -47,6 +47,112 @@
 #include "stm32_eval_spi_sd.h"
 #include "common.h"
 
+uint32_t sd_hw_err = 0;
+DECLARE_OS_LOCK(oslk_spibus, SPI_BUS_LOCK);
+uint32_t logv = 0;
+
+void SD_power_on()
+{
+    lprintf_time("sd power on\n");
+    SD_LowLevel_Init();
+    SD_CS_HIGH();
+#ifdef SDPOW_CTRL
+#ifndef SURPASS
+    GPIO_ResetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
+#else
+    eg_set(EG_SDPWR, 0);
+#endif
+#endif
+}
+
+
+void SD_power_off()
+{
+    GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
+
+    lprintf_time("sd power off\n");
+
+    GPIO_InitStructure.GPIO_Pin = TCLK_PIN;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(TCLK_GG, &GPIO_InitStructure);
+    GPIO_ResetBits(TCLK_GG, TCLK_PIN);
+
+    GPIO_InitStructure.GPIO_Pin = TDIN_PIN ;
+    GPIO_Init(TDIN_GG, &GPIO_InitStructure);
+    GPIO_ResetBits(TDIN_GG, TDIN_PIN);
+
+    GPIO_InitStructure.GPIO_Pin = DOUT_PIN;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_Init(DOUT_GG, &GPIO_InitStructure);
+    GPIO_SetBits(DOUT_GG, DOUT_PIN);
+
+    SD_CS_LOW();
+#ifdef SDPOW_CTRL
+#ifndef SURPASS
+    GPIO_SetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
+#else
+    eg_set(EG_SDPWR, 1);
+#endif
+#endif
+
+    SD_LowLevel_DeInit();
+}
+
+SD_Error SD_WriteBlock(uint8_t* w_buf, uint32_t WriteBlockNo, uint16_t Size)
+{
+}
+SD_Error SD_ReadBlock(uint8_t* pBuffer, uint32_t ReadBlockNo, uint16_t Size)
+{
+}
+u8 SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc)
+{ }
+uint8_t SD_GetRes(void)
+{
+}
+SD_Error SD_Init(void)
+{
+}
+SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
+{
+}
+uint8_t SD_SPI_ReadWriteByte(uint8_t data)
+{
+	return SD_WriteByte(data);
+}
+void sf_read_id()
+{
+    uint16_t id;
+    os_lock(&oslk_spibus);
+	SF_CS_HIGH();
+	SF_CS_LOW();
+	SD_WriteByte(0x90);
+	SD_WriteByte(0x00);
+	SD_WriteByte(0x00);
+	SD_WriteByte(0x00);
+
+    id = SD_ReadByte();
+    id <<= 8;
+    id |= SD_ReadByte();
+    lprintf("id=%x\n", id);
+	SF_CS_HIGH();
+    os_unlock(&oslk_spibus);
+}
+void SD_repower(int n)
+{
+    SD_power_off();
+    delay_ms(100*n);
+    SD_power_on();
+    SD_LowLevel_Init();
+    delay_ms(100);
+}
+
+SD_Error get_sd_hw_err(void)
+{
+    if(  sd_hw_err)return SD_ERROR;
+    else return SD_OK;
+}
+#if 0
 /** @addtogroup Utilities
   * @{
   */
@@ -107,17 +213,10 @@
   * @{
   */ 
 
-uint32_t logv = 0;
-uint32_t sd_hw_err = 0;
 uint8_t  SD_Type = 0;//no card
 uint8_t SD_WaitReady(void);
 void SD_DisSelect(void);
-DECLARE_OS_LOCK(oslk_spibus, SPI_BUS_LOCK);
 
-uint8_t SD_SPI_ReadWriteByte(uint8_t data)
-{
-	return SD_WriteByte(data);
-}
 //选择sd卡,并且等待卡准备OK
 //返回值:0,成功;1,失败;
 u8 SD_Select(void)
@@ -272,25 +371,6 @@ u8 SD_GetCXD(u8 *csd_data, u8 cmd)
     }
 }  
 
-void sf_read_id()
-{
-    uint16_t id;
-    os_lock(&oslk_spibus);
-	SF_CS_HIGH();
-	SF_CS_LOW();
-	SD_WriteByte(0x90);
-	SD_WriteByte(0x00);
-	SD_WriteByte(0x00);
-	SD_WriteByte(0x00);
-
-    id = SD_ReadByte();
-    id <<= 8;
-    id |= SD_ReadByte();
-    lprintf("id=%x\n", id);
-	SF_CS_HIGH();
-    os_unlock(&oslk_spibus);
-}
-
 uint8_t SD_GetRes(void)
 {
 	uint16_t Retry=0X1fff;
@@ -318,72 +398,6 @@ uint8_t getres_SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc)
   * @param  None
   * @retval None
   */
-void SD_DeInit(void)
-{
-  SD_LowLevel_DeInit();
-}
-
-void SD_power_on()
-{
-    lprintf_time("sd power on\n");
-    SD_CS_HIGH();
-#ifdef SDPOW_CTRL
-#ifndef SURPASS
-    GPIO_ResetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
-#else
-    eg_set(EG_SDPWR, 0);
-#endif
-#endif
-}
-
-
-void SD_power_off()
-{
-    GPIO_InitTypeDef GPIO_InitStructure;	//GPIO
-
-    lprintf_time("sd power off\n");
-
-    GPIO_InitStructure.GPIO_Pin = TCLK_PIN;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(TCLK_GG, &GPIO_InitStructure);
-    GPIO_ResetBits(TCLK_GG, TCLK_PIN);
-
-    GPIO_InitStructure.GPIO_Pin = TDIN_PIN ;
-    GPIO_Init(TDIN_GG, &GPIO_InitStructure);
-    GPIO_ResetBits(TDIN_GG, TDIN_PIN);
-
-    GPIO_InitStructure.GPIO_Pin = DOUT_PIN;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_Init(DOUT_GG, &GPIO_InitStructure);
-    GPIO_SetBits(DOUT_GG, DOUT_PIN);
-
-    SD_CS_LOW();
-#ifdef SDPOW_CTRL
-#ifndef SURPASS
-    GPIO_SetBits(SD_POWEROFF_GPIO_GROUP, SD_POWEROFF_GPIO_PIN);
-#else
-    eg_set(EG_SDPWR, 1);
-#endif
-#endif
-
-    SD_DeInit();
-}
-
-void SD_repower(int n)
-{
-    SD_power_off();
-    delay_ms(100*n);
-    SD_power_on();
-    SD_LowLevel_Init();
-    delay_ms(100);
-}
-
-SD_Error get_sd_hw_err(void)
-{
-    if(  sd_hw_err)return SD_ERROR;
-    else return SD_OK;
-}
 /**
   * @brief  Initializes the SD/SD communication.
   * @param  None
@@ -1623,3 +1637,4 @@ SD_Error SD_GoIdleState(void)
   */  
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+#endif
