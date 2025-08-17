@@ -24,13 +24,14 @@
 
 //It is designed to be wrapped by a cubemx generated user_diskio.c file.
 
-#include "stm32f3xx_hal.h" /* Provide the low-level HAL functions */
+#include "stm32f10x_spi.h" /* Provide the low-level HAL functions */
 #include "user_diskio_spi.h"
+#include "common.h"
+#define HAL_GetTick() (get_system_us()/1000)
 
 //Make sure you set #define SD_SPI_HANDLE as some hspix in main.h
 //Make sure you set #define SD_CS_GPIO_Port as some GPIO port in main.h
 //Make sure you set #define SD_CS_Pin as some GPIO pin in main.h
-extern SPI_HandleTypeDef SD_SPI_HANDLE;
 
 /* Function prototypes */
 
@@ -38,8 +39,8 @@ extern SPI_HandleTypeDef SD_SPI_HANDLE;
 #define FCLK_SLOW() { MODIFY_REG(SD_SPI_HANDLE.Instance->CR1, SPI_BAUDRATEPRESCALER_256, SPI_BAUDRATEPRESCALER_128); }	/* Set SCLK = slow, approx 280 KBits/s*/
 #define FCLK_FAST() { MODIFY_REG(SD_SPI_HANDLE.Instance->CR1, SPI_BAUDRATEPRESCALER_256, SPI_BAUDRATEPRESCALER_8); }	/* Set SCLK = fast, approx 4.5 MBits/s */
 
-#define CS_HIGH()	{HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_SET);}
-#define CS_LOW()	{HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_RESET);}
+#define CS_HIGH()	SD_CS_HIGH()
+#define CS_LOW()	SD_CS_LOW()
 
 /*--------------------------------------------------------------------------
 
@@ -106,7 +107,21 @@ BYTE xchg_spi (
 )
 {
 	BYTE rxDat;
-    HAL_SPI_TransmitReceive(&SD_SPI_HANDLE, &dat, &rxDat, 1, 50);
+    //HAL_SPI_TransmitReceive(&SD_SPI_HANDLE, &dat, &rxDat, 1, 50);
+    
+    /*!< Wait until the transmit buffer is empty */
+    while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
+    {
+    }
+
+    /*!< Send the byte */
+    SPI_I2S_SendData(SD_SPI, dat);
+    while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_RXNE) == RESET)
+    {
+    }
+
+    /*!< Return the byte read from the SPI bus */ 
+    rxDat = SPI_I2S_ReceiveData(SD_SPI);
     return rxDat;
 }
 
@@ -132,7 +147,16 @@ void xmit_spi_multi (
 	UINT btx			/* Number of bytes to send (even number) */
 )
 {
-	HAL_SPI_Transmit(&SD_SPI_HANDLE, buff, btx, HAL_MAX_DELAY);
+	//HAL_SPI_Transmit(&SD_SPI_HANDLE, buff, btx, HAL_MAX_DELAY);
+    while(btx--){
+        /*!< Wait until the transmit buffer is empty */
+        while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
+        {
+        }
+
+        /*!< Send the byte */
+        SPI_I2S_SendData(SD_SPI, *buff++);
+    }
 }
 #endif
 
@@ -327,7 +351,8 @@ inline DSTATUS USER_SPI_initialize (
 
 	if (Stat & STA_NODISK) return Stat;	/* Is card existing in the soket? */
 
-	FCLK_SLOW();
+	//FCLK_SLOW();
+    uint16_t speed = SPI_set_speed(SD_SPI, SPI_BaudRatePrescaler_256);
 	for (n = 10; n; n--) xchg_spi(0xFF);	/* Send 80 dummy clocks */
 
 	ty = 0;
@@ -357,11 +382,12 @@ inline DSTATUS USER_SPI_initialize (
 	despiselect();
 
 	if (ty) {			/* OK */
-		FCLK_FAST();			/* Set fast clock */
+		//FCLK_FAST();			/* Set fast clock */
 		Stat &= ~STA_NOINIT;	/* Clear STA_NOINIT flag */
 	} else {			/* Failed */
 		Stat = STA_NOINIT;
 	}
+    SPI_set_speed(SD_SPI, speed);
 
 	return Stat;
 }
