@@ -121,6 +121,9 @@ SD_Error SD_ReadBlock(uint8_t* pBuffer, uint32_t ReadBlockNo, uint16_t Size)
 }
 u8 SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc)
 { 
+    (void ) Cmd;
+    (void)Arg;
+    (void)Crc;
     return 0;
 }
 uint8_t SD_GetRes(void)
@@ -145,6 +148,7 @@ SD_Error SD_Init(void)
 }
 SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
 {
+    (void)cardinfo;
     return 0;
 }
 uint8_t SD_SPI_ReadWriteByte(uint8_t data)
