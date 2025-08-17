@@ -46,6 +46,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32_eval_spi_sd.h"
 #include "common.h"
+#include "diskio.h"
 
 uint32_t sd_hw_err = 0;
 DECLARE_OS_LOCK(oslk_spibus, SPI_BUS_LOCK);
@@ -101,17 +102,36 @@ void SD_power_off()
 
 SD_Error SD_WriteBlock(uint8_t* w_buf, uint32_t WriteBlockNo, uint16_t Size)
 {
+    if(RES_OK==USER_SPI_write(0, w_buf, WriteBlockNo, Size>>9)){
+        return SD_OK;
+    }
+    else{
+        return SD_ERROR;
+    }
 }
 SD_Error SD_ReadBlock(uint8_t* pBuffer, uint32_t ReadBlockNo, uint16_t Size)
 {
+    if(RES_OK==USER_SPI_read(0, pBuffer, ReadBlockNo, Size>>9)){
+        return SD_OK;
+    }
+    else{
+        return SD_ERROR;
+    }
 }
 u8 SD_SendCmd(uint8_t Cmd, uint32_t Arg, uint8_t Crc)
 { }
 uint8_t SD_GetRes(void)
 {
+    return 0;
 }
 SD_Error SD_Init(void)
 {
+    unsigned int ct_n, sz_ct;
+    USER_SPI_initialize(0);
+    USER_SPI_ioctl (0, GET_SECTOR_COUNT, &ct_n);
+    USER_SPI_ioctl (0, GET_BLOCK_SIZE, &sz_ct);
+    prt_dec(ct_n);
+    prt_dec(sz_ct);
 }
 SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
 {
