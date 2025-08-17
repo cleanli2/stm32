@@ -128,11 +128,11 @@ BYTE xchg_spi (
 
 
 /* Receive multiple byte */
-static
 void rcvr_spi_multi (
 	BYTE *buff,		/* Pointer to data buffer */
 	UINT btr		/* Number of bytes to receive (even number) */
-)
+);
+#if 0
 {
 	for(UINT i=0; i<btr; i++) {
         //while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
@@ -149,7 +149,7 @@ void rcvr_spi_multi (
         *(buff+i) = SD_SPI->DR;
 	}
 }
-
+#endif
 
 #if _USE_WRITE
 /* Send multiple byte */
