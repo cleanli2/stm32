@@ -1136,12 +1136,15 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
             rec_count++;
 
             if(rec_count==640*2 && !g_pcf8574_hw){
-                GPIO_SetBits(AL422_WG,OE);
+                //GPIO_SetBits(AL422_WG,OE);
+                AL422_WG->BSRR = OE;
             }
             //rck=0
-            GPIO_ResetBits(AL422_WG,RCK);
+            //GPIO_ResetBits(AL422_WG,RCK);
+            AL422_WG->BRR = RCK;
             //rck=1
-            GPIO_SetBits(AL422_WG,RCK);
+            //GPIO_SetBits(AL422_WG,RCK);
+            AL422_WG->BSRR = RCK;
         }
         if(only_uart_dump==1){
             mem_print(vbf, 640*2*linect, 640*2);
@@ -1391,6 +1394,7 @@ void cam_save_1_frame(u32 only_uart_dump)
     lcd_lprintf(1, 645, 113, "%dmv,%dmA", v_bat, g_ict);
     lcd_lprintf(1, 645, 148, "Stuck times:");
     lcd_lprintf(2, 645, 183, "%d", cam_workloop_stucked);
+    lprintf("%d.%d fpm\r\n", fpm/10, fpm%10);
     if(cam_workloop_stucked>0){
         int py=218, sti=cam_workloop_stucked, cwsi=cam_workloop_stucked;
         if(sti>RECORD_CAM_STUCK_SIZE)sti=RECORD_CAM_STUCK_SIZE;
