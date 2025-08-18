@@ -2122,6 +2122,7 @@ void LCD_ReadRAM_Prepare(void)
 }
 
 
+#if 0
 /*****************************************************************************
  * @name       :void Lcd_WriteData_16Bit(u16 Data)
  * @date       :2018-08-09 
@@ -2147,6 +2148,7 @@ void Lcd_WriteData_16Bit(u16 Data)
         LCD_write(Data);
 	 #endif
 }
+#endif
 
 /*****************************************************************************
  * @name       :u16 Lcd_ReadData_16Bit(void)
