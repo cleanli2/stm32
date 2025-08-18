@@ -119,6 +119,8 @@ u16 SPI_Flash_ReadID(void)
     }
 	return Temp;
 }   		    
+
+void rcvr_spi_multi ( u8*buff, u16 btr);
 //读取SPI FLASH  
 //在指定地址开始读取指定长度的数据
 //pBuffer:数据存储区
@@ -126,17 +128,19 @@ u16 SPI_Flash_ReadID(void)
 //NumByteToRead:要读取的字节数(最大65535)
 void SPI_Flash_Read(u8* pBuffer,u32 ReadAddr,u16 NumByteToRead)   
 { 
- 	u16 i;    												    
     os_lock(&oslk_spibus);
 	SPI_FLASH_CS=0;                            //使能器件   
     SPI1_ReadWriteByte(W25X_ReadData);         //发送读取命令   
     SPI1_ReadWriteByte((u8)((ReadAddr)>>16));  //发送24bit地址    
     SPI1_ReadWriteByte((u8)((ReadAddr)>>8));   
     SPI1_ReadWriteByte((u8)ReadAddr);   
+#if 0
     for(i=0;i<NumByteToRead;i++)
 	{ 
         pBuffer[i]=SPI1_ReadWriteByte(0XFF);   //循环读数  
     }
+#endif
+	rcvr_spi_multi(&pBuffer[0], NumByteToRead);		/* Store trailing data to the buffer */
 	SPI_FLASH_CS=1;                            //取消片选     	      
     os_unlock(&oslk_spibus);
 }  
