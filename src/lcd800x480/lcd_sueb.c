@@ -1440,6 +1440,10 @@ void file_to_lcd()
 {
     u32 pos;
     bus_to_lcd(1);
+    lcd_clr_window(WHITE, 0, 0, 5, 479);
+    lcd_clr_window(BLACK, 6, 0, 10, 479);
+    lcd_clr_window(WHITE, 635, 0, 639, 479);
+    lcd_clr_window(BLACK, 631, 0, 634, 479);
 	LCD_SetWindows(0,0,639,479);   
     bus_to_lcd(0);
 
