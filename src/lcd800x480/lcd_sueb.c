@@ -1089,21 +1089,44 @@ void cam_set_rfn(u32 irn, u32 ifn)
     fn = ifn;
     lprintf("set:rn=%d, fn=%d\n", rn, fn);
 }
+extern int bu[256];
+extern int rv[256];
+extern int gu[256];
+extern int gv[256];
+#define CLAMP(L, D, H) ((D<L)?L:((D<H)?D:H))
 void wtlcd(char*bf, u32 len)
 {
-    struct dataof_yuv2bmp dyb;
+    int y1, y2, u, v;
+    int r1, r2, b1, b2, g1, g2;
     uint32_t color;
     bus_to_lcd(1);
     for(u32 i=0;i<len;i+=4)
     {
-        dyb.y1=bf[i];
-        dyb.u=bf[i+1];
-        dyb.y2=bf[i+2];
-        dyb.v=bf[i+3];
-        yuv2bmp_tab(&dyb);
-        color=Color_To_565(dyb.r1, dyb.g1, dyb.b1);
+        y1=bf[i];
+        u=bf[i+1];
+        y2=bf[i+2];
+        v=bf[i+3];
+
+        //yuv2bmp_tab(&dyb);
+        //compute
+        b1=y1+1770*(u-128)/1000;
+        g1=y1-(343*(u-128)+714*(v-128))/1000;
+        r1=y1+1403*(v-128)/1000;
+        b2=y2+1770*(u-128)/1000;
+        g2=y2-(343*(u-128)+714*(v-128))/1000;
+        r2=y2+1403*(v-128)/1000;
+
+        //output
+        b1=CLAMP(0, b1, 255);
+        b2=CLAMP(0, b2, 255);
+        g1=CLAMP(0, g1, 255);
+        g2=CLAMP(0, g2, 255);
+        r1=CLAMP(0, r1, 255);
+        r2=CLAMP(0, r2, 255);
+
+        color=Color_To_565(r1, g1, b1);
         Lcd_WriteData_16Bit(color);
-        color=Color_To_565(dyb.r2, dyb.g2, dyb.b2);
+        color=Color_To_565(r2, g2, b2);
         Lcd_WriteData_16Bit(color);
     }
     bus_to_lcd(0);
