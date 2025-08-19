@@ -722,9 +722,9 @@ void set_OV7670reg_M(void)
 {
 	cam_w_reg(0x8c, 0x00);
 	cam_w_reg(0x3a, 0x0c);//--------uyvy
-	cam_w_reg(0x40, 0xc0);
+	cam_w_reg(0x40, 0xd0);//----565
 	cam_w_reg(0x8c, 0x00);
-	cam_w_reg(0x12, 0x00);//-----------------
+	cam_w_reg(0x12, 0x04);//------RGB-----------
 	cam_w_reg(0x32, 0x80);
 	cam_w_reg(0x17, 0x16);
 	cam_w_reg(0x18, 0x04);
@@ -1096,10 +1096,11 @@ extern int gv[256];
 #define CLAMP(L, D, H) ((D<L)?L:((D<H)?D:H))
 void wtlcd(char*bf, u32 len)
 {
-    int y1, y2, u, v;
-    int r1, r2, b1, b2, g1, g2;
     uint32_t color;
     bus_to_lcd(1);
+#if 0
+    int y1, y2, u, v;
+    int r1, r2, b1, b2, g1, g2;
     for(u32 i=0;i<len;i+=4)
     {
         y1=bf[i];
@@ -1129,6 +1130,13 @@ void wtlcd(char*bf, u32 len)
         color=Color_To_565(r2, g2, b2);
         Lcd_WriteData_16Bit(color);
     }
+#else
+    for(u32 i=0;i<len;i+=2)
+    {
+        color=(bf[i]<<8)|bf[i+1];
+        Lcd_WriteData_16Bit(color);
+    }
+#endif
     bus_to_lcd(0);
 }
 #define TO_LCD 2
