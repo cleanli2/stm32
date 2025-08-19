@@ -1094,11 +1094,13 @@ extern int rv[256];
 extern int gu[256];
 extern int gv[256];
 #define CLAMP(L, D, H) ((D<L)?L:((D<H)?D:H))
+void rgb565_to_lcd(char*buf, u32 len);
 void wtlcd(char*bf, u32 len)
 {
-    uint32_t color;
+    if(len==0)return;
     bus_to_lcd(1);
 #if 0
+    uint32_t color;
     int y1, y2, u, v;
     int r1, r2, b1, b2, g1, g2;
     for(u32 i=0;i<len;i+=4)
@@ -1131,11 +1133,7 @@ void wtlcd(char*bf, u32 len)
         Lcd_WriteData_16Bit(color);
     }
 #else
-    for(u32 i=0;i<len;i+=2)
-    {
-        color=(bf[i]<<8)|bf[i+1];
-        Lcd_WriteData_16Bit(color);
-    }
+    rgb565_to_lcd(bf, len);
 #endif
     bus_to_lcd(0);
 }

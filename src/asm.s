@@ -8,6 +8,8 @@
 .global atomic_inc
 .global rcvr_spi_multi
 .global xmit_spi_multi
+.global lcd_w16
+.global rgb565_to_lcd
 .code 16
 .syntax unified
 
@@ -145,5 +147,67 @@ bne.n xwait_tx_done
 
 pop {r2-r3}
 bx lr
+
+
+/*void lcd_w16(u16 color)*/
+.type lcd_w16, function
+lcd_w16:
+push {r2, r3, r4}
+
+/*r0=color, r1 no use*/
+/*r3, r2=tmp data*/
+
+/*
+   LCD_RS_SET;
+   LCD_CS_CLR;
+   DATAOUT(d);
+   LCD_WR_CLR;
+   LCD_WR_SET;
+   LCD_CS_SET;
+*/
+ldr r2, =0x40010800
+movs r3, #2
+str r3, [r2, #16]
+movs r3, #1
+str r3, [r2, #20]
+ldr r4, =0x40010c00
+str r0, [r4, #12]
+ldr r4, =0x40011000
+mov.w r3, 0x8000
+str r3, [r4, #20]
+str r3, [r4, #16]
+movs r3, #1
+str r3, [r2, #16]
+
+pop {r2, r3, r4}
+bx lr
+
+.type rgb565_to_lcd, function
+rgb565_to_lcd:
+push {r2-r3, lr}
+
+/*r0->r3=char*buff, r1=lens*/
+/*r3=buff, r2=tmp data*/
+
+mov r3, r0
+
+compute_color:
+/*color=(bf[i]<<8)|bf[i+1];*/
+ldrb r0, [r3, #0]
+lsls r0, r0, #8
+ldrb r2, [r3, #1]
+orrs r0, r2
+bl lcd_w16
+adds r3, r3, #2
+
+/*len--*/
+subs r1, r1, #2
+cmp r1, #1
+beq.n endofrgb2lcd
+cmp r1, #0
+bne.n compute_color
+
+endofrgb2lcd:
+pop {r2-r3, pc}
 
 .end
