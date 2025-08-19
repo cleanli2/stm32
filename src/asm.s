@@ -75,6 +75,7 @@ strex r0, r2, [r1]
 pop {r1, r2}
 bx lr
 
+/***************************************************/
 .type rcvr_spi_multi, function
 rcvr_spi_multi:
 push {r2-r3}
@@ -117,6 +118,7 @@ bne.n wait_tx_done
 pop {r2-r3}
 bx lr
 
+/***************************************************/
 .type xmit_spi_multi, function
 xmit_spi_multi:
 push {r2-r3}
@@ -149,6 +151,7 @@ pop {r2-r3}
 bx lr
 
 
+/***************************************************/
 /*void lcd_w16(u16 color)*/
 .type lcd_w16, function
 lcd_w16:
@@ -182,14 +185,19 @@ str r3, [r2, #16]
 pop {r2, r3, r4}
 bx lr
 
+/***************************************************/
 .type rgb565_to_lcd, function
 rgb565_to_lcd:
-push {r2-r3, lr}
+push {r2-r7}
 
 /*r0->r3=char*buff, r1=lens*/
 /*r3=buff, r2=tmp data*/
 
 mov r3, r0
+ldr r4, =0x40010800
+ldr r5, =0x40010c00
+ldr r6, =0x40011000
+movs r7, #1
 
 compute_color:
 /*color=(bf[i]<<8)|bf[i+1];*/
@@ -197,17 +205,28 @@ ldrb r0, [r3, #0]
 lsls r0, r0, #8
 ldrb r2, [r3, #1]
 orrs r0, r2
-bl lcd_w16
+
+/*bl lcd_w16*/
+movs r2, #2
+str r2, [r4, #16]
+str r7, [r4, #20]
+str r0, [r5, #12]
+mov.w r2, 0x8000
+str r2, [r6, #20]
+str r2, [r6, #16]
+str r7, [r4, #16]
+
 adds r3, r3, #2
 
 /*len--*/
 subs r1, r1, #2
-cmp r1, #1
-beq.n endofrgb2lcd
+//cmp r1, #1
+//beq.n endofrgb2lcd
 cmp r1, #0
 bne.n compute_color
 
 endofrgb2lcd:
-pop {r2-r3, pc}
+pop {r2-r7}
+bx lr
 
 .end
