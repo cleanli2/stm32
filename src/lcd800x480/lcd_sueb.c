@@ -718,7 +718,7 @@ static void init_yuv_25fps(void)
 	sensor_write_reg(0x13, 0xf7);
 }
 
-void set_OV7670reg_M(void)
+void set_OV7670reg_M(void)//setting already change to rgb565, modify 0x40 & 0x12
 {
 	cam_w_reg(0x8c, 0x00);
 	cam_w_reg(0x3a, 0x0c);//--------uyvy
