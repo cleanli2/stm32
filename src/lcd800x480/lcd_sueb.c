@@ -1066,7 +1066,7 @@ int wtf(char*bf, u32 len, u32 ss)
         }
         frames_wsize = wl;
     }
-    while(llt > ss){
+    while(llt >= ss){
         memcpy(fbf, bf, ss);
         llt-=ss;
         bf+=ss;
@@ -1145,6 +1145,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
 {
 
     u32 linect = 0;
+    u32 wtf_idx = 0;
     u32 rec_count = 0;
     u32 linen = rn;
     memset(vbf, 0xff, 640*2);
@@ -1162,6 +1163,10 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
         }
         while(rec_count<640*2){
             vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
+            if((fbfs+rec_count+1-wtf_idx) == 512){
+                wtf(vbf+wtf_idx, rec_count+1-wtf_idx, 512);
+                wtf_idx=rec_count+1;
+            }
             rec_count++;
 
             if(rec_count==640*2 && !g_pcf8574_hw){
@@ -1187,11 +1192,12 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
         else{
             if(g_tlcd) wtlcd(vbf, 640*2);
             yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
-            if(wtf(vbf, 640*2, 512)<0){
+            if(wtf(vbf+wtf_idx, 640*2-wtf_idx, 512)<0){
                 lprintf_time("cam write to file error, linect %d\n", linect);
                 return;
             }
             rec_count=0;
+            wtf_idx=0;
         }
         linect++;
     }
