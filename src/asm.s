@@ -10,6 +10,7 @@
 .global xmit_spi_multi
 .global lcd_w16
 .global rgb565_to_lcd
+.global color16_lcd
 .code 16
 .syntax unified
 
@@ -226,6 +227,38 @@ cmp r1, #0
 bne.n compute_color
 
 endofrgb2lcd:
+pop {r2-r7}
+bx lr
+
+/***************************************************/
+.type color16_lcd, function
+color16_lcd:
+push {r2-r7}
+
+/*r0->r3=char*buff, r1=lens*/
+/*r3=buff, r2=tmp data*/
+
+ldr r4, =0x40010800
+ldr r5, =0x40010c00
+ldr r6, =0x40011000
+movs r3, #1
+movs r7, #2
+mov.w r2, 0x8000
+
+write_color:
+/*bl lcd_w16*/
+str r7, [r4, #16]
+str r3, [r4, #20]
+str r0, [r5, #12]
+str r2, [r6, #20]
+str r2, [r6, #16]
+str r3, [r4, #16]
+
+/*len--*/
+subs r1, r1, #1
+cmp r1, #0
+bne.n write_color
+
 pop {r2-r7}
 bx lr
 
