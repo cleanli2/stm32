@@ -704,6 +704,7 @@ u16 LCD_ReadPoint(u16 x,u16 y)
 	return color;
 }
 
+void color16_lcd(u16 color, u32 n);
 void lcd_clr_window(u16 color, u16 xs, u16 ys, u16 xe, u16 ye)
 {
     //lprintf("clrw:%d %d %d %d\n", xs, ys, xe, ye);
@@ -729,8 +730,9 @@ LCD_Set_Window(xs,ys,w, h);
 	LCD_WriteRAM_Prepare();     		//¿ªÊ¼Ð´ÈëGRAM	  	  
 	for(index=0;index<totalpoint;index++)LCD_WR_DATA(color);	
 #else
-  unsigned int i;//,m;
 	LCD_SetWindows(xs,ys,xe,ye);   
+    color16_lcd(color, ((unsigned int)xe-xs+1)*(ye-ys+1));
+#if 0
 	for(i=0;i<((unsigned int)xe-xs+1)*(ye-ys+1);i++)
 	{
  //   for(m=0;m<lcddev.width;m++)
@@ -738,6 +740,7 @@ LCD_Set_Window(xs,ys,w, h);
 			Lcd_WriteData_16Bit(color);
 	//	}
 	}
+#endif
 #endif
 } 
 

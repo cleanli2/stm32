@@ -265,7 +265,8 @@ void sd(char *p)
         p = str_to_hex(p, &para1);
         p = str_to_hex(p, &para2);
         p = str_to_hex(p, &para3);
-	lprintf("return %x\n", getres_SD_SendCmd(para1, para2, para3));
+        //removed for no used
+	//lprintf("return %x\n", getres_SD_SendCmd(para1, para2, para3));
     }
     else if(cmdindex == 7){//low init/deinit
         str_to_hex(p, &para1);

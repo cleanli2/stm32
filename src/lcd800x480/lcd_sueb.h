@@ -167,6 +167,7 @@ uint16_t get_BL_value();
 void LCD_RESET();
 void lcd_sueb_test();
 void lcd_sueb_basicinit();
+void lcd_w16(u16 c);
 
 #define LCD_write(VAL) \
 { \
@@ -198,11 +199,7 @@ void lcd_sueb_basicinit();
     LCD_CS_SET; \
 }
 #else
-#define Lcd_WriteData_16Bit(Data) \
-{	\
-    LCD_RS_SET; \
-    LCD_write(Data); \
-}
+#define Lcd_WriteData_16Bit(Data) lcd_w16(Data)
 #endif
 //如果仍然觉得速度不够快，可以使用下面的宏定义,提高速度.
 //注意要去掉lcd.c中void LCD_WR_DATA(u16 data)函数定义哦
