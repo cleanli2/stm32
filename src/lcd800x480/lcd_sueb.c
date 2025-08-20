@@ -1066,7 +1066,7 @@ int wtf(char*bf, u32 len, u32 ss)
         }
         frames_wsize = wl;
     }
-    while(llt > ss){
+    while(llt >= ss){
         memcpy(fbf, bf, ss);
         llt-=ss;
         bf+=ss;
@@ -1165,7 +1165,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
             vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
             if((fbfs+rec_count+1-wtf_idx) == 512){
                 wtf(vbf+wtf_idx, rec_count+1-wtf_idx, 512);
-                wtf_idx=rec_count;
+                wtf_idx=rec_count+1;
             }
             rec_count++;
 
@@ -1197,6 +1197,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
                 return;
             }
             rec_count=0;
+            wtf_idx=0;
         }
         linect++;
     }
