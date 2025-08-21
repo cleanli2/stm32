@@ -1165,6 +1165,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
             vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
             if(!only_uart_dump){
                 if((fbfs+rec_count+1-wtf_idx) == 512){
+                    yuv_line_buf_print_str(vbf, linect, 0, 0, tmstp);
                     wtf(vbf+wtf_idx, rec_count+1-wtf_idx, 512);
                     wtf_idx=rec_count+1;
                 }
