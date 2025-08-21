@@ -1163,9 +1163,11 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
         }
         while(rec_count<640*2){
             vbf[rec_count]=CAM_GPIO_GROUP->IDR>>CAM_DATA_OFFSET;
-            if((fbfs+rec_count+1-wtf_idx) == 512){
-                wtf(vbf+wtf_idx, rec_count+1-wtf_idx, 512);
-                wtf_idx=rec_count+1;
+            if(!only_uart_dump){
+                if((fbfs+rec_count+1-wtf_idx) == 512){
+                    wtf(vbf+wtf_idx, rec_count+1-wtf_idx, 512);
+                    wtf_idx=rec_count+1;
+                }
             }
             rec_count++;
 
