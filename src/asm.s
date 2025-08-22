@@ -11,6 +11,7 @@
 .global lcd_w16
 .global rgb565_to_lcd
 .global color16_lcd
+.global wait_ready
 .code 16
 .syntax unified
 
@@ -261,5 +262,56 @@ bne.n write_color
 
 pop {r2-r7}
 bx lr
+
+/***************************************************/
+.type wait_ready, function
+wait_ready:
+push {r1-r3}
+
+/*r0=timeout, r1=lens*/
+/*r3=base of spi, r2=tmp data*/
+ldr r3, =0x40013000
+/*assue 30us/loop, *32=1ms*/
+lsls r1, r0, #5
+
+/*while((SD_SPI->SR & SPI_I2S_FLAG_TXE) == RESET);*/
+wr_wait_tx_done:
+nop
+ldrh r2, [r3, #8]
+uxth r2, r2
+and.w r2, r2, #2
+cmp r2, #0
+beq.n wr_wait_tx_done
+
+/*SD_SPI->DR = 0xff;*/
+movs r2, #255
+strh r2, [r3, #12]
+
+/*while((SD_SPI->SR & SPI_I2S_FLAG_RXNE) == RESET);*/
+wr_wait_rx_done:
+nop
+ldrh r2, [r3, #8]
+uxth r2, r2
+and.w r2, r2, #1
+cmp r2, #0
+beq.n wr_wait_rx_done
+
+/* *(buff+i) = SD_SPI->DR; */
+ldrh r2, [r3, #12]
+uxth r2, r2
+cmp r2, #255
+beq.n rt1
+
+subs r1, r1, #1
+cmp r1, #0
+bne.n wr_wait_tx_done
+
+mov r0, #0
+retwr:
+pop {r1-r3}
+bx lr
+rt1:
+mov r0, #1
+b retwr
 
 .end
