@@ -107,23 +107,10 @@ BYTE xchg_spi (
 	BYTE dat	/* Data to send */
 )
 {
-	BYTE rxDat;
-    //HAL_SPI_TransmitReceive(&SD_SPI_HANDLE, &dat, &rxDat, 1, 50);
-    
-    /*!< Wait until the transmit buffer is empty */
-    while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
-    {
-    }
-
-    /*!< Send the byte */
-    SPI_I2S_SendData(SD_SPI, dat);
-    while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_RXNE) == RESET)
-    {
-    }
-
-    /*!< Return the byte read from the SPI bus */ 
-    rxDat = SPI_I2S_ReceiveData(SD_SPI);
-    return rxDat;
+    while((SD_SPI->SR&SPI_I2S_FLAG_TXE) == RESET);
+    SD_SPI->DR = dat;
+    while((SD_SPI->SR&SPI_I2S_FLAG_RXNE) == RESET);
+    return SD_SPI->DR;
 }
 
 
