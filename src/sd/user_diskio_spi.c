@@ -178,10 +178,10 @@ void xmit_spi_multi (
 /* Wait for card ready                                                   */
 /*-----------------------------------------------------------------------*/
 
-static
 int wait_ready (	/* 1:Ready, 0:Timeout */
 	UINT wt			/* Timeout [ms] */
-)
+);
+#if 0
 {
 	BYTE d;
 	//wait_ready needs its own timer, unfortunately, so it can't use the
@@ -198,6 +198,7 @@ int wait_ready (	/* 1:Ready, 0:Timeout */
 
 	return (d == 0xFF) ? 1 : 0;
 }
+#endif
 
 
 
