@@ -12,7 +12,6 @@
 .global rgb565_to_lcd
 .global color16_lcd
 .global wait_ready
-.global xchg_spi
 .code 16
 .syntax unified
 
@@ -314,42 +313,5 @@ bx lr
 rt1:
 mov r0, #1
 b retwr
-
-/***********char xchg_spi(char)****************************************/
-.type xchg_spi, function
-xchg_spi:
-push {r2-r3}
-
-/*r0=dat*/
-/*r3=base of spi, r2=tmp data*/
-ldr r3, =0x40013000
-
-/*while((SD_SPI->SR & SPI_I2S_FLAG_TXE) == RESET);*/
-xs_wait_tx_done:
-nop
-ldrh r2, [r3, #8]
-uxth r2, r2
-and.w r2, r2, #2
-cmp r2, #0
-beq.n xs_wait_tx_done
-
-/*SD_SPI->DR = dat;*/
-strh r0, [r3, #12]
-
-/*while((SD_SPI->SR & SPI_I2S_FLAG_RXNE) == RESET);*/
-xs_wait_rx_done:
-nop
-ldrh r2, [r3, #8]
-uxth r2, r2
-and.w r2, r2, #1
-cmp r2, #0
-beq.n xs_wait_rx_done
-
-/* *(buff+i) = SD_SPI->DR; */
-ldrh r0, [r3, #12]
-uxth r0, r0
-
-pop {r2-r3}
-bx lr
 
 .end

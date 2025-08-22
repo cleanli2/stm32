@@ -102,10 +102,10 @@ uint8_t SPI_Timer_Status() {
 /*-----------------------------------------------------------------------*/
 
 /* Exchange a byte */
+static
 BYTE xchg_spi (
 	BYTE dat	/* Data to send */
-);
-#if 0
+)
 {
 	BYTE rxDat;
     //HAL_SPI_TransmitReceive(&SD_SPI_HANDLE, &dat, &rxDat, 1, 50);
@@ -125,7 +125,6 @@ BYTE xchg_spi (
     rxDat = SPI_I2S_ReceiveData(SD_SPI);
     return rxDat;
 }
-#endif
 
 
 /* Receive multiple byte */
