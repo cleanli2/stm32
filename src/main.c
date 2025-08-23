@@ -34,6 +34,12 @@ struct task all_tasks[]=
 };
 uint32_t task_mask = 0;
 
+#define NPERBB 10000
+#define BBN 5
+#define MIN_YUV_FILES_NUM NPERBB*BBN
+#define GET_FILE_PATH_AND_NAME(buf, n) \
+        slprintf(buf, "BB%d/V%d/YUV%d.BIN", n/NPERBB, (n%NPERBB)/100, n%NPERBB);
+
 int restarted=0;
 extern char fbf[512];
 uint32_t g_fnn=0;
@@ -46,7 +52,8 @@ void prepare_pic_trsf()
     memset(fbf, ' ', 512);
     if(restarted && t_fnn < g_fnn){
         n_s_fnn = g_fnn+1;
-        slprintf(t_file_name, "V%d/YUV%d.BIN", n_s_fnn/100, n_s_fnn);
+        //slprintf(t_file_name, "V%d/YUV%d.BIN", n_s_fnn/100, n_s_fnn);
+        GET_FILE_PATH_AND_NAME(t_file_name, n_s_fnn);
         if(FS_OK!=open_file_w(t_file_name)){
             lprintf_time("%s not exist\n", t_file_name);
             n_s_fnn = 0;
@@ -74,7 +81,6 @@ void prepare_pic_trsf()
     }
 }
 
-#define MIN_YUV_FILES_NUM 10000
 void save_sd_log();
 int cam_init(int);
 void cam_deinit();
@@ -139,7 +145,8 @@ void check_ui()
             s_fnn-= MIN_YUV_FILES_NUM;
         }
         lcd_lprintf(1, 645, 43, "sfnn=%d    ", s_fnn);
-        slprintf(fs, "V%d/YUV%d.BIN", s_fnn/100, s_fnn);
+        //slprintf(fs, "V%d/YUV%d.BIN", s_fnn/100, s_fnn);
+        GET_FILE_PATH_AND_NAME(fs, s_fnn);
         if(FS_OK==open_file_r(fs)){
             lprintf("open file ok\n");
             file_to_lcd();
@@ -261,7 +268,8 @@ runcmd:
     }
     cam_workingloop_on=1;
     while(!loop_stop){
-        slprintf(file_name, "V%d/YUV%d.BIN", g_fnn/100, g_fnn);
+        //slprintf(file_name, "V%d/YUV%d.BIN", g_fnn/100, g_fnn);
+        GET_FILE_PATH_AND_NAME(file_name, g_fnn);
         if(g_fnn%20==0){
             lprintf_time("%s\n", get_rtc_time(NULL));
             lprintf_time("Version %s%s\n", VERSION, GIT_SHA1);
