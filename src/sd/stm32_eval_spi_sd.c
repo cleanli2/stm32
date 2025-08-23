@@ -144,6 +144,7 @@ SD_Error SD_Init(void)
     USER_SPI_ioctl (0, GET_BLOCK_SIZE, &sz_ct);
     prt_dec(ct_n);
     prt_dec(sz_ct);
+    lprintf("Total size:%dM\r\n", ct_n/1000*512/1000);
     return ret;
 }
 SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
