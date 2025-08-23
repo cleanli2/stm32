@@ -124,14 +124,20 @@ void process_button(ui_t* uif, button_t*pbt);
 void bus_to_lcd(int mode_to_lcd);
 void check_ui()
 {
-    int s_fnn=g_fnn;
+    int s_fnn=(int)g_fnn-1;
     uint16_t touch_x, touch_y;
     uint16_t touch_status = 0, lastts=0;
-    char fs[19];
+    char fs[32];
     bus_to_lcd(1);
     draw_button(camui_button);
     //int touch_up=0;
-    while(1){
+    while(s_fnn!=(int)g_fnn){
+        if(s_fnn<0){
+            s_fnn+=MIN_YUV_FILES_NUM-1;
+        }
+        if(s_fnn>MIN_YUV_FILES_NUM-1){
+            s_fnn-= MIN_YUV_FILES_NUM;
+        }
         lcd_lprintf(1, 645, 43, "sfnn=%d    ", s_fnn);
         slprintf(fs, "V%d/YUV%d.BIN", s_fnn/100, s_fnn);
         if(FS_OK==open_file_r(fs)){
@@ -213,12 +219,6 @@ void check_ui()
         }
         ss=' ';
         s_fnn--;
-        if(s_fnn<0){
-            s_fnn+=9999;
-        }
-        if(s_fnn>9999){
-            s_fnn-= MIN_YUV_FILES_NUM;
-        }
     }
     prtline;
     prt_dec(s_fnn);
