@@ -234,12 +234,27 @@ void check_ui()
 }
 int main()
 {
+    uint32_t sd_g_fnn=0;
     uint32_t end_loop=50;
     char file_name[32];
     char stopreason[64];
     memset(stopreason, 0, 64);
     main_init();
     g_fnn = get_env_uint("fsno", 0);
+    if(FS_OK==open_file_r("ENDFN.TXT")){
+        if(0!=read_sec_from_file(fbf)){
+            str_to_hex((char*)fbf, &sd_g_fnn);
+            sd_g_fnn = bcd2hex_32(sd_g_fnn);
+            if(sd_g_fnn!=g_fnn){
+                lprintf_time("g_fnn different from sdcard, use sdcard's\r\n");
+                g_fnn=sd_g_fnn;
+            }
+            else{
+                lprintf_time("g_fnn same from sdcard\r\n");
+            }
+        }
+        close_file();
+    }
     lprintf_time("start g_fnn=%d\n", g_fnn);
     auto_time_correct2();
     cam_deinit();
