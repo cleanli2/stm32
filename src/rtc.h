@@ -39,5 +39,6 @@ void clear_second();
 uint8_t hex2bcd(uint8_t ipt);
 void get_date(date_info_t*dit);
 int min_zero();
+uint32_t bcd2hex_32(uint32_t ipt);
 
 #endif

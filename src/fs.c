@@ -142,6 +142,12 @@ const char* disk_write_sector(const char*buf, uint32_t sector_no)
 
 char* disk_read_sector(uint32_t sector_no)
 {
+    static int first_sd_read=1;
+    if(first_sd_read){
+        first_sd_read=0;
+        recover_sd(0);
+        recover_sd(0);
+    }
     int retry = disk_retry;
     if(current_r_sector_no == sector_no){
         //lprintf("just read\n");
