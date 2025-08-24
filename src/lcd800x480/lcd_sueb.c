@@ -1141,6 +1141,7 @@ void wtlcd(char*bf, u32 len)
 #define READ_MODE 0
 #define FREE_MODE 1
 char tmstp[24];
+void testgpio();
 void cam_read_line(int in_dump_line, u32 only_uart_dump)
 {
 
@@ -1182,6 +1183,7 @@ void cam_read_line(int in_dump_line, u32 only_uart_dump)
             //rck=1
             //GPIO_SetBits(AL422_WG,RCK);
             AL422_WG->BSRR = RCK;
+            //testgpio();
         }
         if(only_uart_dump==1){
             mem_print(vbf, 640*2*linect, 640*2);

@@ -12,6 +12,7 @@
 .global rgb565_to_lcd
 .global color16_lcd
 .global wait_ready
+.global testgpio
 .code 16
 .syntax unified
 
@@ -313,5 +314,22 @@ bx lr
 rt1:
 mov r0, #1
 b retwr
+
+/***************************************************/
+
+.type testgpio, function
+testgpio:
+push {r2-r3}
+
+mov.w r2, #256
+ldr r3, =0x40011000
+iflp:
+str r2, [r3, #20]
+str r2, [r3, #16]
+b iflp
+
+pop {r2-r3}
+bx lr
+
 
 .end
