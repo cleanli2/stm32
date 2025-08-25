@@ -236,6 +236,7 @@ int spiselect (void)	/* 1:OK, 0:Timeout */
 /*-----------------------------------------------------------------------*/
 /* Receive a data packet from the MMC                                    */
 /*-----------------------------------------------------------------------*/
+int r_wait_ready();
 
 static
 int rcvr_datablock (	/* 1:OK, 0:Error */
@@ -243,15 +244,17 @@ int rcvr_datablock (	/* 1:OK, 0:Error */
 	UINT btr			/* Data block length (byte) */
 )
 {
-	BYTE token;
+	//BYTE token;
 
-
+    if(r_wait_ready()==0)return 0;
+#if 0
 	SPI_Timer_On(200);
 	do {							/* Wait for DataStart token in timeout of 200ms */
 		token = xchg_spi(0xFF);
 		/* This loop will take a time. Insert rot_rdq() here for multitask envilonment. */
 	} while ((token == 0xFF) && SPI_Timer_Status());
 	if(token != 0xFE) return 0;		/* Function fails if invalid DataStart token or timeout */
+#endif
 
 	rcvr_spi_multi(buff, btr);		/* Store trailing data to the buffer */
 	xchg_spi(0xFF); xchg_spi(0xFF);			/* Discard CRC */
