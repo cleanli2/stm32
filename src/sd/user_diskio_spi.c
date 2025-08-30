@@ -373,22 +373,39 @@ inline DSTATUS USER_SPI_initialize (
 	if (send_cmd(CMD0, 0) == 1) {			/* Put the card SPI/Idle state */
 		SPI_Timer_On(1000);					/* Initialization timeout = 1 sec */
 		if (send_cmd(CMD8, 0x1AA) == 1) {	/* SDv2? */
+            lprintf("SDv2?\r\n");
 			for (n = 0; n < 4; n++) ocr[n] = xchg_spi(0xFF);	/* Get 32 bit return value of R7 resp */
 			if (ocr[2] == 0x01 && ocr[3] == 0xAA) {				/* Is the card supports vcc of 2.7-3.6V? */
+                lprintf("card support vcc of 2.7-3.6v\r\n");
 				while (SPI_Timer_Status() && send_cmd(ACMD41, 1UL << 30)) ;	/* Wait for end of initialization with ACMD41(HCS) */
+                lprintf("card init end\r\n");
 				if (SPI_Timer_Status() && send_cmd(CMD58, 0) == 0) {		/* Check CCS bit in the OCR */
 					for (n = 0; n < 4; n++) ocr[n] = xchg_spi(0xFF);
 					ty = (ocr[0] & 0x40) ? CT_SD2 | CT_BLOCK : CT_SD2;	/* Card id SDv2 */
+                    if(ocr[0] & 0x40){
+                        lprintf("block address\r\n");
+					    ty = CT_SD2 | CT_BLOCK;
+                    }
+                    else{
+                        lprintf("NOT block address\r\n");
+					    ty = CT_SD2;
+                    }
 				}
 			}
+            else{
+                lprintf("card DONT support vcc of 2.7-3.6v\r\n");
+            }
 		} else {	/* Not SDv2 card */
 			if (send_cmd(ACMD41, 0) <= 1) 	{	/* SDv1 or MMC? */
+                lprintf("SDv1\r\n");
 				ty = CT_SD1; cmd = ACMD41;	/* SDv1 (ACMD41(0)) */
 			} else {
+                lprintf("MMCv3\r\n");
 				ty = CT_MMC; cmd = CMD1;	/* MMCv3 (CMD1(0)) */
 			}
 			while (SPI_Timer_Status() && send_cmd(cmd, 0)) ;		/* Wait for end of initialization */
 			if (!SPI_Timer_Status() || send_cmd(CMD16, 512) != 0)	/* Set block length: 512 */
+                lprintf("unknown card\r\n");
 				ty = 0;
 		}
 	}
@@ -398,8 +415,10 @@ inline DSTATUS USER_SPI_initialize (
 	if (ty) {			/* OK */
 		//FCLK_FAST();			/* Set fast clock */
 		Stat &= ~STA_NOINIT;	/* Clear STA_NOINIT flag */
+        lprintf("card init OK\r\n");
 	} else {			/* Failed */
 		Stat = STA_NOINIT;
+        lprintf("card init failed\r\n");
 	}
     SPI_set_speed(SD_SPI, speed);
 
