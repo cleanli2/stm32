@@ -440,6 +440,7 @@ inline DRESULT USER_SPI_read (
 	UINT count		/* Number of sectors to read (1..128) */
 )
 {
+    lprintf("sd_read\r\n");
 	if (drv || !count) return RES_PARERR;		/* Check parameter */
 	if (Stat & STA_NOINIT) return RES_NOTRDY;	/* Check if drive is ready */
 
@@ -462,6 +463,7 @@ inline DRESULT USER_SPI_read (
 	}
 	despiselect();
 
+    prt_dec(count);
 	return count ? RES_ERROR : RES_OK;	/* Return result */
 }
 
@@ -479,6 +481,7 @@ inline DRESULT USER_SPI_write (
 	UINT count			/* Number of sectors to write (1..128) */
 )
 {
+    lprintf("sd_write\r\n");
 	if (drv || !count) return RES_PARERR;		/* Check parameter */
 	if (Stat & STA_NOINIT) return RES_NOTRDY;	/* Check drive status */
 	if (Stat & STA_PROTECT) return RES_WRPRT;	/* Check write protect */
@@ -503,6 +506,7 @@ inline DRESULT USER_SPI_write (
 	}
 	despiselect();
 
+    prt_dec(count);
 	return count ? RES_ERROR : RES_OK;	/* Return result */
 }
 #endif
