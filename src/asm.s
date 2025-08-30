@@ -12,7 +12,6 @@
 .global rgb565_to_lcd
 .global color16_lcd
 .global wait_ready
-.global r_wait_ready
 .global testgpio
 .code 16
 .syntax unified
@@ -315,58 +314,6 @@ bx lr
 rt1:
 mov r0, #1
 b retwr
-
-/***************************************************/
-.type r_wait_ready, function
-r_wait_ready:
-push {r1-r3}
-
-/*r0=timeout, r1=lens*/
-/*r3=base of spi, r2=tmp data*/
-ldr r3, =0x40013000
-/*assue 30us/loop, *32=1ms*/
-lsls r1, r0, #5
-
-/*while((SD_SPI->SR & SPI_I2S_FLAG_TXE) == RESET);*/
-rwr_wait_tx_done:
-nop
-ldrh r2, [r3, #8]
-uxth r2, r2
-and.w r2, r2, #2
-cmp r2, #0
-beq.n rwr_wait_tx_done
-
-/*SD_SPI->DR = 0xff;*/
-movs r2, #255
-strh r2, [r3, #12]
-
-/*while((SD_SPI->SR & SPI_I2S_FLAG_RXNE) == RESET);*/
-rwr_wait_rx_done:
-nop
-ldrh r2, [r3, #8]
-uxth r2, r2
-and.w r2, r2, #1
-cmp r2, #0
-beq.n rwr_wait_rx_done
-
-/* *(buff+i) = SD_SPI->DR; */
-ldrh r2, [r3, #12]
-uxth r2, r2
-cmp r2, #255
-bne.n rrt1
-
-subs r1, r1, #1
-cmp r1, #0
-bne.n rwr_wait_tx_done
-
-rrt1:
-cmp r2, #0xfe
-ite ne
-movne r0, #0
-moveq r0, #1
-mov r0, #0
-pop {r1-r3}
-bx lr
 
 /***************************************************/
 
