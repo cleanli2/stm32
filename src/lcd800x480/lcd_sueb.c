@@ -1485,22 +1485,6 @@ void cam_to_lcd_1_frame()
     cam_save_lines(300, 480, TO_LCD);
 }
 
-void toggle1()
-{
-    static int t1=0;
-    t1=!t1;
-    if(t1) GPIOA->BRR = GPIO_Pin_11;
-    else GPIOA->BSRR = GPIO_Pin_11;
-}
-
-void toggle2()
-{
-    static int t2=0;
-    t2=!t2;
-    if(t2) GPIOA->BRR = GPIO_Pin_12;
-    else GPIOA->BSRR = GPIO_Pin_12;
-}
-
 void file_to_lcd()
 {
     u32 pos;
@@ -1512,12 +1496,7 @@ void file_to_lcd()
 	LCD_SetWindows(0,0,639,479);   
     bus_to_lcd(0);
 
-    while(pos<640*480*2){
-        toggle1();
-        toggle2();
-
-        pos=read_sec_from_file(fbf);
-        toggle1();
+    while((pos=read_sec_from_file(fbf))<640*480*2){
         wtlcd(fbf, 512);
     }
     wtlcd(fbf, pos-640*480*2);//left data
@@ -1899,6 +1878,7 @@ int cam_init(int choose)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
 
     bus_to_lcd(0);
+
 
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
@@ -2763,14 +2743,6 @@ void LCD_GPIOInit(void)
 	LCD_BUS_To_write(1);
 	lprintf("LCD gpio init done\n");
 #endif
-
-    /**pa11 pa12 for hw debug time*/
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11|GPIO_Pin_12;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-    lprintf("hw debug pin one 1 one 0\n");
-    GPIO_SetBits(GPIOA,GPIO_Pin_11);
-    GPIO_ResetBits(GPIOA,GPIO_Pin_12);
 }
 
 /*****************************************************************************
