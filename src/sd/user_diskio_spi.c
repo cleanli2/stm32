@@ -113,6 +113,30 @@ BYTE xchg_spi (
     return SD_SPI->DR;
 }
 
+static
+BYTE slow_xchg_spi (
+	BYTE dat	/* Data to send */
+)
+{
+    BYTE rxDat;
+    //HAL_SPI_TransmitReceive(&SD_SPI_HANDLE, &dat, &rxDat, 1, 50);
+
+    /*!< Wait until the transmit buffer is empty */
+    while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_TXE) == RESET)
+    {
+    }
+
+    /*!< Send the byte */
+    SPI_I2S_SendData(SD_SPI, dat);
+    while(SPI_I2S_GetFlagStatus(SD_SPI, SPI_I2S_FLAG_RXNE) == RESET)
+    {
+    }
+
+    /*!< Return the byte read from the SPI bus */
+    rxDat = SPI_I2S_ReceiveData(SD_SPI);
+    return rxDat;
+}
+
 
 /* Receive multiple byte */
 void rcvr_spi_multi (
@@ -259,20 +283,21 @@ int xmit_datablock (	/* 1:OK, 0:Failed */
 	BYTE token			/* Token */
 )
 {
-	BYTE resp;
+    BYTE resp;
 
 
-	if (!wait_ready(500)) return 0;		/* Wait for card ready */
+    if (!wait_ready(500)) return 0;		/* Wait for card ready */
 
-	xchg_spi(token);					/* Send token */
-	if (token != 0xFD) {				/* Send data if token is other than StopTran */
-		xmit_spi_multi(buff, 512);		/* Data */
-		xchg_spi(0xFF); xchg_spi(0xFF);	/* Dummy CRC */
+    xchg_spi(token);					/* Send token */
+    if (token != 0xFD) {				/* Send data if token is other than StopTran */
+        xmit_spi_multi(buff, 512);		/* Data */
+        slow_xchg_spi(0xFF);
+        slow_xchg_spi(0xFF);	/* Dummy CRC */
 
-		resp = xchg_spi(0xFF);				/* Receive data resp */
-		if ((resp & 0x1F) != 0x05) return 0;	/* Function fails if the data packet was not accepted */
-	}
-	return 1;
+        resp = slow_xchg_spi(0xFF);				/* Receive data resp */
+        if ((resp & 0x1F) != 0x05) return 0;	/* Function fail if the data packet was not accepted */
+    }
+    return 1;
 }
 #endif
 
