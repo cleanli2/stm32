@@ -100,6 +100,10 @@ void poweroff(char *p)
         lprintf("wake from stop\r\n");
     }
     else if(!strcmp(p1, "standby")){
+        GPIO_InitTypeDef GPIO_InitStructure;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_10;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
         PWR_WakeUpPinCmd (ENABLE);
         PWR_EnterSTANDBYMode();
     }
