@@ -672,116 +672,14 @@ void main_init(void)
       debug_enable = 0xdeb49eab;
   }
 #endif
-  systick_init();
-
-  //PB3 PB4 PA15 PA13 PA14 set to gpio instead of SWJ
-  GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
   //Touch_Test();
 
   //os_task_init();
 
   //72M/72=1M, 1us/count
   //72M/12=6M, 1/6us / count
-  timer_init(TIM2_RELOAD, 12-1);
-
-  GPIO_InitTypeDef GPIO_InitStructure;
-  //led
-#ifdef RTC_SOC
-  RTC_Init();
-#endif
   lprintf("~~~~~~\n");
-#ifdef ALIENTEK_MINI
-  lprintf_time("\n\n================ALIENTEK_MINI board start================\n");
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-  GPIO_ResetBits(GPIOA,GPIO_Pin_8);
-  GPIO_ResetBits(GPIOA,GPIO_Pin_13);
-
-  RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
-
-  GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
-  GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
-
-  RCC_APB2PeriphClockCmd(LED1_GPIO_PERIPH, ENABLE);
-
-  GPIO_InitStructure.GPIO_Pin = LED1_GPIO_PIN;
-  GPIO_Init(LED1_GPIO_GROUP, &GPIO_InitStructure);
-  GPIO_ResetBits(LED1_GPIO_GROUP, LED1_GPIO_PIN);
-#elif defined SUNRISE
-  lprintf_time("\n\n================SUNRISE board start================\n");
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-
-  /* Configure PD0 and PD2 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-  GPIO_ResetBits(GPIOA,GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13);
-
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-
-  /* Configure in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4|GPIO_Pin_0;//PB4 spi flash cs
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
-  GPIO_ResetBits(GPIOC,GPIO_Pin_0);	
-  GPIO_SetBits(GPIOC,GPIO_Pin_4);//spi flash cs =1
-
-  RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
-
-  GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
-  GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
-#else
   lprintf_time("\n\n================c6t6 board start================\n");
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-
-  /* Configure PD0 and PD2 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-  GPIO_ResetBits(GPIOA,GPIO_Pin_15|GPIO_Pin_14|GPIO_Pin_13);
-
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-
-  /* Configure PD0 and PD2 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4|GPIO_Pin_0;//PB4 spi flash cs
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
-  GPIO_ResetBits(GPIOB,GPIO_Pin_0);	
-  GPIO_SetBits(GPIOB,GPIO_Pin_4);//spi flash cs =1
-
-  RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
-
-  GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
-  GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
-#endif
-  //led end
-
-  //power off pin set low
-  RCC_APB2PeriphClockCmd(POWEROFF_GPIO_PERIPH, ENABLE);
-
-  GPIO_InitStructure.GPIO_Pin = POWEROFF_GPIO_PIN;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(POWEROFF_GPIO_GROUP, &GPIO_InitStructure);
-  GPIO_ResetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
-  //power off pin end
 
   RCC_GetClocksFreq(&RCC_ClocksStatus);
   get_mcu_id();
@@ -797,7 +695,7 @@ void main_init(void)
   //SD_LowLevel_Init();
 
   /*1us/timer_count, 10ms/timer_intrpt*/
-  if(con_is_recved())run_cmd_interface();
+  run_cmd_interface();
 #if 0
     while(1){
         run_cmd_interface();
