@@ -27,25 +27,16 @@ CFLAGS =  -W -Wall -g -mcpu=cortex-m3 -mthumb -DUSE_STDPERIPH_DRIVER $(INC_FLAGS
 CFLAGS+=-DGIT_SHA1=\"$(GIT_SHA1)$(DIRTY)$(CLEAN)\"
 LDFLAGS =  -mthumb -mcpu=cortex-m3 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=Project.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80
 C_SRC= \
-src/adc.c                                                                                             \
 src/cmd.c                                                                                             \
 src/CoIDE_startup.c                                                                                   \
 src/common.c                                                                                          \
 src/date.c                                                                                            \
 src/display.c                                                                                            \
-src/fs.c                                                                                              \
 src/env.c \
 src/lprintf.c                                                                                         \
 src/main.c                                                                                            \
 src/music.c                                                                                           \
-src/rtc.c                                                                                             \
 src/os_task.c                                                                                             \
-src/sd/sd_lowlevel.c                                                                                  \
-src/sd/user_diskio_spi.c                                                                                  \
-src/sd/stm32_eval_spi_sd.c                                                                            \
-src/sd/w25flash.c                                                                                     \
-src/cl_sd.c                                                                                     \
-src/soc_rtc.c                                                                                         \
 src/stm32f10x_it.c                                                                                    \
 src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c  \
 src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/misc.c                    \
@@ -71,27 +62,6 @@ src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm3
 src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c           \
 src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c         \
 src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c          \
-src/task.c                                                                                            \
-src/ui.c                                                                                              \
-src/yuv_rgb_tab.c                                                                                              \
-src/usb/USB/CONFIG/hw_config.c                                                                        \
-src/usb/USB/CONFIG/mass_mal.c                                                                         \
-src/usb/USB/CONFIG/memory.c                                                                           \
-src/usb/USB/CONFIG/scsi_data.c                                                                        \
-src/usb/USB/CONFIG/usb_bot.c                                                                          \
-src/usb/USB/CONFIG/usb_desc.c                                                                         \
-src/usb/USB/CONFIG/usb_endp.c                                                                         \
-src/usb/USB/CONFIG/usb_istr.c                                                                         \
-src/usb/USB/CONFIG/usb_prop.c                                                                         \
-src/usb/USB/CONFIG/usb_pwr.c                                                                          \
-src/usb/USB/CONFIG/usb_scsi.c                                                                         \
-src/usb/USB/STM32_USB-FS-Device_Driver/src/usb_core.c                                                 \
-src/usb/USB/STM32_USB-FS-Device_Driver/src/usb_init.c                                                 \
-src/usb/USB/STM32_USB-FS-Device_Driver/src/usb_int.c                                                  \
-src/usb/USB/STM32_USB-FS-Device_Driver/src/usb_mem.c                                                  \
-src/usb/USB/STM32_USB-FS-Device_Driver/src/usb_regs.c                                                 \
-src/usb/USB/STM32_USB-FS-Device_Driver/src/usb_sil.c                                                  \
-src/usb/usb_main.c
 
 C_OBJ=$(C_SRC:%.c=%.o)
 ifeq ($(type),write_w25f)

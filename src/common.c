@@ -273,7 +273,6 @@ u32*TIM2_IRQHandler_local(u32*stack_data)
     g_10ms_count++;
     if((g_10ms_count%3000)==0){//30seconds
     }
-    sound_execute();
     //*(u32*)0xe000ed04=0x10000000;
     os_switch_trigger();
 #if 0
@@ -795,21 +794,7 @@ void main_init(void)
   RCC_GetClocksFreq(&RCC_ClocksStatus);
   get_mcu_id();
   lprintf_time("Version %s%s\n", VERSION, GIT_SHA1);
-  get_rtc_time(0);
 
-  //pcf8574t
-  {
-      uint8_t t;
-      if(1==pcf8574t_readData1(&t)){
-          lprintf("pcf8574 on\r\n");
-          g_pcf8574_hw=1;
-      }
-      else{
-          lprintf("pcf8574 off\r\n");
-      }
-  }
-
-  lprintf_time("%s\n", get_rtc_time(0));
   lprintf("clk %d %d %d %d %d Hz\n\r",
 		  RCC_ClocksStatus.SYSCLK_Frequency,
 		  RCC_ClocksStatus.HCLK_Frequency,
@@ -817,17 +802,6 @@ void main_init(void)
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
   lprintf_time("SD init\n");
-  SD_Init();
-  {
-      disk_opers tmpso;
-
-      tmpso.rd_block=SD_ReadBlock;
-      tmpso.wt_block=SD_WriteBlock;
-      tmpso.disk_init=SD_Init;
-      tmpso.disk_hw_inited=FS_HW_INITED ;
-      fs_hw_init(&tmpso);
-      lprintf_time("fs hw inited\n");
-  }
   lprintf_time("SD init done\n");
   lprintf_time("lcd init\n");
   //lprintf_time("NO lcd init.\n");

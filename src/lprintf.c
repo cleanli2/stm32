@@ -173,42 +173,6 @@ void reset_time_offset()
 {
     date_hour_offset = 0xffffffff;
 }
-char*get_sys_hour()
-{
-    u32 ms_time;
-    u32 t;//tmp variable
-    if(date_hour_offset == 0xffffffff){
-        date_info_t cur_date = {0};
-        get_date(&cur_date);
-        ms_time = (u32)(get_system_us()/1000);
-        date_hour_offset = cur_date.second;
-        date_hour_offset += cur_date.minute*60;
-        date_hour_offset += cur_date.hour*3600;
-        date_hour_offset *= 1000;
-        date_hour_offset -= ms_time;
-    }
-    ms_time = (u32)(get_system_us()/1000);
-    if(date_hour_offset != 0xffffffff){
-        ms_time+=date_hour_offset;
-    }
-    t = ms_time/3600/1000;
-    t %= 24;
-    sprint_uint_0n(&sys_hour[0], t, 2);
-    sys_hour[2]=':';
-    t = ms_time/60/1000;
-    t %= 60;
-    sprint_uint_0n(&sys_hour[3], t, 2);
-    sys_hour[5]=':';
-    t = ms_time/1000;
-    t %= 60;
-    sprint_uint_0n(&sys_hour[6], t, 2);
-    sys_hour[8]='.';
-    t = ms_time%1000;
-    sprint_uint_0n(&sys_hour[9], t, 3);
-    sys_hour[12]=' ';
-    sys_hour[13]=0;//last byte
-    return sys_hour;
-}
 
 char*vslprintf(int print_with_time, char*s_buf, const char *fmt, va_list args)
 {
@@ -219,11 +183,6 @@ char*vslprintf(int print_with_time, char*s_buf, const char *fmt, va_list args)
     va_list ap;
     char*sp = s_buf;
 
-    if(print_with_time){
-        s = get_sys_hour();
-        strcpy(sp, s);
-        sp += strlen(s);
-    }
     va_copy(ap, args);
     while (*fmt) {
         if (*fmt != '%') {
