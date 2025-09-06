@@ -631,14 +631,6 @@ void update_progress_indicator(progress_indicator_t*pip, uint32_t progressed, ui
   * @param  None
   * @retval None
   */
-u32 task1_stack[STACK_SIZE_LOCAL];
-u32 task2_stack[STACK_SIZE_LARGE*2];
-u32 task_log_stack[STACK_SIZE_LOCAL];
-u32 touch_stack[STACK_SIZE_LARGE];
-u32 display_stack[STACK_SIZE_LARGE*2];
-u32 cmd_stack[STACK_SIZE_LARGE];
-u32 ui_stack[STACK_SIZE_LARGE*2];
-u32 music_stack[STACK_SIZE_LARGE];
 void main_init(void)
 {
   /*!< At this stage the microcontroller clock setting is already configured, 

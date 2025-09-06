@@ -72,22 +72,8 @@ endif
 ifeq ($(board),)
 board=alientek_mini
 endif
-ifeq ($(board),alientek_mini)
-$(warning choose board alientek_mini)
-CFLAGS+=-DALIENTEK_MINI
-CFLAGS+=-DSTM32F10X_HD
-LDFILE=stm32_f103_512k_gcc
-else ifeq ($(board),sunrise)
-$(warning choose board sunrise)
-CFLAGS+=-DSUNRISE
-CFLAGS+=-DSTM32F10X_HD
-LDFILE=stm32_f103_512k_gcc
-else
-$(warning choose board hammer)
-board=hammer
-CFLAGS+=-DSTM32F10X_MD
-LDFILE=stm32_f103_128k_gcc
-endif
+CFLAGS+=-DSTM32F10X_LD
+LDFILE=stm32_f103_32k_gcc
 
 .PHONY: all clean
 
