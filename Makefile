@@ -23,7 +23,6 @@ INC_FLAGS= \
 		   -I $(TOP)/src/usb \
 		   -I $(TOP)/src/lcd800x480 \
 
-
 CFLAGS =  -W -Wall -g -mcpu=cortex-m3 -mthumb -DUSE_STDPERIPH_DRIVER $(INC_FLAGS) -O0 -std=gnu11 -ffunction-sections -fdata-sections
 CFLAGS+=-DGIT_SHA1=\"$(GIT_SHA1)$(DIRTY)$(CLEAN)\"
 LDFLAGS =  -mthumb -mcpu=cortex-m3 -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=Project.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80
@@ -34,13 +33,8 @@ src/CoIDE_startup.c                                                             
 src/common.c                                                                                          \
 src/date.c                                                                                            \
 src/display.c                                                                                            \
-src/env.c                                                                                             \
 src/fs.c                                                                                              \
-src/lcd800x480/cch_str.c                                                                              \
-src/lcd800x480/gui.c                                                                                  \
-src/lcd800x480/lcd_sueb.c                                                                             \
-src/lcd800x480/test.c                                                                                 \
-src/lcd800x480/touch.c                                                                                \
+src/env.c \
 src/lprintf.c                                                                                         \
 src/main.c                                                                                            \
 src/music.c                                                                                           \

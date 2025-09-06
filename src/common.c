@@ -272,7 +272,6 @@ u32*TIM2_IRQHandler_local(u32*stack_data)
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
     g_10ms_count++;
     if((g_10ms_count%3000)==0){//30seconds
-        cam_working_confirm();
     }
     sound_execute();
     //*(u32*)0xe000ed04=0x10000000;
@@ -565,40 +564,6 @@ void beep(uint32_t hz, uint32_t t_ms)
 
 void power_off()
 {
-    if(g_fnn_not_save){
-        g_fnn_not_save=0;
-        lprintf_time("save g_fnn %d\n", g_fnn);
-        set_env_uint("fsno", g_fnn);
-    }
-    Show_Str(20, 630,RED,0xffff,"Power off in 3 seconds",24,0,1);
-    lprintf_time("power off in 3 secs\n");
-    foce_save_log_func();
-    beep(600, 100);
-//#ifdef RTC_8563
-#if 0
-    check_rtc_alert_and_clear();
-    auto_time_alert_set(AUTO_TIME_ALERT_INC_MINS, -1, -1);
-    auto_time_correct();
-#endif
-#ifndef ALIENTEK_MINI
-    lprintf_time("gpio setb\n");
-    foce_save_log_func();
-    GPIO_SetBits(GPIOB,GPIO_Pin_0);
-    lprintf_time("gpio setb done\n");
-#endif
-    //power off pin set high to power down
-    RCC_APB2PeriphClockCmd(POWEROFF_GPIO_PERIPH, ENABLE);
-
-    GPIO_InitStructure.GPIO_Pin = POWEROFF_GPIO_PIN;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(POWEROFF_GPIO_GROUP, &GPIO_InitStructure);
-    GPIO_SetBits(POWEROFF_GPIO_GROUP, POWEROFF_GPIO_PIN);
-    //
-
-    delay_ms(200);
-    lprintf_time("power off done\n");
-    while(1);
 }
 typedef struct timer_struct
 {
@@ -851,7 +816,6 @@ void main_init(void)
 		  RCC_ClocksStatus.PCLK1_Frequency,
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
-  TP_Init();
   lprintf_time("SD init\n");
   SD_Init();
   {
@@ -866,7 +830,6 @@ void main_init(void)
   }
   lprintf_time("SD init done\n");
   lprintf_time("lcd init\n");
-  lcd_sueb_init(0);
   //lprintf_time("NO lcd init.\n");
   //SD_LowLevel_Init();
 
@@ -981,15 +944,6 @@ void os_task2(void*p)
 void soft_reset_system()
 {
     lprintf_time("system reset\n");
-    if(g_fnn_not_save){
-        g_fnn_not_save=0;
-        lprintf_time("save g_fnn %d\n", g_fnn);
-        set_env_uint("fsno", g_fnn);
-    }
-    foce_save_log_func();
-    set_BL_value(0);
-    LCD_RESET();
-    __disable_fault_irq();
     NVIC_SystemReset();
 }
 
