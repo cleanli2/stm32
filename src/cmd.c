@@ -76,12 +76,49 @@ void history(char *p)
 
     return;
 }
+void poweroff(char *p)
+{
+    char*p1;
+    uint32_t np = get_howmany_para(p);
+    lprintf("number of para=%d\n", np);
+    if(np==0){
+        lprintf("Power OFF need para!\n");
+        return;
+    }
+    else{
+        p = str_to_str(p, &p1);
+        lprintf("p1=%s\n", p1);
+    }
+    if(!strcmp(p1, "sleep")){
+        lprintf("goto sleep\r\n");
+        __WFI();
+        lprintf("wake from sleep\r\n");
+    }
+    else if(!strcmp(p1, "stop")){
+        lprintf("goto stop\r\n");
+        PWR_EnterSTOPMode(PWR_Regulator_LowPower,PWR_STOPEntry_WFI);
+        lprintf("wake from stop\r\n");
+    }
+    else if(!strcmp(p1, "standby")){
+        PWR_WakeUpPinCmd (ENABLE);
+        PWR_EnterSTANDBYMode();
+    }
+    else{
+        lprintf("error para.\r\n");
+    }
+    con_send('\n');
+
+    return;
+
+}
+
 static const struct command cmd_list[]=
 {
     {"exit",cmd_exit},
     {"help",print_help},
     {"history",history},
     {"pm",print_mem},
+    {"poff",poweroff},
     {"r",read_mem},
     {"reboot",reboot},
     {"w",write_mem},

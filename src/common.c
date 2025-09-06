@@ -743,7 +743,7 @@ void main_init(void)
   GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
   GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
 #else
-  lprintf_time("\n\n================Hamer board start================\n");
+  lprintf_time("\n\n================c6t6 board start================\n");
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
   /* Configure PD0 and PD2 in output pushpull mode */
@@ -793,21 +793,10 @@ void main_init(void)
 		  RCC_ClocksStatus.PCLK1_Frequency,
 		  RCC_ClocksStatus.PCLK2_Frequency,
 		  RCC_ClocksStatus.ADCCLK_Frequency);
-  lprintf_time("SD init\n");
-  lprintf_time("SD init done\n");
-  lprintf_time("lcd init\n");
   //lprintf_time("NO lcd init.\n");
   //SD_LowLevel_Init();
 
   /*1us/timer_count, 10ms/timer_intrpt*/
-  g_cam_r70p_e = get_env_uint("camr70pe", 0);
-  g_cam_r71p_e = get_env_uint("camr71pe", 0);
-  g_tlcd = get_env_uint("cam2lcd", 0);
-  while (looptimes--)
-  {
-      led_flash(0x3, 100);
-  }
-  beep_by_timer_100(0);
   if(con_is_recved())run_cmd_interface();
 #if 0
     while(1){
