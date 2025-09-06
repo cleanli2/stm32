@@ -342,15 +342,15 @@ void led_flash(u32 led_flag, u32 ms_ct)
 
 void delay_us(u32 nus)
 {
-    u32 ts;
-    ts = TIM_GetCounter(TIM2);
-    while(sub_with_limit(TIM_GetCounter(TIM2), ts, TIM2_RELOAD) < (nus*COUNTS_PER_US));
+    volatile int t=nus;
+    while(t--);
+
 }
 
 void delay_ms(u16 nms)
 {
     while(nms--){
-        delay_us(1000);
+        delay_us(100);
     }
 }
 
