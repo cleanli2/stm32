@@ -100,6 +100,7 @@ void poweroff(char *p)
         lprintf("wake from stop\r\n");
     }
     else if(!strcmp(p1, "standby")){
+        RCC_APB1PeriphResetCmd(RCC_APB1Periph_PWR, ENABLE);
         GPIO_InitTypeDef GPIO_InitStructure;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_10;
