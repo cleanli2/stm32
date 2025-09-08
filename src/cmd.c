@@ -80,6 +80,7 @@ void poweroff(char *p)
 {
     char*p1;
     uint32_t np = get_howmany_para(p);
+    RCC_APB1PeriphResetCmd(RCC_APB1Periph_PWR, ENABLE);
     lprintf("number of para=%d\n", np);
     if(np==0){
         lprintf("Power OFF need para!\n");
@@ -100,11 +101,12 @@ void poweroff(char *p)
         lprintf("wake from stop\r\n");
     }
     else if(!strcmp(p1, "standby")){
-        RCC_APB1PeriphResetCmd(RCC_APB1Periph_PWR, ENABLE);
         GPIO_InitTypeDef GPIO_InitStructure;
+        PWR_WakeUpPinCmd (DISABLE);
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_10;
         GPIO_Init(GPIOA, &GPIO_InitStructure);
+        PWR->CR |= PWR_CR_CWUF;
         PWR_WakeUpPinCmd (ENABLE);
         PWR_EnterSTANDBYMode();
     }
