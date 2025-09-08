@@ -6,6 +6,8 @@
 #include "task.h"
 #include "fs.h"
 
+extern uint32_t v_bat;
+extern int32_t g_ict;
 struct task all_tasks[]=
 {
     {
@@ -226,6 +228,10 @@ void check_ui()
         }
         ss=' ';
         s_fnn--;
+        if(adc_test()){
+            power_off();
+        }
+        lcd_lprintf(1, 645, 450, "%dmv,%dmA", v_bat, g_ict);
     }
     prtline;
     prt_dec(s_fnn);
