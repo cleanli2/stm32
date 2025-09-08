@@ -80,7 +80,7 @@ void poweroff(char *p)
 {
     char*p1;
     uint32_t np = get_howmany_para(p);
-    RCC_APB1PeriphResetCmd(RCC_APB1Periph_PWR, ENABLE);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
     lprintf("number of para=%d\n", np);
     if(np==0){
         lprintf("Power OFF need para!\n");
