@@ -110,16 +110,9 @@ void timer_init(uint16_t arr, uint16_t psr)
     TIM_Cmd(TIM2, ENABLE);
 }
 
-u32*SysTick_Handler_local(u32*stack_data)
+u32*SysTick_Handler()
 {
-    (void)stack_data;
-    tm_cpt_start();
-    u32 t = TIM_GetCounter(TIM2);
-    interv_systick = (t>last_systick)?t-last_systick:t+TIM2_RELOAD-last_systick;
-    last_systick = t;
     g_ms_count++;
-    intrpt_time[INTSYSTICK]=tm_cpt_end();
-    return stack_data;
 }
 
 void systick_init()
@@ -554,6 +547,8 @@ void main_init(void)
 
   //72M/72=1M, 1us/count
   //72M/12=6M, 1/6us / count
+  systick_init();
+
   lprintf("~~~~~~\n");
   lprintf_time("\n\n================c6t6 board start================\n");
 
@@ -570,7 +565,6 @@ void main_init(void)
   //lprintf_time("NO lcd init.\n");
   //SD_LowLevel_Init();
 
-  /*1us/timer_count, 10ms/timer_intrpt*/
   run_cmd_interface();
 }
 
