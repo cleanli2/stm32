@@ -117,10 +117,9 @@ u32*SysTick_Handler()
 
 void systick_init()
 {
-    lprintf("SystemCoreClock=%d\n", SystemCoreClock);
 
     SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);
-    SysTick_Config(72000-1);
+    SysTick_Config(8000-1);
     NVIC_SetPriority (PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
     NVIC_SetPriorityGrouping(0x7);//no interrupt preempt
 }
@@ -129,7 +128,7 @@ uint64_t get_system_us()
 {
     uint64_t system_us_count;
 
-    system_us_count = (uint64_t)g_ms_count * 1000 + (72000-1-SysTick->VAL)/72;
+    system_us_count = (uint64_t)g_ms_count * 1000 + (8000-1-SysTick->VAL)/72;
     return system_us_count;
 }
 
@@ -551,6 +550,7 @@ void main_init(void)
 
   lprintf("~~~~~~\n");
   lprintf_time("\n\n================c6t6 board start================\n");
+  lprintf("SystemCoreClock=%d\n", SystemCoreClock);
 
   RCC_GetClocksFreq(&RCC_ClocksStatus);
   get_mcu_id();
