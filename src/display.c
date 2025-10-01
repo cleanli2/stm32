@@ -1,6 +1,5 @@
 #include "display.h"
 #include "common.h"
-#include "ring_buf.h"
 
 char os_lcd_printf_buf[512];
 u16 PROXY_POINT_COLOR = 0x0000;

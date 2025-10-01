@@ -3,7 +3,6 @@
 #include <stdarg.h>
 #include <string.h>
 #include "common.h"
-#include "os_task.h"
 
 #define LOG_BUF_SIZE 1024
 char log_buf[LOG_BUF_SIZE];
@@ -13,11 +12,6 @@ char buf_printf_buf[64];
 char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 char lprintf_buf[256];
 char lcdprintf_buf[256];
-DECLARE_OS_LOCK(oslk_timebuf, LPRINTF_TIMEBUF_LOCK);
-DECLARE_OS_LOCK(oslk_lprintf, LPRINTF_LOCK);
-DECLARE_OS_LOCK(oslk_mempt, MEM_PRINT_LOCK);
-DECLARE_OS_LOCK(oslk_log, LOG_LOCK_NO);
-DECLARE_OS_LOCK(oslk_lcdpt, LCD_PRINT_LOCK_NO);
 char halfbyte2char(char c)
 {
         return ((c & 0x0f) < 0x0a)?(0x30 + c):('A' + c - 0x0a);
@@ -254,14 +248,12 @@ char*vslprintf(int print_with_time, char*s_buf, const char *fmt, va_list args)
 u32 get_log_size()
 {
     u32 ret;
-    os_lock(&oslk_log);
     if(read_index<=write_index){
         ret = write_index - read_index;
     }
     else{
         ret = LOG_BUF_SIZE - read_index + write_index;
     }
-    os_unlock(&oslk_log);
     return ret;
 }
 static int force_save_log = 0;
@@ -276,37 +268,7 @@ void foce_save_log_func()
     log_size = get_log_size();
     wi = write_index;
     log_to_flash(log_buf, read_index, log_size, LOG_BUF_SIZE);
-    os_lock(&oslk_log);
     read_index =  wi;
-    os_unlock(&oslk_log);
-}
-
-os_task_st * log_wait_task = NULL;
-void os_task_log(void*p)
-{
-    u32 log_size=0, wi, irqsv;
-    (void)p;
-
-    while(1){
-        while(1){
-            log_size = get_log_size();
-            if(0 == log_size){
-                dis_irq_save(irqsv);
-                log_wait_task = cur_os_task;
-                cur_os_task->task_status = TASK_STATUS_SLEEPING_IDLE;
-                irq_restore(irqsv);
-                os_switch_trigger();
-            }
-            else{
-                break;
-            }
-        }
-        wi = write_index;
-        log_to_flash(log_buf, read_index, log_size, LOG_BUF_SIZE);
-        os_lock(&oslk_log);
-        read_index =  wi;
-        os_unlock(&oslk_log);
-    }
 }
 
 void task_log(struct task*vp)
@@ -350,9 +312,7 @@ void log_to_buf(char* log)
                 w_len = len;
             }
             memcpy(&log_buf[write_index], log, w_len);
-            os_lock(&oslk_log);
             write_index = add_with_limit(write_index, w_len, LOG_BUF_SIZE);
-            os_unlock(&oslk_log);
             log+=w_len;
             len-=w_len;
             if(0==len){
@@ -391,7 +351,6 @@ void lprintf_time_buf(u32 time, const char *fmt, ...)
     dis_irq_save(flag);
     u32 us = get_system_us();
 
-    //os_lock(&oslk_timebuf);
     va_start(ap,fmt);
 
     if(time){
@@ -404,7 +363,6 @@ void lprintf_time_buf(u32 time, const char *fmt, ...)
     buf_log(buf_printf_buf);
     va_end(ap);
     irq_restore(flag);
-    //os_unlock(&oslk_timebuf);
 }
 
 void putchars_buf(const char *s)
@@ -421,7 +379,6 @@ void lprintf_time(const char *fmt, ...)
 {
     va_list ap;
 
-    os_lock(&oslk_lprintf);
     va_start(ap,fmt);
 #ifdef NO_PRINT_WITH_TIME
     vslprintf(0, lprintf_buf,fmt,ap);
@@ -439,13 +396,11 @@ void lprintf(const char *fmt, ...)
 #if 1
     va_list ap;
 
-    os_lock(&oslk_lprintf);
     va_start(ap,fmt);
     vslprintf(0, lprintf_buf,fmt,ap);
     putchars(lprintf_buf);
     va_end(ap);
     putchars_buf(fmt);
-    os_unlock(&oslk_lprintf);
 #else
     putchars(fmt);
 #endif
@@ -463,24 +418,20 @@ uint16_t LCD_PRINT_FRONT_COLOR = BLACK;
 void lcd_lprintf_win(uint32_t chscale, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const char *fmt, ...)
 {
     va_list ap;
-    os_lock(&oslk_lcdpt);
     memset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
     va_start(ap,fmt);
     vslprintf(0, lcdprintf_buf,fmt,ap);
     va_end(ap);
-    os_unlock(&oslk_lcdpt);
     Show_Str_win(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lcdprintf_buf,16,0, w, h, chscale);
 }
 void lcd_lprintf(uint32_t chscale, uint32_t x, uint32_t y, const char *fmt, ...)
 {
     va_list ap;
-    os_lock(&oslk_lcdpt);
     memset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
     va_start(ap,fmt);
     vslprintf(0, lcdprintf_buf,fmt,ap);
     va_end(ap);
     Show_Str(x, y,LCD_PRINT_FRONT_COLOR,LCD_PRINT_BACK_COLOR,lcdprintf_buf,16,0, chscale);
-    os_unlock(&oslk_lcdpt);
 }
 
 void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
@@ -488,7 +439,6 @@ void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
     const char*line_stt = buf;
     uint32_t left=len, line_len;
 
-    os_lock(&oslk_mempt);
     putchars("\nMemShow Start:");
     while(left){
         int j, li;
@@ -521,5 +471,4 @@ void mem_print(const char*buf, uint32_t ct_start, uint32_t len)
         ct_start+=line_len;
     }
     lprintf("\nMemShow End:\n");
-    os_unlock(&oslk_mempt);
 }

@@ -1,8 +1,6 @@
-#include "fs.h"
 #include "cmd.h"
 #include "common.h"
 #include "lprintf.h"
-#include "sd/stm32_eval_spi_sd.h"
 #include <stdint.h>
 #include <string.h>
 #include <display.h>

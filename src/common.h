@@ -13,8 +13,6 @@
 #include "gui.h"
 #include "rtc.h"
 #include "touch.h"
-#include "sd_lowlevel.h"
-#include "stm32_eval_spi_sd.h"
 #include "env.h"
 #include "cch_str.h"
 #include "w25flash.h"
@@ -23,7 +21,6 @@
 #include "soc_rtc.h"
 #include "ui.h"
 #include "music.h"
-#include "os_task.h"
 
 //for camera
 #define RECORD_CAM_STUCK_SIZE 8

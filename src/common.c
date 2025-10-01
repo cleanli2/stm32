@@ -2,14 +2,10 @@
 #include "board.h"
 #include "common.h"
 #include "cmd.h"
-#include "fs.h"
 #include "lprintf.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
-#include "sd/stm32_eval_spi_sd.h"
-#include "os_task.h"
-#include "ring_buf.h"
 #include "display.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
@@ -23,8 +19,6 @@ extern unsigned long debug_enable;
 
 u32 intrpt_time[NUM_INTRPT]={0};
 u32 debug_mode = 0;
-DECLARE_OS_LOCK(oslk_evt, EVT_LOCK_NO);
-DECLARE_RB_DATA(evt, rb_evt, 3)
 #define COUNTS_PER_US 6
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,94 +40,9 @@ u32 g_pcf8574_hw=0;
 static int sound_enable=1;
 static uint32_t g_10ms_count = 0;
 uint32_t g_ms_count = 0;
-void os_task1(void*);
-void os_task2(void*);
-void os_task3(void*);
 void compute_cpu_occp();
-void os_ui(void*p)
-{
-    (void)p;
-    struct point* ppt;
-    struct point last_pt = {0xffff, 0xffff};;
-    evt *dtw;
-
-    ui_start();
-    while(1){
-        g_flag_1s = false;
-        dtw=RB_R_GET_wait(evt, rb_evt);
-        switch(dtw->type){
-            case EVT_SCRN_TOUCH_UP:
-                ppt = (struct point*)dtw->pkg;
-                if(last_pt.px != 0xffff){
-                    Proxy_TP_Draw_Big_Point(last_pt.px, last_pt.py, WHITE);
-                }
-                Proxy_TP_Draw_Big_Point(ppt->px, ppt->py, BLACK);
-                last_pt = *ppt;
-                cur_task_event_flag |= 1<<EVENT_TOUCH_UP;
-                cached_touch_x = ppt->px;
-                cached_touch_y = ppt->py;
-                break;
-            case EVT_ONE_SECOND:
-                g_flag_1s = true;
-                break;
-            default:
-                lprintf("unknow evt type\n");
-        };
-        RB_R_SET(evt, rb_evt);
-        task_ui(NULL);
-    }
-}
 struct emulate_touch g_fake_touch = {0};
 struct emulate_touch *gftp=&g_fake_touch;
-void os_touch(void*p)
-{
-    struct point pt;
-    struct point pt_cache;
-    int touch_pressed = 0;
-    (void)p;
-    while(1){
-        if(gftp->n_pt && gftp->pts){
-            u32 test_time;
-            gftp->cur_interval++;
-            if(gftp->cur_interval >= gftp->interval){
-                gftp->cur_interval = 0;
-                if(gftp->cur_n_pt >= gftp->n_pt){
-                    gftp->cur_n_pt = 0;
-                }
-                pt_cache = gftp->pts[gftp->cur_n_pt++];
-                touch_pressed = 1;
-                test_time = g_ms_count-gftp->start;
-                if(gftp->last*60*1000u < test_time){//test done
-                    gftp->pts =NULL;
-                    lprintf("##########stress test end %s\n", get_rtc_time(0));
-                    lprintf("##########stress test time long %d mins %d s %d ms\n",
-                            test_time/1000/60,
-                            (test_time/1000)%60, test_time%1000);
-                }
-            }
-        }
-        if(touch_down()){
-            touch_pressed = 1;
-            if(get_TP_point(&pt.px, &pt.py)){
-                //lprintf("touch: %d %d\n", pt.px, pt.py);
-                pt_cache = pt;
-            }
-        }
-        else{
-            if(touch_pressed == 1){
-                os_lock(&oslk_evt);
-                evt *dtw=RB_W_GET_wait(evt, rb_evt);
-                //do work
-                dtw->type = EVT_SCRN_TOUCH_UP;
-                memcpy(dtw->pkg, &pt_cache, sizeof(struct point));
-                RB_W_SET(evt, rb_evt);
-                os_unlock(&oslk_evt);
-            }
-            touch_pressed = 0;
-        }
-        os_10ms_delay(20);
-    }
-}
 static inline u32 get_sp()
 {
     register u32 __reg_sp __asm("sp");
@@ -201,7 +110,6 @@ void timer_init(uint16_t arr, uint16_t psr)
     TIM_Cmd(TIM2, ENABLE);
 }
 
-extern os_task_timer *g_tt;
 u32*SysTick_Handler_local(u32*stack_data)
 {
     (void)stack_data;
@@ -209,22 +117,7 @@ u32*SysTick_Handler_local(u32*stack_data)
     u32 t = TIM_GetCounter(TIM2);
     interv_systick = (t>last_systick)?t-last_systick:t+TIM2_RELOAD-last_systick;
     last_systick = t;
-#if 0
-    lprintf_time_buf(1, "stk+%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
-            stack_data[1],
-            stack_data[7],
-            stack_data[8],
-            stack_data[9]);
-#endif
     g_ms_count++;
-    check_os_timer();
-#if 0
-    lprintf_time_buf(1, "stk-%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
-            stack_data[1],
-            stack_data[7],
-            stack_data[8],
-            stack_data[9]);
-#endif
     intrpt_time[INTSYSTICK]=tm_cpt_end();
     return stack_data;
 }
@@ -261,27 +154,12 @@ u32*TIM2_IRQHandler_local(u32*stack_data)
 {
     (void)stack_data;
     tm_cpt_start();
-#if 0
-    lprintf_time_buf(1, "tm2+%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
-            stack_data[1],
-            stack_data[7],
-            stack_data[8],
-            stack_data[9]);
-#endif
 	//if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
     g_10ms_count++;
     if((g_10ms_count%3000)==0){//30seconds
     }
     //*(u32*)0xe000ed04=0x10000000;
-    os_switch_trigger();
-#if 0
-    lprintf_time_buf(1, "tm2-%s_%X:%X_%X_%X_%X\n", cur_os_task->name, stack_data,
-            stack_data[1],
-            stack_data[7],
-            stack_data[8],
-            stack_data[9]);
-#endif
     intrpt_time[INTTIM2]=tm_cpt_end();
     return stack_data;
 }
@@ -639,7 +517,6 @@ void main_init(void)
        To reconfigure the default setting of SystemInit() function, refer to
        system_stm32f10x.c file
      */     
-  int looptimes = 3;
   //uint32_t ict;
   RCC_ClocksTypeDef RCC_ClocksStatus;
 
@@ -674,7 +551,6 @@ void main_init(void)
 #endif
   //Touch_Test();
 
-  //os_task_init();
 
   //72M/72=1M, 1us/count
   //72M/12=6M, 1/6us / count
@@ -696,104 +572,9 @@ void main_init(void)
 
   /*1us/timer_count, 10ms/timer_intrpt*/
   run_cmd_interface();
-#if 0
-    while(1){
-        run_cmd_interface();
-    }
-  os_task_add(os_task_log, task_log_stack, "log", STACK_SIZE_LOCAL, 5);
-  os_task_add(os_task1, task1_stack, "t1", STACK_SIZE_LOCAL, 1);
-  os_task_add(os_task2, task2_stack, "t2", STACK_SIZE_LARGE*2, 2);
-  os_task_add(os_task3, cmd_stack, "cmd", STACK_SIZE_LARGE, 4);
-  os_task_add(os_touch, touch_stack, "touch", STACK_SIZE_LARGE, 2);
-  os_task_add(os_task_display, display_stack, "display", STACK_SIZE_LARGE*2, 7);
-  os_task_add(task_music, music_stack, "music", STACK_SIZE_LARGE, 6);
-  os_task_add(os_ui, ui_stack, "ui", STACK_SIZE_LOCAL*2, 3);
-  while(1){
-  }
-#endif
 }
 
-#if 0
-DECLARE_OS_LOCK(oslktest, 3);
-void os_lock_test()
-{
-    lprintf("task %s wait lock\n", cur_os_task->name);
-    os_lock(&oslktest);
-    lprintf("task %s in\n", cur_os_task->name);
-    os_10ms_delay(200);
-    lprintf("task %s out\n", cur_os_task->name);
-    os_unlock(&oslktest);
-    lprintf("task %s release lock\n", cur_os_task->name);
-}
-#endif
 
-void os_task1(void*p)
-{
-    int td = 0;
-    u32 direct = 1;
-    (void)p;
-    while(1){
-        //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
-        os_10ms_delay(td/2);
-        //putchars("1 1\n");
-        //GPIO_SetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
-        os_10ms_delay(20-td/2+1);
-        //putchars("1 0\n");
-        //GPIO_ResetBits(LED0_GPIO_GROUP,LED0_GPIO_PIN);
-#if 1
-        if(direct){
-            td++;
-            if(td>=40){
-                direct = 0;
-            }
-        }
-        if(!direct){
-            td--;
-            if(td<=0){
-                direct = 1;
-            }
-        }
-#endif
-    }
-}
-void os_task3(void*p)
-{
-    (void)p;
-    while(1){
-        run_cmd_interface();
-    }
-}
-void os_task2(void*p)
-{
-    (void)p;
-    while(1){
-#if 0
-        //mem_print(cur_os_task, cur_os_task, sizeof(os_task_st));
-        //putchars("--0 0\n");
-        GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-        os_10ms_delay(teset_td);
-        //putchars("--0 1\n");
-        GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-        os_10ms_delay(teset_td);
-        //lprintf("other task %d\n", *rtet);
-#if 0
-            {
-                struct point pt_cache;
-                os_lock(&oslk_evt);
-                evt *dtw=RB_W_GET_wait(evt, rb_evt);
-                //do work
-                dtw->type = EVT_SCRN_TOUCH_UP;
-                pt_cache.px=220;
-                pt_cache.py=310;
-                memcpy(dtw->pkg, &pt_cache, sizeof(struct point));
-                RB_W_SET(evt, rb_evt);
-                os_unlock(&oslk_evt);
-            }
-#endif
-        task_timer(NULL);
-#endif
-    }
-}
 void soft_reset_system()
 {
     lprintf_time("system reset\n");

@@ -4,7 +4,6 @@
 #include "common.h"
 #include "ui.h"
 #include "task.h"
-#include "fs.h"
 
 int main()
 {

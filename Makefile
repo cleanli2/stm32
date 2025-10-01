@@ -31,12 +31,10 @@ src/cmd.c                                                                       
 src/CoIDE_startup.c                                                                                   \
 src/common.c                                                                                          \
 src/date.c                                                                                            \
-src/display.c                                                                                            \
 src/env.c \
 src/lprintf.c                                                                                         \
 src/main.c                                                                                            \
 src/music.c                                                                                           \
-src/os_task.c                                                                                             \
 src/stm32f10x_it.c                                                                                    \
 src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c  \
 src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/misc.c                    \
@@ -77,9 +75,9 @@ LDFILE=stm32_f103_32k_gcc
 
 .PHONY: all clean
 
-all:$(C_OBJ) src/asm.o
+all:$(C_OBJ)
 	touch src/version.h
-	$(CC) $(C_OBJ) src/asm.o -T $(LDFILE).ld -o $(TARGET).elf $(LDFLAGS)
+	$(CC) $(C_OBJ) -T $(LDFILE).ld -o $(TARGET).elf $(LDFLAGS)
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).bin -Obinary 
 	$(OBJCOPY) $(TARGET).elf  $(TARGET).hex -Oihex
 	cp $(TARGET).hex $(TARGET)$(GIT_SHA1)_$(DIRTY)$(CLEAN).hex
@@ -97,6 +95,3 @@ clean:
 	rm -f $(shell find ./ -name '*.bin')
 	rm -f $(shell find ./ -name '*.hex')
 	rm -f $(shell find ./ -name '*.asm')
-
-src/asm.o:src/asm.s
-	$(AS) -mcpu=cortex-m3 -mthumb src/asm.s -o src/asm.o
