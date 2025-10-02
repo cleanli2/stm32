@@ -108,6 +108,10 @@ void switch_env_area()
 uint8_t env_get_char(uint32_t offset)
 {
     uint8_t*tbp=(uint8_t*)(get_env_start_addr()+offset);
+    if((uint32_t)tbp>=HW_FLASH_END_FORBIDEN){
+        lprintf("forbidden flash addr:%x\r\n", tbp);
+        while(1);
+    }
     return *tbp;
 }
 
@@ -289,8 +293,13 @@ uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
             }
         }
         if(env_get_char(nxt+1)=='\0')nxt++;
-        if ((val=envmatch((uint8_t *)name, i)) < 0)
+        if ((val=envmatch((uint8_t *)name, i)) < 0){
+            if(nxt==FM_ENV_STORE_SIZE-1){
+                ret = ENV_FAIL;
+                goto end;
+            }
             continue;
+        }
         if(p_position!=NULL){
             *p_position = i;
             goto end;
