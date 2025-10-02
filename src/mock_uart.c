@@ -29,6 +29,15 @@ void hw_init()
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_Init(MOCK_UART_RX_GP, &GPIO_InitStructure);
 }
+
+void time_start()
+{
+    dt_us_last();
+}
+uint32_t time_passed_ms()
+{
+    return dt_us_last()/1000;
+}
 /*********************HW related end  **************************/
 
 static unsigned int BIT_DELAY=10000;
@@ -78,10 +87,12 @@ int mock_uart_rx(char*cp, int maxn, int timeout_ms)
         }
         if(RX_BIT()==1)return nrv;
 
+        delay_us(BIT_DELAY/8);
+
         while(nbit--){
             delay_us(BIT_DELAY);
-            if(RX_BIT())da+=0x80;
             da>>=1;
+            if(RX_BIT())da+=0x80;
         }
 
         //stop bit detect

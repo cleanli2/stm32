@@ -129,7 +129,7 @@ uint64_t get_system_us()
 {
     uint64_t system_us_count;
 
-    system_us_count = (uint64_t)g_ms_count * 1000 + (8000-1-SysTick->VAL)/72;
+    system_us_count = (uint64_t)g_ms_count * 1000 + (8000-1-SysTick->VAL)/8;
     return system_us_count;
 }
 

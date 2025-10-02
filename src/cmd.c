@@ -121,6 +121,7 @@ void muart(char *p)
 {
     char*p1;
     int p2=10000;
+    char rv;
     uint32_t np = get_howmany_para(p);
     lprintf("number of para=%d\n", np);
     if(np==0){
@@ -140,6 +141,13 @@ void muart(char *p)
     if(!strcmp(p1, "tx")){
     }
     else if(!strcmp(p1, "rx")){
+        lprintf("rx test!\n");
+        while(1){
+            if(0!=mock_uart_rx(&rv, 1, 100)){
+                prt_hex(rv);
+                lprintf("%c\r\n", rv);
+            }
+        }
     }
     else{
         lprintf("error para.\r\n");
