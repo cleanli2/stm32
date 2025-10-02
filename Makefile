@@ -31,7 +31,8 @@ src/cmd.c                                                                       
 src/CoIDE_startup.c                                                                                   \
 src/common.c                                                                                          \
 src/date.c                                                                                            \
-src/env.c \
+src/env.c                                                                                             \
+src/mock_uart.c                                                                                       \
 src/lprintf.c                                                                                         \
 src/main.c                                                                                            \
 src/music.c                                                                                           \

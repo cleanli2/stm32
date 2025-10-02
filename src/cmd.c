@@ -1,4 +1,5 @@
 #include "cmd.h"
+#include "mock_uart.h"
 #include "common.h"
 #include "lprintf.h"
 #include <stdint.h>
@@ -116,12 +117,42 @@ void poweroff(char *p)
     return;
 
 }
+void muart(char *p)
+{
+    char*p1;
+    int p2=100;
+    uint32_t np = get_howmany_para(p);
+    lprintf("number of para=%d\n", np);
+    if(np==0){
+        lprintf("no para!\n");
+        while(p2--){
+            mock_uart_tx(0x87);
+        }
+        return;
+    }
+    else{
+        p = str_to_str(p, &p1);
+        lprintf("p1=%s\n", p1);
+    }
+    if(!strcmp(p1, "tx")){
+    }
+    else if(!strcmp(p1, "rx")){
+    }
+    else{
+        lprintf("error para.\r\n");
+    }
+    con_send('\n');
+
+    return;
+
+}
 
 static const struct command cmd_list[]=
 {
     {"exit",cmd_exit},
     {"help",print_help},
     {"history",history},
+    {"muart",muart},
     {"pm",print_mem},
     {"poff",poweroff},
     {"r",read_mem},

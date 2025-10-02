@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdint.h>
 #include "display.h"
+#include "mock_uart.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Examples
   * @{
@@ -212,9 +213,9 @@ void led_flash(u32 led_flag, u32 ms_ct)
 
 void delay_us(u32 nus)
 {
-    volatile int t=nus;
-    while(t--);
-
+    uint64_t s=get_system_us();
+    s+=nus;
+    while(get_system_us()<s);
 }
 
 void delay_ms(u16 nms)
@@ -565,6 +566,7 @@ void main_init(void)
   //lprintf_time("NO lcd init.\n");
   //SD_LowLevel_Init();
 
+  mock_uart_init();
   run_cmd_interface();
 }
 
