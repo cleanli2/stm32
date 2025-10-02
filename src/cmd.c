@@ -231,9 +231,84 @@ void fmenv(char *p)
 err:
     lprintf("ERROR para\n");
 }
+void envprint(char *p)
+{
+    int tmp = get_howmany_para(p);
+    lprintf("number of para %d\n", tmp);
+    if(tmp>0){
+        lprintf("raw env:\n");
+        printrawenv();
+    }
+    else{
+        printenv();
+    }
+    con_send('\n');
+
+    return;
+
+}
+void envget(char *p)
+{
+    uint32_t tmp;
+    char* name, value[ENV_MAX_VALUE_LEN];
+    tmp = get_howmany_para(p);
+    lprintf("tmp=%d\n", tmp);
+    if(tmp<1){
+        lprintf("err\n");
+        return;
+    }
+    str_to_str(p, &name);
+    if(ENV_FAIL == get_env(name, value)){
+        lprintf("get_env fail\n");
+        return;
+    }
+    else{
+        lprintf("get_env OK\n");
+    }
+    lprintf("%s=%s\n", name, value);
+    con_send('\n');
+
+    return;
+
+}
+void envset(char *p)
+{
+    uint32_t tmp;
+    char* name, *value=0;
+    tmp = get_howmany_para(p);
+    lprintf("tmp=%d\n", tmp);
+    if(tmp<1){
+        lprintf("err\n");
+        return;
+    }
+    if(tmp>=1){
+        p = str_to_str(p, &name);
+    }
+    value = p;
+    if(value){
+        lprintf("todo: %s=%s\n", name, value);
+    }
+    else{
+        lprintf("todo: del %s\n", name);
+    }
+    if(ENV_FAIL == set_env(name, value)){
+        lprintf("set_env fail\n");
+        return;
+    }
+    else{
+        lprintf("set_env OK\n");
+    }
+    con_send('\n');
+
+    return;
+
+}
 static const struct command cmd_list[]=
 {
     {"exit",cmd_exit},
+    {"envset",envset},
+    {"envget",envget},
+    {"envprint",envprint},
     {"fmenv",fmenv},
     {"help",print_help},
     {"history",history},
