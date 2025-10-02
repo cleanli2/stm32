@@ -1,3 +1,4 @@
+#include "env.h"
 #include "cmd.h"
 #include "mock_uart.h"
 #include "common.h"
@@ -163,9 +164,77 @@ void muart(char *p)
 
 }
 
+void fmenv(char *p)
+{
+    uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
+
+    lprintf("p=%s\n", p);
+    tmp = get_howmany_para(p);
+    lprintf("tmp=%d\n", tmp);
+    if(tmp>=1){
+	    p = str_to_hex(p, &cmdindex);
+    }
+    if(tmp == 0 || cmdindex == 0){
+    }
+    else if(cmdindex == 4){//
+    }
+    else if(cmdindex == 5){//fake w w25f
+    }
+    else if(cmdindex == 6){//cmd
+    }
+    else if(cmdindex == 7){//w w25f
+    }
+    else if(cmdindex == 8){//
+        lprintf("erase one sector.\n");
+        if(tmp<2){
+            goto err;
+        }
+        p = str_to_hex(p, &para1);
+        p = str_to_hex(p, &para2);
+        if(para2 != 0xe4a5e07e){
+            lprintf("erase %X fail", para1);
+        }
+        else{
+            //SPI_Flash_Erase_Sector(GET_SECTOR_ADDR(para1));
+        }
+    }
+    else if(cmdindex == 0x9){//
+        lprintf("switch env area\n");
+        switch_env_area();
+    }
+    else if(cmdindex == 0xa){//
+        lprintf("switch env area with data\n");
+        p = str_to_hex(p, &para1);
+        if(para1 != 0x5e14c6e7){
+            lprintf("switch env fail", para1);
+            goto err;
+        }
+        switch_env_area_with_data();
+    }
+    else if(cmdindex == 0xb){//
+        lprintf("erase cur env area\n");
+        p = str_to_hex(p, &para1);
+        if(para1 != 0xe4a5ee7c){
+            lprintf("erase env fail", para1);
+        }
+        else{
+            erase_env_area();
+        }
+    }
+    else if(cmdindex == 0xc){//
+    }
+    else if(cmdindex == 0xd){
+    }
+    con_send('\n');
+
+    return;
+err:
+    lprintf("ERROR para\n");
+}
 static const struct command cmd_list[]=
 {
     {"exit",cmd_exit},
+    {"fmenv",fmenv},
     {"help",print_help},
     {"history",history},
     {"muart",muart},
