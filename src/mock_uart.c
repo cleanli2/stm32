@@ -15,8 +15,8 @@
 void hw_init()
 {
     GPIO_InitTypeDef GPIO_InitStructure;
-    RCC_APB2PeriphClockCmd(MOCK_UART_TX_GP, ENABLE);
-    RCC_APB2PeriphClockCmd(MOCK_UART_RX_GP, ENABLE);
+    RCC_APB2PeriphClockCmd(MOCK_UART_TX_PERIPH, ENABLE);
+    RCC_APB2PeriphClockCmd(MOCK_UART_RX_PERIPH, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = MOCK_UART_TX_PIN;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;

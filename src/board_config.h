@@ -14,6 +14,8 @@
 #define MOCK_UART_RX_PIN GPIO_Pin_10
 #define MOCK_UART_TX_GP GPIOB
 #define MOCK_UART_RX_GP GPIOB
+#define MOCK_UART_TX_PERIPH RCC_APB2Periph_GPIOB
+#define MOCK_UART_RX_PERIPH RCC_APB2Periph_GPIOB
 
 #ifdef ALIENTEK_MINI
 /////////////////////////////////////ALIENTEK_MINI//////////////////////////////////////////////
