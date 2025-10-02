@@ -126,8 +126,10 @@ void muart(char *p)
     if(np==0){
         lprintf("no para!\n");
         while(1){
-            mock_uart_tx(0x55);
-            mock_uart_tx(0x87);
+            mock_uart_tx('U');
+            delay_ms(1000);
+            mock_uart_tx('W');
+            delay_ms(1000);
         }
         return;
     }
