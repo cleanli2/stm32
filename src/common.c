@@ -213,15 +213,19 @@ void led_flash(u32 led_flag, u32 ms_ct)
 
 void delay_us(u32 nus)
 {
+#if 0
     uint64_t s=get_system_us();
     s+=nus;
     while(get_system_us()<s);
+#endif
+    volatile int a=nus;
+    while(a--);
 }
 
 void delay_ms(u16 nms)
 {
     while(nms--){
-        delay_us(100);
+        delay_us(1000);
     }
 }
 

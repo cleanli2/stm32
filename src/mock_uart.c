@@ -37,6 +37,7 @@ void mock_uart_init()
 {
     hw_init();
     BIT_DELAY=1000000u/MOCK_UART_BAUTRATE;
+    prt_dec(BIT_DELAY);
 }
 
 void mock_uart_tx(char da)
