@@ -139,6 +139,11 @@ void muart(char *p)
         lprintf("p1=%s\n", p1);
     }
     if(!strcmp(p1, "tx")){
+        lprintf("tx test!\n");
+        while(1){
+            rv = con_recv();
+            mock_uart_tx(rv);
+        }
     }
     else if(!strcmp(p1, "rx")){
         lprintf("rx test!\n");
