@@ -195,6 +195,7 @@ void fmenv(char *p)
             lprintf("erase %X fail", para1);
         }
         else{
+            lprintf("not implement\n");
             //SPI_Flash_Erase_Sector(GET_SECTOR_ADDR(para1));
         }
     }

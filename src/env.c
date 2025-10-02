@@ -434,6 +434,14 @@ uint32_t set_env_raw(const char* name, const char*value)
         lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
+
+    if(strlen(name)>ENV_MAX_VALUE_LEN-1 ||
+            strlen(value)>ENV_MAX_VALUE_LEN-1){
+        lprintf("'name' or 'value' len can't > 31\n");
+        ret = ENV_FAIL;
+        goto end;
+    }
+
     char ev[ENV_MAX_VALUE_LEN];
     if(ENV_OK==get_env(name, ev)){
         if(!strcmp(ev, value)){
