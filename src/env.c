@@ -114,7 +114,7 @@ uint8_t env_get_char(uint32_t offset)
 int env_set_2char(uint32_t offset, const char*dp)
 {
     uint32_t faddr;
-    uint16_t*wdp=(uint16_t*)dp;
+    const uint16_t*wdp=(const uint16_t*)dp;
     faddr=offset+get_env_start_addr();
     //lprintf("fphw:%x=%b %b\r\n", faddr, dp[1],dp[0]);
     FLASH_Unlock();
@@ -326,7 +326,6 @@ int fm_save(uint32_t i, const char*name, const char*value)
 {
     unsigned int len, ci;
     char tbt[2]={0};
-    uint16_t*wdp=(uint16_t*)tbt;
     //lprintf("fmsave:%s=%s\r\n", name, value);
     len = strlen(name)+strlen(value)+2;
     if(len&1){
@@ -402,11 +401,12 @@ int fm_save(uint32_t i, const char*name, const char*value)
             i+=2;
         }
     }
+    return ENV_OK;
 }
 
 uint32_t set_env_raw(const char* name, const char*value)
 {
-    uint32_t i = 0, n, ret = ENV_OK;
+    uint32_t i = 0, ret = ENV_OK;
     uint8_t zero_str = 0;
     uint16_t wd=0;
 
@@ -436,7 +436,7 @@ uint32_t set_env_raw(const char* name, const char*value)
     i = find_env_data_start();
     if(i == ENV_EMPTY_DATA){
         i = FM_ENV_STORE_SIZE - 2;
-        env_set_2char(i, &wd);
+        env_set_2char(i, (const char*)&wd);
     }
     else if(i > ENV_ABNORMAL){
         ret = ENV_FAIL;
@@ -598,73 +598,6 @@ void find_log_write_addr()
             XSPI_Flash_Erase_Sector(flash_log_write_addr/SPI_FLASH_SECTOR_SIZE);//erase sector
             return;
         }
-    }
-#endif
-}
-
-void log_to_flash(const char*lgbuf, u32 ri, u32 len, u32 buf_size)
-{
-    u32 buf_left, flash_left, w_len;
-    if(0xffffffff == flash_log_write_addr){
-        find_log_write_addr();
-    }
-
-    lprintf("log>flash:i %d len %d fadr 0x%x\n",
-            ri, len, flash_log_write_addr);
-    while(1){
-        lprintf("ri %d %d %x\n", ri, len, flash_log_write_addr);
-        if(ri+len >= buf_size)
-        {
-            buf_left = buf_size - ri;
-        }
-        else{
-            buf_left = len;
-        }
-        flash_left = SPI_FLASH_LOG_END - flash_log_write_addr;
-        w_len = MIN(buf_left, flash_left);
-        lprintf("wl %d %d %x\n", w_len, buf_left, flash_left);
-        //XSPI_Flash_Write_direct_erase((const u8*)lgbuf+ri, flash_log_write_addr, w_len);
-        flash_log_write_addr += w_len;
-        ri += w_len;
-        len -= w_len;
-        if(0 == len){
-            break;
-        }
-        if(flash_log_write_addr >= SPI_FLASH_LOG_END){
-            flash_log_write_addr = SPI_FLASH_LOG_START;
-        }
-        if(ri >= buf_size){
-            ri = 0;
-        }
-    }
-#if 0
-    if(0xff!=XSPI_Flash_Read_Byte(flash_log_write_addr))
-    {
-        lprintf("next flash log addr %x is not 0xff, erase it\n",
-                flash_log_write_addr);
-        XSPI_Flash_Erase_Sector(flash_log_write_addr/SPI_FLASH_SECTOR_SIZE);//erase sector
-    }
-    lprintf("log>flash:done fadr 0x%x\n", flash_log_write_addr);
-#endif
-}
-
-void spi_flash_log_print()
-{
-#if 0
-    u32 ch_cnt = 0;
-    char ch;
-    u32 addr = SPI_FLASH_LOG_START;
-    while(1){
-        ch=SPI_Flash_Read_Byte(addr);
-        if(0xff!=ch)
-        {
-            __io_putchar(ch);
-        }
-        ch_cnt++;
-        if(ch_cnt >= SPI_FLASH_LOG_SIZE){
-            return;
-        }
-        addr++;
     }
 #endif
 }

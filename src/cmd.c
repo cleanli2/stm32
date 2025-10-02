@@ -121,7 +121,7 @@ void poweroff(char *p)
 void muart(char *p)
 {
     char*p1;
-    int p2=10000;
+    //int p2=10000;
     char rv;
     uint32_t np = get_howmany_para(p);
     lprintf("number of para=%d\n", np);
@@ -166,7 +166,7 @@ void muart(char *p)
 
 void fmenv(char *p)
 {
-    uint32_t para1 = 0, para2=0, para3 = 0, tmp, cmdindex;
+    uint32_t para1 = 0, para2=0, tmp, cmdindex;
 
     lprintf("p=%s\n", p);
     tmp = get_howmany_para(p);

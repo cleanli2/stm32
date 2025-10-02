@@ -111,7 +111,7 @@ void timer_init(uint16_t arr, uint16_t psr)
     TIM_Cmd(TIM2, ENABLE);
 }
 
-u32*SysTick_Handler()
+void SysTick_Handler()
 {
     g_ms_count++;
 }

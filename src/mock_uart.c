@@ -69,7 +69,7 @@ void mock_uart_tx(char da)
 }
 
 
-int mock_uart_rx(char*cp, int maxn, int timeout_ms)
+int mock_uart_rx(char*cp, int maxn, unsigned int timeout_ms)
 {
     int nrv=0, nbit=8;
     char da=0;

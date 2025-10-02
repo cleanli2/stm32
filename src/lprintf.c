@@ -170,6 +170,7 @@ void reset_time_offset()
 
 char*vslprintf(int print_with_time, char*s_buf, const char *fmt, va_list args)
 {
+    (void)print_with_time;
     const char *s;
     uint32_t d;
     int32_t di;
