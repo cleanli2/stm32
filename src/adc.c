@@ -7,14 +7,8 @@
 #else
 #define Debug_LOG_ADC(...)
 #endif
-uint32_t v_bat = 0, v_core=0;
-int32_t g_ict=0;
-#ifdef SD_WRITE_VERIFY
-extern int  g_random_wv;
-#endif
 
 static int adc_inited = 0;
-static int adci_cali = 0;
 void adc_init()
 {
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -25,10 +19,8 @@ void adc_init()
 
     /* Configure analog inputs */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
-    GPIO_InitStructure.GPIO_Pin = GPIO_ADC_V4_2_PIN | GPIO_ADC_IBAT_PIN;
-    GPIO_Init(GPIO_GROUP_V4_2_IBAT, &GPIO_InitStructure);
-    GPIO_InitStructure.GPIO_Pin = GPIO_ADC_VREF_PIN;
-    GPIO_Init(GPIO_GROUP_VREF, &GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
     /* ADC1 configuration ------------------------------------------------------*/
     ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
     ADC_InitStructure.ADC_ScanConvMode = DISABLE;
@@ -39,7 +31,7 @@ void adc_init()
     ADC_Init(ADC1, &ADC_InitStructure);
     /* ADC1 regular channels configuration */
     lprintf("config adc1 using VREF\n");
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_VREF, 1, ADC_SampleTime_28Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_28Cycles5);
 
     lprintf("enable adc1\n");
     ADC_Cmd(ADC1, ENABLE);
@@ -54,27 +46,16 @@ void adc_init()
     /* Check the end of ADC1 calibration */
     while(ADC_GetCalibrationStatus(ADC1));
     lprintf("adc1 calibration done\n");
-    adci_cali= (int)get_env_uint("adcIcal", 0);
-    lprintf("adci_cali=%d\n", adci_cali);
     adc_inited = ADC_INITED;
 }
 
 uint32_t get_adc_value(int my_index)
 {
-    switch(my_index){
-        case VREF:
-            ADC_RegularChannelConfig(ADC1, ADC_Channel_VREF, 1, ADC_SampleTime_28Cycles5);
-            break;
-        case V4_2:
-            ADC_RegularChannelConfig(ADC1, ADC_Channel_V4_2, 1, ADC_SampleTime_28Cycles5);
-            break;
-        case VIMEA:
-            ADC_RegularChannelConfig(ADC1, ADC_Channel_IBAT, 1, ADC_SampleTime_28Cycles5);
-            break;
-        default:
-            lprintf("not support adc type\n");
-            return 0;
+    (void)my_index;
+    if(ADC_INITED!=adc_inited){
+        adc_init();
     }
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_28Cycles5);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     do
     {
@@ -84,6 +65,12 @@ uint32_t get_adc_value(int my_index)
     return ADC_GetConversionValue(ADC1);
 }
 
+char adc_random()
+{
+    return (char)get_adc_value(0);
+}
+
+#if 0
 void get_myadc_value(uint32_t*v_core_mv_p, uint32_t*v_bat_mv_p, int32_t*i_mA_p)
 {
     uint32_t v_currt_mv, v_core_mv, v_bat_mv, raw_v_ref, raw_v_bat, raw_v_currt;
@@ -161,3 +148,4 @@ int adc_test()
 #endif
     return ret;
 }
+#endif

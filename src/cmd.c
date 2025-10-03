@@ -304,8 +304,41 @@ void envset(char *p)
     return;
 
 }
+void adc(char *p)
+{
+    uint32_t np, rct=1000;
+    np = get_howmany_para(p);
+    if(np==0){
+        lprintf("no para!\n");
+        while(rct--){
+            prt_hex(get_adc_value(0));
+            delay_ms(1000);
+        }
+        return;
+    }
+    else{
+        char*p1;
+        p = str_to_str(p, &p1);
+        lprintf("p1=%s\n", p1);
+
+        if(!strcmp(p1, "r")){
+            lprintf("adc random!\n");
+            while(rct--){
+                prt_hex(adc_random(0));
+                delay_ms(1000);
+            }
+        }
+        else{
+            lprintf("error para.\r\n");
+        }
+    }
+    con_send('\n');
+
+    return;
+}
 static const struct command cmd_list[]=
 {
+    {"adc",adc},
     {"exit",cmd_exit},
     {"envset",envset},
     {"envget",envget},
