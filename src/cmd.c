@@ -556,26 +556,32 @@ void handle_cmd()
     }
     lprint("Unknow cmd:%s\n%s",cmd_buf, "Please check the cmd list.");
 }
-
+#define POWER_TIMEOUT_S 10
+void wait_input()
+{
+    uint64_t nt;
+    uint64_t st=get_system_us();
+    while(!con_is_recved()){
+        nt=get_system_us();
+        //prt_dec((uint32_t)get_system_us()/1000000);
+        if((nt-st)>((uint64_t)POWER_TIMEOUT_S*1000000u)){
+            prt_dec((uint32_t)st);
+            prt_dec((uint32_t)nt);
+            prt_dec((uint32_t)(nt-st));
+            lprintf("Power timeout(10s)! Go standby\r\n");
+            poweroff("standby");
+        }
+    }
+}
 extern unsigned long debug_enable;
 uint time_limit_recv_byte(uint limit, char * c);
 void run_cmd_interface()
 {
     char c = 0, last_c = 0;
-    int timeout = 5;
 
     mrw_addr = (uint32_t*)0x20000000;
     lprintf("Version %s%s\n", VERSION, GIT_SHA1);
     lprint("\n\nclean_cmd. \n'c' key go cmd...\n");
-    while(timeout--){
-        delay_ms(1000);
-        if(con_is_recved() && (con_recv() == 'c'))break;
-        lprintf("timeout %d\n", timeout);
-        if(timeout == 1){
-            lprintf("Timeout. Quit cmd\n");
-            return;
-        }
-    }
     lmemset(cmd_buf, 0, COM_MAX_LEN);
     memset(&cmd_caches[0][0], 0, CMD_CACHES_SIZE*COM_MAX_LEN);;
     cmd_buf_p = 0;
@@ -584,6 +590,7 @@ void run_cmd_interface()
 
     while(!quit_cmd){
         last_c = c;
+        wait_input();
         c = con_recv();
         if(c == ENTER_CHAR || c == 0x1b || c== 0x03){
             if(c == ENTER_CHAR){
