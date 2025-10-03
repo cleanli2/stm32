@@ -387,30 +387,6 @@ void beep_by_timer(uint32_t hz)
     beep_by_timer_100(hz*100);
 }
 
-u32*TIM3_IRQHandler_local(u32*stack_data)
-{
-    static int tog=0;
-    tm_cpt_start();
-#if 0
-    lprintf_time_buf(1, "tm3-\n");
-#endif
-    //if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
-    TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-    if(sound_enable){
-        if(tog++&0x1){
-            GPIO_SetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
-        }
-        else{
-            GPIO_ResetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
-        }
-    }
-#if 0
-    lprintf_time_buf(1, "tm3-\n");
-#endif
-    intrpt_time[INTTIM3]=tm_cpt_end();
-    return stack_data;
-}
-
 void beep(uint32_t hz, uint32_t t_ms)
 {
     uint32_t pd, ct;
@@ -595,7 +571,6 @@ void reboot_download()
     GPIO_SetBits(GPIOA,GPIO_Pin_13);
     beep(100, 500);
     lprintf_time("reboot download\n");
-    foce_save_log_func();
     soft_reset_system();
 }
 

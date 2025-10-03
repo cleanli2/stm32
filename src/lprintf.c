@@ -4,12 +4,7 @@
 #include <string.h>
 #include "common.h"
 
-#define LOG_BUF_SIZE 1024
-char log_buf[LOG_BUF_SIZE];
-static u32 write_index = 0;
-static u32 read_index = 0;
 char buf_printf_buf[64];
-char debug_log_buf[DEBUG_LOG_BUF_SIZE+1];
 char lprintf_buf[256];
 char lcdprintf_buf[256];
 char halfbyte2char(char c)
@@ -246,136 +241,6 @@ char*vslprintf(int print_with_time, char*s_buf, const char *fmt, va_list args)
     return sp;
 }
 
-#define SIZE_OF_START_WRITE_FLASH 128
-u32 get_log_size()
-{
-    u32 ret;
-    if(read_index<=write_index){
-        ret = write_index - read_index;
-    }
-    else{
-        ret = LOG_BUF_SIZE - read_index + write_index;
-    }
-    return ret;
-}
-static int force_save_log = 0;
-void set_save_log_flag()
-{
-    force_save_log = 1;
-}
-
-void foce_save_log_func()
-{
-    u32 log_size, wi;
-    log_size = get_log_size();
-    wi = write_index;
-    log_to_flash(log_buf, read_index, log_size, LOG_BUF_SIZE);
-    read_index =  wi;
-}
-
-void task_log(struct task*vp)
-{
-    u32 log_size, wi;
-    (void)vp;
-
-    log_size = get_log_size();
-    if(0 == log_size){
-        return;
-    }
-    wi = write_index;
-    log_to_flash(log_buf, read_index, log_size, LOG_BUF_SIZE);
-    read_index =  wi;
-}
-
-#define HINT_LOG_LOST "#LOST#\n"
-#define HINT_LOG_LOST_LEN (strlen(HINT_LOG_LOST))
-void log_to_buf(char* log)
-{
-    u32 free_log_size, len, log_to_end_size, w_len;
-    if(LOG_BUF_SIZE-1 == get_log_size()){
-        lprintf("log buf full, log lost\n");
-        return;
-    }
-    len = strlen(log);
-    free_log_size = LOG_BUF_SIZE - 1 - get_log_size() - HINT_LOG_LOST_LEN;
-    if(free_log_size<len){
-        lprintf("err:%d bytes log lost\n", len-free_log_size);
-        slprintf(log+free_log_size, HINT_LOG_LOST);
-        len = free_log_size+HINT_LOG_LOST_LEN;
-    }
-    //if(free_log_size>len)
-    {
-        log_to_end_size = LOG_BUF_SIZE - write_index;
-        while(1){
-            if(log_to_end_size < len){
-                w_len = log_to_end_size;
-            }
-            else{
-                w_len = len;
-            }
-            memcpy(&log_buf[write_index], log, w_len);
-            write_index = add_with_limit(write_index, w_len, LOG_BUF_SIZE);
-            log+=w_len;
-            len-=w_len;
-            if(0==len){
-                return;
-            }
-        }
-    }
-}
-
-void buf_log(const char* log)
-{
-    static u32 w_p = 0;
-    u32 len, w_len, buf_left;
-    len = strlen(log);
-    while(len){
-        buf_left=DEBUG_LOG_BUF_SIZE-w_p;
-        if(buf_left>=len){
-            w_len=len;
-        }
-        else{
-            w_len=buf_left;
-        }
-        memcpy(&debug_log_buf[w_p], log, w_len);
-        w_p= add_with_limit(w_p, w_len, DEBUG_LOG_BUF_SIZE);
-        len-=w_len;
-        log+=w_len;
-    }
-}
-
-void lprintf_time_buf(u32 time, const char *fmt, ...)
-{
-    va_list ap;
-    u32 flag;
-    char*sp=buf_printf_buf;
-    if(debug_mode)return;
-    dis_irq_save(flag);
-    u32 us = get_system_us();
-
-    va_start(ap,fmt);
-
-    if(time){
-        sp += sprint_uint(sp, us/1000000);
-        *sp++ = '.';
-        sp += sprint_uint_0n(sp, us%1000000, 6);
-        *sp++ = ':';
-    }
-    vslprintf(0, sp,fmt,ap);
-    buf_log(buf_printf_buf);
-    va_end(ap);
-    irq_restore(flag);
-}
-
-void putchars_buf(const char *s)
-{
-    u32 flag;
-    if(debug_mode)return;
-    dis_irq_save(flag);
-    buf_log(s);
-    irq_restore(flag);
-}
-
 #if 1
 void lprintf_time(const char *fmt, ...)
 {
@@ -388,7 +253,6 @@ void lprintf_time(const char *fmt, ...)
     vslprintf(1, lprintf_buf,fmt,ap);
 #endif
     putchars(lprintf_buf);
-    log_to_buf(lprintf_buf);
     va_end(ap);
 }
 #endif
@@ -402,7 +266,6 @@ void lprintf(const char *fmt, ...)
     vslprintf(0, lprintf_buf,fmt,ap);
     putchars(lprintf_buf);
     va_end(ap);
-    putchars_buf(fmt);
 #else
     putchars(fmt);
 #endif
