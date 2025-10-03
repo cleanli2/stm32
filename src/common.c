@@ -125,11 +125,15 @@ void systick_init()
     NVIC_SetPriorityGrouping(0x7);//no interrupt preempt
 }
 
+uint32_t shot_msct;
+uint32_t shot_systick_val;
 uint64_t get_system_us()
 {
     uint64_t system_us_count;
 
-    system_us_count = (uint64_t)g_ms_count * 1000 + (8000-1-SysTick->VAL)/8;
+    shot_msct=g_ms_count;
+    shot_systick_val=SysTick->VAL;
+    system_us_count = (uint64_t)shot_msct * 1000 + (8000-1-shot_systick_val)/8;
     return system_us_count;
 }
 

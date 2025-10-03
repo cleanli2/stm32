@@ -557,18 +557,29 @@ void handle_cmd()
     lprint("Unknow cmd:%s\n%s",cmd_buf, "Please check the cmd list.");
 }
 #define POWER_TIMEOUT_S 10
+extern uint32_t shot_msct;
+extern uint32_t shot_systick_val;
 void wait_input()
 {
+    uint32_t ms1, ms2, val1, val2;
     uint64_t nt;
     uint64_t st=get_system_us();
+    ms1=shot_msct;
+    val1=shot_systick_val;
     while(!con_is_recved()){
         nt=get_system_us();
+        ms2=shot_msct;
+        val2=shot_systick_val;
         //prt_dec((uint32_t)get_system_us()/1000000);
         if((nt-st)>((uint64_t)POWER_TIMEOUT_S*1000000u)){
             lprintf("\r\nPower timeout(10s)! Go standby\r\n");
             prt_dec((uint32_t)st);
             prt_dec((uint32_t)nt);
             prt_dec((uint32_t)(nt-st));
+            prt_dec(ms1);
+            prt_dec(ms2);
+            prt_dec(val1);
+            prt_dec(val2);
             poweroff("standby");
         }
     }
