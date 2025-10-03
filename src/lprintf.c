@@ -14,7 +14,8 @@ char lprintf_buf[256];
 char lcdprintf_buf[256];
 char halfbyte2char(char c)
 {
-        return ((c & 0x0f) < 0x0a)?(0x30 + c):('A' + c - 0x0a);
+    c&=0xf;
+    return ((c & 0x0f) < 0x0a)?(0x30 + c):('A' + c - 0x0a);
 }
 
 void puthexch(char c)
