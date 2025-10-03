@@ -5,7 +5,7 @@
 #define con_recv __io_getchar
 #define con_is_recved() __io_char_received()
 
-#define COM_MAX_LEN 64
+#define COM_MAX_LEN 81
 #define CMD_CACHES_SIZE 20
 #define ENTER_CHAR 0x0d
 #ifndef NULL

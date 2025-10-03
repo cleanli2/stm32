@@ -437,7 +437,7 @@ uint32_t set_env_raw(const char* name, const char*value)
 
     if(strlen(name)>ENV_MAX_VALUE_LEN-1 ||
             strlen(value)>ENV_MAX_VALUE_LEN-1){
-        lprintf("'name' or 'value' len can't > 31\n");
+        lprintf("'name' or 'value' len can't > %d\n", ENV_MAX_VALUE_LEN-1);
         ret = ENV_FAIL;
         goto end;
     }
