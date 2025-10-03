@@ -29,6 +29,7 @@ LDFLAGS =  -mthumb -mcpu=cortex-m3 -Wl,--start-group -lc -lm -Wl,--end-group -sp
 C_SRC= \
 src/cmd.c                                                                                             \
 src/adc.c                                                                                             \
+src/sha256.c                                                                                             \
 src/CoIDE_startup.c                                                                                   \
 src/common.c                                                                                          \
 src/date.c                                                                                            \

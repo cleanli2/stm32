@@ -1,4 +1,5 @@
 #include "env.h"
+#include "sha256.h"
 #include "cmd.h"
 #include "mock_uart.h"
 #include "common.h"
@@ -336,6 +337,25 @@ void adc(char *p)
 
     return;
 }
+void csha(char *p)
+{
+    uint32_t np;
+    np = get_howmany_para(p);
+    if(np==0){
+        lprintf("input str!\n");
+        return;
+    }
+    else{
+        char*p1;
+        p = str_to_str(p, &p1);
+        lprintf("p1=%s\n", p1);
+        compute_sha256((uint8_t*)p1, strlen(p1), (char*)read_buf);
+        lprintf("sha256=%s\r\n", read_buf);
+    }
+    con_send('\n');
+
+    return;
+}
 static const struct command cmd_list[]=
 {
     {"adc",adc},
@@ -351,6 +371,7 @@ static const struct command cmd_list[]=
     {"poff",poweroff},
     {"r",read_mem},
     {"reboot",reboot},
+    {"csha",csha},
     {"w",write_mem},
     {NULL, NULL},
 };

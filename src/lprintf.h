@@ -24,6 +24,7 @@ void puthexch(char c);
 void reset_time_offset();
 void log_to_buf(char* log);
 void os_task_log(void*p);
+char halfbyte2char(char c);
 
 #define prtline lprintf("line:%d %s\r\n", __LINE__, __func__)
 #define prt_hex(x) lprintf(#x"=%x\r\n", x)
