@@ -129,9 +129,11 @@ void muart(char *p)
     if(np==0){
         lprintf("no para!\n");
         while(1){
-            mock_uart_tx('U');
+            rv='U';
+            mock_uart_sends(&rv, 1);
             delay_ms(1000);
-            mock_uart_tx('W');
+            rv='W';
+            mock_uart_sends(&rv, 1);
             delay_ms(1000);
         }
         return;
@@ -144,7 +146,7 @@ void muart(char *p)
         lprintf("tx test!\n");
         while(1){
             rv = con_recv();
-            mock_uart_tx(rv);
+            mock_uart_sends(&rv, 1);
         }
     }
     else if(!strcmp(p1, "rx")){

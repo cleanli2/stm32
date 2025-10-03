@@ -4,30 +4,29 @@
 /*********************HW related start**************************/
 #define TX_BIT(D) {\
     if(D){\
-        MOCK_UART_TX_GP->BSRR = MOCK_UART_TX_PIN;\
+        MOCK_UART_GP->BSRR = MOCK_UART_PIN;\
     }\
     else{\
-        MOCK_UART_TX_GP->BRR = MOCK_UART_TX_PIN;\
+        MOCK_UART_GP->BRR = MOCK_UART_PIN;\
     }\
 }
-#define RX_BIT() (!!(MOCK_UART_RX_GP->IDR&MOCK_UART_RX_PIN))
+#define RX_BIT() (!!(MOCK_UART_GP->IDR&MOCK_UART_PIN))
 
-void hw_init()
+void hw_rx_init(int flag)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
-    RCC_APB2PeriphClockCmd(MOCK_UART_TX_PERIPH, ENABLE);
-    RCC_APB2PeriphClockCmd(MOCK_UART_RX_PERIPH, ENABLE);
+    RCC_APB2PeriphClockCmd(MOCK_UART_PERIPH, ENABLE);
 
-    GPIO_InitStructure.GPIO_Pin = MOCK_UART_TX_PIN;
+    GPIO_InitStructure.GPIO_Pin = MOCK_UART_PIN;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_SetBits(MOCK_UART_TX_GP, MOCK_UART_TX_PIN);
-    GPIO_Init(MOCK_UART_TX_GP, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin = MOCK_UART_RX_PIN;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_Init(MOCK_UART_RX_GP, &GPIO_InitStructure);
+    if(flag){//rx
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+    }
+    else{//tx
+        GPIO_SetBits(MOCK_UART_GP, MOCK_UART_PIN);
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    }
+    GPIO_Init(MOCK_UART_GP, &GPIO_InitStructure);
 }
 
 void time_start()
@@ -44,7 +43,7 @@ static unsigned int BIT_DELAY=10000;
 
 void mock_uart_init()
 {
-    hw_init();
+    hw_rx_init(1);
     BIT_DELAY=1000000u/MOCK_UART_BAUTRATE;
     prt_dec(BIT_DELAY);
 }
@@ -68,6 +67,14 @@ void mock_uart_tx(char da)
     delay_us(BIT_DELAY);
 }
 
+void mock_uart_sends(char*da, int len)
+{
+    hw_rx_init(0);
+    while(len--){
+        mock_uart_tx(*da++);
+    }
+    hw_rx_init(1);
+}
 
 int mock_uart_rx(char*cp, int maxn, unsigned int timeout_ms)
 {

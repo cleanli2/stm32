@@ -77,6 +77,7 @@ uint add_with_limit(uint a, uint b, uint limit);
 uint sub_with_limit(uint a, uint b, uint limit);
 uint8_t pcf8574t_writeData(uint8_t mdata);
 uint8_t pcf8574t_readData1(uint8_t * buff);
+void lmemset(char *d,unsigned char v,unsigned int n);
 
 #define LED_R_C 0x1
 #define LED_Y_C 0x2

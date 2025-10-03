@@ -562,7 +562,10 @@ void main_init(void)
   prt_dec(s2);
   prt_dec(s3);
   mock_uart_init();
-  run_cmd_interface();
+  delay_ms(200);
+  if(con_is_recved()){
+      run_cmd_interface();
+  }
 }
 
 
