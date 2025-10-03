@@ -565,10 +565,10 @@ void wait_input()
         nt=get_system_us();
         //prt_dec((uint32_t)get_system_us()/1000000);
         if((nt-st)>((uint64_t)POWER_TIMEOUT_S*1000000u)){
+            lprintf("\r\nPower timeout(10s)! Go standby\r\n");
             prt_dec((uint32_t)st);
             prt_dec((uint32_t)nt);
             prt_dec((uint32_t)(nt-st));
-            lprintf("Power timeout(10s)! Go standby\r\n");
             poweroff("standby");
         }
     }

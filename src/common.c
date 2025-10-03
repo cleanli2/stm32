@@ -554,6 +554,9 @@ void main_init(void)
   prt_dec(s2-s1);
   prt_dec(s3-s2);
   prt_dec(s4-s3);
+  prt_dec(s1);
+  prt_dec(s2);
+  prt_dec(s3);
   mock_uart_init();
   run_cmd_interface();
 }
