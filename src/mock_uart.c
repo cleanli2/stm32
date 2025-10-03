@@ -29,13 +29,14 @@ void hw_rx_init(int flag)
     GPIO_Init(MOCK_UART_GP, &GPIO_InitStructure);
 }
 
+static unsigned int ms_rec=0;
 void time_start()
 {
-    dt_us_last();
+    ms_rec=g_ms_count;
 }
 uint32_t time_passed_ms()
 {
-    return dt_us_last()/1000;
+    return g_ms_count-ms_rec;
 }
 /*********************HW related end  **************************/
 
