@@ -486,7 +486,7 @@ uint32_t set_env(const char* name, const char*value)
 int go_through_env(int operation)
 {
     uint32_t i, ret=ENV_OK, posi_name, posi;
-    char buf[64], *name, *value, *posi_eq;
+    char buf[ENV_MAX_VALUE_LEN], *name, *value, *posi_eq;
 
     i = 0;
     memset(buf, 0, 64);
