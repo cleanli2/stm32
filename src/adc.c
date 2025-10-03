@@ -67,7 +67,13 @@ uint32_t get_adc_value(int my_index)
 
 char adc_random()
 {
-    return (char)get_adc_value(0);
+    int bn=8;
+    char ret=0;
+    while(bn--){
+        ret<<=1;
+        ret+=(char)get_adc_value(0)&0x1;
+    }
+    return ret;
 }
 
 #if 0
