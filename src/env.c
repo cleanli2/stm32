@@ -480,16 +480,17 @@ uint32_t set_env(const char* name, const char*value)
     return ret;
 }
 
+char buf[ENV_MAX_VALUE_LEN*2+2];
 /************************************************************************
  * Command interface: print one or all environment variables
  */
 int go_through_env(int operation)
 {
     uint32_t i, ret=ENV_OK, posi_name, posi;
-    char buf[ENV_MAX_VALUE_LEN], *name, *value, *posi_eq;
+    char *name, *value, *posi_eq;
 
     i = 0;
-    memset(buf, 0, 64);
+    memset(buf, 0, ENV_MAX_VALUE_LEN*2+2);
     get_cur_env_area();
     lprintf("env_store_start %x size %x\n\n", get_env_start_addr(), FM_ENV_STORE_SIZE);
 
