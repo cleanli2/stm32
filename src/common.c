@@ -217,9 +217,10 @@ void delay_us(u32 nus)
     uint64_t s=get_system_us();
     s+=nus;
     while(get_system_us()<s);
-#endif
+#else
     volatile int a=nus;
     while(a--);
+#endif
 }
 
 void delay_ms(u16 nms)
@@ -570,6 +571,13 @@ void main_init(void)
   //lprintf_time("NO lcd init.\n");
   //SD_LowLevel_Init();
 
+  uint32_t s1=get_system_us();
+  uint32_t s2=get_system_us();
+  uint32_t s3=get_system_us();
+  uint32_t s4=get_system_us();
+  prt_dec(s2-s1);
+  prt_dec(s3-s2);
+  prt_dec(s4-s3);
   mock_uart_init();
   run_cmd_interface();
 }
