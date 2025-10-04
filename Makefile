@@ -65,9 +65,16 @@ src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm3
 src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c          \
 
 C_OBJ=$(C_SRC:%.c=%.o)
-ifeq ($(type),write_w25f)
-CFLAGS+=-DWRITE_W25F
-C_OBJ+=unused/ziku16.o
+
+$(warning t=$(type))
+ifeq ($(type),)
+	type=clt
+endif
+ifeq ($(type),svr)
+CFLAGS+=-DSVR
+$(info type server)
+else
+$(info type client)
 endif
 
 ifeq ($(board),)
