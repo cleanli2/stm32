@@ -328,6 +328,7 @@ void adc(char *p)
             lprintf("adc random!\n");
             while(rct--){
                 prt_hex(adc_random(0));
+                lprintf("%c\n", asc_random());
                 delay_ms(1000);
             }
         }
@@ -603,7 +604,7 @@ void run_cmd_interface()
 
     while(!quit_cmd){
         last_c = c;
-        wait_input();
+        //wait_input();
         c = con_recv();
         if(c == ENTER_CHAR || c == 0x1b || c== 0x03){
             if(c == ENTER_CHAR){
