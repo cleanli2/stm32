@@ -12,10 +12,10 @@ char mrx_bf[MRXBF_SIZE];
 char m_value[ENV_MAX_VALUE_LEN];
 const char default_token[]="88888888999999992222222255555555";
 char token[33]={0};
+unsigned int state=REQ_INFO;
 #ifdef SVR
 #else
 char svr_info[25]={0};
-unsigned int state=REQ_INFO;
 #endif
 char asc_random()
 {
@@ -55,12 +55,17 @@ int main()
         if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, 2000)){
             lprintf("Got:reqrsp is %x, len %d\n", mkp->reqrsp, mkp->len);
             lprintf("str=%s\n", mkp->data);
+            if(mkp->reqrsp>state){
+                lprintf("state error\n");
+                continue;
+            }
             if(mkp->reqrsp==REQ_INFO){
                 lmemset(mrx_bf, 0, MRXBF_SIZE);
                 mkp->reqrsp=RSP_ACK;
                 mkp->len=24;
                 slprintf(mkp->data, "%X%X%X",
                         device_serial0, device_serial1, device_serial2);
+                state=REQ_ACCESS;
             }
             else if(mkp->reqrsp==REQ_ACCESS){
                 strcpy(token, mkp->data);
@@ -75,6 +80,8 @@ int main()
                     mkp->reqrsp=RSP_ACK;
                     mkp->len=4;
                     strcpy(mkp->data, "pass");
+                    token[0]=0;
+                    state=REQ_UPDATE;
                 }
                 else{
                     lprintf("token wrong!\n");
@@ -85,6 +92,8 @@ int main()
                 }
             }
             else if(mkp->reqrsp==REQ_UPDATE){
+                prt_dec(strlen(token));
+                lprintf("token=%s\n", token);
                 if(0==strlen(token)){
                     strcpy(token, mkp->data);
                 }
@@ -97,6 +106,7 @@ int main()
                         mkp->reqrsp=RSP_ACK;
                         mkp->len=4;
                         strcpy(mkp->data, "pass");
+                        state=REQ_PWN;
                     }
                     else{
                         mkp->reqrsp=RSP_NACK;
