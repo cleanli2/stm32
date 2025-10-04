@@ -120,6 +120,10 @@ int main()
                 mkp->reqrsp=RSP_ACK;
                 mkp->len=4;
                 strcpy(mkp->data, "pass");
+                for(int zi=0;zi<20;zi++){
+                    delay_ms(10);
+                    mock_uart_sends((char*)mkp, sizeof(mupk)+mkp->len);
+                }
                 stop=1;
             }
             mock_uart_sends((char*)mkp, sizeof(mupk)+mkp->len);
