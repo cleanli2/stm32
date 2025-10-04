@@ -261,7 +261,7 @@ uint32_t find_env_data_start()
 
 uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
 {
-    uint32_t i = 0, nxt, ret = ENV_OK;
+    uint32_t i = 0, nxt, ret = ENV_FAIL;
     if(p_position!=NULL){
         *p_position=ENV_INVALID;
     }
