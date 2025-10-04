@@ -8,6 +8,7 @@
 #include "commctr.h"
 
 #define MRXBF_SIZE 128
+#define FRAME_INTV 500
 char mrx_bf[MRXBF_SIZE];
 char m_value[ENV_MAX_VALUE_LEN];
 const char default_token[]="88888888999999992222222255555555";
@@ -52,7 +53,7 @@ int main()
 #ifdef SVR
 
         lprintf("waiting req...\n");
-        if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, 2000)){
+        if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, FRAME_INTV)){
             lprintf("Got:reqrsp is %x, len %d\n", mkp->reqrsp, mkp->len);
             lprintf("str=%s\n", mkp->data);
             if(mkp->reqrsp>state){
@@ -167,7 +168,7 @@ int main()
 
         lmemset(mrx_bf, 0, MRXBF_SIZE);
         lprintf("waiting response...\n");
-        if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, 2000)){
+        if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, FRAME_INTV)){
             lprintf("Got:reqrsp is %x, len %d\n", mkp->reqrsp, mkp->len);
             lprintf("str=%s\n", mkp->data);
             if(mkp->reqrsp==RSP_ACK){
