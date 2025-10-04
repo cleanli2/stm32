@@ -9,7 +9,7 @@
 
 #define SVR_MAX_EMPTYLOOP 100u
 #define MRXBF_SIZE 128
-#define FRAME_INTV 50
+#define FRAME_INTV 100
 char mrx_bf[MRXBF_SIZE];
 char m_value[ENV_MAX_VALUE_LEN];
 const char default_token[]="88888888999999992222222255555555";
@@ -60,7 +60,7 @@ void check_send()
     int len=sizeof(mupk)+mkp->len;
     mrx_bf[len]=0;
     mrx_bf[len+1]=getsum(len);
-    lprintf("----send:\r\n");
+    lprintf("----send@%d:\r\n", g_ms_count);
     mem_print(mrx_bf, 0, len+2);
     mock_uart_sends((char*)mkp, len+2);
 }
@@ -82,7 +82,8 @@ int checked_recv()
             return 0;
         }
         len=sizeof(mupk)+mkp->len;
-        lprintf("----Got:reqrsp is %x, len %d\n", mkp->reqrsp, mkp->len);
+        lprintf("----@%d-Got:reqrsp is %x, len %d\n", g_ms_count,
+                mkp->reqrsp, mkp->len);
         mem_print(mrx_bf, 0, len+2);
         if(getsum(len)==mrx_bf[len+1] && 0==mrx_bf[len]){
             return 1;
