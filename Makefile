@@ -103,5 +103,4 @@ clean:
 	rm -f $(shell find ./ -name '*.map')
 	rm -f $(shell find ./ -name '*.elf')
 	rm -f $(shell find ./ -name '*.bin')
-	rm -f $(shell find ./ -name '*.hex')
 	rm -f $(shell find ./ -name '*.asm')
