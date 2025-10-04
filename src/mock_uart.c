@@ -70,7 +70,7 @@ void mock_uart_tx(char da)
 
 void mock_uart_sends(char*da, int len)
 {
-    delay_ms(adc_random(0));
+    delay_us(adc_random(0));
     hw_rx_init(0);
     while(len--){
         mock_uart_tx(*da++);
