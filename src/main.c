@@ -112,6 +112,7 @@ int main()
                         mkp->reqrsp=RSP_NACK;
                         mkp->len=3;
                         strcpy(mkp->data, "err");
+                        token[0]=0;
                     }
                 }
             }
