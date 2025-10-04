@@ -61,7 +61,7 @@ void check_send()
     mrx_bf[len]=0;
     mrx_bf[len+1]=getsum(len);
     lprintf("----send@%d:\r\n", g_ms_count);
-    mem_print(mrx_bf, 0, len+2);
+    //mem_print(mrx_bf, 0, len+2);
     mock_uart_sends((char*)mkp, len+2);
 }
 int checked_recv()
@@ -84,7 +84,7 @@ int checked_recv()
         len=sizeof(mupk)+mkp->len;
         lprintf("----@%d-Got:reqrsp is %x, len %d\n", g_ms_count,
                 mkp->reqrsp, mkp->len);
-        mem_print(mrx_bf, 0, len+2);
+        //mem_print(mrx_bf, 0, len+2);
         if(getsum(len)==mrx_bf[len+1] && 0==mrx_bf[len]){
             return 1;
         }
@@ -171,6 +171,7 @@ int main()
                 mkp->len=4;
                 strcpy(mkp->data, "pass");
             }
+            delay_ms(FRAME_INTV/2);
             check_send();
         }
         else{
@@ -215,8 +216,6 @@ int main()
         mkp->reqrsp=state;
         check_send();
 
-        lmemset(mrx_bf, 0, MRXBF_SIZE);
-        lprintf("waiting response...\n");
         if(checked_recv()){
             if(mkp->reqrsp==RSP_ACK){
                 if(state==REQ_INFO){
