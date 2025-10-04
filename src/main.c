@@ -10,10 +10,13 @@
 #define MRXBF_SIZE 128
 char mrx_bf[MRXBF_SIZE];
 char m_value[ENV_MAX_VALUE_LEN];
-char default_token[]="88888888999999992222222255555555";
+const char default_token[]="88888888999999992222222255555555";
+#ifdef SVR
+char token[33]={0};
+#else
 char svr_info[25]={0};
-#ifndef SVR
 unsigned int state=REQ_INFO;
+#endif
 char asc_random()
 {
     char ret;
@@ -35,12 +38,12 @@ void generate_token(char*out)
         out[i++]=c;
     }
 }
-#endif
 int main()
 {
+    int stop=0;
     mupk * mkp=(mupk*)mrx_bf;
     main_init();
-    while(1){
+    while(!stop){
         lmemset(mrx_bf, 0, MRXBF_SIZE);
 
 #ifdef SVR
@@ -55,8 +58,54 @@ int main()
                 mkp->len=24;
                 slprintf(mkp->data, "%X%X%X",
                         device_serial0, device_serial1, device_serial2);
-                mock_uart_sends((char*)mkp, sizeof(mupk)+mkp->len);
             }
+            else if(mkp->reqrsp==REQ_ACCESS){
+                strcpy(token, mkp->data);
+                lmemset(mrx_bf, 0, MRXBF_SIZE);
+                if(ENV_FAIL == get_env("token", m_value)){
+                    lprintf("get_env fail, new one, use default\n");
+                    strcpy(m_value, default_token);
+                }
+                lprintf("token=%s\n", m_value);
+                if(!strcmp(m_value, token)){
+                    lprintf("token match!\n");
+                    mkp->reqrsp=RSP_ACK;
+                    mkp->len=4;
+                    strcpy(mkp->data, "pass");
+                }
+                else{
+                    lprintf("token wrong!\n");
+                    mkp->reqrsp=RSP_NACK;
+                    mkp->len=3;
+                    strcpy(mkp->data, "err");
+                    delay_ms(1000);
+                }
+            }
+            else if(mkp->reqrsp==REQ_UPDATE){
+                lmemset(mrx_bf, 0, MRXBF_SIZE);
+                if(0==strlen(token)){
+                    strcpy(token, mkp->data);
+                }
+                else{
+                    if(!strcmp(token, mkp->data)){
+                        mkp->reqrsp=RSP_ACK;
+                        mkp->len=4;
+                        strcpy(mkp->data, "pass");
+                    }
+                    else{
+                        mkp->reqrsp=RSP_NACK;
+                        mkp->len=3;
+                        strcpy(mkp->data, "err");
+                    }
+                }
+            }
+            else if(mkp->reqrsp==REQ_PWN){
+                mkp->reqrsp=RSP_ACK;
+                mkp->len=4;
+                strcpy(mkp->data, "pass");
+                stop=1;
+            }
+            mock_uart_sends((char*)mkp, sizeof(mupk)+mkp->len);
         }
 
 #else//client
@@ -116,12 +165,13 @@ int main()
                     state=REQ_PWN;
                 }
                 else if(state==REQ_PWN){
-                    lprintf("end\n");
-                    while(1);
+                    stop=1;
                 }
             }
         }
 #endif
     }
+    lprintf("end\n");
+    while(1);
     return 0;
 }
