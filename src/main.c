@@ -8,7 +8,7 @@
 #include "commctr.h"
 
 #define MRXBF_SIZE 128
-#define FRAME_INTV 500
+#define FRAME_INTV 20
 char mrx_bf[MRXBF_SIZE];
 char m_value[ENV_MAX_VALUE_LEN];
 const char default_token[]="88888888999999992222222255555555";
@@ -121,8 +121,8 @@ int main()
                 mkp->reqrsp=RSP_ACK;
                 mkp->len=4;
                 strcpy(mkp->data, "pass");
-                for(int zi=0;zi<20;zi++){
-                    delay_ms(10);
+                for(int zi=0;zi<5;zi++){
+                    delay_ms(50);
                     mock_uart_sends((char*)mkp, sizeof(mupk)+mkp->len);
                 }
                 stop=1;
