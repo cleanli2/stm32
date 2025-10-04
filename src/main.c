@@ -60,7 +60,7 @@ void check_send()
     int len=sizeof(mupk)+mkp->len;
     mrx_bf[len]=0;
     mrx_bf[len+1]=getsum(len);
-    lprintf("----send@%d:\r\n", g_ms_count);
+    //lprintf("----send@%d:\r\n", g_ms_count);
     //mem_print(mrx_bf, 0, len+2);
     mock_uart_sends((char*)mkp, len+2);
 }
@@ -82,8 +82,8 @@ int checked_recv()
             return 0;
         }
         len=sizeof(mupk)+mkp->len;
-        lprintf("----@%d-Got:reqrsp is %x, len %d\n", g_ms_count,
-                mkp->reqrsp, mkp->len);
+        //lprintf("----@%d-Got:reqrsp is %x, len %d\n", g_ms_count,
+                //mkp->reqrsp, mkp->len);
         //mem_print(mrx_bf, 0, len+2);
         if(getsum(len)==mrx_bf[len+1] && 0==mrx_bf[len]){
             return 1;
@@ -94,6 +94,7 @@ int checked_recv()
     }
     return 0;
 }
+void poweroff(char *p);
 int main()
 {
     int stop=0;
@@ -103,7 +104,6 @@ int main()
 
 #ifdef SVR
 
-        lprintf("waiting req...\n");
         if(checked_recv()){
             if(mkp->reqrsp>state){
                 lprintf("state error\n");
@@ -124,7 +124,7 @@ int main()
                     lprintf("get_env fail, new one, use default\n");
                     strcpy(m_value, default_token);
                 }
-                lprintf("token=%s\n", m_value);
+                //lprintf("token=%s\n", m_value);
                 if(!strcmp(m_value, token)){
                     lprintf("token match!\n");
                     mkp->reqrsp=RSP_ACK;
@@ -143,7 +143,7 @@ int main()
             }
             else if(mkp->reqrsp==REQ_UPDATE){
                 prt_dec(strlen(token));
-                lprintf("token=%s\n", token);
+                //lprintf("token=%s\n", token);
                 if(0==strlen(token)){
                     strcpy(token, mkp->data);
                 }
@@ -175,6 +175,7 @@ int main()
             check_send();
         }
         else{
+            lprintf("waiting req %d\n", empty_loops);
             if(empty_loops++>SVR_MAX_EMPTYLOOP){
                 lprintf("svr max empty loops reached\n");
                 stop=1;
@@ -194,7 +195,7 @@ int main()
                 strcpy(m_value, default_token);
             }
             lprintf("req acc\n");
-            lprintf("token=%s\n", m_value);
+            //lprintf("token=%s\n", m_value);
             mkp->len=strlen(m_value);
             strcpy(mkp->data, m_value);
         }
@@ -204,7 +205,7 @@ int main()
             if(strlen(token)!=32){
                 generate_token(token);
             }
-            lprintf("token=%s\n", token);
+            //lprintf("token=%s\n", token);
             mkp->len=strlen(token);
             strcpy(mkp->data, token);
         }
@@ -250,6 +251,8 @@ int main()
 #endif
     }
     lprintf("end\n");
+    poweroff("standby");
+    lprintf("standby failed..\n");
     while(1);
     return 0;
 }
