@@ -113,6 +113,7 @@ int main()
             lprintf("req info\n");
             mkp->len=5;
             strcpy(mkp->data, "hello");
+            token[0]=0;
         }
         if(state==REQ_ACCESS){
             if(ENV_FAIL == get_env(svr_info, m_value)){
@@ -142,6 +143,7 @@ int main()
         lprintf("sending req...\n");
         mock_uart_sends((char*)mkp, sizeof(mupk)+mkp->len);
 
+        lmemset(mrx_bf, 0, MRXBF_SIZE);
         lprintf("waiting response...\n");
         if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, 2000)){
             lprintf("Got:reqrsp is %x, len %d\n", mkp->reqrsp, mkp->len);
