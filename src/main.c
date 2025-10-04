@@ -127,6 +127,7 @@ int main()
         }
         if(state==REQ_UPDATE){
             lprintf("req upd\n");
+            prt_dec(strlen(token));
             if(strlen(token)!=32){
                 generate_token(token);
             }
@@ -156,6 +157,7 @@ int main()
                     else{
                         if(!strcmp(svr_info, mkp->data)){
                             state=REQ_ACCESS;
+                            token[0]=0;
                         }
                         else{
                             memset(svr_info, 0, 25);
