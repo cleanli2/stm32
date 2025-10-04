@@ -7,8 +7,9 @@
 #include "mock_uart.h"
 #include "commctr.h"
 
+#define SVR_MAX_EMPTYLOOP 100u
 #define MRXBF_SIZE 128
-#define FRAME_INTV 20
+#define FRAME_INTV 50
 char mrx_bf[MRXBF_SIZE];
 char m_value[ENV_MAX_VALUE_LEN];
 const char default_token[]="88888888999999992222222255555555";
@@ -44,6 +45,9 @@ void generate_token(char*out)
 }
 int main()
 {
+#ifdef SVR
+    unsigned int empty_loops=0;
+#endif
     int stop=0;
     mupk * mkp=(mupk*)mrx_bf;
     main_init();
@@ -54,6 +58,7 @@ int main()
 
         lprintf("waiting req...\n");
         if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, FRAME_INTV)){
+            empty_loops=0;
             lprintf("Got:reqrsp is %x, len %d\n", mkp->reqrsp, mkp->len);
             lprintf("str=%s\n", mkp->data);
             if(mkp->reqrsp>state){
@@ -121,13 +126,14 @@ int main()
                 mkp->reqrsp=RSP_ACK;
                 mkp->len=4;
                 strcpy(mkp->data, "pass");
-                for(int zi=0;zi<5;zi++){
-                    delay_ms(50);
-                    mock_uart_sends((char*)mkp, sizeof(mupk)+mkp->len);
-                }
-                stop=1;
             }
             mock_uart_sends((char*)mkp, sizeof(mupk)+mkp->len);
+        }
+        else{
+            if(empty_loops++>SVR_MAX_EMPTYLOOP){
+                lprintf("svr max empty loops reached\n");
+                stop=1;
+            }
         }
 
 #else//client
