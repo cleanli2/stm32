@@ -11,8 +11,8 @@
 char mrx_bf[MRXBF_SIZE];
 char m_value[ENV_MAX_VALUE_LEN];
 const char default_token[]="88888888999999992222222255555555";
-#ifdef SVR
 char token[33]={0};
+#ifdef SVR
 #else
 char svr_info[25]={0};
 unsigned int state=REQ_INFO;
@@ -126,10 +126,12 @@ int main()
         }
         if(state==REQ_UPDATE){
             lprintf("req upd\n");
-            generate_token(m_value);
-            lprintf("token=%s\n", m_value);
-            mkp->len=strlen(m_value);
-            strcpy(mkp->data, m_value);
+            if(strlen(token)!=32){
+                generate_token(token);
+            }
+            lprintf("token=%s\n", token);
+            mkp->len=strlen(token);
+            strcpy(mkp->data, token);
         }
         if(state==REQ_PWN){
             lprintf("req pwn\n");
@@ -162,6 +164,10 @@ int main()
                     state=REQ_UPDATE;
                 }
                 else if(state==REQ_UPDATE){
+                    if(ENV_FAIL == set_env(svr_info, token)){
+                        lprintf("set_env fail, fatal\n");
+                        while(1);
+                    }
                     state=REQ_PWN;
                 }
                 else if(state==REQ_PWN){
