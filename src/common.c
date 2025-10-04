@@ -551,6 +551,12 @@ void main_init(void)
   //lprintf_time("NO lcd init.\n");
   //SD_LowLevel_Init();
 
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
+  if(PWR_GetFlagStatus(PWR_FLAG_SB)!=RESET){
+      lprintf("boot from Standby\n");
+      PWR_ClearFlag(PWR_FLAG_SB);
+      PWR_WakeUpPinCmd (DISABLE);
+  }
   uint32_t s1=get_system_us();
   uint32_t s2=get_system_us();
   uint32_t s3=get_system_us();
