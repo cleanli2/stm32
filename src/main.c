@@ -70,6 +70,13 @@ int checked_recv()
     if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, FRAME_INTV)){
 #ifdef SVR
         empty_loops=0;
+        if(mkp->reqrsp<REQ_INFO||mkp->reqrsp>REQ_PWN){
+            return 0;
+        }
+#else
+        if(mkp->reqrsp!=RSP_ACK&&mkp->reqrsp!=RSP_NACK){
+            return 0;
+        }
 #endif
         if(mkp->len>=MRXBF_SIZE){
             return 0;

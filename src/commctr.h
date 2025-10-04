@@ -9,8 +9,8 @@
 #define RSP_NACK 0x9c
 
 typedef struct mupack_t{
-    char reqrsp;
-    char len;
+    unsigned char reqrsp;
+    unsigned char len;
     char data[0];
 } mupk;
 
