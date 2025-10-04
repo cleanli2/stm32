@@ -10,9 +10,15 @@
 
 
 
+#ifdef SVR
+#define MOCK_UART_PIN GPIO_Pin_0
+#define MOCK_UART_GP GPIOA
+#define MOCK_UART_PERIPH RCC_APB2Periph_GPIOA
+#else
 #define MOCK_UART_PIN GPIO_Pin_11
 #define MOCK_UART_GP GPIOB
 #define MOCK_UART_PERIPH RCC_APB2Periph_GPIOB
+#endif
 
 #define HW_FLASH_END_FORBIDEN 0x8008000u
 
