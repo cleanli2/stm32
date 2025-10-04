@@ -85,12 +85,15 @@ int main()
                 }
             }
             else if(mkp->reqrsp==REQ_UPDATE){
-                lmemset(mrx_bf, 0, MRXBF_SIZE);
                 if(0==strlen(token)){
                     strcpy(token, mkp->data);
                 }
                 else{
                     if(!strcmp(token, mkp->data)){
+                        if(ENV_FAIL == set_env("token", token)){
+                            lprintf("set_env fail, fatal\n");
+                            while(1);
+                        }
                         mkp->reqrsp=RSP_ACK;
                         mkp->len=4;
                         strcpy(mkp->data, "pass");
