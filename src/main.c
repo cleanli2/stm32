@@ -15,7 +15,9 @@ char m_value[ENV_MAX_VALUE_LEN];
 const char default_token[]="88888888999999992222222255555555";
 char token[33]={0};
 unsigned int state=REQ_INFO;
+mupk * mkp=(mupk*)mrx_bf;
 #ifdef SVR
+    unsigned int empty_loops=0;
 #else
 char svr_info[25]={0};
 #endif
@@ -43,13 +45,50 @@ void generate_token(char*out)
     }
     //lprintf("\n");
 }
+
+unsigned char getsum(int len)
+{
+    unsigned char sum=0;
+    for(int zi=0;zi<len;zi++){
+        sum+=(unsigned char)mrx_bf[zi];
+    }
+    return sum;
+}
+
+void check_send()
+{
+    int len=sizeof(mupk)+mkp->len;
+    mrx_bf[len]=0;
+    mrx_bf[len+1]=getsum(len);
+    lprintf("----send:\r\n");
+    mem_print(mrx_bf, 0, len+2);
+    mock_uart_sends((char*)mkp, len+2);
+}
+int checked_recv()
+{
+    int len;
+    if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, FRAME_INTV)){
+#ifdef SVR
+        empty_loops=0;
+#endif
+        if(mkp->len>=MRXBF_SIZE){
+            return 0;
+        }
+        len=sizeof(mupk)+mkp->len;
+        lprintf("----Got:reqrsp is %x, len %d\n", mkp->reqrsp, mkp->len);
+        mem_print(mrx_bf, 0, len+2);
+        if(getsum(len)==mrx_bf[len+1] && 0==mrx_bf[len]){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+    return 0;
+}
 int main()
 {
-#ifdef SVR
-    unsigned int empty_loops=0;
-#endif
     int stop=0;
-    mupk * mkp=(mupk*)mrx_bf;
     main_init();
     while(!stop){
         lmemset(mrx_bf, 0, MRXBF_SIZE);
@@ -57,10 +96,7 @@ int main()
 #ifdef SVR
 
         lprintf("waiting req...\n");
-        if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, FRAME_INTV)){
-            empty_loops=0;
-            lprintf("Got:reqrsp is %x, len %d\n", mkp->reqrsp, mkp->len);
-            lprintf("str=%s\n", mkp->data);
+        if(checked_recv()){
             if(mkp->reqrsp>state){
                 lprintf("state error\n");
                 continue;
@@ -127,7 +163,7 @@ int main()
                 mkp->len=4;
                 strcpy(mkp->data, "pass");
             }
-            mock_uart_sends((char*)mkp, sizeof(mupk)+mkp->len);
+            check_send();
         }
         else{
             if(empty_loops++>SVR_MAX_EMPTYLOOP){
@@ -169,14 +205,11 @@ int main()
             strcpy(mkp->data, "bye");
         }
         mkp->reqrsp=state;
-        lprintf("sending req...\n");
-        mock_uart_sends((char*)mkp, sizeof(mupk)+mkp->len);
+        check_send();
 
         lmemset(mrx_bf, 0, MRXBF_SIZE);
         lprintf("waiting response...\n");
-        if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, FRAME_INTV)){
-            lprintf("Got:reqrsp is %x, len %d\n", mkp->reqrsp, mkp->len);
-            lprintf("str=%s\n", mkp->data);
+        if(checked_recv()){
             if(mkp->reqrsp==RSP_ACK){
                 if(state==REQ_INFO){
                     if(strlen(svr_info)==0){
