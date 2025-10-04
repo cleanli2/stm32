@@ -31,12 +31,15 @@ char asc_random()
 void generate_token(char*out)
 {
     char c;
+    //lprintf("\n");
     for(int i=0;i<32;i++){
         c=asc_random();
         if(c==' ')c=' '+1;
         if(c=='=')c='='+1;
-        out[i++]=c;
+        out[i]=c;
+        //lprintf("%c ", c);
     }
+    //lprintf("\n");
 }
 int main()
 {
