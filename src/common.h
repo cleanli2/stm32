@@ -57,6 +57,7 @@ struct emulate_touch {
 
 extern struct emulate_touch *gftp;
 extern uint32_t logv;
+extern u32 device_serial0, device_serial1, device_serial2;
 
 extern uint32_t g_ms_count;
 void delay_us(u32 nus);
