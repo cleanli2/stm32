@@ -16,8 +16,8 @@ const char default_token[]="88888888999999992222222255555555";
 char token[33]={0};
 unsigned int state=REQ_INFO;
 mupk * mkp=(mupk*)mrx_bf;
+unsigned int empty_loops=0;
 #ifdef SVR
-    unsigned int empty_loops=0;
 #else
 char svr_info[25]={0};
 #endif
@@ -68,8 +68,8 @@ int checked_recv()
 {
     int len;
     if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, FRAME_INTV)){
-#ifdef SVR
         empty_loops=0;
+#ifdef SVR
         if(mkp->reqrsp<REQ_INFO||mkp->reqrsp>REQ_PWN){
             return 0;
         }
@@ -175,13 +175,6 @@ int main()
             delay_ms(FRAME_INTV/2);
             check_send();
         }
-        else{
-            lprintf("waiting req %d\n", empty_loops);
-            if(empty_loops++>SVR_MAX_EMPTYLOOP){
-                lprintf("svr max empty loops reached\n");
-                stop=1;
-            }
-        }
 
 #else//client
         if(state==REQ_INFO){
@@ -250,6 +243,13 @@ int main()
             }
         }
 #endif
+        else{
+            lprintf("Empty %d\n", empty_loops);
+            if(empty_loops++>SVR_MAX_EMPTYLOOP){
+                lprintf("max empty loops reached\n");
+                stop=1;
+            }
+        }
     }
     lprintf("end\n");
     poweroff("standby");
