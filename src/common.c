@@ -164,6 +164,7 @@ u32*TIM2_IRQHandler_local(u32*stack_data)
 static int g_led_cache=0;
 void toggle_led(int i)
 {
+    (void)i;
     if(g_led_cache){
         g_led_cache=0;
         GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
@@ -300,7 +301,6 @@ int __io_char_received()
   return (USART_GetFlagStatus(BOARD_COM1, USART_FLAG_RXNE) == SET);
 }
 
-static uint32_t beep_st = 0;
 u32 device_serial0, device_serial1, device_serial2;
 void get_mcu_id(void)
 {
@@ -309,103 +309,6 @@ void get_mcu_id(void)
     device_serial2 = *(u32*)(0x1ffff7f0);
     lprintf_time("MCU ID=%X %X %X\n",
             device_serial0, device_serial1, device_serial2);
-}
-
-void beep_by_timer_100(uint32_t hz_100)
-{
-    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-    //RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
-    //GPIO_InitTypeDef GPIO_InitStructure;
-    NVIC_InitTypeDef NVIC_InitStructure;
-
-    if(beep_st == hz_100){
-        return;
-    }
-
-    if(hz_100>0){
-        /*
-        GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN; //TIM_CH1
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //复用推挽输出
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
-        GPIO_ResetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
-        */
-
-        RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-        TIM_DeInit(TIM3);
-        TIM_InternalClockConfig(TIM3);
-        /* Time base configuration */
-        TIM_TimeBaseStructure.TIM_Period = 4000000/hz_100/2;
-        TIM_TimeBaseStructure.TIM_Prescaler = 1800;
-        TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-        TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-
-        TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-
-        TIM_ARRPreloadConfig(TIM3, DISABLE);
-
-        TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
-        NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
-        NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-        NVIC_Init(&NVIC_InitStructure);
-
-        /* TIM enable counter */
-        TIM_Cmd(TIM3, ENABLE);
-        beep_st = hz_100;
-    }
-    else{
-        if(beep_st == 0)return;
-        beep_st = 0;
-        TIM_Cmd(TIM3, DISABLE);
-        NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
-        NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
-        NVIC_Init(&NVIC_InitStructure);
-        TIM_ITConfig(TIM3, TIM_IT_Update, DISABLE);
-        TIM_DeInit(TIM3);
-        RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, DISABLE);
-        /*
-        GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
-        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-        GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
-        GPIO_SetBits(BEEP_GPIO_GROUP,BEEP_GPIO_PIN);
-        */
-    }
-}
-
-void beep_by_timer(uint32_t hz)
-{
-    beep_by_timer_100(hz*100);
-}
-
-void beep(uint32_t hz, uint32_t t_ms)
-{
-    uint32_t pd, ct;
-    if(hz > 1000000)return;
-    if(!sound_enable)return;
-
-    pd = 1000000/hz/2;
-    ct = hz*t_ms/1000;
-    RCC_APB2PeriphClockCmd(BEEP_GPIO_PERIPH, ENABLE);
-
-    GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Pin = BEEP_GPIO_PIN;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
-    GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
-    while(ct--){
-	    GPIO_ResetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
-	    delay_us(pd);
-	    GPIO_SetBits(BEEP_GPIO_GROUP, BEEP_GPIO_PIN);
-	    delay_us(pd);
-    }
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_Init(BEEP_GPIO_GROUP, &GPIO_InitStructure);
 }
 
 void power_off()
@@ -575,15 +478,6 @@ void soft_reset_system()
 {
     lprintf_time("system reset\n");
     NVIC_SystemReset();
-}
-
-void reboot_download()
-{
-    lprintf_time("reboot download\n");
-    GPIO_SetBits(GPIOA,GPIO_Pin_13);
-    beep(100, 500);
-    lprintf_time("reboot download\n");
-    soft_reset_system();
 }
 
 #ifdef  USE_FULL_ASSERT
