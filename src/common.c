@@ -26,7 +26,7 @@ u32 debug_mode = 0;
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-GPIO_InitTypeDef GPIO_InitStructure;
+GPIO_InitTypeDef g_gpio_inits;
 USART_InitTypeDef USART_InitStructure;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -164,22 +164,13 @@ u32*TIM2_IRQHandler_local(u32*stack_data)
 static int g_led_cache=0;
 void toggle_led(int i)
 {
-    unsigned int cv;
-    //update cache
-    cv=g_led_cache&(1<<i);
-    cv=!cv;
-    if(cv){
-        g_led_cache|=(1<<i);
+    if(g_led_cache){
+        g_led_cache=0;
+        GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
     }
     else{
-        g_led_cache&=~(1<<i);
-    }
-    if(i==0){//led0
-        //no led0
-    }
-    else{//led1
-        if(cv) GPIO_ResetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
-        else GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
+        g_led_cache=1;
+        GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
     }
 }
 
@@ -528,7 +519,12 @@ void main_init(void)
   }
 #endif
   //Touch_Test();
-
+  RCC_APB2PeriphClockCmd(LED1_GPIO_PERIPH, ENABLE);
+  g_gpio_inits.GPIO_Mode = GPIO_Mode_Out_PP;
+  g_gpio_inits.GPIO_Pin = LED1_GPIO_PIN;
+  g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(LED1_GPIO_GROUP, &g_gpio_inits);
+  GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
 
   //72M/72=1M, 1us/count
   //72M/12=6M, 1/6us / count

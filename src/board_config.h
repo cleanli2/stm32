@@ -9,6 +9,9 @@
 
 
 
+#define LED1_GPIO_PERIPH RCC_APB2Periph_GPIOA
+#define LED1_GPIO_GROUP GPIOA
+#define LED1_GPIO_PIN GPIO_Pin_13
 
 #ifdef SVR
 #define MOCK_UART_PIN GPIO_Pin_0
