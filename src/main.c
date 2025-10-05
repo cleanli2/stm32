@@ -8,7 +8,7 @@
 #include "mock_uart.h"
 #include "commctr.h"
 
-#define SVR_MAX_EMPTYLOOP 10u
+#define SVR_MAX_EMPTYLOOP 5u
 #define MRXBF_SIZE 128
 #define FRAME_INTV 50
 char mrx_bf[MRXBF_SIZE];
