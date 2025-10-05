@@ -421,7 +421,8 @@ void main_init(void)
       debug_enable = 0xdeb49eab;
   }
 #endif
-  //Touch_Test();
+  GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
+
   RCC_APB2PeriphClockCmd(LED1_GPIO_PERIPH, ENABLE);
   g_gpio_inits.GPIO_Mode = GPIO_Mode_Out_PP;
   g_gpio_inits.GPIO_Pin = LED1_GPIO_PIN;
