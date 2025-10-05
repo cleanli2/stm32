@@ -100,6 +100,7 @@ int main()
     int stop=0;
     main_init();
     while(!stop){
+        toggle_led(0);
         lmemset(mrx_bf, 0, MRXBF_SIZE);
 
 #ifdef SVR
