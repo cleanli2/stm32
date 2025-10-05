@@ -7,9 +7,9 @@
 #include "mock_uart.h"
 #include "commctr.h"
 
-#define SVR_MAX_EMPTYLOOP 5u
+#define SVR_MAX_EMPTYLOOP 10u
 #define MRXBF_SIZE 128
-#define FRAME_INTV 100
+#define FRAME_INTV 50
 char mrx_bf[MRXBF_SIZE];
 char m_value[ENV_MAX_VALUE_LEN];
 const char default_token[]="88888888999999992222222255555555";
@@ -166,8 +166,8 @@ int main()
             }
             else if(mkp->reqrsp==REQ_PWN){
                 mkp->reqrsp=RSP_ACK;
-                mkp->len=4;
-                strcpy(mkp->data, "pass");
+                mkp->len=3;
+                strcpy(mkp->data, "bye");
             }
             delay_ms(FRAME_INTV/2);
             check_send();
