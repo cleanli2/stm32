@@ -119,14 +119,12 @@ int main()
                 state=REQ_ACCESS;
             }
             else if(mkp->reqrsp==REQ_ACCESS){
-                strcpy(token, mkp->data);
-                lmemset(mrx_bf, 0, MRXBF_SIZE);
                 if(ENV_FAIL == get_env("token", m_value)){
                     lprintf("get_env fail, new one, use default\n");
                     strcpy(m_value, default_token);
                 }
                 //lprintf("token=%s\n", m_value);
-                if(!strcmp(m_value, token)){
+                if(!strcmp(m_value, mkp->data)){
                     lprintf("token match!\n");
                     mkp->reqrsp=RSP_ACK;
                     mkp->len=4;
