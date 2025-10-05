@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include "sha256.h"
 //#include "music.h"
 #include "common.h"
 #include "ui.h"
@@ -18,6 +19,7 @@ unsigned int state=REQ_INFO;
 mupk * mkp=(mupk*)mrx_bf;
 unsigned int empty_loops=0;
 #ifdef SVR
+char sha_token[ENV_MAX_VALUE_LEN];
 #else
 char svr_info[25]={0};
 #endif
@@ -131,10 +133,11 @@ int main()
             else if(mkp->reqrsp==REQ_ACCESS){
                 if(ENV_FAIL == get_env("token", m_value)){
                     lprintf("default token\n");
-                    strcpy(m_value, default_token);
+                    compute_sha256((const uint8_t*)default_token, strlen(default_token), (char*)m_value);
                 }
+                compute_sha256((const uint8_t*)mkp->data, strlen(mkp->data), (char*)sha_token);
                 //lprintf("token=%s\n", m_value);
-                if(!strcmp(m_value, mkp->data)){
+                if(!strcmp(m_value, sha_token)){
                     lprintf("token match!\n");
                     mkp->reqrsp=RSP_ACK;
                     mkp->len=32;
@@ -149,7 +152,8 @@ int main()
                         mkp->reqrsp=RSP_ACK;
                         mkp->len=4;
                         strcpy(mkp->data, "save");
-                        if(ENV_FAIL == set_env("token", token)){
+                        compute_sha256((const uint8_t*)token, strlen(token), (char*)sha_token);
+                        if(ENV_FAIL == set_env("token", sha_token)){
                             lprintf("set_env fail, fatal\n");
                             while(1);
                         }
