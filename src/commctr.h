@@ -3,8 +3,7 @@
 
 #define REQ_INFO 0x81
 #define REQ_ACCESS 0x82
-#define REQ_UPDATE 0x83
-#define REQ_PWN 0x84
+#define REQ_PWN 0x83
 #define RSP_ACK 0x8a
 #define RSP_NACK 0x9c
 
