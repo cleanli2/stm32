@@ -479,7 +479,9 @@ void main_init(void)
   mock_uart_init();
   delay_ms(200);
   if(con_is_recved()){
-      run_cmd_interface();
+      if('c'==con_recv()){
+          run_cmd_interface();
+      }
   }
 }
 
