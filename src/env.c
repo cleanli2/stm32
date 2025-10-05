@@ -369,8 +369,8 @@ int fm_save(uint32_t i, const char*name, const char*value)
             return ENV_OK;
         }
         else{
-            tbt[1]='=';
-            tbt[0]='\0';
+            tbt[0]='=';
+            tbt[1]='\0';
             if(ENV_FAIL==env_set_2char(i, tbt)){
                 return ENV_FAIL;
             }
