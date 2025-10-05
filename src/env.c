@@ -15,13 +15,13 @@ uint32_t get_env_start_addr()
         //last byte will not be 0xff if main env has data
         set_cur_env_area(USE_MAIN_ENV);
         tmpc = env_get_char(FM_ENV_STORE_SIZE-1);
-        lprintf("last byte=0x%b\n", tmpc);
+        //lprintf("last byte=0x%b\n", tmpc);
         if(tmpc==0xff){
             //will use help env
-            lprintf("env:set hlep env %X\n", FM_ENV_STORE_START_ADDR);
+            lprintf("hlep env %X\n", FM_ENV_STORE_START_ADDR);
             set_cur_env_area(USE_HELP_ENV);
         }
-        lprintf("env use %X\n", env_start_addr);
+        //lprintf("env use %X\n", env_start_addr);
     }
     return env_start_addr;
 }
@@ -34,7 +34,7 @@ int erase_env_area()
     uint32_t sector_addr = FM_GET_SECTOR_ADDR(get_env_start_addr());
     FLASH_Unlock();
     while(ct--){
-        lprintf("env_erase:sector %x\n", sector_addr);
+        //lprintf("env_erase:sector %x\n", sector_addr);
         if(FLASH_COMPLETE != FLASH_ErasePage(sector_addr)){
             lprintf("env_erase:sector 0x%x fail!\n", sector_addr);
             FLASH_Lock();
@@ -63,26 +63,23 @@ int erase_env_area()
 void set_cur_env_area(int env_area)
 {
     if(env_area == USE_MAIN_ENV){
-        lprintf("env set to main %X\n", FM_ENV_STORE_START_ADDR);
+        lprintf("env>main %X\n", FM_ENV_STORE_START_ADDR);
         env_start_addr=FM_ENV_STORE_START_ADDR;
     }
     else if(env_area == USE_HELP_ENV){
-        lprintf("env set to help %X\n", FM_ENV_HELP_STORE_START_ADDR);
+        lprintf("env>help %X\n", FM_ENV_HELP_STORE_START_ADDR);
         env_start_addr=FM_ENV_HELP_STORE_START_ADDR;
-    }
-    else{
-        lprintf("set_cur_env_area:fault para. Doing nothing\n");
     }
 }
 
 int get_idle_env_area()
 {
     if( get_env_start_addr()==FM_ENV_STORE_START_ADDR){
-        lprintf("curenv is main %X\n", FM_ENV_STORE_START_ADDR);
+        //lprintf("curenv is main %X\n", FM_ENV_STORE_START_ADDR);
         return USE_HELP_ENV;
     }
     else if(get_env_start_addr()==FM_ENV_HELP_STORE_START_ADDR){
-        lprintf("curenv is help %X\n", FM_ENV_HELP_STORE_START_ADDR);
+        //lprintf("curenv is help %X\n", FM_ENV_HELP_STORE_START_ADDR);
         return USE_MAIN_ENV;
     }
     return ENV_INVALID;
@@ -90,11 +87,11 @@ int get_idle_env_area()
 int get_cur_env_area()
 {
     if(get_env_start_addr()==FM_ENV_STORE_START_ADDR){
-        lprintf("cur env is main %X\n", FM_ENV_STORE_START_ADDR);
+        //lprintf("cur env is main %X\n", FM_ENV_STORE_START_ADDR);
         return USE_MAIN_ENV;
     }
     else if(get_env_start_addr()==FM_ENV_HELP_STORE_START_ADDR){
-        lprintf("cur env is help %X\n", FM_ENV_HELP_STORE_START_ADDR);
+        //lprintf("cur env is help %X\n", FM_ENV_HELP_STORE_START_ADDR);
         return USE_HELP_ENV;
     }
     return ENV_INVALID;
@@ -109,7 +106,7 @@ uint8_t env_get_char(uint32_t offset)
 {
     uint8_t*tbp=(uint8_t*)(get_env_start_addr()+offset);
     if((uint32_t)tbp>=HW_FLASH_END_FORBIDEN){
-        lprintf("forbidden flash addr:%x\r\n", tbp);
+        lprintf("forbidden:%x\r\n", tbp);
         while(1);
     }
     return *tbp;
@@ -123,7 +120,7 @@ int env_set_2char(uint32_t offset, const char*dp)
     //lprintf("fphw:%x=%b %b\r\n", faddr, dp[1],dp[0]);
     FLASH_Unlock();
     if(FLASH_COMPLETE != FLASH_ProgramHalfWord(faddr, *wdp)){
-        lprintf("flash program halfword fail!addr=%x\r\n", faddr);
+        lprintf("halfword fail!addr=%x\r\n", faddr);
         FLASH_Lock();
         return ENV_FAIL;
     }
@@ -168,11 +165,11 @@ uint32_t find_env_data_start_raw()
 {
     uint32_t i_down=0, i_up=FM_ENV_STORE_SIZE-1, i;
     if(env_get_char(i_down) != 0xff){
-        lprintf("env data is full\n");
+        lprintf("env full\n");
         return ENV_INVALID;
     }
     if(env_get_char(i_up) == 0xff){
-        lprintf("empty env block\n");
+        lprintf("empty env\n");
         return ENV_EMPTY_DATA;
     }
     while(1!=i_up-i_down){
@@ -244,18 +241,13 @@ uint32_t find_env_data_start()
         if(0xff == db && 0x00 == da){
             return env_data_start_i;
         }
-        else{
-            lprintf("env_data_start_i err:0x%b 0x%b\n", db, da);
-        }
     }
     ret = find_env_data_start_raw();
     if(ret > ENV_ABNORMAL && ret != ENV_EMPTY_DATA){
-        lprintf("w25f read fail, reinit SD lowlevel\n");
-        //SD_LowLevel_Init();
-        //retry
         ret = find_env_data_start_raw();
     }
     env_data_start_i = ret;
+    lprintf("env used %d%\n", (FM_ENV_STORE_SIZE - ret)*100/FM_ENV_STORE_SIZE);
     return ret;
 }
 
@@ -422,7 +414,7 @@ uint32_t set_env_raw(const char* name, const char*value)
     if(!name){
         lprintf("name=NULL\n");
         ret = ENV_FAIL;
-        lprintf("--enverr%d\n",__LINE__);
+        //lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
     if(!value){
@@ -431,13 +423,13 @@ uint32_t set_env_raw(const char* name, const char*value)
     if(strchr(name, '=')!=NULL || strchr(value, '=')){
         lprintf("'=' can't be in name or value\n");
         ret = ENV_FAIL;
-        lprintf("--enverr%d\n",__LINE__);
+        //lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
 
     if(strlen(name)>ENV_MAX_VALUE_LEN-1 ||
             strlen(value)>ENV_MAX_VALUE_LEN-1){
-        lprintf("'name' or 'value' len can't > %d\n", ENV_MAX_VALUE_LEN-1);
+        lprintf("len cant>%d\n", ENV_MAX_VALUE_LEN-1);
         ret = ENV_FAIL;
         goto end;
     }
@@ -460,7 +452,6 @@ uint32_t set_env_raw(const char* name, const char*value)
         lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
-    lprintf("env used %d%\n", (FM_ENV_STORE_SIZE - i)*100/FM_ENV_STORE_SIZE);
     return fm_save(i, name, value);
 
 end:
@@ -492,7 +483,7 @@ int go_through_env(int operation)
     i = 0;
     memset(buf, 0, ENV_MAX_VALUE_LEN*2+2);
     get_cur_env_area();
-    lprintf("env_store_start %x size %x\n\n", get_env_start_addr(), FM_ENV_STORE_SIZE);
+    //lprintf("env_store_start %x size %x\n\n", get_env_start_addr(), FM_ENV_STORE_SIZE);
 
     i = find_env_data_start();
     if(i > ENV_ABNORMAL){
@@ -500,7 +491,6 @@ int go_through_env(int operation)
         //lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
-    lprintf("env used %d%\n", (FM_ENV_STORE_SIZE - i)*100/FM_ENV_STORE_SIZE);
     i++;
     while(env_get_char(i) != '\0'){
         posi = i;
@@ -532,7 +522,7 @@ int go_through_env(int operation)
                             ret = set_env_raw(name, value);
                             switch_env_area();
                             if(ret == ENV_FAIL){
-                                lprintf("set env fail in idle env\n");
+                                lprintf("switch env fail\n");
                                 return ret;
                             }
                         }
@@ -564,7 +554,7 @@ void switch_env_area_with_data()
     //int cur_area = get_cur_env_area();
     //int idle_area = get_idle_env_area();
     if(ENV_OK == go_through_env(COPY_DATA_ENV)){
-        lprintf("copy env to idle OK, erase cur env\n");
+        lprintf("env copied, erase cur\n");
         erase_env_area();
         switch_env_area();
     }
@@ -580,7 +570,7 @@ uint32_t get_env_uint(const char*name, uint32_t def_value)
         return ret;
     }
     else{
-        lprintf("envgetint %s fail, use default\n", name);
+        //lprintf("envgetint %s fail, use default\n", name);
         return def_value;
     }
 }

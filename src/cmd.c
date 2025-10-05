@@ -82,9 +82,9 @@ void poweroff(char *p)
     char*p1;
     uint32_t np = get_howmany_para(p);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
-    lprintf("number of para=%d\n", np);
+    lprintf("number para=%d\n", np);
     if(np==0){
-        lprintf("Power OFF need para!\n");
+        lprintf("need para!\n");
         return;
     }
     else{
@@ -92,14 +92,14 @@ void poweroff(char *p)
         lprintf("p1=%s\n", p1);
     }
     if(!strcmp(p1, "sleep")){
-        lprintf("goto sleep\r\n");
+        lprintf("gosleep\r\n");
         __WFI();
-        lprintf("wake from sleep\r\n");
+        lprintf("wake\r\n");
     }
     else if(!strcmp(p1, "stop")){
-        lprintf("goto stop\r\n");
+        lprintf("gostop\r\n");
         PWR_EnterSTOPMode(PWR_Regulator_LowPower,PWR_STOPEntry_WFI);
-        lprintf("wake from stop\r\n");
+        lprintf("wake\r\n");
     }
     else if(!strcmp(p1, "standby")){
         GPIO_InitTypeDef GPIO_InitStructure;
@@ -125,7 +125,7 @@ void muart(char *p)
     //int p2=10000;
     char rv;
     uint32_t np = get_howmany_para(p);
-    lprintf("number of para=%d\n", np);
+    lprintf("number para=%d\n", np);
     if(np==0){
         lprintf("no para!\n");
         while(1){
@@ -471,7 +471,7 @@ print:
     return;
 
 error:
-    lprint("Err!\npm [length](0x80 default)\n");
+    lprint("Err!\npm [length]\n");
 
 }
 
@@ -493,7 +493,7 @@ write:
     return;
 
 error:
-    lprint("Err!\nw (hexaddr) [(hexaddr)](last addr default)\n");
+    lprint("Err!\nw v [addr]\n");
 
 }
 
@@ -516,7 +516,7 @@ read:
     return;
 
 error:
-    lprint("Err!\nr [(hexaddr)](last addr default)\n");
+    lprint("Err!\nr addr\n");
 
 }
 
@@ -557,7 +557,7 @@ void handle_cmd()
        	    }
 	    i++;
     }
-    lprint("Unknow cmd:%s\n%s",cmd_buf, "Please check the cmd list.");
+    lprint("Unknow cmd:%s\n",cmd_buf);
 }
 #define POWER_TIMEOUT_S 10
 extern uint32_t shot_msct;
