@@ -64,8 +64,10 @@ void check_send()
     mkp->seqno=pkn++;
     mrx_bf[len]=0;
     mrx_bf[len+1]=getsum(len);
+    /*
     lprintf("----send %d@%d:\r\n", mkp->seqno, g_ms_count);
     mem_print(mrx_bf, 0, len+2);
+    */
     mock_uart_sends((char*)mkp, len+2);
 }
 int checked_recv()
@@ -87,9 +89,11 @@ int checked_recv()
                 return 0;
             }
             len=sizeof(mupk)+mkp->len;
+            /*
             lprintf("----@%d-Got%d:reqrsp is %x, len %d\n", g_ms_count, mkp->seqno,
                     mkp->reqrsp, mkp->len);
             mem_print(mrx_bf, 0, len+2);
+            */
             if(getsum(len)==mrx_bf[len+1] && 0==mrx_bf[len]){
                 return 1;
             }
