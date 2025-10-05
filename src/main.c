@@ -7,7 +7,7 @@
 #include "mock_uart.h"
 #include "commctr.h"
 
-#define SVR_MAX_EMPTYLOOP 100u
+#define SVR_MAX_EMPTYLOOP 5u
 #define MRXBF_SIZE 128
 #define FRAME_INTV 100
 char mrx_bf[MRXBF_SIZE];
@@ -68,30 +68,37 @@ void check_send()
 }
 int checked_recv()
 {
-    int len;
-    if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, FRAME_INTV)){
-        empty_loops=0;
+    int len, waitloops=20;
+    while(1){
+        if(0!=mock_uart_rx(mrx_bf, MRXBF_SIZE-1, FRAME_INTV)){
+            empty_loops=0;
 #ifdef SVR
-        if(mkp->reqrsp<REQ_INFO||mkp->reqrsp>REQ_PWN){
-            return 0;
-        }
+            if(mkp->reqrsp<REQ_INFO||mkp->reqrsp>REQ_PWN){
+                return 0;
+            }
 #else
-        if(mkp->reqrsp!=RSP_ACK&&mkp->reqrsp!=RSP_NACK){
-            return 0;
-        }
+            if(mkp->reqrsp!=RSP_ACK&&mkp->reqrsp!=RSP_NACK){
+                return 0;
+            }
 #endif
-        if(mkp->len>=MRXBF_SIZE){
-            return 0;
-        }
-        len=sizeof(mupk)+mkp->len;
-        lprintf("----@%d-Got%d:reqrsp is %x, len %d\n", g_ms_count, mkp->seqno,
-                mkp->reqrsp, mkp->len);
-        mem_print(mrx_bf, 0, len+2);
-        if(getsum(len)==mrx_bf[len+1] && 0==mrx_bf[len]){
-            return 1;
+            if(mkp->len>=MRXBF_SIZE){
+                return 0;
+            }
+            len=sizeof(mupk)+mkp->len;
+            lprintf("----@%d-Got%d:reqrsp is %x, len %d\n", g_ms_count, mkp->seqno,
+                    mkp->reqrsp, mkp->len);
+            mem_print(mrx_bf, 0, len+2);
+            if(getsum(len)==mrx_bf[len+1] && 0==mrx_bf[len]){
+                return 1;
+            }
+            else{
+                return 0;
+            }
         }
         else{
-            return 0;
+            if(0>=waitloops--){
+                break;
+            }
         }
     }
     return 0;
@@ -153,7 +160,7 @@ int main()
                         mkp->reqrsp=RSP_NACK;
                         mkp->len=3;
                         strcpy(mkp->data, "err");
-                        delay_ms(1000);
+                        delay_ms(2000);
                     }
                 }
             }
