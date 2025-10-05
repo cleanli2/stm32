@@ -17,8 +17,11 @@
 #define MOCK_UART_PIN GPIO_Pin_0
 #define MOCK_UART_GP GPIOA
 #define MOCK_UART_PERIPH RCC_APB2Periph_GPIOA
+#define MOS_PIN GPIO_Pin_13
+#define MOS_GP GPIOB
+#define MOS_PERIPH RCC_APB2Periph_GPIOB
 #else
-#define MOCK_UART_PIN GPIO_Pin_11
+#define MOCK_UART_PIN GPIO_Pin_12
 #define MOCK_UART_GP GPIOB
 #define MOCK_UART_PERIPH RCC_APB2Periph_GPIOB
 #endif
