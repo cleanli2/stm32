@@ -449,6 +449,13 @@ void main_init(void)
   g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(LOCKPOSI_GP, &g_gpio_inits);
 
+  RCC_APB2PeriphClockCmd(LOCKLOCK_PERIPH, ENABLE);
+  GPIO_SetBits(LOCKLOCK_GP,LOCKLOCK_PIN);
+  g_gpio_inits.GPIO_Mode = GPIO_Mode_IPU;
+  g_gpio_inits.GPIO_Pin = LOCKLOCK_PIN;
+  g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(LOCKLOCK_GP, &g_gpio_inits);
+
   g_lockposi=get_env_uint("lpe", 0);;
 #endif
 
@@ -498,7 +505,10 @@ void main_init(void)
   }
 #ifdef SVR
   if(g_lockposi){
-      lock_lock();
+      if(0==GPIO_ReadInputDataBit(LOCKLOCK_GP, LOCKLOCK_PIN)){
+          lock_lock();
+          poweroff("standby");
+      }
   }
 #endif
 }
