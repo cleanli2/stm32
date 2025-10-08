@@ -25,6 +25,7 @@
 //for camera
 #define RECORD_CAM_STUCK_SIZE 8
 
+extern u32 g_lockposi;
 extern u32 interv_systick;
 extern u32 g_cam_r70p_e;
 extern u32 g_cam_r71p_e;

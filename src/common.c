@@ -38,6 +38,9 @@ u32 g_cam_r70p_e=0;
 u32 g_cam_r71p_e=0;
 u32 g_tlcd=0;
 u32 g_pcf8574_hw=0;
+#ifdef SVR
+u32 g_lockposi=0;
+#endif
 static int sound_enable=1;
 static uint32_t g_10ms_count = 0;
 uint32_t g_ms_count = 0;
@@ -437,6 +440,15 @@ void main_init(void)
   g_gpio_inits.GPIO_Pin = MOS_PIN;
   g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(MOS_GP, &g_gpio_inits);
+
+  RCC_APB2PeriphClockCmd(LOCKPOSI_PERIPH, ENABLE);
+  GPIO_SetBits(LOCKPOSI_GP,LOCKPOSI_PIN);
+  g_gpio_inits.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  g_gpio_inits.GPIO_Pin = LOCKPOSI_PIN;
+  g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(LOCKPOSI_GP, &g_gpio_inits);
+
+  g_lockposi=get_env_uint("lpe", 0);;
 #endif
 
   //72M/72=1M, 1us/count

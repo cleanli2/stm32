@@ -19,7 +19,9 @@ unsigned int state=REQ_INFO;
 mupk * mkp=(mupk*)mrx_bf;
 unsigned int empty_loops=0;
 #ifdef SVR
+#define LOCKPOSI_LOCKED() (!GPIO_ReadInputDataBit(LOCKPOSI_GP, LOCKPOSI_PIN))
 #define MOS_OPEN() GPIO_SetBits(MOS_GP,MOS_PIN);
+#define MOS_CLOSE() GPIO_ResetBits(MOS_GP,MOS_PIN);
 char sha_token[ENV_MAX_VALUE_LEN];
 #else
 char svr_info[25]={0};
@@ -163,7 +165,16 @@ int main()
                             while(1);
                         }
                         state=REQ_PWN;
-                        MOS_OPEN();
+                        if(g_lockposi){
+                            if(LOCKPOSI_LOCKED()){
+                                MOS_OPEN();
+                                while(LOCKPOSI_LOCKED());
+                                MOS_CLOSE();
+                            }
+                        }
+                        else{
+                            MOS_OPEN();
+                        }
                     }
                     else{
                         lprintf("token wrong!\n");

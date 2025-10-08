@@ -20,6 +20,9 @@
 #define MOS_PIN GPIO_Pin_13
 #define MOS_GP GPIOB
 #define MOS_PERIPH RCC_APB2Periph_GPIOB
+#define LOCKPOSI_PIN GPIO_Pin_2
+#define LOCKPOSI_GP GPIOA
+#define LOCKPOSI_PERIPH RCC_APB2Periph_GPIOA
 #else
 #define MOCK_UART_PIN GPIO_Pin_12
 #define MOCK_UART_GP GPIOB
