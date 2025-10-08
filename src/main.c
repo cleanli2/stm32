@@ -8,7 +8,6 @@
 #include "mock_uart.h"
 #include "commctr.h"
 
-#define SVR_MAX_EMPTYLOOP 2u
 #define MRXBF_SIZE 128
 #define FRAME_INTV 50
 char mrx_bf[MRXBF_SIZE];
@@ -19,6 +18,7 @@ unsigned int state=REQ_INFO;
 mupk * mkp=(mupk*)mrx_bf;
 unsigned int empty_loops=0;
 #ifdef SVR
+#define MAX_EMPTYLOOP 2u
 #define LOCKPOSI_LOCKED() (0x1&(g_lockposi+GPIO_ReadInputDataBit(LOCKPOSI_GP, LOCKPOSI_PIN)))
 #define MOS_OPEN() GPIO_SetBits(MOS_GP,MOS_PIN);
 #define MOS_CLOSE() GPIO_ResetBits(MOS_GP,MOS_PIN);
@@ -45,6 +45,7 @@ void lock_lock()
 }
 
 #else
+#define MAX_EMPTYLOOP 8u
 char svr_info[25]={0};
 #endif
 char asc_random()
@@ -291,7 +292,7 @@ int main()
 #endif
         else{
             lprintf("Empty %d\n", empty_loops);
-            if(empty_loops++>SVR_MAX_EMPTYLOOP){
+            if(empty_loops++>MAX_EMPTYLOOP){
                 lprintf("max empty loops reached\n");
                 stop=1;
             }
