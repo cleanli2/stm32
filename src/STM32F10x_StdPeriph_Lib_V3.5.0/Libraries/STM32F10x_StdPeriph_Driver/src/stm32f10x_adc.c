@@ -220,6 +220,7 @@ void ADC_Init(ADC_TypeDef* ADCx, ADC_InitTypeDef* ADC_InitStruct)
   uint32_t tmpreg1 = 0;
   uint8_t tmpreg2 = 0;
   /* Check the parameters */
+#if 0
   assert_param(IS_ADC_ALL_PERIPH(ADCx));
   assert_param(IS_ADC_MODE(ADC_InitStruct->ADC_Mode));
   assert_param(IS_FUNCTIONAL_STATE(ADC_InitStruct->ADC_ScanConvMode));
@@ -227,6 +228,7 @@ void ADC_Init(ADC_TypeDef* ADCx, ADC_InitTypeDef* ADC_InitStruct)
   assert_param(IS_ADC_EXT_TRIG(ADC_InitStruct->ADC_ExternalTrigConv));   
   assert_param(IS_ADC_DATA_ALIGN(ADC_InitStruct->ADC_DataAlign)); 
   assert_param(IS_ADC_REGULAR_LENGTH(ADC_InitStruct->ADC_NbrOfChannel));
+#endif
 
   /*---------------------------- ADCx CR1 Configuration -----------------*/
   /* Get the ADCx CR1 value */
