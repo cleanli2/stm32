@@ -473,16 +473,11 @@ void main_init(void)
   //lprintf_time("NO lcd init.\n");
   //SD_LowLevel_Init();
 
-  int boot_standby=0;
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
   if(PWR_GetFlagStatus(PWR_FLAG_SB)!=RESET){
       lprintf("boot<Standby\n");
       PWR_ClearFlag(PWR_FLAG_SB);
       PWR_WakeUpPinCmd (DISABLE);
-      boot_standby=1;
-  }
-  else{
-      boot_standby=0;
   }
   uint32_t s1=get_system_us();
   uint32_t s2=get_system_us();
@@ -501,15 +496,11 @@ void main_init(void)
           run_cmd_interface();
       }
   }
-  if(!boot_standby){
-      lprintf("boot<reset\n");
 #ifdef SVR
-      if(g_lockposi){
-          lock_lock();
-      }
-      poweroff("standby");
-#endif
+  if(g_lockposi){
+      lock_lock();
   }
+#endif
 }
 
 
