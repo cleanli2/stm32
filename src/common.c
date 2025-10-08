@@ -42,7 +42,7 @@ u32 g_pcf8574_hw=0;
 u32 g_lockposi=0;
 #endif
 static int sound_enable=1;
-static uint32_t g_10ms_count = 0;
+volatile uint32_t g_10ms_count = 0;
 uint32_t g_ms_count = 0;
 void compute_cpu_occp();
 struct emulate_touch g_fake_touch = {0};
@@ -379,6 +379,7 @@ void update_progress_indicator(progress_indicator_t*pip, uint32_t progressed, ui
 }
 #define AUTO_POWER_OFF_COUNT 100000
 //static uint32_t single_timer_len = 16;
+void poweroff(char *p);
 /**
   * @brief  Main program.
   * @param  None
@@ -472,11 +473,16 @@ void main_init(void)
   //lprintf_time("NO lcd init.\n");
   //SD_LowLevel_Init();
 
+  int boot_standby=0;
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
   if(PWR_GetFlagStatus(PWR_FLAG_SB)!=RESET){
-      lprintf("boot from Standby\n");
+      lprintf("boot<Standby\n");
       PWR_ClearFlag(PWR_FLAG_SB);
       PWR_WakeUpPinCmd (DISABLE);
+      boot_standby=1;
+  }
+  else{
+      boot_standby=0;
   }
   uint32_t s1=get_system_us();
   uint32_t s2=get_system_us();
@@ -494,6 +500,15 @@ void main_init(void)
       if('c'==con_recv()){
           run_cmd_interface();
       }
+  }
+  if(!boot_standby){
+      lprintf("boot<reset\n");
+#ifdef SVR
+      if(g_lockposi){
+          lock_lock();
+      }
+      poweroff("standby");
+#endif
   }
 }
 

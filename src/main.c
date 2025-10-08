@@ -23,6 +23,27 @@ unsigned int empty_loops=0;
 #define MOS_OPEN() GPIO_SetBits(MOS_GP,MOS_PIN);
 #define MOS_CLOSE() GPIO_ResetBits(MOS_GP,MOS_PIN);
 char sha_token[ENV_MAX_VALUE_LEN];
+
+void lock_lock()
+{
+    unsigned int tst=0, locktime=0;;
+    MOS_OPEN();
+    while(!LOCKPOSI_LOCKED());
+    while(LOCKPOSI_LOCKED());
+    while(!LOCKPOSI_LOCKED());
+    lprintf("s-lock\n");
+    tst=g_ms_count;
+    while(LOCKPOSI_LOCKED());
+    locktime=g_ms_count-tst;
+    lprintf("e-lock %dms\n", locktime);
+    while(!LOCKPOSI_LOCKED());
+    tst=g_ms_count;
+    lprintf("s2lock\n");
+    while(g_ms_count<(tst+locktime/2));
+    lprintf("e2lock %dms\n", g_ms_count-locktime);
+    MOS_CLOSE();
+}
+
 #else
 char svr_info[25]={0};
 #endif
