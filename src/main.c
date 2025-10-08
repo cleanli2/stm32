@@ -165,16 +165,6 @@ int main()
                             while(1);
                         }
                         state=REQ_PWN;
-                        if(g_lockposi){
-                            if(LOCKPOSI_LOCKED()){
-                                MOS_OPEN();
-                                while(LOCKPOSI_LOCKED());
-                                MOS_CLOSE();
-                            }
-                        }
-                        else{
-                            MOS_OPEN();
-                        }
                     }
                     else{
                         lprintf("token wrong!\n");
@@ -189,6 +179,16 @@ int main()
                 mkp->reqrsp=RSP_ACK;
                 mkp->len=3;
                 strcpy(mkp->data, "bye");
+                if(g_lockposi){
+                    if(LOCKPOSI_LOCKED()){
+                        MOS_OPEN();
+                        while(LOCKPOSI_LOCKED());
+                        MOS_CLOSE();
+                    }
+                }
+                else{
+                    MOS_OPEN();
+                }
             }
             delay_ms(FRAME_INTV/2);
             check_send();
