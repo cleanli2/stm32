@@ -504,12 +504,14 @@ void main_init(void)
       }
   }
 #ifdef SVR
+/*
   if(g_lockposi){
       if(0==GPIO_ReadInputDataBit(LOCKLOCK_GP, LOCKLOCK_PIN)){
           lock_lock();
           poweroff("standby");
       }
   }
+  */
 #endif
 }
 
