@@ -112,7 +112,7 @@ void print_uint(uint32_t num)
 int sprint_uint64(char*s, uint64_t num)
 {
     char nc[21];
-    memset(nc, 0, 21);
+    lmemset(nc, 0, 21);
     num2str(num, nc, 10);
     strcpy(s, nc);
     return strlen(nc);
@@ -130,7 +130,7 @@ int sprint_uint_0n(char*s, uint32_t num, uint32_t num_len)
 {
     char nc[22];
     uint32_t raw_len;
-    memset(nc,'0', 22);
+    lmemset(nc,'0', 22);
     raw_len = sprint_uint(nc+11, num);
     strcpy(s, nc+11+raw_len-num_len);
     return strlen(nc+11+raw_len-num_len);
@@ -283,7 +283,7 @@ uint16_t LCD_PRINT_FRONT_COLOR = BLACK;
 void lcd_lprintf_win(uint32_t chscale, uint32_t x, uint32_t y, uint32_t w, uint32_t h, const char *fmt, ...)
 {
     va_list ap;
-    memset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
+    lmemset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
     va_start(ap,fmt);
     vslprintf(0, lcdprintf_buf,fmt,ap);
     va_end(ap);
@@ -292,7 +292,7 @@ void lcd_lprintf_win(uint32_t chscale, uint32_t x, uint32_t y, uint32_t w, uint3
 void lcd_lprintf(uint32_t chscale, uint32_t x, uint32_t y, const char *fmt, ...)
 {
     va_list ap;
-    memset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
+    lmemset(lcdprintf_buf, 0, sizeof(lcdprintf_buf));
     va_start(ap,fmt);
     vslprintf(0, lcdprintf_buf,fmt,ap);
     va_end(ap);

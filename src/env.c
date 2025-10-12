@@ -436,7 +436,7 @@ uint32_t set_env_raw(const char* name, const char*value)
 
     char ev[ENV_MAX_VALUE_LEN];
     if(ENV_OK==get_env(name, ev)){
-        if(!strcmp(ev, value)){
+        if(!lstrcmp(ev, value)){
             lprintf("env already set\n");
             return ret;
         }
@@ -481,7 +481,7 @@ int go_through_env(int operation)
     char *name, *value, *posi_eq;
 
     i = 0;
-    memset(buf, 0, ENV_MAX_VALUE_LEN*2+2);
+    lmemset(buf, 0, ENV_MAX_VALUE_LEN*2+2);
     get_cur_env_area();
     //lprintf("env_store_start %x size %x\n\n", get_env_start_addr(), FM_ENV_STORE_SIZE);
 
@@ -578,7 +578,7 @@ uint32_t get_env_uint(const char*name, uint32_t def_value)
 uint32_t set_env_uint(const char*name, uint32_t value)
 {
     char t[ENV_MAX_VALUE_LEN];
-    memset(t, 0, ENV_MAX_VALUE_LEN);
+    lmemset(t, 0, ENV_MAX_VALUE_LEN);
     slprintf(t, "%x", value);
     if(ENV_OK == set_env(name, t)){
         return ENV_OK;

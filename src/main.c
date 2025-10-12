@@ -157,7 +157,7 @@ int main()
                 slprintf(mkp->data, "%X%X%X",
                         device_serial0, device_serial1, device_serial2);
                 state=REQ_ACCESS;
-                memset(token, 0, 33);
+                lmemset(token, 0, 33);
             }
             else if(mkp->reqrsp==REQ_ACCESS){
                 if(ENV_FAIL == get_env("token", m_value)){
@@ -166,7 +166,7 @@ int main()
                 }
                 compute_sha256((const uint8_t*)mkp->data, strlen(mkp->data), (char*)sha_token);
                 //lprintf("token=%s\n", m_value);
-                if(!strcmp(m_value, sha_token)){
+                if(!lstrcmp(m_value, sha_token)){
                     lprintf("token match!\n");
                     mkp->reqrsp=RSP_ACK;
                     mkp->len=32;
@@ -176,7 +176,7 @@ int main()
                     strcpy(mkp->data, token);
                 }
                 else{
-                    if(strlen(token)==32 && !strcmp(token, mkp->data)){
+                    if(strlen(token)==32 && !lstrcmp(token, mkp->data)){
                         lprintf("new token\n");
                         mkp->reqrsp=RSP_ACK;
                         mkp->len=4;
@@ -225,7 +225,7 @@ int main()
             lprintf("req info\n");
             mkp->len=5;
             strcpy(mkp->data, "hello");
-            memset(token, 0, 33);
+            lmemset(token, 0, 33);
         }
         if(state==REQ_ACCESS){
             if(strlen(token)!=32){
@@ -258,12 +258,12 @@ int main()
                         strcpy(svr_info, mkp->data);
                     }
                     else{
-                        if(!strcmp(svr_info, mkp->data)){
+                        if(!lstrcmp(svr_info, mkp->data)){
                             state=REQ_ACCESS;
                             token[0]=0;
                         }
                         else{
-                            memset(svr_info, 0, 25);
+                            lmemset(svr_info, 0, 25);
                         }
                     }
                 }
@@ -285,7 +285,7 @@ int main()
             }
             else{
                 if(state==REQ_ACCESS && strlen(token)==32){
-                    memset(token, 0, 33);
+                    lmemset(token, 0, 33);
                 }
             }
         }

@@ -91,17 +91,17 @@ void poweroff(char *p)
         p = str_to_str(p, &p1);
         lprintf("p1=%s\n", p1);
     }
-    if(!strcmp(p1, "sleep")){
+    if(!lstrcmp(p1, "sleep")){
         lprintf("gosleep\r\n");
         __WFI();
         lprintf("wake\r\n");
     }
-    else if(!strcmp(p1, "stop")){
+    else if(!lstrcmp(p1, "stop")){
         lprintf("gostop\r\n");
         PWR_EnterSTOPMode(PWR_Regulator_LowPower,PWR_STOPEntry_WFI);
         lprintf("wake\r\n");
     }
-    else if(!strcmp(p1, "standby")){
+    else if(!lstrcmp(p1, "standby")){
         GPIO_InitTypeDef GPIO_InitStructure;
         PWR_WakeUpPinCmd (DISABLE);
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
@@ -142,14 +142,14 @@ void muart(char *p)
         p = str_to_str(p, &p1);
         lprintf("p1=%s\n", p1);
     }
-    if(!strcmp(p1, "tx")){
+    if(!lstrcmp(p1, "tx")){
         lprintf("tx test!\n");
         while(1){
             rv = con_recv();
             mock_uart_sends(&rv, 1);
         }
     }
-    else if(!strcmp(p1, "rx")){
+    else if(!lstrcmp(p1, "rx")){
         lprintf("rx test!\n");
         while(1){
             if(0!=mock_uart_rx(&rv, 1, 100)){
@@ -324,7 +324,7 @@ void adc(char *p)
         p = str_to_str(p, &p1);
         lprintf("p1=%s\n", p1);
 
-        if(!strcmp(p1, "r")){
+        if(!lstrcmp(p1, "r")){
             lprintf("adc random!\n");
             while(rct--){
                 prt_hex(adc_random(0));
@@ -520,6 +520,15 @@ error:
 
 }
 
+int lstrcmp(const char *a,const char *b)
+{
+    while(1){
+        if(*a!=*b)return 1;
+        if(*a==0)return 0;
+        a++;
+        b++;
+    }
+}
 void lmemset(char *d,unsigned char v,unsigned int n)
 {
 	while(n--)*d++=v;
@@ -597,7 +606,7 @@ void run_cmd_interface()
     lprintf("Version %s%s\n", VERSION, GIT_SHA1);
     lprint("\n\nclean_cmd. \n'c' key go cmd...\n");
     lmemset(cmd_buf, 0, COM_MAX_LEN);
-    memset(&cmd_caches[0][0], 0, CMD_CACHES_SIZE*COM_MAX_LEN);;
+    lmemset((char*)&cmd_caches[0][0], 0, CMD_CACHES_SIZE*COM_MAX_LEN);;
     cmd_buf_p = 0;
     lprintf_time("Enter CMD\n");
     lprint("\nCleanCMD>");

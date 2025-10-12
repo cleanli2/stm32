@@ -1,5 +1,5 @@
-#include <string.h>
 #include <stdint.h>
+#include "common.h"
 
 // --- SHA-256 const define---
 #define ROTRIGHT(a,b) (((a) >> (b)) | ((a) << (32-(b))))
@@ -118,7 +118,7 @@ void sha256_final(SHA256_CTX *ctx, uint8_t hash[]) {
         while (i < 64)
             ctx->data[i++] = 0x00;
         sha256_transform(ctx, ctx->data);
-        memset(ctx->data, 0, 56);
+        lmemset((char*)ctx->data, 0, 56);
     }
 
     ctx->bitlen += ctx->datalen * 8;
