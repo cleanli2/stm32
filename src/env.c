@@ -263,7 +263,7 @@ uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
         ret = ENV_FAIL;
         goto end;
     }
-    if(strchr(name, '=')!=NULL){
+    if(lstrchr(name, '=')!=NULL){
         lprintf("'=' can't be in name\n");
         ret = ENV_FAIL;
         goto end;
@@ -420,7 +420,7 @@ uint32_t set_env_raw(const char* name, const char*value)
     if(!value){
         value = (const char*)&zero_str;
     }
-    if(strchr(name, '=')!=NULL || strchr(value, '=')){
+    if(lstrchr(name, '=')!=NULL || lstrchr(value, '=')){
         lprintf("'=' can't be in name or value\n");
         ret = ENV_FAIL;
         //lprintf("--enverr%d\n",__LINE__);
@@ -503,7 +503,7 @@ int go_through_env(int operation)
             lprintf("%s\n", buf);
         }
         else{
-            posi_eq=strchr(buf, '=');
+            posi_eq=lstrchr(buf, '=');
             if(posi_eq){
                 name = buf;
                 *posi_eq=0;

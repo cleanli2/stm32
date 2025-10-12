@@ -541,6 +541,13 @@ void lmemset(char *d,unsigned char v,unsigned int n)
 {
 	while(n--)*d++=v;
 }
+char *lstrchr(const char *str, int c)
+{
+    while(1){
+        if(*str==(char)c)return (char*)str;
+        if(*str++==0)return NULL;
+    }
+}
 
 void handle_cmd()
 {
