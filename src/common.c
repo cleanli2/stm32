@@ -498,8 +498,12 @@ void main_init(void)
       lprintf("rtc reset!!!!!!\n");
       u8 temp=0;
       BKP_DeInit();
+#if 0
       RCC_LSICmd(ENABLE);
-      while (RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == RESET)
+#else
+      RCC_LSEConfig(RCC_LSE_ON);
+#endif
+      while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET)
       {
           temp++;
           delay_ms(10);
@@ -508,7 +512,7 @@ void main_init(void)
           lprintf("rtc rc clk fail\n");
       }
       else{
-          RCC_RTCCLKConfig(RCC_RTCCLKSource_LSI);
+          RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);
           RCC_RTCCLKCmd(ENABLE);
           RTC_WaitForLastTask();
           RTC_WaitForSynchro();
@@ -524,7 +528,7 @@ void main_init(void)
   else
   {
       lprintf("rtc runs normally %d\n", RTC_GetCounter());
-      //RTC_WaitForSynchro();
+      RTC_WaitForSynchro();
       //RTC_ITConfig(RTC_IT_SEC, ENABLE);
       //RTC_WaitForLastTask();
   }
