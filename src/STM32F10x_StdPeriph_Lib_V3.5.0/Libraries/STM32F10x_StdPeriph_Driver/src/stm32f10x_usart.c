@@ -181,6 +181,7 @@ void USART_Init(USART_TypeDef* USARTx, USART_InitTypeDef* USART_InitStruct)
   uint32_t usartxbase = 0;
   RCC_ClocksTypeDef RCC_ClocksStatus;
   /* Check the parameters */
+#if 0
   assert_param(IS_USART_ALL_PERIPH(USARTx));
   assert_param(IS_USART_BAUDRATE(USART_InitStruct->USART_BaudRate));  
   assert_param(IS_USART_WORD_LENGTH(USART_InitStruct->USART_WordLength));
@@ -193,6 +194,7 @@ void USART_Init(USART_TypeDef* USARTx, USART_InitTypeDef* USART_InitStruct)
   {
     assert_param(IS_USART_123_PERIPH(USARTx));
   }
+#endif
 
   usartxbase = (uint32_t)USARTx;
 
@@ -592,8 +594,10 @@ void USART_LINCmd(USART_TypeDef* USARTx, FunctionalState NewState)
 void USART_SendData(USART_TypeDef* USARTx, uint16_t Data)
 {
   /* Check the parameters */
+#if 0
   assert_param(IS_USART_ALL_PERIPH(USARTx));
   assert_param(IS_USART_DATA(Data)); 
+#endif
     
   /* Transmit Data */
   USARTx->DR = (Data & (uint16_t)0x01FF);
@@ -609,7 +613,7 @@ void USART_SendData(USART_TypeDef* USARTx, uint16_t Data)
 uint16_t USART_ReceiveData(USART_TypeDef* USARTx)
 {
   /* Check the parameters */
-  assert_param(IS_USART_ALL_PERIPH(USARTx));
+  //assert_param(IS_USART_ALL_PERIPH(USARTx));
   
   /* Receive Data */
   return (uint16_t)(USARTx->DR & (uint16_t)0x01FF);
