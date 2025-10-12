@@ -489,6 +489,46 @@ void main_init(void)
   else{
       lprintf("boot<reset\n");
   }
+
+  //RTC_Init
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
+  PWR_BackupAccessCmd(ENABLE);
+  if (BKP_ReadBackupRegister(BKP_DR1) != 0x5050)
+  {
+      lprintf("rtc reset!!!!!!\n");
+      u8 temp=0;
+      BKP_DeInit();
+      RCC_LSICmd(ENABLE);
+      while (RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == RESET)
+      {
+          temp++;
+          delay_ms(10);
+      }
+      if(temp>=250){
+          lprintf("rtc rc clk fail\n");
+      }
+      else{
+          RCC_RTCCLKConfig(RCC_RTCCLKSource_LSI);
+          RCC_RTCCLKCmd(ENABLE);
+          RTC_WaitForLastTask();
+          RTC_WaitForSynchro();
+          //RTC_ITConfig(RTC_IT_SEC, ENABLE);
+          //RTC_WaitForLastTask();
+          RTC_EnterConfigMode();///allow config
+          RTC_SetPrescaler(32767);
+          RTC_WaitForLastTask();
+          RTC_ExitConfigMode();
+          BKP_WriteBackupRegister(BKP_DR1, 0X5050);
+      }
+  }
+  else
+  {
+      lprintf("rtc runs normally %d\n", RTC_GetCounter());
+      //RTC_WaitForSynchro();
+      //RTC_ITConfig(RTC_IT_SEC, ENABLE);
+      //RTC_WaitForLastTask();
+  }
+
   uint32_t s1=get_system_us();
   uint32_t s2=get_system_us();
   uint32_t s3=get_system_us();
