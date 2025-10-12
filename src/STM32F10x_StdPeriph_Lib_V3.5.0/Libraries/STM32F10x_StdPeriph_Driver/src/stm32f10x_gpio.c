@@ -357,9 +357,11 @@ uint16_t GPIO_ReadOutputData(GPIO_TypeDef* GPIOx)
   */
 void GPIO_SetBits(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
+#if 0
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
   assert_param(IS_GPIO_PIN(GPIO_Pin));
+#endif
   
   GPIOx->BSRR = GPIO_Pin;
 }
@@ -373,9 +375,11 @@ void GPIO_SetBits(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
   */
 void GPIO_ResetBits(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
+#if 0
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
   assert_param(IS_GPIO_PIN(GPIO_Pin));
+#endif
   
   GPIOx->BRR = GPIO_Pin;
 }
@@ -550,9 +554,11 @@ void GPIO_PinRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
 {
   uint32_t tmp = 0x00, tmp1 = 0x00, tmpreg = 0x00, tmpmask = 0x00;
 
+#if 0
   /* Check the parameters */
   assert_param(IS_GPIO_REMAP(GPIO_Remap));
   assert_param(IS_FUNCTIONAL_STATE(NewState));  
+#endif
   
   if((GPIO_Remap & 0x80000000) == 0x80000000)
   {
