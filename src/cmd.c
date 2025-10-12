@@ -520,13 +520,21 @@ error:
 
 }
 
+char* lstrncpy(char*d, const char*s, unsigned int n)
+{
+    char*ret=d;
+    while(n--){
+        *d++=*s;
+        if(*s++==0)return ret;
+    }
+    return ret;
+}
+
 int lstrcmp(const char *a,const char *b)
 {
     while(1){
-        if(*a!=*b)return 1;
-        if(*a==0)return 0;
-        a++;
-        b++;
+        if(*a!=*b++)return 1;
+        if(*a++==0)return 0;
     }
 }
 void lmemset(char *d,unsigned char v,unsigned int n)
@@ -544,7 +552,7 @@ void handle_cmd()
 	return;
     //record the history cmd
     review_cmd_his_index = cmdcache_index;
-    strcpy((char*)cmd_caches[cmdcache_index++], cmd_buf);
+    lstrncpy((char*)cmd_caches[cmdcache_index++], cmd_buf, COM_MAX_LEN);
     if(cmdcache_index==CMD_CACHES_SIZE){
         cmdcache_index = 0;
     }
@@ -643,7 +651,7 @@ void run_cmd_interface()
             con_send(c);
         }
         else if(c == 0x5B && last_c == 0x1b){//history cmd
-            strcpy(cmd_buf, (char*)cmd_caches[review_cmd_his_index]);
+            lstrncpy(cmd_buf, (char*)cmd_caches[review_cmd_his_index],COM_MAX_LEN);
             cmd_buf_p = strlen(cmd_buf);
             lprintf("%s", cmd_caches[review_cmd_his_index]);
             if(review_cmd_his_index==0){

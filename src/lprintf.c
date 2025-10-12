@@ -114,7 +114,7 @@ int sprint_uint64(char*s, uint64_t num)
     char nc[21];
     lmemset(nc, 0, 21);
     num2str(num, nc, 10);
-    strcpy(s, nc);
+    lstrncpy(s, nc, 21);
     return strlen(nc);
 }
 
@@ -122,7 +122,7 @@ int sprint_uint(char*s, uint32_t num)
 {
     char nc[11];
     num2str(num, nc, 10);
-    strcpy(s, nc);
+    lstrncpy(s, nc,11);
     return strlen(nc);
 }
 
@@ -132,7 +132,7 @@ int sprint_uint_0n(char*s, uint32_t num, uint32_t num_len)
     uint32_t raw_len;
     lmemset(nc,'0', 22);
     raw_len = sprint_uint(nc+11, num);
-    strcpy(s, nc+11+raw_len-num_len);
+    lstrncpy(s, nc+11+raw_len-num_len, 22);
     return strlen(nc+11+raw_len-num_len);
 }
 
@@ -147,7 +147,7 @@ int sprint_hex(char*s, uint32_t num)
 {
     char nc[9];
     num2str(num, nc, 16);
-    strcpy(s, nc);
+    lstrncpy(s, nc, 9);
     return strlen(nc);
 }
 
@@ -186,7 +186,7 @@ char*vslprintf(int print_with_time, char*s_buf, const char *fmt, va_list args)
 		break;
             case 's':
                 s = va_arg(ap, const char *);
-                strcpy(sp, s);
+                lstrncpy(sp, s, 256);
                 sp += strlen(s);
                 break;
             case 'u':

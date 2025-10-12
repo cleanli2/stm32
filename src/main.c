@@ -173,14 +173,14 @@ int main()
                     if(strlen(token)!=32){
                         generate_token(token);
                     }
-                    strcpy(mkp->data, token);
+                    lstrncpy(mkp->data, token, 33);
                 }
                 else{
                     if(strlen(token)==32 && !lstrcmp(token, mkp->data)){
                         lprintf("new token\n");
                         mkp->reqrsp=RSP_ACK;
                         mkp->len=4;
-                        strcpy(mkp->data, "save");
+                        lstrncpy(mkp->data, "save", 5);
                         compute_sha256((const uint8_t*)token, strlen(token), (char*)sha_token);
                         if(ENV_FAIL == set_env("token", sha_token)){
                             lprintf("set_env fail, fatal\n");
@@ -192,7 +192,7 @@ int main()
                         lprintf("token wrong!\n");
                         mkp->reqrsp=RSP_NACK;
                         mkp->len=3;
-                        strcpy(mkp->data, "err");
+                        lstrncpy(mkp->data, "err", 4);
                         delay_ms(2000);
                     }
                 }
@@ -200,7 +200,7 @@ int main()
             else if(mkp->reqrsp==REQ_PWN){
                 mkp->reqrsp=RSP_ACK;
                 mkp->len=3;
-                strcpy(mkp->data, "bye");
+                lstrncpy(mkp->data, "bye", 4);
                 if(g_lockposi){
                     if(LOCKPOSI_LOCKED()){
                         lprintf("locked\n");
@@ -224,29 +224,29 @@ int main()
         if(state==REQ_INFO){
             lprintf("req info\n");
             mkp->len=5;
-            strcpy(mkp->data, "hello");
+            lstrncpy(mkp->data, "hello", 6);
             lmemset(token, 0, 33);
         }
         if(state==REQ_ACCESS){
             if(strlen(token)!=32){
                 if(ENV_FAIL == get_env(svr_info, m_value)){
                     lprintf("default token\n");
-                    strcpy(m_value, default_token);
+                    lstrncpy(m_value, default_token, ENV_MAX_VALUE_LEN);
                 }
             }
             else{
                 lprintf("new token\n");
-                strcpy(m_value, token);
+                lstrncpy(m_value, token, ENV_MAX_VALUE_LEN);
             }
             lprintf("req acc\n");
             //lprintf("token=%s\n", m_value);
             mkp->len=strlen(m_value);
-            strcpy(mkp->data, m_value);
+            lstrncpy(mkp->data, m_value, ENV_MAX_VALUE_LEN);
         }
         if(state==REQ_PWN){
             lprintf("req pwn\n");
             mkp->len=3;
-            strcpy(mkp->data, "bye");
+            lstrncpy(mkp->data, "bye", 4);
         }
         mkp->reqrsp=state;
         check_send();
@@ -255,7 +255,7 @@ int main()
             if(mkp->reqrsp==RSP_ACK){
                 if(state==REQ_INFO){
                     if(strlen(svr_info)==0){
-                        strcpy(svr_info, mkp->data);
+                        lstrncpy(svr_info, mkp->data, 25);
                     }
                     else{
                         if(!lstrcmp(svr_info, mkp->data)){
@@ -269,7 +269,7 @@ int main()
                 }
                 else if(state==REQ_ACCESS){
                     if(mkp->len==32){
-                        strcpy(token, mkp->data);
+                        lstrncpy(token, mkp->data, 33);
                     }
                     else if(mkp->len==4 && strlen(token)==32){
                         if(ENV_FAIL == set_env(svr_info, token)){
