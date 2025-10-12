@@ -481,10 +481,13 @@ void main_init(void)
   //SD_LowLevel_Init();
 
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
-  if(PWR_GetFlagStatus(PWR_FLAG_SB)!=RESET){
+  if(PWR_GetFlagStatus(PWR_FLAG_WU)!=RESET){
       lprintf("boot<Standby\n");
       PWR_ClearFlag(PWR_FLAG_SB);
       PWR_WakeUpPinCmd (DISABLE);
+  }
+  else{
+      lprintf("boot<reset\n");
   }
   uint32_t s1=get_system_us();
   uint32_t s2=get_system_us();
