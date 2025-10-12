@@ -17,8 +17,8 @@ typedef struct
 	u8  w_month;
 	u8  w_date;
 	u8  week;		 
-}_calendar_obj;					 
-extern _calendar_obj calendar;	//日历结构体
+}date_time;
+extern date_time calendar;					 
 
 extern u8 const mon_table[12];	//月份日期数据表
 void Disp_Time(u8 x,u8 y,u8 size);//在制定位置开始显示时间

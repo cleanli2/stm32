@@ -359,6 +359,29 @@ void csha(char *p)
 
     return;
 }
+void rtc(char *p)
+{
+    uint8_t d[6], tmp;
+
+    tmp = get_howmany_para(p);
+    lprintf("tmp=%d\n", tmp);
+    if(tmp==6){
+        p = str_to_hex(p, (uint*)&d[0]);
+        p = str_to_hex(p, (uint*)&d[1]);
+        p = str_to_hex(p, (uint*)&d[2]);
+        p = str_to_hex(p, (uint*)&d[3]);
+        p = str_to_hex(p, (uint*)&d[4]);
+        p = str_to_hex(p, (uint*)&d[5]);
+        RTC_Set(d[0]+2000, d[1], d[2], d[3], d[4], d[5]);
+    }
+    else if(tmp==0){
+        RTC_Get();
+    }
+    con_send('\n');
+
+    return;
+
+}
 static const struct command cmd_list[]=
 {
     {"adc",adc},
@@ -374,6 +397,7 @@ static const struct command cmd_list[]=
     {"poff",poweroff},
     {"r",read_mem},
     {"reboot",reboot},
+    {"rtc",rtc},
     {"csha",csha},
     {"w",write_mem},
     {NULL, NULL},
