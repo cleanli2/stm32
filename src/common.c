@@ -523,12 +523,14 @@ void main_init(void)
           RTC_WaitForLastTask();
           RTC_ExitConfigMode();
           BKP_WriteBackupRegister(BKP_DR1, 0X5050);
+          RTC_Set();
       }
   }
   else
   {
-      lprintf("rtc runs normally %d\n", RTC_GetCounter());
       RTC_WaitForSynchro();
+      lprintf("rtc runs normally %d\n", RTC_GetCounter());
+      lprintf("%s\n", RTC_Get());
       //RTC_ITConfig(RTC_IT_SEC, ENABLE);
       //RTC_WaitForLastTask();
   }

@@ -361,21 +361,22 @@ void csha(char *p)
 }
 void rtc(char *p)
 {
-    uint8_t d[6], tmp;
+    uint8_t tmp;
 
     tmp = get_howmany_para(p);
     lprintf("tmp=%d\n", tmp);
     if(tmp==6){
-        p = str_to_hex(p, (uint*)&d[0]);
-        p = str_to_hex(p, (uint*)&d[1]);
-        p = str_to_hex(p, (uint*)&d[2]);
-        p = str_to_hex(p, (uint*)&d[3]);
-        p = str_to_hex(p, (uint*)&d[4]);
-        p = str_to_hex(p, (uint*)&d[5]);
-        RTC_Set(d[0]+2000, d[1], d[2], d[3], d[4], d[5]);
+        p = str_to_hex(p, (uint*)&dt->w_year);
+        p = str_to_hex(p, (uint*)&dt->w_month);
+        p = str_to_hex(p, (uint*)&dt->w_date);
+        p = str_to_hex(p, (uint*)&dt->hour);
+        p = str_to_hex(p, (uint*)&dt->min);
+        p = str_to_hex(p, (uint*)&dt->sec);
+        dt->w_year+=2000;
+        RTC_Set();
     }
     else if(tmp==0){
-        RTC_Get();
+        lprintf("%s\n", RTC_Get());
     }
     con_send('\n');
 
