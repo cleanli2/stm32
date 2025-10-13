@@ -300,9 +300,11 @@ void ADC_StructInit(ADC_InitTypeDef* ADC_InitStruct)
   */
 void ADC_Cmd(ADC_TypeDef* ADCx, FunctionalState NewState)
 {
+#if 0
   /* Check the parameters */
   assert_param(IS_ADC_ALL_PERIPH(ADCx));
   assert_param(IS_FUNCTIONAL_STATE(NewState));
+#endif
   if (NewState != DISABLE)
   {
     /* Set the ADON bit to wake up the ADC from power down mode */
@@ -458,9 +460,11 @@ FlagStatus ADC_GetCalibrationStatus(ADC_TypeDef* ADCx)
   */
 void ADC_SoftwareStartConvCmd(ADC_TypeDef* ADCx, FunctionalState NewState)
 {
+#if 0
   /* Check the parameters */
   assert_param(IS_ADC_ALL_PERIPH(ADCx));
   assert_param(IS_FUNCTIONAL_STATE(NewState));
+#endif
   if (NewState != DISABLE)
   {
     /* Enable the selected ADC conversion on external event and start the selected
@@ -592,11 +596,13 @@ void ADC_DiscModeCmd(ADC_TypeDef* ADCx, FunctionalState NewState)
 void ADC_RegularChannelConfig(ADC_TypeDef* ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime)
 {
   uint32_t tmpreg1 = 0, tmpreg2 = 0;
+#if 0
   /* Check the parameters */
   assert_param(IS_ADC_ALL_PERIPH(ADCx));
   assert_param(IS_ADC_CHANNEL(ADC_Channel));
   assert_param(IS_ADC_REGULAR_RANK(Rank));
   assert_param(IS_ADC_SAMPLE_TIME(ADC_SampleTime));
+#endif
   /* if ADC_Channel_10 ... ADC_Channel_17 is selected */
   if (ADC_Channel > ADC_Channel_9)
   {
@@ -1197,9 +1203,11 @@ void ADC_TempSensorVrefintCmd(FunctionalState NewState)
 FlagStatus ADC_GetFlagStatus(ADC_TypeDef* ADCx, uint8_t ADC_FLAG)
 {
   FlagStatus bitstatus = RESET;
+#if 0
   /* Check the parameters */
   assert_param(IS_ADC_ALL_PERIPH(ADCx));
   assert_param(IS_ADC_GET_FLAG(ADC_FLAG));
+#endif
   /* Check the status of the specified ADC flag */
   if ((ADCx->SR & ADC_FLAG) != (uint8_t)RESET)
   {

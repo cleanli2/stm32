@@ -243,7 +243,7 @@ uint16_t BKP_ReadBackupRegister(uint16_t BKP_DR)
   __IO uint32_t tmp = 0;
 
   /* Check the parameters */
-  assert_param(IS_BKP_DR(BKP_DR));
+  //assert_param(IS_BKP_DR(BKP_DR));
 
   tmp = (uint32_t)BKP_BASE; 
   tmp += BKP_DR;

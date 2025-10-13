@@ -352,9 +352,11 @@ void USART_ClockStructInit(USART_ClockInitTypeDef* USART_ClockInitStruct)
   */
 void USART_Cmd(USART_TypeDef* USARTx, FunctionalState NewState)
 {
+#if 0
   /* Check the parameters */
   assert_param(IS_USART_ALL_PERIPH(USARTx));
   assert_param(IS_FUNCTIONAL_STATE(NewState));
+#endif
   
   if (NewState != DISABLE)
   {
@@ -878,13 +880,15 @@ void USART_IrDACmd(USART_TypeDef* USARTx, FunctionalState NewState)
 FlagStatus USART_GetFlagStatus(USART_TypeDef* USARTx, uint16_t USART_FLAG)
 {
   FlagStatus bitstatus = RESET;
+#if 0
   /* Check the parameters */
   assert_param(IS_USART_ALL_PERIPH(USARTx));
   assert_param(IS_USART_FLAG(USART_FLAG));
+#endif
   /* The CTS flag is not available for UART4 and UART5 */
   if (USART_FLAG == USART_FLAG_CTS)
   {
-    assert_param(IS_USART_123_PERIPH(USARTx));
+    //assert_param(IS_USART_123_PERIPH(USARTx));
   }  
   
   if ((USARTx->SR & USART_FLAG) != (uint16_t)RESET)

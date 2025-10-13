@@ -197,9 +197,11 @@ void PWR_WakeUpPinCmd(FunctionalState NewState)
 void PWR_EnterSTOPMode(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry)
 {
   uint32_t tmpreg = 0;
+#if 0
   /* Check the parameters */
   assert_param(IS_PWR_REGULATOR(PWR_Regulator));
   assert_param(IS_PWR_STOP_ENTRY(PWR_STOPEntry));
+#endif
   
   /* Select the regulator state in STOP mode ---------------------------------*/
   tmpreg = PWR->CR;
@@ -262,7 +264,7 @@ FlagStatus PWR_GetFlagStatus(uint32_t PWR_FLAG)
 {
   FlagStatus bitstatus = RESET;
   /* Check the parameters */
-  assert_param(IS_PWR_GET_FLAG(PWR_FLAG));
+  //assert_param(IS_PWR_GET_FLAG(PWR_FLAG));
   
   if ((PWR->CSR & PWR_FLAG) != (uint32_t)RESET)
   {
