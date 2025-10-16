@@ -34,7 +34,7 @@ src/CoIDE_startup.c                                                             
 src/common.c                                                                                          \
 src/date.c                                                                                            \
 src/env.c                                                                                             \
-src/soc_rtc.c                                                                                             \
+src/date_util.c                                                                                             \
 src/mock_uart.c                                                                                       \
 src/lprintf.c                                                                                         \
 src/main.c                                                                                            \

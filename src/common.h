@@ -18,7 +18,7 @@
 #include "w25flash.h"
 #include "lcd800x480/test.h"
 #include "date.h"
-#include "soc_rtc.h"
+#include "date_util.h"
 #include "ui.h"
 #include "music.h"
 
