@@ -434,6 +434,13 @@ void main_init(void)
   GPIO_Init(LED1_GPIO_GROUP, &g_gpio_inits);
   GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
 
+  RCC_APB2PeriphClockCmd(ADC_PWR_GPIO_PERIPH, ENABLE);
+  g_gpio_inits.GPIO_Mode = GPIO_Mode_Out_PP;
+  g_gpio_inits.GPIO_Pin = ADC_PWR_GPIO_PIN;
+  g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(ADC_PWR_GPIO_GROUP, &g_gpio_inits);
+  GPIO_SetBits(ADC_PWR_GPIO_GROUP,ADC_PWR_GPIO_PIN);
+
 #ifdef SVR
   RCC_APB2PeriphClockCmd(MOS_PERIPH, ENABLE);
   GPIO_ResetBits(MOS_GP,MOS_PIN);
