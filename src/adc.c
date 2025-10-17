@@ -155,3 +155,10 @@ int adc_test()
     return ret;
 }
 #endif
+int get_bat_voltage()
+{
+    //note: the formula is from data fitting
+    int v, vr=get_adc_value(0);
+    v=vr*1061/1000*vr-5295*vr+9873400;
+    return v/1000;
+}

@@ -19,4 +19,5 @@ extern uint32_t v_bat;
   */
 char adc_random();
 uint32_t get_adc_value(int my_index);
+int get_bat_voltage();
 #endif

@@ -553,6 +553,7 @@ void main_init(void)
   prt_dec(s2);
   prt_dec(s3);
   mock_uart_init();
+  lprintf("batv=%dmv\n", get_bat_voltage());
   delay_ms(200);
   if(con_is_recved()){
       if('c'==con_recv()){
