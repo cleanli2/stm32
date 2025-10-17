@@ -10,7 +10,7 @@ char datestr[20]={0};
 //days_since_ad1(1970,1,1)
 #define DAYS_197011 719162u
 
-date_time g_dt={25,10,17,5,0,0,5};
+date_time g_dt={2025,10,17,5,0,0,5};
 date_time*dt=&g_dt;
 
 // === Convert date → day count ===
