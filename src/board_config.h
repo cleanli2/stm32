@@ -29,6 +29,7 @@
 #define LOCKLOCK_PIN GPIO_Pin_1
 #define LOCKLOCK_GP GPIOA
 #define LOCKLOCK_PERIPH RCC_APB2Periph_GPIOA
+#define LOCKPOSI_LOCKED() (0x1&(g_lockposi+GPIO_ReadInputDataBit(LOCKPOSI_GP, LOCKPOSI_PIN)))
 #else
 #define MOCK_UART_PIN GPIO_Pin_12
 #define MOCK_UART_GP GPIOB

@@ -19,7 +19,6 @@ mupk * mkp=(mupk*)mrx_bf;
 unsigned int empty_loops=0;
 #ifdef SVR
 #define MAX_EMPTYLOOP 2u
-#define LOCKPOSI_LOCKED() (0x1&(g_lockposi+GPIO_ReadInputDataBit(LOCKPOSI_GP, LOCKPOSI_PIN)))
 #define MOS_OPEN() GPIO_SetBits(MOS_GP,MOS_PIN);
 #define MOS_CLOSE() GPIO_ResetBits(MOS_GP,MOS_PIN);
 char sha_token[ENV_MAX_VALUE_LEN];

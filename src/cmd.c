@@ -392,9 +392,20 @@ void rtc(char *p)
     return;
 
 }
+void test(char*para)
+{
+    (void)para;
+    while(1){
+        delay_ms(200);
+#ifdef SVR
+        prt_hex(LOCKPOSI_LOCKED());
+#endif
+    }
+}
 static const struct command cmd_list[]=
 {
     {"adc",adc},
+    {"csha",csha},
     {"exit",cmd_exit},
     {"envset",envset},
     {"envget",envget},
@@ -408,7 +419,7 @@ static const struct command cmd_list[]=
     {"r",read_mem},
     {"reboot",reboot},
     {"rtc",rtc},
-    {"csha",csha},
+    {"test",test},
     {"w",write_mem},
     {NULL, NULL},
 };
