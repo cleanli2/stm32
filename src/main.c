@@ -182,8 +182,14 @@ int main()
                         lstrncpy(mkp->data, "save", 5);
                         compute_sha256((const uint8_t*)token, strlen(token), (char*)sha_token);
                         if(ENV_FAIL == set_env("token", sha_token)){
-                            lprintf("set_env fail, fatal\n");
-                            while(1);
+                            while(1){
+                                lprintf("set_env token fail, fatal\n");
+                            }
+                        }
+                        if(ENV_FAIL == set_env("udtm", RTC_Get())){
+                            while(1){
+                                lprintf("set_env udtm fail, fatal\n");
+                            }
                         }
                         state=REQ_PWN;
                     }
