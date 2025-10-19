@@ -86,7 +86,7 @@ char*RTC_Get(void)
 	u32 timecount=0; 
     timecount=RTC_GetCounter();	 
     secs2date_197011(timecount);
-    slprintf(datestr, "%d.%d.%d-%d:%d:%d\n", dt->y, dt->m, dt->d,
+    slprintf(datestr, "%d.%d.%d-%d:%d:%d", dt->y, dt->m, dt->d,
             dt->h, dt->min, dt->s);
     return datestr;
 }

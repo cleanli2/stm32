@@ -211,6 +211,7 @@ int main()
                         lprintf("locked\n");
                         MOS_OPEN();
                         while(LOCKPOSI_LOCKED());
+                        lprintf("end\n");
                         MOS_CLOSE();
                     }
                     else{
