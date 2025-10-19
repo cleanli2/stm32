@@ -434,6 +434,13 @@ void main_init(void)
   GPIO_Init(LED1_GPIO_GROUP, &g_gpio_inits);
   GPIO_SetBits(LED1_GPIO_GROUP,LED1_GPIO_PIN);
 
+  RCC_APB2PeriphClockCmd(LEDLP_GPIO_PERIPH, ENABLE);
+  g_gpio_inits.GPIO_Mode = GPIO_Mode_Out_PP;
+  g_gpio_inits.GPIO_Pin = LEDLP_GPIO_PIN;
+  g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(LEDLP_GPIO_GROUP, &g_gpio_inits);
+  GPIO_SetBits(LEDLP_GPIO_GROUP,LEDLP_GPIO_PIN);
+
   RCC_APB2PeriphClockCmd(ADC_PWR_GPIO_PERIPH, ENABLE);
   g_gpio_inits.GPIO_Mode = GPIO_Mode_Out_PP;
   g_gpio_inits.GPIO_Pin = ADC_PWR_GPIO_PIN;
@@ -455,13 +462,6 @@ void main_init(void)
   g_gpio_inits.GPIO_Pin = LOCKPOSI_PIN;
   g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(LOCKPOSI_GP, &g_gpio_inits);
-
-  RCC_APB2PeriphClockCmd(LOCKLOCK_PERIPH, ENABLE);
-  GPIO_SetBits(LOCKLOCK_GP,LOCKLOCK_PIN);
-  g_gpio_inits.GPIO_Mode = GPIO_Mode_IPU;
-  g_gpio_inits.GPIO_Pin = LOCKLOCK_PIN;
-  g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(LOCKLOCK_GP, &g_gpio_inits);
 
   g_lockposi=get_env_uint("lpe", 0);;
 #endif
@@ -553,7 +553,14 @@ void main_init(void)
   prt_dec(s2);
   prt_dec(s3);
   mock_uart_init();
-  lprintf("batv=%dmv\n", get_bat_voltage());
+  int bv=get_bat_voltage();
+  lprintf("batv=%dmv\n", bv);
+  if(bv>BATV_LOW_LIMIT){
+      GPIO_ResetBits(LEDLP_GPIO_GROUP,LEDLP_GPIO_PIN);
+  }
+  else{
+      lprintf("LP!!!\n");
+  }
   delay_ms(200);
   if(con_is_recved()){
       if('c'==con_recv()){
