@@ -21,9 +21,6 @@
 #define ADC_PWR_GPIO_PIN GPIO_Pin_7
 
 #ifdef SVR
-#define MOCK_UART_PIN GPIO_Pin_0
-#define MOCK_UART_GP GPIOA
-#define MOCK_UART_PERIPH RCC_APB2Periph_GPIOA
 #define MOS_PIN GPIO_Pin_13
 #define MOS_GP GPIOB
 #define MOS_PERIPH RCC_APB2Periph_GPIOB
@@ -32,10 +29,10 @@
 #define LOCKPOSI_PERIPH RCC_APB2Periph_GPIOA
 #define LOCKPOSI_LOCKED() (0x1&(g_lockposi+GPIO_ReadInputDataBit(LOCKPOSI_GP, LOCKPOSI_PIN)))
 #else
-#define MOCK_UART_PIN GPIO_Pin_12
+#endif
+#define MOCK_UART_PIN GPIO_Pin_10
 #define MOCK_UART_GP GPIOB
 #define MOCK_UART_PERIPH RCC_APB2Periph_GPIOB
-#endif
 
 #define HW_FLASH_END_FORBIDEN 0x8010000u
 
