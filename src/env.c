@@ -551,17 +551,11 @@ int printrawenv()
 
 void switch_env_area_with_data()
 {
-    //get new env area empty
-    switch_env_area();
-    lprintf("erase new env area\n");
-    erase_env_area();
-    switch_env_area();
+    //int cur_area = get_cur_env_area();
+    //int idle_area = get_idle_env_area();
     if(ENV_OK == go_through_env(COPY_DATA_ENV)){
-        lprintf("env copied, switch to it\n");
-
-        //don't erase old env
-        //erase_env_area();
-
+        lprintf("env copied, erase cur\n");
+        erase_env_area();
         switch_env_area();
     }
 }
