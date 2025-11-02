@@ -85,6 +85,7 @@ char* lstrncpy(char*d, const char*s, unsigned int n);
 char *lstrchr(const char *str, int c);
 char asc_random();
 void lock_lock();
+void mcu_printer(const char *pt);
 
 #define LED_R_C 0x1
 #define LED_Y_C 0x2

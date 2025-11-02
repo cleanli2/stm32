@@ -18,6 +18,7 @@
   */
 extern unsigned long debug_enable;
 
+u32 g_lockposi=0;
 u32 intrpt_time[NUM_INTRPT]={0};
 u32 debug_mode = 0;
 #define COUNTS_PER_US 6
@@ -38,9 +39,6 @@ u32 g_cam_r70p_e=0;
 u32 g_cam_r71p_e=0;
 u32 g_tlcd=0;
 u32 g_pcf8574_hw=0;
-#ifdef SVR
-u32 g_lockposi=0;
-#endif
 static int sound_enable=1;
 volatile uint32_t g_10ms_count = 0;
 uint32_t g_ms_count = 0;
@@ -377,9 +375,14 @@ void update_progress_indicator(progress_indicator_t*pip, uint32_t progressed, ui
     if(t>0)lcd_clr_window(pip->f_color, pip->x, pip->y, pip->x+t, pip->y+pip->h);
     lcd_lprintf(1, pip->x+pip->w+5, pip->y, "%d/%d", progressed, total);
 }
+void mcu_printer(const char *pt)
+{
+    mock_uart_sends(pt, strlen(pt));
+}
 #define AUTO_POWER_OFF_COUNT 100000
 //static uint32_t single_timer_len = 16;
 void poweroff(char *p);
+char bvpt[16];
 /**
   * @brief  Main program.
   * @param  None
@@ -448,7 +451,6 @@ void main_init(void)
   GPIO_Init(ADC_PWR_GPIO_GROUP, &g_gpio_inits);
   GPIO_SetBits(ADC_PWR_GPIO_GROUP,ADC_PWR_GPIO_PIN);
 
-#ifdef SVR
   RCC_APB2PeriphClockCmd(MOS_PERIPH, ENABLE);
   GPIO_ResetBits(MOS_GP,MOS_PIN);
   g_gpio_inits.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -462,9 +464,6 @@ void main_init(void)
   g_gpio_inits.GPIO_Pin = LOCKPOSI_PIN;
   g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(LOCKPOSI_GP, &g_gpio_inits);
-
-  g_lockposi=get_env_uint("lpe", 0);;
-#endif
 
   //72M/72=1M, 1us/count
   //72M/12=6M, 1/6us / count
@@ -532,15 +531,19 @@ void main_init(void)
           BKP_WriteBackupRegister(BKP_DR1, 0X5050);
           RTC_Set();
       }
+      mcu_printer("rtc init");
   }
   else
   {
       RTC_WaitForSynchro();
       lprintf("rtc runs normally %d\n", RTC_GetCounter());
       lprintf("%s\n", RTC_Get());
+      mcu_printer(RTC_Get());
       //RTC_ITConfig(RTC_IT_SEC, ENABLE);
       //RTC_WaitForLastTask();
   }
+  mcu_printer(" on\r\n");
+  g_lockposi=get_env_uint("lpe", 0);;
 
   uint32_t s1=get_system_us();
   uint32_t s2=get_system_us();
@@ -554,29 +557,23 @@ void main_init(void)
   prt_dec(s3);
   mock_uart_init();
   int bv=get_bat_voltage();
-  lprintf("batv=%dmv\n", bv);
+  slprintf(bvpt, "batv=%dmv", bv);
+  lprintf("%s\n", bvpt);
+  mcu_printer(bvpt);
   if(bv>BATV_LOW_LIMIT){
       GPIO_ResetBits(LEDLP_GPIO_GROUP,LEDLP_GPIO_PIN);
   }
   else{
       lprintf("LP!!!\n");
+      mcu_printer(" LP!!!");
   }
+  mcu_printer("\r\n");
   delay_ms(200);
   if(con_is_recved()){
       if('c'==con_recv()){
           run_cmd_interface();
       }
   }
-#ifdef SVR
-/*
-  if(g_lockposi){
-      if(0==GPIO_ReadInputDataBit(LOCKLOCK_GP, LOCKLOCK_PIN)){
-          lock_lock();
-          poweroff("standby");
-      }
-  }
-  */
-#endif
 }
 
 

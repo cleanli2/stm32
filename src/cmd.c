@@ -307,6 +307,18 @@ void envset(char *p)
     return;
 
 }
+char asc_random()
+{
+    char ret;
+    uint32_t val;
+    delay_us(adc_random(0));
+    val=SysTick->VAL;
+    val/=95;
+    ret=0x20+val;
+    if(ret==0x7f)ret=0x7e;
+    return ret;
+}
+
 void adc(char *p)
 {
     uint32_t np, rct=1000;
@@ -397,9 +409,7 @@ void test(char*para)
     (void)para;
     while(1){
         delay_ms(200);
-#ifdef SVR
         prt_hex(LOCKPOSI_LOCKED());
-#endif
     }
 }
 static const struct command cmd_list[]=
