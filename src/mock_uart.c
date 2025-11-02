@@ -68,7 +68,7 @@ void mock_uart_tx(char da)
     delay_us(BIT_DELAY);
 }
 
-void mock_uart_sends(char*da, int len)
+void mock_uart_sends(const char*da, int len)
 {
     delay_ms(adc_random(0)>>3);
     hw_rx_init(0);

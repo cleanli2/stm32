@@ -134,10 +134,16 @@ int checked_recv()
     return 0;
 }
 void poweroff(char *p);
+void mcu_printer(const char *pt)
+{
+    mock_uart_sends(pt, strlen(pt));
+}
 int main()
 {
     int stop=0;
     main_init();
+    mcu_printer(RTC_Get());
+    while(1);
     while(!stop){
         toggle_led(0);
         lmemset(mrx_bf, 0, MRXBF_SIZE);
