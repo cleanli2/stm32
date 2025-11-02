@@ -33,7 +33,7 @@
 #define MOCK_UART_GP GPIOB
 #define MOCK_UART_PERIPH RCC_APB2Periph_GPIOB
 
-#define HW_FLASH_END_FORBIDEN 0x8010000u
+#define HW_FLASH_END_FORBIDEN 0x8008000u
 
 #ifdef ALIENTEK_MINI
 /////////////////////////////////////ALIENTEK_MINI//////////////////////////////////////////////
