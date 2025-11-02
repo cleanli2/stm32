@@ -36,6 +36,7 @@ int main()
     }
     mcu_printer(RTC_Get());
     mcu_printer(" off\r\n");
+    set_env("close", RTC_Get());
     mcu_printer("-~-~-~-~-~-~-~-~-~-~-~-~-~-~\r\n");
     lprintf("end\n");
     poweroff("standby");

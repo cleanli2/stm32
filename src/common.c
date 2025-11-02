@@ -495,6 +495,7 @@ void main_init(void)
   else{
       lprintf("boot<reset\n");
   }
+  mock_uart_init();
 
   //RTC_Init
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
@@ -532,6 +533,7 @@ void main_init(void)
           RTC_Set();
       }
       mcu_printer("rtc init");
+      set_env("open", "rtcinit");
   }
   else
   {
@@ -539,6 +541,7 @@ void main_init(void)
       lprintf("rtc runs normally %d\n", RTC_GetCounter());
       lprintf("%s\n", RTC_Get());
       mcu_printer(RTC_Get());
+      set_env("open", RTC_Get());
       //RTC_ITConfig(RTC_IT_SEC, ENABLE);
       //RTC_WaitForLastTask();
   }
@@ -555,7 +558,6 @@ void main_init(void)
   prt_dec(s1);
   prt_dec(s2);
   prt_dec(s3);
-  mock_uart_init();
   int bv=get_bat_voltage();
   slprintf(bvpt, "batv=%dmv", bv);
   lprintf("%s\n", bvpt);
