@@ -546,7 +546,7 @@ void main_init(void)
       //RTC_WaitForLastTask();
   }
   mcu_printer(" on\r\n");
-  g_lockposi=get_env_uint("lpe", 0);;
+  g_lockposi=get_env_uint("lpe", 1);
 
   uint32_t s1=get_system_us();
   uint32_t s2=get_system_us();

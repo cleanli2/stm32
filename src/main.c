@@ -32,6 +32,7 @@ int main()
         if(wt++>WAITLMT){
             MOS_OPEN();
         }
+        prt_hex(LOCKPOSI_LOCKED());
         delay_ms(1000);
     }
     mcu_printer(RTC_Get());
