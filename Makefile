@@ -67,10 +67,6 @@ src/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries/STM32F10x_StdPeriph_Driver/src/stm3
 
 C_OBJ=$(C_SRC:%.c=%.o)
 
-$(warning t=$(type))
-ifeq ($(type),)
-	type=clt
-endif
 ifeq ($(type),svr)
 CFLAGS+=-DSVR
 $(info type server)

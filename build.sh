@@ -1,3 +1,3 @@
 rm *.hex
-./clt_build.sh
-./svr_build.sh
+make board=c6t6 clean
+make board=c6t6 -j8
