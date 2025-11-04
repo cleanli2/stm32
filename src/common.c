@@ -530,6 +530,7 @@ void main_init(void)
           RTC_WaitForLastTask();
           RTC_ExitConfigMode();
           BKP_WriteBackupRegister(BKP_DR1, 0X5050);
+          BKP_RTCOutputConfig(BKP_RTCOutputSource_CalibClock);
           RTC_Set();
       }
       mcu_printer("rtc init");
