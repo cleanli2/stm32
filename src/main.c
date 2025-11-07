@@ -44,7 +44,10 @@ int main()
         delay_ms(1000);
     }
     mcu_printer(RTC_Get());
-    mcu_printer(" off\r\n");
+    mcu_printer(" off ");
+    slprintf(mrx_bf, "%dms", g_ms_count);
+    mcu_printer(mrx_bf);
+    mcu_printer("\r\n");
     set_env("close", RTC_Get());
     mcu_printer("-~-~-~-~-~-~-~-~-~-~-~-~-~-~\r\n");
     if (BKP_ReadBackupRegister(BKP_DR2) != 0x2031){
@@ -55,7 +58,7 @@ int main()
             delay_ms(1000);
         }
     }
-    lprintf("end\n");
+    lprintf("end %s\n", mrx_bf);
     poweroff("standby");
     lprintf("standby failed..\n");
     while(1);
