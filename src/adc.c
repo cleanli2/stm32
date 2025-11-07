@@ -162,3 +162,10 @@ int get_bat_voltage()
     v=vr*1061/1000*vr-5295*vr+9873400;
     return v/1000;
 }
+int get_bat_voltage_tlv431()
+{
+    //note: the formula is from data fitting
+    int v, vr=get_adc_value(0);
+    v=vr*427/1000*vr-2990*vr+8470000;
+    return v/1000;
+}

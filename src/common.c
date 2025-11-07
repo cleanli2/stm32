@@ -559,7 +559,10 @@ void main_init(void)
   prt_dec(s1);
   prt_dec(s2);
   prt_dec(s3);
-  int bv=get_bat_voltage();
+
+  //int bv=get_bat_voltage();
+  int bv=get_bat_voltage_tlv431();
+
   slprintf(bvpt, "batv=%dmv", bv);
   lprintf("%s\n", bvpt);
   mcu_printer(bvpt);
