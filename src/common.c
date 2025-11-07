@@ -462,7 +462,7 @@ void main_init(void)
 
   RCC_APB2PeriphClockCmd(LOCKPOSI_PERIPH, ENABLE);
   GPIO_SetBits(LOCKPOSI_GP,LOCKPOSI_PIN);
-  g_gpio_inits.GPIO_Mode = GPIO_Mode_IPU;
+  g_gpio_inits.GPIO_Mode = GPIO_Mode_IN_FLOATING;
   g_gpio_inits.GPIO_Pin = LOCKPOSI_PIN;
   g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(LOCKPOSI_GP, &g_gpio_inits);

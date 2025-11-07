@@ -31,10 +31,15 @@ int main()
     if (BKP_ReadBackupRegister(BKP_DR2) != 0x2031){
         MOS_OPEN();
     }
+    prt_hex(GPIO_ReadInputDataBit(LOCKPOSI_GP, LOCKPOSI_PIN));
+    prt_hex(g_lockposi);
+    prt_hex(LOCKPOSI_LOCKED());
     while(!LOCKPOSI_LOCKED()){
         if(wt++>WAITLMT){
             MOS_OPEN();
         }
+        prt_hex(GPIO_ReadInputDataBit(LOCKPOSI_GP, LOCKPOSI_PIN));
+        prt_hex(g_lockposi);
         prt_hex(LOCKPOSI_LOCKED());
         delay_ms(1000);
     }
