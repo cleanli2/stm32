@@ -9,6 +9,7 @@
 #endif
 
 static int adc_inited = 0;
+int g_v5_vltg=0;
 void adc_init()
 {
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -19,7 +20,7 @@ void adc_init()
 
     /* Configure analog inputs */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
     /* ADC1 configuration ------------------------------------------------------*/
     ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
@@ -55,7 +56,15 @@ uint32_t get_adc_value(int my_index)
     if(ADC_INITED!=adc_inited){
         adc_init();
     }
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_28Cycles5);
+    if(my_index==VREF){
+        ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_28Cycles5);
+    }
+    else if(my_index==V5){
+        ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 1, ADC_SampleTime_28Cycles5);
+    }
+    else{
+        return 0;
+    }
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     do
     {
@@ -167,5 +176,7 @@ int get_bat_voltage_tlv431()
     //note: the formula is from data fitting
     int v, vr=get_adc_value(0);
     v=vr*427/1000*vr-2990*vr+8470000;
+    g_v5_vltg=get_adc_value(1)*1240/vr;
+    g_v5_vltg*=5;
     return v/1000;
 }

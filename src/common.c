@@ -535,6 +535,8 @@ void main_init(void)
           RTC_ExitConfigMode();
           BKP_SetRTCCalibrationValue((g_sptds*1157/1000)%61);
           BKP_WriteBackupRegister(BKP_DR1, 0X5050);
+          //dr2=5valert reg
+          BKP_WriteBackupRegister(BKP_DR2, 0X2031);
           BKP_RTCOutputConfig(BKP_RTCOutputSource_CalibClock);
           RTC_Set();
       }
@@ -568,7 +570,7 @@ void main_init(void)
   //int bv=get_bat_voltage();
   int bv=get_bat_voltage_tlv431();
 
-  slprintf(bvpt, "batv=%dmv", bv);
+  slprintf(bvpt, "batv=%dmv v5=%dmv", bv, g_v5_vltg);
   lprintf("%s\n", bvpt);
   mcu_printer(bvpt);
   if(bv>BATV_LOW_LIMIT){
@@ -577,6 +579,10 @@ void main_init(void)
   else{
       lprintf("LP!!!\n");
       mcu_printer(" LP!!!");
+  }
+  if(g_v5_vltg<V5_LOW_LIMIT){
+      lprintf("No 5v power\n");
+      BKP_WriteBackupRegister(BKP_DR2, 0xdfce);
   }
   mcu_printer("\r\n");
   delay_ms(200);

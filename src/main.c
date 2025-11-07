@@ -28,6 +28,9 @@ int main()
 {
     int wt=0;
     main_init();
+    if (BKP_ReadBackupRegister(BKP_DR2) != 0x2031){
+        MOS_OPEN();
+    }
     while(!LOCKPOSI_LOCKED()){
         if(wt++>WAITLMT){
             MOS_OPEN();
@@ -39,6 +42,14 @@ int main()
     mcu_printer(" off\r\n");
     set_env("close", RTC_Get());
     mcu_printer("-~-~-~-~-~-~-~-~-~-~-~-~-~-~\r\n");
+    if (BKP_ReadBackupRegister(BKP_DR2) != 0x2031){
+        MOS_OPEN();
+        wt=10;
+        while(wt--){
+            lprintf("alert:no 5v power\n");
+            delay_ms(1000);
+        }
+    }
     lprintf("end\n");
     poweroff("standby");
     lprintf("standby failed..\n");
