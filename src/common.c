@@ -554,7 +554,8 @@ void main_init(void)
   prt_dec(s2);
   prt_dec(s3);
   mock_uart_init();
-  int bv=get_bat_voltage();
+  //int bv=get_bat_voltage();
+  int bv=get_bat_voltage_tlv431();
   lprintf("batv=%dmv\n", bv);
   if(bv>BATV_LOW_LIMIT){
       GPIO_ResetBits(LEDLP_GPIO_GROUP,LEDLP_GPIO_PIN);
