@@ -18,6 +18,8 @@
   */
 extern unsigned long debug_enable;
 
+//diff seconds per ten days
+u32 g_sptds=0;
 u32 intrpt_time[NUM_INTRPT]={0};
 u32 debug_mode = 0;
 #define COUNTS_PER_US 6
@@ -503,6 +505,7 @@ void main_init(void)
   if (BKP_ReadBackupRegister(BKP_DR1) != 0x5050)
   {
       lprintf("rtc reset!!!!!!\n");
+      g_sptds=get_env_uint("sptds", 0);
       u8 temp=0;
       BKP_DeInit();
 #if 0
@@ -526,9 +529,11 @@ void main_init(void)
           //RTC_ITConfig(RTC_IT_SEC, ENABLE);
           //RTC_WaitForLastTask();
           RTC_EnterConfigMode();///allow config
-          RTC_SetPrescaler(32767);
+          //1sptds=1.157ppm, 61ppm/2clks
+          RTC_SetPrescaler(32767+(2*(g_sptds*1157/1000)/61));
           RTC_WaitForLastTask();
           RTC_ExitConfigMode();
+          BKP_SetRTCCalibrationValue((g_sptds*1157/1000)%61);
           BKP_WriteBackupRegister(BKP_DR1, 0X5050);
           BKP_RTCOutputConfig(BKP_RTCOutputSource_CalibClock);
           RTC_Set();
