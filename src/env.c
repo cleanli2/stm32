@@ -233,6 +233,10 @@ uint32_t find_env_data_start()
     static int env_data_start_i = -1;
     uint32_t ret;
     uint8_t db, da;
+    if(env_get_char(0)==0){
+        //full and not in using
+        return 0;
+    }
     if(env_data_start_i != -1){//check if it is OK
         db = env_get_char(env_data_start_i -1);
         da = env_get_char(env_data_start_i);
@@ -272,6 +276,10 @@ uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
         ret = ENV_FAIL;
         lprintf("--enverr%d\n",__LINE__);
         goto end;
+    }
+    //skip all '0' at the begining
+    while(env_get_char(i) == '\0'){
+        i++;
     }
     for (i++; env_get_char(i) != '\0'; i=nxt+1) {
         int val;
