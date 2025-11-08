@@ -500,6 +500,7 @@ void main_init(void)
       g_bootreset=1;
   }
   mock_uart_init();
+  mpprintf("");
 
   //RTC_Init
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
