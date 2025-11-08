@@ -9,19 +9,17 @@ void set_cur_env_area(int env_area);
 static u32 flash_log_write_addr = 0xffffffff;
 uint32_t get_env_start_addr()
 {
-    uint8_t tmpc;
-
     if(env_start_addr == 0xffffffff){
-        //last byte will not be 0xff if main env has data
         set_cur_env_area(USE_MAIN_ENV);
-        tmpc = env_get_char(FM_ENV_STORE_SIZE-1);
-        //lprintf("last byte=0x%b\n", tmpc);
-        if(tmpc==0xff){
+        //first byte will be 0 if env full and not be using
+        if(0 == env_get_char(0)){
             //will use help env
-            lprintf("hlep env %X\n", FM_ENV_STORE_START_ADDR);
+            lprintf("using hlep env %X\n", FM_ENV_HELP_STORE_START_ADDR);
             set_cur_env_area(USE_HELP_ENV);
         }
-        //lprintf("env use %X\n", env_start_addr);
+        else{
+            lprintf("using main env %X\n", FM_ENV_STORE_START_ADDR);
+        }
     }
     return env_start_addr;
 }
@@ -159,7 +157,7 @@ int envmatch (uint8_t *s1, int i2)
 
 /*
  * the env store is like this:
- * XX XX '= YY .. YY 00 FF FF FF ... FF 00 XX XX XX '= YY YY YY 00 XX XX ...
+ * FF FF FF ... FF 00 XX XX XX '= YY YY YY 00 XX XX ...
  * */
 uint32_t find_env_data_start_raw()
 {
@@ -458,12 +456,30 @@ end:
     return ret;
 }
 
+void mark_cur_env_full()
+{
+    char tbt[2]={0,0};
+    uint32_t i = find_env_data_start();
+    if (i > (ENV_MAX_VALUE_LEN*2+2)){
+        lprintf("seems env not full. stop to be fix\n");
+        while(1);
+    }
+    while(i){
+        i-=2;
+        if(ENV_FAIL==env_set_2char(i, tbt)){
+            lprintf("fatal:envset hw err\n");
+            while(1);
+        }
+    }
+}
+
 uint32_t set_env(const char* name, const char*value)
 {
     uint32_t ret;
     ret = set_env_raw(name, value);
     if(ret==ENV_FULL){
         lprintf("env full. Try switching env area...\n");
+        mark_cur_env_full();
         switch_env_area_with_data();
         lprintf("set env again\n");
         ret = set_env_raw(name, value);
@@ -491,7 +507,10 @@ int go_through_env(int operation)
         //lprintf("--enverr%d\n",__LINE__);
         goto end;
     }
-    i++;
+    //skip all '0' at the begining
+    while(env_get_char(i) == '\0'){
+        i++;
+    }
     while(env_get_char(i) != '\0'){
         posi = i;
         i+=strcpy2mem((uint8_t*)buf, i);
@@ -544,9 +563,18 @@ int printenv()
     return go_through_env(PRINT_ACTIVE_ENV);
 }
 
-int printrawenv()
+int printrawenv(int idle)
 {
-    return go_through_env(PRINT_RAW_ENV);
+    int ret;
+    if(idle==0){
+        return go_through_env(PRINT_RAW_ENV);
+    }
+    else{
+        switch_env_area();
+        ret = go_through_env(PRINT_RAW_ENV);
+        switch_env_area();
+        return ret;
+    }
 }
 
 void switch_env_area_with_data()
