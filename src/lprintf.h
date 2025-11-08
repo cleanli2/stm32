@@ -11,6 +11,7 @@ int __io_char_received();
 extern uint16_t LCD_PRINT_BACK_COLOR;
 extern uint16_t LCD_PRINT_FRONT_COLOR;
 void lprintf(const char *fmt, ...);
+void mpprintf(const char *fmt, ...);
 void lprintf_time(const char *fmt, ...);
 void lprintf_to(const char *fmt, ...);
 void lprintf_time_buf(u32, const char *fmt, ...);

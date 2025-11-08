@@ -257,6 +257,16 @@ void lprintf_time(const char *fmt, ...)
 }
 #endif
 
+void mpprintf(const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap,fmt);
+    vslprintf(0, lprintf_buf,fmt,ap);
+    mcu_printer(lprintf_buf);
+    va_end(ap);
+}
+
 void lprintf(const char *fmt, ...)
 {
 #if 1

@@ -43,13 +43,14 @@ int main()
         prt_hex(LOCKPOSI_LOCKED());
         delay_ms(1000);
     }
-    mcu_printer(RTC_Get());
-    mcu_printer(" off ");
-    slprintf(mrx_bf, "%dms", g_ms_count);
-    mcu_printer(mrx_bf);
-    mcu_printer("\r\n");
+    mpprintf("%s off %dms\r\n", RTC_Get(), g_ms_count);
     set_env("close", RTC_Get());
-    mcu_printer("-~-~-~-~-~-~-~-~-~-~-~-~-~-~\r\n");
+    if(g_bootreset){
+        mpprintf("*|*|*|*|*|*|*|*|*|*|*|*|*|*|\r\n");
+    }
+    else{
+        mpprintf("-~-~-~-~-~-~-~-~-~-~-~-~-~-~\r\n");
+    }
     if (BKP_ReadBackupRegister(BKP_DR2) != 0x2031){
         MOS_OPEN();
         wt=10;

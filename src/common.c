@@ -19,6 +19,7 @@
 extern unsigned long debug_enable;
 
 u32 g_lockposi=0;
+u32 g_bootreset=0;
 //diff seconds per ten days
 u32 g_sptds=0;
 u32 intrpt_time[NUM_INTRPT]={0};
@@ -496,6 +497,7 @@ void main_init(void)
   }
   else{
       lprintf("boot<reset\n");
+      g_bootreset=1;
   }
   mock_uart_init();
 
@@ -540,7 +542,7 @@ void main_init(void)
           BKP_RTCOutputConfig(BKP_RTCOutputSource_CalibClock);
           RTC_Set();
       }
-      mcu_printer("rtc init");
+      mpprintf("rtc init");
       set_env("open", "rtcinit");
   }
   else
@@ -548,14 +550,15 @@ void main_init(void)
       RTC_WaitForSynchro();
       lprintf("rtc runs normally %d\n", RTC_GetCounter());
       lprintf("%s\n", RTC_Get());
-      mcu_printer(RTC_Get());
+      mpprintf(RTC_Get());
       set_env("open", RTC_Get());
       //RTC_ITConfig(RTC_IT_SEC, ENABLE);
       //RTC_WaitForLastTask();
   }
-  mcu_printer(" on\r\n");
+  mpprintf(" on\r\n");
   g_lockposi=get_env_uint("lpe", 1);
 
+#if 0
   uint32_t s1=get_system_us();
   uint32_t s2=get_system_us();
   uint32_t s3=get_system_us();
@@ -566,25 +569,26 @@ void main_init(void)
   prt_dec(s1);
   prt_dec(s2);
   prt_dec(s3);
+#endif
 
   //int bv=get_bat_voltage();
   int bv=get_bat_voltage_tlv431();
 
   slprintf(bvpt, "batv=%dmv v5=%dmv", bv, g_v5_vltg);
   lprintf("%s\n", bvpt);
-  mcu_printer(bvpt);
+  mpprintf(bvpt);
   if(bv>BATV_LOW_LIMIT){
       GPIO_ResetBits(LEDLP_GPIO_GROUP,LEDLP_GPIO_PIN);
   }
   else{
       lprintf("LP!!!\n");
-      mcu_printer(" LP!!!");
+      mpprintf(" LP!!!");
   }
   if(g_v5_vltg<V5_LOW_LIMIT){
       lprintf("No 5v power\n");
       BKP_WriteBackupRegister(BKP_DR2, 0xdfce);
   }
-  mcu_printer("\r\n");
+  mpprintf("\r\n");
   delay_ms(200);
   if(con_is_recved()){
       if('c'==con_recv()){
