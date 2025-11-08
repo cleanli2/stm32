@@ -137,7 +137,7 @@
 uint32_t get_env(const char* name, char*value);
 uint32_t set_env(const char* name, const char*value);
 int printenv();
-int printrawenv();
+int printrawenv(int);
 void switch_env_area();
 void switch_env_area_with_data();
 int erase_env_area();

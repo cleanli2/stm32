@@ -237,11 +237,19 @@ err:
 }
 void envprint(char *p)
 {
+    char*para;
     int tmp = get_howmany_para(p);
     lprintf("number of para %d\n", tmp);
     if(tmp>0){
-        lprintf("raw env:\n");
-        printrawenv();
+        str_to_str(p, &para);
+        if(0==lstrcmp(para, "r")){
+            lprintf("raw env:\n");
+            printrawenv(0);
+        }
+        else if(0==lstrcmp(para, "i")){
+            lprintf("idle area raw env:\n");
+            printrawenv(1);
+        }
     }
     else{
         printenv();
