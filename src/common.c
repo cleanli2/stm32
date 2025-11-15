@@ -450,6 +450,20 @@ void main_init(void)
   GPIO_Init(ADC_PWR_GPIO_GROUP, &g_gpio_inits);
   GPIO_SetBits(ADC_PWR_GPIO_GROUP,ADC_PWR_GPIO_PIN);
 
+  RCC_APB2PeriphClockCmd(SDA_GPIO_PERIPH, ENABLE);
+  g_gpio_inits.GPIO_Mode = GPIO_Mode_Out_PP;
+  g_gpio_inits.GPIO_Pin = SDA_GPIO_PIN;
+  g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(SDA_GPIO_GROUP, &g_gpio_inits);
+  GPIO_SetBits(SDA_GPIO_GROUP,SDA_GPIO_PIN);
+
+  RCC_APB2PeriphClockCmd(SCL_GPIO_PERIPH, ENABLE);
+  g_gpio_inits.GPIO_Mode = GPIO_Mode_Out_PP;
+  g_gpio_inits.GPIO_Pin = SCL_GPIO_PIN;
+  g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(SCL_GPIO_GROUP, &g_gpio_inits);
+  GPIO_SetBits(SCL_GPIO_GROUP,SCL_GPIO_PIN);
+
 #ifdef SVR
   RCC_APB2PeriphClockCmd(MOS_PERIPH, ENABLE);
   GPIO_ResetBits(MOS_GP,MOS_PIN);

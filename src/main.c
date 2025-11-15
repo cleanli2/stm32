@@ -134,10 +134,12 @@ int checked_recv()
     return 0;
 }
 void poweroff(char *p);
+int oled_show();
 int main()
 {
     int stop=0;
     main_init();
+    oled_show();
     while(!stop){
         toggle_led(0);
         lmemset(mrx_bf, 0, MRXBF_SIZE);

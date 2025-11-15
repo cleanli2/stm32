@@ -33,6 +33,7 @@ src/sha256.c                                                                    
 src/CoIDE_startup.c                                                                                   \
 src/common.c                                                                                          \
 src/date.c                                                                                            \
+src/oled.c                                                                                            \
 src/env.c                                                                                             \
 src/date_util.c                                                                                             \
 src/mock_uart.c                                                                                       \
