@@ -24,7 +24,7 @@ void hw_rx_init(int flag)
     }
     else{//tx
         GPIO_SetBits(MOCK_UART_GP, MOCK_UART_PIN);
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
     }
     GPIO_Init(MOCK_UART_GP, &GPIO_InitStructure);
 }
