@@ -559,8 +559,12 @@ void main_init(void)
   {
       RTC_WaitForSynchro();
       lprintf("rtc runs normally %d\n", RTC_GetCounter());
-      lprintf("%s\n", RTC_Get());
-      oled_lprintf(0, 100, "%s", RTC_Get());
+      char* ds=RTC_Get();
+      lprintf("%s\n", ds);
+      char* ts=lstrchr(ds, '-');
+      *ts=0;
+      oled_lprintf(0, 100, "%s", 2+ds);
+      oled_lprintf(0, 84, "%s", ts+1);
       //RTC_ITConfig(RTC_IT_SEC, ENABLE);
       //RTC_WaitForLastTask();
   }
