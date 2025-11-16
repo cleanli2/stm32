@@ -390,6 +390,10 @@ void oled_putasc(int page, int column, char c)
     int pos;
     uint8_t idx=(uint8_t)c-' ';
 
+    if(column>=128 || page >= 8){
+        return;
+    }
+
     Page_set(page);
     Column_set(column);
 

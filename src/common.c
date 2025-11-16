@@ -558,9 +558,12 @@ void main_init(void)
       RTC_WaitForSynchro();
       lprintf("rtc runs normally %d\n", RTC_GetCounter());
       lprintf("%s\n", RTC_Get());
+      oled_lprintf(0, 100, "%s", RTC_Get());
       //RTC_ITConfig(RTC_IT_SEC, ENABLE);
       //RTC_WaitForLastTask();
   }
+  OLED_init();
+  OLED_clear();
 
   uint32_t s1=get_system_us();
   uint32_t s2=get_system_us();
@@ -576,6 +579,7 @@ void main_init(void)
   //int bv=get_bat_voltage();
   int bv=get_bat_voltage_tlv431();
   lprintf("batv=%dmv\n", bv);
+  oled_lprintf(0, 80, "%dmv", bv);
   if(bv>BATV_LOW_LIMIT){
       GPIO_ResetBits(LEDLP_GPIO_GROUP,LEDLP_GPIO_PIN);
   }

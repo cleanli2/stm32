@@ -271,6 +271,20 @@ void lprintf(const char *fmt, ...)
 #endif
 }
 
+void oled_lprintf(int page, int column, const char *fmt, ...)
+{
+#if 1
+    va_list ap;
+
+    va_start(ap,fmt);
+    vslprintf(0, lprintf_buf,fmt,ap);
+    oled_putstr(page, column, lprintf_buf);
+    va_end(ap);
+#else
+    putchars(fmt);
+#endif
+}
+
 void slprintf(char*buf, const char *fmt, ...)
 {
     va_list ap;

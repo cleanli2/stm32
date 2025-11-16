@@ -85,6 +85,10 @@ char* lstrncpy(char*d, const char*s, unsigned int n);
 char *lstrchr(const char *str, int c);
 char asc_random();
 void lock_lock();
+void OLED_init(void);
+void OLED_clear(void);
+void oled_lprintf(int page, int column, const char *fmt, ...);
+void oled_putstr(int page, int column, char* s);
 
 #define LED_R_C 0x1
 #define LED_Y_C 0x2
