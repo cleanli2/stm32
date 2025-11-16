@@ -342,7 +342,6 @@ void OLED_full(void)
         Column_set(0);	  
         for(column=0;column<128;column++)	//column loop
         {
-        oled_delayms(3000);
             OLED_send_data(0xff);
         }
     }
@@ -397,13 +396,32 @@ void oled_putasc(int page, int column, char c)
     const int size=16;
     for(pos=0;pos<size;pos++)
     {
-        OLED_send_data(asc2_1608[idx][pos]);
+        OLED_send_data(asc2_1608[idx][size-1-pos]);
+    }
+}
+void oled_putstr(int page, int column, char* s)
+{
+    int p=page, c=column;
+    while(*s){
+        oled_putasc(p, c, *s);
+        s++;
+        if(p!=7)p++;
+        else{
+            p=0;
+            c-=16;
+        }
     }
 }
 int oled_show()
 {
+    logline;
     OLED_init();
+    logline;
     OLED_full();
-    oled_putasc(1, 20, 'U');
+    logline;
+    OLED_clear();
+    logline;
+    oled_putstr(0, 110, "Hello!I am your friend!");
+    logline;
     return 0;
 }
