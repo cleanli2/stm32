@@ -281,6 +281,7 @@ uint32_t get_env_raw(const char* name, char*value, uint32_t * p_position)
     while(env_get_char(i) == '\0'){
         i++;
     }
+    i--;
     for (i++; env_get_char(i) != '\0'; i=nxt+1) {
         int val;
 
