@@ -480,6 +480,13 @@ void main_init(void)
   GPIO_Init(LOCKPOSI_GP, &g_gpio_inits);
 
   g_lockposi=get_env_uint("lpe", 0);;
+#else
+  RCC_APB2PeriphClockCmd(MOCK_UART_PERIPH, ENABLE);
+  GPIO_SetBits(MOCK_UART_GP,MOCK_UART_PIN);
+  g_gpio_inits.GPIO_Mode = GPIO_Mode_Out_PP;
+  g_gpio_inits.GPIO_Pin = MOCK_UART_PIN;
+  g_gpio_inits.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(MOCK_UART_GP, &g_gpio_inits);
 #endif
 
   //72M/72=1M, 1us/count
